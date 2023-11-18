@@ -9,10 +9,12 @@ import Select from "@mui/material/Select";
 import twokeyLanding from "../assets/twokeyLanding.png";
 import ErrorPage from "../components/ErrorPage";
 import { useMediaQuery } from "@mui/material";
+import { useAuth } from "../context/authContext";
 
 const Login = () => {
   let navigate = useNavigate();
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const { getProfileData } = useAuth();
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   const [formData, setFormData] = useState({
     email: "",
@@ -56,6 +58,7 @@ const Login = () => {
       // setToken(data);
       if (data) {
         sessionStorage.setItem("token", JSON.stringify(data));
+        getProfileData();
       }
       navigate("/dashboard");
     } catch (error) {
@@ -82,20 +85,32 @@ const Login = () => {
 
     orgData();
   }, []);
-  
+
+  /**
+   * if user is already logged in then redirect to dashboard,
+   * instead of returning the login page
+   */
+  if (sessionStorage.getItem("token")) {
+    navigate("/dashboard");
+  }
+
+  /**
+   * comment this out on dev mode
+   * as the api call fails from localhost
+   */
   // if (pageErr) {
   //   return <ErrorPage error={pageErr} />;
   // }
   return (
     <div className="flex flex-col md:flex-row">
       {!isSmallScreen && (
-      <div className="w-full md:w-1/2 ">
-        <img
-          className="h-screen w-full object-cover"
-          src={twokeyLanding}
-          alt="twokeyLandingImage"
-        />
-      </div>
+        <div className="w-full md:w-1/2 ">
+          <img
+            className="h-screen w-full object-cover"
+            src={twokeyLanding}
+            alt="twokeyLandingImage"
+          />
+        </div>
       )}
 
       <div className="bg-white flex flex-col justify-center items-center w-full md:w-1/2 p-4">
@@ -103,10 +118,7 @@ const Login = () => {
           Welcome to Twokey
         </h1>
 
-        <form
-          onSubmit={handleSubmit}
-          className="text-center w-full md:w-11/12"
-        >
+        <form onSubmit={handleSubmit} className="text-center w-full md:w-11/12">
           <span className="my-4 flex flex-col justify-center ">
             <InputLabel
               className="text-md text-left mb-2 mt-4"

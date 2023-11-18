@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [coordinates, setCoordinates] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     // Prevent right-click
@@ -166,8 +167,8 @@ export const AuthProvider = ({ children }) => {
           // console.log("Files:", filteredFiles);
 
           // Set the filtered files to the state
-          // setFilteredData(filteredFiles);
-          localStorage.setItem("filteredFiles", JSON.stringify(filteredFiles));
+          setFilteredData(filteredFiles);
+          // localStorage.setItem("filteredFiles", JSON.stringify(filteredFiles));
         }
       } catch (error) {
         console.error("Error fetching files:", error);
@@ -303,6 +304,7 @@ export const AuthProvider = ({ children }) => {
     getProfileData,
     listLocations,
     coordinates,
+    filteredData,
   };
 
   return (

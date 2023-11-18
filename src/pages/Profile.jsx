@@ -6,6 +6,7 @@ import ProfileAddressInformation from "../components/ProfileAddressInformation";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import RecentFiles from "../components/RecentFiles";
 import AccountFiles from "../components/AccountFiles";
+import Pen from "../assets/pen.svg";
 
 import ErrorPage from "../components/ErrorPage";
 
@@ -84,15 +85,16 @@ const Profile = () => {
           )}
           <button
             onClick={toggleEditing}
-            className={`px-4 py-1 text-sm border-2 rounded-md ${
+            className={`w-16 px-2 py-1 text-sm border shadow-lg rounded-md flex flex-row gap-2 justify-center items-center ${
               isEditing ? "bg-blue-700 text-white" : "bg-white"
             }`}
           >
+            {!isEditing && <img src={Pen} alt="." />}
             {isEditing ? "Save" : "Edit"}
           </button>
         </span>
       </div>
-      <div className="p-4 border-2 bg-[#F7F8FA] border-gray-200 w-full rounded-xl ">
+      <div className="p-4 border shadow-lg bg-[#F7F8FA] border-gray-200 w-full rounded-xl ">
         <div className="flex flex-row items-center space-x-4">
           {profileData && (
             <div

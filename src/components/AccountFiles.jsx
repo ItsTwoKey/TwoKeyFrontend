@@ -20,18 +20,24 @@ import StepLabel from "@mui/material/StepLabel";
 import ReadIcon from "../assets/read.svg";
 import UnfoldIcon from "../assets/unfold.svg";
 import { useDarkMode } from "../context/darkModeContext";
+import { useAuth } from "../context/authContext";
 
 const AccountFiles = () => {
   const { darkMode } = useDarkMode();
+  const { filteredData } = useAuth();
   const location = useLocation();
-  const [filteredData, setFilteredData] = useState([]);
+  // const [filteredData, setFilteredData] = useState([]);
 
-  useEffect(() => {
-    let data = localStorage.getItem("filteredFiles");
-    console.log("filtered files:", JSON.parse(data));
-    // console.log("Location:", location.pathname.slice(1));
-    setFilteredData(JSON.parse(data));
-  }, []);
+  // useEffect(() => {
+  //   let data = localStorage.getItem("filteredFiles");
+
+  //   let filteredData = JSON.parse(data);
+  //   console.log("filtered files:", filteredData);
+
+  //   if (filteredData !== null) {
+  //     setFilteredData(filteredData);
+  //   }
+  // }, []);
 
   return (
     <div className={`${darkMode ? "bg-gray-800 text-white" : "text-gray-800"}`}>

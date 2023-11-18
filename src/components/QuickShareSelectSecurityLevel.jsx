@@ -5,6 +5,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogActions from "@mui/material/DialogActions";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import LinearProgress from "@mui/material/LinearProgress"; // Import LinearProgress
 import axios from "axios";
 import SecurityAllocation from "./SecurityAllocation";
 import { supabase } from "../helper/supabaseClient";
@@ -25,10 +26,16 @@ export default function QuickShareSelectSecurityLevel({
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [progress, setProgress] = useState(0); // New state for progress
 
   const handleAlignment = (event, newAlignment) => {
     setAlignment(newAlignment);
     console.log(newAlignment);
+  };
+
+  const handleProgress = (event) => {
+    const percentage = (event.loaded / event.total) * 100;
+    setProgress(percentage);
   };
 
   // const handleFinalUpload = async () => {
@@ -36,9 +43,10 @@ export default function QuickShareSelectSecurityLevel({
   //     for (const file of droppedFiles) {
   //       const { data, error } = await supabase.storage
   //         .from("TwoKey")
-  //         .upload(file.name, file, {
+  //         .upload(customFileName || file.name, file, {
   //           cacheControl: "3600",
   //           upsert: false,
+  //           onProgress: handleProgress,
   //         });
   //       console.log("uploaded file:", data.path);
   //       handleFileIdRetrieval(data.path);
@@ -55,22 +63,29 @@ export default function QuickShareSelectSecurityLevel({
   //   } catch (error) {
   //     console.error("Error occurred in file upload:", error);
 
-  //     // onClose();
   //     showSnackbar("Upload failed. Please try again.", "error");
   //     setTimeout(() => {
   //       onClose();
   //     }, 3000);
+  //   } finally {
+  //     setProgress(0); // Reset progress after upload is complete
   //   }
   // };
 
   const handleFinalUpload = async () => {
     try {
       for (const file of droppedFiles) {
+        console.log("upload started");
         const { data, error } = await supabase.storage
           .from("TwoKey")
           .upload(customFileName || file.name, file, {
             cacheControl: "3600",
             upsert: false,
+
+            onProgress: (event) => {
+              const progress = (event.loaded / event.total) * 100;
+              console.log(`File uploading... ${progress.toFixed(2)}%`);
+            },
           });
         console.log("uploaded file:", data.path);
         handleFileIdRetrieval(data.path);
@@ -81,16 +96,18 @@ export default function QuickShareSelectSecurityLevel({
       }
 
       showSnackbar("Upload successful", "success");
-      setTimeout(() => {
-        onClose();
-      }, 3000);
+      // setTimeout(() => {
+      //   onClose();
+      // }, 3000);
     } catch (error) {
       console.error("Error occurred in file upload:", error);
 
       showSnackbar("Upload failed. Please try again.", "error");
-      setTimeout(() => {
-        onClose();
-      }, 3000);
+      // setTimeout(() => {
+      //   onClose();
+      // }, 3000);
+    } finally {
+      // setProgress(0); // Reset progress after upload is complete
     }
   };
 
@@ -139,7 +156,7 @@ export default function QuickShareSelectSecurityLevel({
 
       console.log("shareFiles:", res);
     } catch (error) {
-      console.log("error occured while setting the permissions", error);
+      console.log("error occurred while setting the permissions", error);
     }
   };
 
@@ -168,7 +185,7 @@ export default function QuickShareSelectSecurityLevel({
         },
       }}
     >
-      <DialogTitle>Security Level</DialogTitle>
+      <DialogTitle>Quick Search</DialogTitle>
       <DialogContent className="bg-gray-100">
         <div className="w-80 py-4">
           <ul className="my-2">
@@ -187,6 +204,7 @@ export default function QuickShareSelectSecurityLevel({
               </li>
             ))}
           </ul>
+
           <span className="my-4">
             {" "}
             <p className="text-gray-600 text-sm font-semibold">
@@ -230,6 +248,14 @@ export default function QuickShareSelectSecurityLevel({
             selectedUsers={selectedUsers}
           />
         </div>
+        {/* <div>
+          <LinearProgress
+            variant="determinate"
+            value={progress}
+            sx={{ width: "100%", marginBottom: 2 }}
+          />
+          <p>{Math.round(progress)}% Complete</p>
+        </div> */}
       </DialogContent>
       <DialogActions style={{ margin: "5px" }}>
         <button

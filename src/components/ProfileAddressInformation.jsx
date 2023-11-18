@@ -60,7 +60,7 @@ const ProfileAddressInformation = ({ profileData, isEditing }) => {
   };
 
   return (
-    <div className="p-4 my-4 bg-[#F7F8FA] border-2 border-gray-200 w-full rounded-xl">
+    <div className="p-4 my-4 bg-[#F7F8FA] border shadow-lg border-gray-200 w-full rounded-xl">
       <div className="grid grid-cols-4 gap-4">
         <span>
           <h5 className="px-2 font-semibold">Country</h5>

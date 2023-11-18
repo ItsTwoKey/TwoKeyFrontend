@@ -7,8 +7,10 @@ import QuickShare from "../components/QuickShare";
 import { useDarkMode } from "../context/darkModeContext";
 import { Skeleton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
+import { useAuth } from "../context/authContext";
 
 const RecentFiles = () => {
+  const { filteredData } = useAuth();
   const { darkMode } = useDarkMode();
   const [files, setFiles] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -68,12 +70,13 @@ const RecentFiles = () => {
   useEffect(() => {
     async function fetchRecentFiles() {
       try {
-        let recentFilesFromBackend = localStorage.getItem("filteredFiles");
+        // let recentFilesFromBackend = localStorage.getItem("filteredFiles");
         // console.log("Recent files top:", JSON.parse(recentFilesFromBackend));
 
-        const mappedFiles = JSON.parse(recentFilesFromBackend).slice(0, 5);
-        console.log("Recent files:", mappedFiles);
-        setFiles(mappedFiles);
+        // const mappedFiles = JSON.parse(recentFilesFromBackend).slice(0, 5);
+        // const mappedFiles = filteredData;
+        console.log("Recent files:", filteredData);
+        // setFiles(filteredData);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching files:", error);
@@ -127,7 +130,7 @@ const RecentFiles = () => {
                 </span>
               </div>
             ))
-          : files.map((file, index) => (
+          : filteredData.slice(0, 5).map((file, index) => (
               <div
                 key={index}
                 className={`border border-gray-200 p-2 rounded-lg shadow-md cursor-pointer ${
