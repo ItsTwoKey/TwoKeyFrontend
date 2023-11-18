@@ -8,11 +8,12 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import twokeyLanding from "../assets/twokeyLanding.png";
 import ErrorPage from "../components/ErrorPage";
-import { useAuth } from "../context/authContext";
+import { useMediaQuery } from "@mui/material";
 
 const Login = () => {
   let navigate = useNavigate();
-  const { getProfileData } = useAuth();
+  const isSmallScreen = useMediaQuery('(max-width:600px)');
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -55,7 +56,6 @@ const Login = () => {
       // setToken(data);
       if (data) {
         sessionStorage.setItem("token", JSON.stringify(data));
-        getProfileData();
       }
       navigate("/dashboard");
     } catch (error) {
@@ -65,8 +65,6 @@ const Login = () => {
 
   useEffect(() => {
     const orgData = async () => {
-      // catching the errors if the api call fails
-      // set the error message to page error state to be used for displaying error page.
       try {
         const org = await axios.get(
           "https://twokeybackend.onrender.com/org/list_orgs"
@@ -84,40 +82,30 @@ const Login = () => {
 
     orgData();
   }, []);
-
-  /**
-   * if user is already logged in then redirect to dashboard,
-   * instead of returning the login page
-   */
-  if (sessionStorage.getItem("token")) {
-    navigate("/dashboard");
-  }
-
-  /**
-   * comment this out on dev mode
-   * as the api call fails from localhost
-   */
+  
   // if (pageErr) {
   //   return <ErrorPage error={pageErr} />;
   // }
   return (
     <div className="flex flex-col md:flex-row">
+      {!isSmallScreen && (
       <div className="w-full md:w-1/2 ">
         <img
-          className="h-screen w-screen"
+          className="h-screen w-full object-cover"
           src={twokeyLanding}
           alt="twokeyLandingImage"
         />
       </div>
+      )}
 
-      <div className="bg-white flex flex-col justify-center items-center w-full md:w-1/2">
+      <div className="bg-white flex flex-col justify-center items-center w-full md:w-1/2 p-4">
         <h1 className="text-5xl text-center mt-4 font-semibold ">
           Welcome to Twokey
         </h1>
 
         <form
           onSubmit={handleSubmit}
-          className="p-4 text-center w-full md:w-11/12"
+          className="text-center w-full md:w-11/12"
         >
           <span className="my-4 flex flex-col justify-center ">
             <InputLabel

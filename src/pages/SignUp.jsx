@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../helper/supabaseClient";
-import { TextField } from "@mui/material";
+import { TextField, useMediaQuery } from "@mui/material";
 import axios from "axios";
 
 import ErrorPage from "../components/ErrorPage";
@@ -11,8 +11,10 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 
 import twokeyLanding from "../assets/twokeyLanding.png";
+import twokeySignup from "../assets/twokeySignup.png";
 
 const SignUp = () => {
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -57,8 +59,6 @@ const SignUp = () => {
 
   useEffect(() => {
     const orgData = async () => {
-      // catching the errors if the api call fails
-      // set the error message to page error state to be used for displaying error page.
       try {
         const org = await axios.get(
           "https://twokeybackend.onrender.com/org/list_orgs"
@@ -85,13 +85,15 @@ const SignUp = () => {
 
   return (
     <div className="flex flex-col md:flex-row">
-      <div className="w-full md:w-1/2">
-        <img
-          className="h-screen w-screen"
-          src={twokeyLanding}
-          alt="twokeyLandingImage"
-        />
-      </div>
+      {!isSmallScreen && (
+        <div className="w-full md:w-1/2">
+          <img
+            className="h-screen w-screen"
+            src={twokeySignup}
+            alt="twokeySignupImage"
+          />
+        </div>
+      )}
 
       <div className="bg-white flex flex-col justify-center items-center w-full md:w-1/2">
         <h1 className="text-5xl text-center mt-8 font-semibold ">
@@ -150,7 +152,6 @@ const SignUp = () => {
                 Email
               </InputLabel>
               <span id="email" className="flex flex-row gap-2">
-                {/* <h3 className="text-lg text-left mb-2 mt-4">Email</h3> */}
 
                 <TextField
                   id="outlined-basic-email"
