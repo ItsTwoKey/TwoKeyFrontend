@@ -21,6 +21,7 @@ import ReadIcon from "../assets/read.svg";
 import UnfoldIcon from "../assets/unfold.svg";
 import { useDarkMode } from "../context/darkModeContext";
 import { useAuth } from "../context/authContext";
+import Avatar from "@mui/material/Avatar";
 
 const AccountFiles = () => {
   const { darkMode } = useDarkMode();
@@ -150,14 +151,15 @@ function Row(props) {
         </TableCell>
 
         <TableCell component="th" scope="row">
-          <p className="text-indigo-600 font-medium">{row.name}</p>
+          <p className="text-indigo-600 font-medium">{row.name.slice(0, 15)}</p>
         </TableCell>
         <TableCell align="center">
           <Tooltip title={row.owner} arrow>
-            <img
+            <Avatar
+              sx={{ width: "30px", height: "30px" }}
               src={row.publicUrl}
               alt="Owner"
-              style={{ width: "30px", height: "30px", borderRadius: "10%" }}
+              variant="rounded"
             />
           </Tooltip>
         </TableCell>

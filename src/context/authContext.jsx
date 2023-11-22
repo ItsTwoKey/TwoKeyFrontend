@@ -14,95 +14,132 @@ export const AuthProvider = ({ children }) => {
   const [coordinates, setCoordinates] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
 
+  const detectPrintScreen = (event) => {
+    const { key, code, metaKey, shiftKey, ctrlKey, altKey } = event;
+
+    switch (true) {
+      case metaKey && shiftKey && key === "3":
+      case metaKey && shiftKey && key === "4":
+      case metaKey && shiftKey && key === "6":
+      case ctrlKey && key === "p":
+      case altKey && (key === "PrintScreen" || key === "Insert"):
+      case metaKey && (key === "PrintScreen" || key === "Insert"):
+      case altKey && metaKey && (key === "PrintScreen" || key === "Insert"):
+      case key === "PrintScreen" || key === "Insert":
+      case metaKey && shiftKey && key === "s":
+      case metaKey && shiftKey:
+        event.preventDefault();
+        console.log(`${event.key} pressed!`);
+
+        setScreenshotDetected(true);
+
+        // Remove the blur class after 3 seconds
+        setTimeout(() => {
+          setScreenshotDetected(false);
+        }, 3000);
+        // monitorClipboard();
+        // checkClipboardForImage();
+        screenshotAlert();
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const handleContextMenu = (event) => {
+    event.preventDefault();
+    console.log("Right-click prevented!");
+  };
+
   useEffect(() => {
-    // Prevent right-click
-    const preventRightClick = (e) => {
-      e.preventDefault();
-    };
-
-    document.addEventListener("contextmenu", preventRightClick);
-
-    // Detect keypress
-    const handleKeyPress = (e) => {
-      console.log("Key pressed:", e.key);
-
-      // check the data type of the clipboard item
-      // navigator.clipboard.read().then((data) => {
-      //   const types = data[0].types;
-      //   let hasImageType = false;
-
-      //   for (const type of types) {
-      //     if (type.startsWith("image")) {
-      //       hasImageType = true;
-      //       break;
-      //     }
-      //   }
-
-      //   if (hasImageType) {
-      //     console.log("ScreenShot captured.", types);
-      //   } else {
-      //     console.log("Clipboard data does not contain an image type.");
-      //   }
-      // });
-    };
-
-    document.addEventListener("keydown", handleKeyPress);
+    document.addEventListener("keydown", detectPrintScreen);
+    document.addEventListener("contextmenu", handleContextMenu);
 
     return () => {
-      document.removeEventListener("contextmenu", preventRightClick);
-      document.removeEventListener("keydown", handleKeyPress);
+      document.removeEventListener("keydown", detectPrintScreen);
+      document.removeEventListener("contextmenu", handleContextMenu);
     };
   }, []);
 
-  useEffect(() => {
-    const preventPrintScreen = (e) => {
-      try {
-        const forbiddenKeys = [
-          "PrintScreen",
-          "Snapshot",
-          "PrtSc",
-          "Meta",
-          "Escape",
-          "PrtSc",
-          "Control",
-          "Alt",
-          "Insert",
-        ];
+  const monitorClipboard = async () => {
+    // Delay to allow the clipboard to update
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
-        // if (e.keyCode === 114) {
-        //   //keyCode for Print Screen key
-        //   e.preventDefault();
-        // }
+    navigator.clipboard
+      .read()
+      .then((clipText) => {
+        console.log("Clipboard content changed:", clipText[0].types);
+      })
+      .catch((error) => {
+        console.error("Error reading clipboard:", error);
+      });
+  };
 
-        if (forbiddenKeys.includes(e.key)) {
-          e.preventDefault();
+  const checkClipboardForImage = async () => {
+    try {
+      const data = await navigator.clipboard.read();
+      const types = data[0].types;
+      let hasImageType = false;
 
-          console.log(
-            token ? token.user.user_metadata.full_name : "Unknown User",
-            "took the ScreenShot."
-          );
-
-          setScreenshotDetected(true);
-
-          // Remove the blur class after 3 seconds
-          setTimeout(() => {
-            setScreenshotDetected(false);
-          }, 3000);
+      for (const type of types) {
+        if (type.startsWith("image")) {
+          hasImageType = true;
+          break;
         }
-      } catch (error) {
-        console.error(
-          "An error occurred while preventing Print Screen:",
-          error
-        );
       }
-    };
 
-    document.addEventListener("keypress", preventPrintScreen);
+      if (hasImageType) {
+        console.log("Screenshot captured.", types);
 
-    return () => {
-      document.removeEventListener("keypress", preventPrintScreen);
-    };
-  }, [token]);
+        // Assuming the first item in the clipboard data is the image
+        const imageBlob = await data[0].getType("image/png");
+        await uploadImageToSupabase(imageBlob);
+      } else {
+        console.log("Clipboard data does not contain an image type.", types);
+      }
+    } catch (error) {
+      console.error("Error reading clipboard:", error);
+    }
+  };
+
+  const screenshotAlert = async () => {
+    try {
+      let token = JSON.parse(sessionStorage.getItem("token"));
+      const img = await axios.get(
+        "https://twokeybackend.onrender.com/file/screenShotAlert/a9f8c5a8-0957-4719-800a-18e16a9bb4c7/",
+
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+      console.log("img :", img);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const uploadImageToSupabase = async (imageBlob) => {
+    try {
+      let token = JSON.parse(sessionStorage.getItem("token"));
+
+      const { data, error } = await supabase.storage
+        .from("screenshots") // specify the bucket name
+        .upload(`screenshot-${token.user.email}-${Date.now()}.png`, imageBlob, {
+          contentType: "image/png",
+        });
+
+      if (error) {
+        console.error("Error uploading image to Supabase:", error);
+      } else {
+        console.log("Image uploaded successfully:", data);
+      }
+    } catch (error) {
+      console.error("Error uploading image to Supabase:", error);
+    }
+  };
 
   useEffect(() => {
     const sessionToken = sessionStorage.getItem("token");
@@ -295,7 +332,6 @@ export const AuthProvider = ({ children }) => {
     token,
     setSessionToken,
     screenshotDetected,
-    setScreenshotDetected,
     location,
     error,
     getGeolocation,

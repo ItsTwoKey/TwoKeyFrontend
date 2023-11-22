@@ -15,9 +15,13 @@ const FileDrawer = ({
   selectedFileInfo,
   sharedFileInfo,
 }) => {
-  const [screenshotDetected, setScreenshotDetected] = useState(false);
   const [sharedWith, setSharedWith] = useState({});
-  const { isFileViewerOpen, openFileViewer, closeFileViewer } = useAuth();
+  const {
+    isFileViewerOpen,
+    openFileViewer,
+    closeFileViewer,
+    screenshotDetected,
+  } = useAuth();
 
   // console.log("getSharedFileInfo filedrawer:", sharedFileInfo.shared_with);
 
@@ -28,46 +32,6 @@ const FileDrawer = ({
       openFileViewer();
     }
   };
-
-  useEffect(() => {
-    const preventPrintScreen = (e) => {
-      try {
-        const forbiddenKeys = [
-          "PrintScreen",
-          "Snapshot",
-          "PrtSc",
-          "Meta",
-          "Escape",
-          "PrtSc",
-          "Control",
-          "Alt",
-          "Shift",
-          "Insert",
-        ];
-        if (forbiddenKeys.includes(e.key)) {
-          e.preventDefault();
-
-          setScreenshotDetected(true);
-
-          // Remove the blur class after 2 seconds
-          setTimeout(() => {
-            setScreenshotDetected(false);
-          }, 2000);
-        }
-      } catch (error) {
-        console.error(
-          "An error occurred while preventing Print Screen:",
-          error
-        );
-      }
-    };
-
-    document.addEventListener("keydown", preventPrintScreen);
-
-    return () => {
-      document.removeEventListener("keydown", preventPrintScreen);
-    };
-  }, []);
 
   const handleDownload = async () => {
     try {
@@ -132,7 +96,7 @@ const FileDrawer = ({
           <div className="bg-gray-100 my-2 rounded-md shadow-md">
             <img src={PDFPreview} alt="preview" />
           </div>
-          <h2>{selectedFileInfo.name}</h2>
+          <h2>{selectedFileInfo.name.slice(0, 15)}</h2>
           {/* <h2>{selectedFileId}</h2> */}
         </div>
         <hr className="my-2" />

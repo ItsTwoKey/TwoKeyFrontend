@@ -153,7 +153,7 @@ const RecentFiles = () => {
                   className="rounded-md"
                 />
                 <span>
-                  <h5 className="font-semibold">{file.name}</h5>
+                  <h5 className="font-semibold">{file.name.slice(0, 15)}</h5>
                   <span className="flex flex-row justify-between items-center">
                     <span>
                       <h6 className="text-sm font-semibold">File Info:</h6>
