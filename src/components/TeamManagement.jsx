@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import StickyHeadTable from "../components/TeamManagementTable";
+import InviteMember from "./InviteMember";
+import RevokeInvite from "./RevokeInvite";
+import ResendInvite from "./ResendInvite";
+import TeamManagementTable from "./TeamManagementTable";
 import { supabase } from "../helper/supabaseClient";
 
 const TeamManagement = () => {
@@ -79,9 +82,10 @@ const TeamManagement = () => {
             >
               Download CSV
             </button>
-            <button className="bg-[#5E5ADB] text-white rounded-lg py-1 px-2">
+            {/* <button className="bg-[#5E5ADB] text-white rounded-lg py-1 px-2">
               Invite a member
-            </button>
+            </button> */}
+            <InviteMember />
           </span>
         </div>
       </div>
@@ -91,7 +95,7 @@ const TeamManagement = () => {
           <p key={user.id}>{user.name}</p>
         ))}
       </div> */}
-      <StickyHeadTable />
+      <TeamManagementTable />
     </div>
   );
 };

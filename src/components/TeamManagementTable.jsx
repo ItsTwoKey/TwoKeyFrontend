@@ -43,7 +43,7 @@ const userData = {
 
 const rows = [createData(userData)];
 
-export default function UserInfoTable() {
+export default function TeamManagementTable() {
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
@@ -86,8 +86,8 @@ export default function UserInfoTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.id}>
+            {rows.map((row, index) => (
+              <TableRow key={index}>
                 {columns.map((column) => (
                   <TableCell key={column.id} align="left">
                     {column.id === "name" ? (
