@@ -5,26 +5,33 @@ import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import { useDarkMode } from "../context/darkModeContext";
+import { useLocation } from "react-router-dom";
 
 const LatestActivities = () => {
   const { darkMode } = useDarkMode();
   const [selectedValue, setSelectedValue] = useState("");
   const [logs, setLogs] = useState([]);
-
+  const location = useLocation();
+  const isUserProfile = location.pathname.includes("/profile");
   useEffect(() => {
     const getCommonLogs = async () => {
       try {
         let token = JSON.parse(sessionStorage.getItem("token"));
-        const commonLogs = await axios.get(
-          "https://twokeybackend.onrender.com/file/getLogs/access",
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
-        // console.log("commonLogs :", commonLogs.data);
-        setLogs(commonLogs.data);
+
+        // Check if the user is on the profile
+
+        // Use the appropriate URL based on the user's location
+        const logsEndpoint = isUserProfile
+          ? "https://twokeybackend.onrender.com/file/getLogs?global=0&recs=5"
+          : "https://twokeybackend.onrender.com/file/getLogs/?recs=5";
+
+        const accessLogs = await axios.get(logsEndpoint, {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        });
+
+        setLogs(accessLogs.data);
       } catch (error) {
         console.log(error);
       }
@@ -54,8 +61,8 @@ const LatestActivities = () => {
   };
 
   return (
-    <div className="w-2/5">
-      <Paper className="h-72 ">
+    <div className={`${isUserProfile ? "w-full" : "w-2/5"}`}>
+      <Paper elevation={isUserProfile ? 0 : 1} className="h-72 ">
         <div
           className={`flex justify-between items-center p-4 ${
             darkMode ? "bg-gray-600 text-gray-200" : " "
@@ -94,7 +101,9 @@ const LatestActivities = () => {
                   <span>
                     <p className="text-sm">
                       <span className="font-semibold">{log.username}</span>{" "}
-                      accessed
+                      {log.event === "screenshot"
+                        ? "took Screenshot of"
+                        : "accessed"}
                       <span className="font-semibold"> {log.file}</span> file.
                     </p>
                     <p className="text-sm text-gray-400 mt-2">

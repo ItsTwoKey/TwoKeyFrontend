@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { supabase } from "../helper/supabaseClient";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -47,6 +48,33 @@ const InviteMember = () => {
     // Additional logic for sending the invite can be added here
     // closeDialog();
   };
+
+  // const handleInvite = async () => {
+  //   try {
+  //     // Perform any client-side validation before sending the invite
+
+  //     // Call the Supabase function to send the email invite
+
+  //     const { data, error } = await supabase.rpc("sendEmailInvite", {
+  //       email: formData.emailAddress,
+  //       firstName: formData.firstName,
+  //       lastName: formData.lastName,
+  //       role: formData.role,
+  //     });
+
+  //     if (error) {
+  //       console.error("Error sending email invite:", error.message);
+  //       // Handle error, show a message to the user, etc.
+  //     } else {
+  //       console.log("Email invite sent successfully:", data);
+  //       // You might want to show a success message to the user
+  //       closeDialog();
+  //     }
+  //   } catch (error) {
+  //     console.error("Unexpected error:", error.message);
+  //     // Handle unexpected errors
+  //   }
+  // };
 
   return (
     <div className="">

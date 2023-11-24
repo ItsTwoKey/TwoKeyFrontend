@@ -21,7 +21,14 @@ const FileDrawer = ({
     openFileViewer,
     closeFileViewer,
     screenshotDetected,
+    screenshotAlert,
   } = useAuth();
+
+  useEffect(() => {
+    if (screenshotDetected) {
+      screenshotAlert(selectedFileInfo.id);
+    }
+  }, [screenshotDetected, selectedFileInfo.id, screenshotAlert]);
 
   // console.log("getSharedFileInfo filedrawer:", sharedFileInfo.shared_with);
 

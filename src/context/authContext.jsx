@@ -103,19 +103,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const screenshotAlert = async () => {
+  const screenshotAlert = async (fileId) => {
     try {
       let token = JSON.parse(sessionStorage.getItem("token"));
-      const img = await axios.get(
-        "https://twokeybackend.onrender.com/file/screenShotAlert/a9f8c5a8-0957-4719-800a-18e16a9bb4c7/",
 
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
-      console.log("img :", img);
+      if (fileId) {
+        const img = await axios.get(
+          `https://twokeybackend.onrender.com/file/screenShotAlert/${fileId}/`,
+
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+        console.log("img :", img);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -341,6 +344,8 @@ export const AuthProvider = ({ children }) => {
     listLocations,
     coordinates,
     filteredData,
+    screenshotAlert,
+    formatFileSize,
   };
 
   return (

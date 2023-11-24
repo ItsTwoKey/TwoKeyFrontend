@@ -4,8 +4,7 @@ import ProfilePersonalInfo from "../components/ProfilePersonalInfo";
 import ProfileWorkInformation from "../components/ProfileWorkInformation";
 import ProfileAddressInformation from "../components/ProfileAddressInformation";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
-import RecentFiles from "../components/RecentFiles";
-import AccountFiles from "../components/AccountFiles";
+import ProfileTabs from "../components/ProfileTabs";
 import Pen from "../assets/pen.svg";
 
 import ErrorPage from "../components/ErrorPage";
@@ -145,8 +144,7 @@ const Profile = () => {
         onChange={handleImageUpload}
       />
       <div>
-        <RecentFiles />
-        <AccountFiles />
+        <ProfileTabs />
       </div>
     </div>
   );

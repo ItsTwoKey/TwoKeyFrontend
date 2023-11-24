@@ -23,19 +23,13 @@ import { useDarkMode } from "../context/darkModeContext";
 import { useAuth } from "../context/authContext";
 import Avatar from "@mui/material/Avatar";
 
-const AccountFiles = () => {
+const ProfileLogs = ({ logs }) => {
   const { darkMode } = useDarkMode();
-  const { filteredData } = useAuth();
+
   const location = useLocation();
 
   return (
     <div className={`${darkMode ? "bg-gray-800 text-white" : "text-gray-800"}`}>
-      {location.pathname === "/profile" ? (
-        ""
-      ) : (
-        <p className="text-lg text-left font-semibold my-6">Account Files</p>
-      )}
-
       <Box sx={{ width: "100%" }}>
         <TableContainer component={Paper}>
           <Table aria-label="collapsible table">
@@ -69,8 +63,15 @@ const AccountFiles = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredData &&
-                filteredData.map((row) => <Row key={row.id} row={row} />)}
+              {logs && logs.length > 0 ? (
+                logs.map((row) => <Row key={row.id} row={row} />)
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={7} align="center">
+                    loading...
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -83,13 +84,14 @@ function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
   const [Logs, setLogs] = useState([]);
+  const { formatFileSize } = useAuth();
 
   const getLogs = async (fileId) => {
     try {
       let token = JSON.parse(sessionStorage.getItem("token"));
 
       const accessLogs = await axios.get(
-        `https://twokeybackend.onrender.com/file/getLogs/${fileId}?recs=5`,
+        `https://twokeybackend.onrender.com/file/getLogs/access/${fileId}`,
 
         {
           headers: {
@@ -97,7 +99,7 @@ function Row(props) {
           },
         }
       );
-      console.log(`Access Logs of id ( ${fileId} ) :`, accessLogs.data);
+      console.log(`received`, accessLogs.data);
 
       setLogs(accessLogs.data);
     } catch (error) {
@@ -147,10 +149,10 @@ function Row(props) {
         </TableCell>
 
         <TableCell component="th" scope="row">
-          <p className="text-indigo-600 font-medium">{row.name.slice(0, 15)}</p>
+          <p className="text-indigo-600 font-medium">{row.name}</p>
         </TableCell>
         <TableCell align="center">
-          <Tooltip title={row.owner} arrow>
+          <Tooltip title={row.owner_email} arrow>
             <Avatar
               sx={{ width: "30px", height: "30px" }}
               src={row.publicUrl}
@@ -161,21 +163,27 @@ function Row(props) {
         </TableCell>
         <TableCell align="center">
           <p className="bg-gray-100 text-gray-800 rounded-md py-1">
-            {row.status}
+            {/* {row.status} */}
+            Team
           </p>
         </TableCell>
         <TableCell align="center">
-          <p className="bg-gray-100 text-gray-800 rounded-md py-1">
-            {row.size}
-          </p>
+          {row.metadata && row.metadata.size ? (
+            <p className="bg-gray-100 text-gray-800 rounded-md py-1">
+              {formatFileSize(row.metadata.size)}
+            </p>
+          ) : (
+            <p className="bg-gray-100 text-gray-800 rounded-md py-1">N/A</p>
+          )}
         </TableCell>
         <TableCell align="center">
           <strong className="bg-green-100 text-green-700  rounded-md py-1 px-4">
-            {row.security}
+            {/* {row.security} */}
+            Enhanced
           </strong>
         </TableCell>
         <TableCell align="center">
-          <p className="">{row.lastUpdate}</p>
+          <p className="">{formatTimestamp(row.metadata.lastModified)}</p>
         </TableCell>
       </TableRow>
       <TableRow>
@@ -228,4 +236,4 @@ function Row(props) {
   );
 }
 
-export default AccountFiles;
+export default ProfileLogs;
