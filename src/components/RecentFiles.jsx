@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { supabase } from "../helper/supabaseClient";
 import axios from "axios";
-import FileDrawer from "./FileDrawer";
+import FileView from "./FileView";
 import PDFPreview from "../assets/pdfPreviewDummy.jpg";
 import QuickShare from "../components/QuickShare";
 import { useDarkMode } from "../context/darkModeContext";
@@ -10,10 +9,8 @@ import Avatar from "@mui/material/Avatar";
 import { useAuth } from "../context/authContext";
 
 const RecentFiles = () => {
-  const { filteredData } = useAuth();
   const { darkMode } = useDarkMode();
-  const [files, setFiles] = useState([]);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { filteredData } = useAuth();
   const [selectedFileInfo, setSelectedFileInfo] = useState({
     name: "",
     size: "",
@@ -24,6 +21,7 @@ const RecentFiles = () => {
   });
   const [loading, setLoading] = useState(true);
   const [sharedFileInfo, setSharedFileInfo] = useState({});
+  const [isFileViewOpen, setIsFileViewOpen] = useState(false);
 
   const getSharedFileInfo = async (fileId) => {
     try {
@@ -37,7 +35,6 @@ const RecentFiles = () => {
         }
       );
       setSharedFileInfo(info.data);
-      // console.log("getSharedFileInfo :", info.data);
     } catch (error) {
       console.log(error);
     }
@@ -60,23 +57,18 @@ const RecentFiles = () => {
       ownerProfileUrl: publicUrl,
       lastUpdate: lastUpdate,
     });
-    setIsDrawerOpen(true);
+    setIsFileViewOpen(true);
   };
 
   const closeDrawer = () => {
-    setIsDrawerOpen(false);
+    setIsFileViewOpen(false);
   };
 
   useEffect(() => {
     async function fetchRecentFiles() {
       try {
-        // let recentFilesFromBackend = localStorage.getItem("filteredFiles");
-        // console.log("Recent files top:", JSON.parse(recentFilesFromBackend));
-
-        // const mappedFiles = JSON.parse(recentFilesFromBackend).slice(0, 5);
-        // const mappedFiles = filteredData;
+        // Fetch recent files logic
         console.log("Recent files:", filteredData);
-        // setFiles(filteredData);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching files:", error);
@@ -171,13 +163,13 @@ const RecentFiles = () => {
               </div>
             ))}
       </div>
-
-      <FileDrawer
-        isDrawerOpen={isDrawerOpen}
-        closeDrawer={closeDrawer}
-        selectedFileInfo={selectedFileInfo}
-        sharedFileInfo={sharedFileInfo}
-      />
+      {isFileViewOpen && (
+        <FileView
+          fileInfo={selectedFileInfo}
+          closeDrawer={closeDrawer}
+          sharedFileInfo={sharedFileInfo}
+        />
+      )}
     </div>
   );
 };

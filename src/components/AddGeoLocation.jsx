@@ -4,19 +4,25 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 
-// AIzaSyCz2wui9Ei43eFaUCJUdowugfb1sGKaTcM
-import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 const AddGeoLocation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const center = {
+  const [selectedLocation, setSelectedLocation] = useState({
     lat: 18.5962,
     lng: 73.9223,
-  };
-  const mapContainerStyle = {
-    width: "100%",
-    height: "400px",
-  };
+  });
+  const [selectedAddress, setSelectedAddress] = useState(null);
+
+  useEffect(() => {
+    const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+
+    if (!apiKey) {
+      console.error(
+        "Google Maps API key not found. Make sure to set it in the .env file."
+      );
+    }
+  }, []);
 
   const openDialog = () => {
     setIsOpen(true);
@@ -24,6 +30,43 @@ const AddGeoLocation = () => {
 
   const closeDialog = () => {
     setIsOpen(false);
+  };
+
+  const handleMapClick = async (e) => {
+    const clickedLocation = {
+      lat: e.latLng.lat(),
+      lng: e.latLng.lng(),
+    };
+    setSelectedLocation(clickedLocation);
+
+    try {
+      const address = await getAddressFromLatLng(clickedLocation);
+      setSelectedAddress(address);
+    } catch (error) {
+      console.error("Error fetching address:", error);
+    }
+  };
+
+  const getAddressFromLatLng = async (location) => {
+    const geocoder = new window.google.maps.Geocoder();
+    return new Promise((resolve, reject) => {
+      geocoder.geocode({ location }, (results, status) => {
+        if (status === "OK" && results[0]) {
+          resolve(results[0].formatted_address);
+        } else {
+          reject("Unable to fetch address");
+        }
+      });
+    });
+  };
+
+  const handleConfirmLocation = () => {
+    if (selectedLocation) {
+      console.log("Selected Location:", selectedLocation);
+      console.log("Selected Address:", selectedAddress);
+      // You can perform any other actions with the selected location and address here
+    }
+    closeDialog();
   };
 
   return (
@@ -48,16 +91,21 @@ const AddGeoLocation = () => {
         <DialogContent
           style={{
             backgroundColor: "#F7F8FA",
+            margin: 0,
+            padding: 0,
           }}
         >
-          <div className="my-2 w-[486px] p-3">
-            <LoadScript googleMapsApiKey="AIzaSyCz2wui9Ei43eFaUCJUdowugfb1sGKaTcM">
+          <div className="w-[506px]">
+            <LoadScript
+              googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
+            >
               <GoogleMap
-                mapContainerStyle={mapContainerStyle}
-                center={center}
+                mapContainerStyle={{ height: "320px", width: "100%" }}
+                onClick={handleMapClick}
+                center={selectedLocation}
                 zoom={13}
               >
-                {/* Add your map components, markers, etc. here */}
+                {selectedLocation && <Marker position={selectedLocation} />}
               </GoogleMap>
             </LoadScript>
           </div>
@@ -72,7 +120,7 @@ const AddGeoLocation = () => {
           </button>
           <button
             className="px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white"
-            onClick={() => alert("Confirm Location Clicked!")}
+            onClick={handleConfirmLocation}
           >
             Confirm Location
           </button>
