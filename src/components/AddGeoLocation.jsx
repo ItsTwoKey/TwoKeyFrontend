@@ -12,7 +12,6 @@ const AddGeoLocation = () => {
     lat: 18.5962,
     lng: 73.9223,
   });
-  const [selectedAddress, setSelectedAddress] = useState(null);
 
   useEffect(() => {
     const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -32,41 +31,20 @@ const AddGeoLocation = () => {
     setIsOpen(false);
   };
 
-  const handleMapClick = async (e) => {
+  const handleMapClick = (e) => {
     const clickedLocation = {
       lat: e.latLng.lat(),
       lng: e.latLng.lng(),
     };
     setSelectedLocation(clickedLocation);
-
-    try {
-      const address = await getAddressFromLatLng(clickedLocation);
-      setSelectedAddress(address);
-    } catch (error) {
-      console.error("Error fetching address:", error);
-    }
-  };
-
-  const getAddressFromLatLng = async (location) => {
-    const geocoder = new window.google.maps.Geocoder();
-    return new Promise((resolve, reject) => {
-      geocoder.geocode({ location }, (results, status) => {
-        if (status === "OK" && results[0]) {
-          resolve(results[0].formatted_address);
-        } else {
-          reject("Unable to fetch address");
-        }
-      });
-    });
   };
 
   const handleConfirmLocation = () => {
     if (selectedLocation) {
       console.log("Selected Location:", selectedLocation);
-      console.log("Selected Address:", selectedAddress);
-      // You can perform any other actions with the selected location and address here
+      // You can perform any other actions with the selected location here
     }
-    closeDialog();
+    // closeDialog();
   };
 
   return (

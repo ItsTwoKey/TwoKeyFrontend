@@ -15,8 +15,6 @@ import Sales from "./pages/Sales";
 import HR from "./pages/HR";
 import Background from "./components/Background";
 import Settings from "./pages/Settings";
-import Security from "./components/Security";
-import PasswordChangeForm from "./components/PasswordChangeForm";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuth } from "./context/authContext";
@@ -45,10 +43,6 @@ const App = () => {
               <Route path="/manufacturing" element={<Manufacturing />} />
               <Route path="/humanresources" element={<HR />} />
               <Route path="/settings" element={<Settings />} />
-              {/* <Route path="/settings" element={<Settings />}>
-                <Route path="accountsettings" element={<PasswordChangeForm />} />
-                <Route path="security" element={<Security />} />
-              </Route> */}
 
               <Route path="/test" element={<Test />} />
             </Route>

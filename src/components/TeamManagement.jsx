@@ -7,8 +7,6 @@ import TeamManagementTable from "./TeamManagementTable";
 import { supabase } from "../helper/supabaseClient";
 
 const TeamManagement = () => {
-  // const [users, setUsers] = useState([]);
-
   const [data, setData] = useState([]);
 
   const downloadData = async () => {
@@ -40,26 +38,27 @@ const TeamManagement = () => {
     }
   };
 
+  // const [roles, setRoles] = useState([]);
   // useEffect(() => {
-  //   const listUsers = async () => {
+  //   const getRoles = async () => {
   //     try {
   //       let token = JSON.parse(sessionStorage.getItem("token"));
-  //       const users = await axios.get(
-  //         "https://twokeybackend.onrender.com/users/list_users/",
+  //       const role = await axios.get(
+  //         "https://twokeybackend.onrender.com/role/listRoles/",
   //         {
   //           headers: {
   //             Authorization: `Bearer ${token.session.access_token}`,
   //           },
   //         }
   //       );
-  //       console.log("users :", users.data);
-  //       setUsers(users.data);
+  //       console.log("roles:", role.data);
+  //       setRoles(role.data);
   //     } catch (error) {
-  //       console.log(error);
+  //       console.log("Error fetching departments");
   //     }
   //   };
 
-  //   listUsers();
+  //   getRoles();
   // }, []);
 
   return (

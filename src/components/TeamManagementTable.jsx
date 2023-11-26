@@ -9,45 +9,39 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
-
-const columns = [
-  { id: "name", label: "Team Member", minWidth: 170 },
-  { id: "dept", label: "Department", minWidth: 170 },
-  { id: "access", label: "Access", minWidth: 100 },
-];
-
-function createData(data) {
-  return {
-    name: data.name + " " + data.last_name,
-    dept: data.dept,
-    profile_pic: data.profile_pic,
-    email: data.email,
-    access: data.role_priv,
-  };
-}
-
-const userData = {
-  id: "a1a3d4ac-9574-4791-9148-3c1583b1fd20",
-  manager: null,
-  role_priv: "employee",
-  is_approved: true,
-  username: "SuperAkash",
-  email: "trimbakeakash19@gmail.com",
-  name: "Akash",
-  last_name: "Trimbake",
-  dept: "Marketing",
-  profile_pic:
-    "https://dxqrkmzagreeiyncplzx.supabase.co/storage/v1/object/public/avatar/trimbakeakash19@gmail.com",
-};
-
-const rows = [createData(userData)];
+import Trash from "../assets/trash.svg";
 
 export default function TeamManagementTable() {
+  const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
-    const depData = async () => {
+    const listUsers = async () => {
+      try {
+        let token = JSON.parse(sessionStorage.getItem("token"));
+        const users = await axios.get(
+          "https://twokeybackend.onrender.com/users/list_users/",
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+        console.log("users :", users.data);
+        setUsers(users.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    listUsers();
+  }, []);
+
+  useEffect(() => {
+    const getRoles = async () => {
       try {
         let token = JSON.parse(sessionStorage.getItem("token"));
         const role = await axios.get(
@@ -65,8 +59,81 @@ export default function TeamManagementTable() {
       }
     };
 
-    depData();
+    getRoles();
   }, []);
+
+  const columns = [
+    { id: "name", label: "Team Member", minWidth: 170 },
+    { id: "status", label: "Status", minWidth: 60 },
+    { id: "dateAdded", label: "Date Added", minWidth: 100 },
+    { id: "lastActivity", label: "Last Activity", minWidth: 100 },
+    { id: "access", label: "Access", minWidth: 100 },
+    { id: "delete", label: "", minWidth: 10 },
+  ];
+
+  function createData(data) {
+    return {
+      id: data.id,
+      name: data.name + " " + data.last_name,
+      status: "Active",
+      dateAdded: "11/11/2023",
+      lastActivity: "11/11/2023",
+      profile_pic: data.profile_pic,
+      email: data.email,
+      access: data.role_priv,
+      delete: <img src={Trash} alt="Delete" className="cursor-pointer" />,
+    };
+  }
+
+  const rows = users.map((user) => createData(user));
+
+  const handleAccessChange = async (event, index) => {
+    const newUsers = [...users];
+    newUsers[index].role_priv = event.target.value;
+    setUsers(newUsers);
+
+    const selectedUserId = newUsers[index].id; // Extract the user's ID
+    const selectedUserName = newUsers[index].name;
+    const selectedRoleId = event.target.value;
+
+    // Find the selected role in the roles array
+    const selectedRole = roles.find((role) => role.role === selectedRoleId);
+
+    console.log(
+      `User ID: ${selectedUserId}, User: ${selectedUserName}, Selected Role: ${selectedRole?.role}, Selected Role ID: ${selectedRole?.id}`
+    );
+
+    // Call elevateUserRole function
+    await elevateUserRole(selectedUserId, selectedRole?.role);
+  };
+
+  const elevateUserRole = async (selectedUserId, selectedRole) => {
+    let token = JSON.parse(sessionStorage.getItem("token"));
+    if (token) {
+      try {
+        const res = await axios.put(
+          `https://twokeybackend.onrender.com/users/elevate/${selectedUserId}`,
+          {
+            role_priv: selectedRole,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+        console.log("elevate user:", res);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const handleDeleteClick = (index) => {
+    const deletedUserName = users[index].name;
+    console.log(`User deleted: ${deletedUserName}`);
+    // Add logic to handle the deletion if needed
+  };
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -106,6 +173,26 @@ export default function TeamManagementTable() {
                           />
                         </Tooltip>
                         {row.name}
+                      </div>
+                    ) : column.id === "access" ? (
+                      <Select
+                        value={row.access}
+                        label="Access"
+                        onChange={(event) => handleAccessChange(event, index)}
+                        className="w-36"
+                      >
+                        {roles.map((role) => (
+                          <MenuItem key={role.id} value={role.role}>
+                            {role.role}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    ) : column.id === "delete" ? (
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => handleDeleteClick(index)}
+                      >
+                        {row[column.id]}
                       </div>
                     ) : (
                       row[column.id]
