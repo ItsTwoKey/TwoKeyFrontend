@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import InviteMember from "./InviteMember";
-import RevokeInvite from "./RevokeInvite";
-import ResendInvite from "./ResendInvite";
+
 import TeamManagementTable from "./TeamManagementTable";
+import PendingInviteTable from "./PendingInviteTable";
 import { supabase } from "../helper/supabaseClient";
 
 const TeamManagement = () => {
@@ -38,35 +38,12 @@ const TeamManagement = () => {
     }
   };
 
-  // const [roles, setRoles] = useState([]);
-  // useEffect(() => {
-  //   const getRoles = async () => {
-  //     try {
-  //       let token = JSON.parse(sessionStorage.getItem("token"));
-  //       const role = await axios.get(
-  //         "https://twokeybackend.onrender.com/role/listRoles/",
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token.session.access_token}`,
-  //           },
-  //         }
-  //       );
-  //       console.log("roles:", role.data);
-  //       setRoles(role.data);
-  //     } catch (error) {
-  //       console.log("Error fetching departments");
-  //     }
-  //   };
-
-  //   getRoles();
-  // }, []);
-
   return (
-    <div className="py-4 px-8 rounded-md">
+    <div className="py-4 px-8 rounded-md h-screen overflow-y-scroll scrollbar-hide">
       <h2 className="text-xl font-semibold p-2">Team Management</h2>
       <hr className="border border-white border-b-[#D8DEE4]" />
 
-      <div className="my-4 rounded-lg p-4 bg-[#F1F1FF] w-full">
+      <div className="my-4 rounded-lg p-4 bg-[#F1F1FF] w-full shadow-lg">
         <p className="font-semibold mb-1">Members</p>
         <div className="flex flex-row justify-between items-center">
           <p className="w-1/2 text-sm">
@@ -81,20 +58,24 @@ const TeamManagement = () => {
             >
               Download CSV
             </button>
-            {/* <button className="bg-[#5E5ADB] text-white rounded-lg py-1 px-2">
-              Invite a member
-            </button> */}
+
             <InviteMember />
           </span>
         </div>
       </div>
 
-      {/* <div>
-        {users.map((user) => (
-          <p key={user.id}>{user.name}</p>
-        ))}
-      </div> */}
       <TeamManagementTable />
+
+      <div className="my-4 rounded-lg p-4 bg-[#F1F1FF] w-full shadow-lg">
+        <p className="font-semibold mb-1">Pending Invites</p>
+
+        <p className="text-sm w-11/12">
+          In an invitation you sent has expired or been lost, you can resend it.
+          You can also revoke an invitation to prevent a member who recived an
+          invitation from accepting it.
+        </p>
+      </div>
+      <PendingInviteTable />
     </div>
   );
 };

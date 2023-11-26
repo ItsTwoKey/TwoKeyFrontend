@@ -136,7 +136,7 @@ function Row(props) {
         }}
         onClick={handleRowClick}
       >
-        <TableCell>
+        <TableCell sx={{ padding: "7px" }}>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -146,10 +146,10 @@ function Row(props) {
           </IconButton>
         </TableCell>
 
-        <TableCell component="th" scope="row">
+        <TableCell component="th" scope="row" sx={{ padding: "7px" }}>
           <p className="text-indigo-600 font-medium">{row.name.slice(0, 15)}</p>
         </TableCell>
-        <TableCell align="center">
+        <TableCell align="center" sx={{ padding: "7px" }}>
           <Tooltip title={row.owner} arrow>
             <Avatar
               sx={{ width: "30px", height: "30px" }}
@@ -159,18 +159,18 @@ function Row(props) {
             />
           </Tooltip>
         </TableCell>
-        <TableCell align="center">
+        <TableCell align="center" sx={{ padding: "7px 20px" }}>
           <p className="bg-gray-100 text-gray-800 rounded-md py-1">
             {row.status}
           </p>
         </TableCell>
-        <TableCell align="center">
+        <TableCell align="center" sx={{ padding: "7px" }}>
           <p className="bg-gray-100 text-gray-800 rounded-md py-1">
             {row.size}
           </p>
         </TableCell>
-        <TableCell align="center">
-          <strong className="bg-green-100 text-green-700  rounded-md py-1 px-4">
+        <TableCell align="center" sx={{ padding: "7px" }}>
+          <strong className="bg-green-100 text-green-700  rounded-md py-[8px] px-4">
             {row.security}
           </strong>
         </TableCell>

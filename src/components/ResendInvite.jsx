@@ -33,7 +33,7 @@ const ResendInvite = () => {
           },
         }}
       >
-        <DialogTitle>Revoke Invite</DialogTitle>
+        <DialogTitle>Resend Invite</DialogTitle>
         <DialogContent
           style={{
             backgroundColor: "#F7F8FA",

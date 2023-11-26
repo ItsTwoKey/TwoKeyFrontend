@@ -71,13 +71,22 @@ export default function TeamManagementTable() {
     { id: "delete", label: "", minWidth: 10 },
   ];
 
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "numeric", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   function createData(data) {
     return {
       id: data.id,
       name: data.name + " " + data.last_name,
-      status: "Active",
-      dateAdded: "11/11/2023",
-      lastActivity: "11/11/2023",
+      status: (
+        <p className="bg-[#ECFDF3] text-center text-green-700 rounded-full py-0.5">
+          Active
+        </p>
+      ),
+      dateAdded: formatDate(data.created_at),
+      lastActivity: formatDate(data.last_sign_in_at),
       profile_pic: data.profile_pic,
       email: data.email,
       access: data.role_priv,
@@ -136,8 +145,8 @@ export default function TeamManagementTable() {
   };
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+    <div>
+      <TableContainer sx={{ maxHeight: 400 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -146,17 +155,22 @@ export default function TeamManagementTable() {
                   key={column.id}
                   align="left"
                   style={{ minWidth: column.minWidth }}
+                  sx={{ backgroundColor: "#FCFCFD" }}
                 >
                   {column.label}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody sx={{ padding: "0px", margin: "0px", height: "20px" }}>
             {rows.map((row, index) => (
               <TableRow key={index}>
                 {columns.map((column) => (
-                  <TableCell key={column.id} align="left">
+                  <TableCell
+                    key={column.id}
+                    align="left"
+                    sx={{ padding: "7px" }}
+                  >
                     {column.id === "name" ? (
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <Tooltip title={row.email} arrow>
@@ -179,7 +193,9 @@ export default function TeamManagementTable() {
                         value={row.access}
                         label="Access"
                         onChange={(event) => handleAccessChange(event, index)}
-                        className="w-36"
+                        className="w-36 h-8"
+                        sx={{ borderRadius: "6px" }}
+                        size="small"
                       >
                         {roles.map((role) => (
                           <MenuItem key={role.id} value={role.role}>
@@ -204,6 +220,6 @@ export default function TeamManagementTable() {
           </TableBody>
         </Table>
       </TableContainer>
-    </Paper>
+    </div>
   );
 }
