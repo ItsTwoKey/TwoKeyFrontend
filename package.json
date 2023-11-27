@@ -20,11 +20,13 @@
     "@uiw/react-color-chrome": "^2.0.2",
     "axios": "^1.5.1",
     "file-type": "^18.5.0",
+    "leaflet": "^1.9.4",
     "notistack": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-google-autocomplete": "^2.7.3",
+    "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.17.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"

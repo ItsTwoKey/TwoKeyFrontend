@@ -138,9 +138,24 @@ export default function TeamManagementTable() {
     }
   };
 
-  const handleDeleteClick = (index) => {
-    const deletedUserName = users[index].name;
-    console.log(`User deleted: ${deletedUserName}`);
+  const deleteUser = async (index) => {
+    const deletedUserId = users[index].id;
+    console.log(`User deleted: ${deletedUserId}`);
+    let token = JSON.parse(sessionStorage.getItem("token"));
+    try {
+      const res = await axios.delete(
+        `https://twokeybackend.onrender.com/users/deleteUser/${deletedUserId}/`,
+
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+      console.log("delete user:", res);
+    } catch (error) {
+      console.log(error);
+    }
     // Add logic to handle the deletion if needed
   };
 
@@ -206,7 +221,7 @@ export default function TeamManagementTable() {
                     ) : column.id === "delete" ? (
                       <div
                         className="cursor-pointer"
-                        onClick={() => handleDeleteClick(index)}
+                        onClick={() => deleteUser(index)}
                       >
                         {row[column.id]}
                       </div>

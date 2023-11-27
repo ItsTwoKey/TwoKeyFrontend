@@ -3,11 +3,13 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
+import axios from "axios";
 
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 const AddGeoLocation = () => {
   const [isOpen, setIsOpen] = useState(false);
+
   const [selectedLocation, setSelectedLocation] = useState({
     lat: 18.5962,
     lng: 73.9223,
@@ -23,6 +25,37 @@ const AddGeoLocation = () => {
     }
   }, []);
 
+  const addLocation = async () => {
+    try {
+      let token = JSON.parse(sessionStorage.getItem("token"));
+
+      const body = {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [selectedLocation.lat, selectedLocation.lng],
+        },
+        properties: {
+          name: "office3",
+        },
+      };
+      if (selectedLocation) {
+        const addLocation = await axios.post(
+          `https://twokeybackend.onrender.com/file/createLocation/`,
+          body,
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+        console.log("addLocation:", addLocation.data);
+      }
+    } catch (error) {
+      console.log("Error while adding Location", error);
+    }
+  };
+
   const openDialog = () => {
     setIsOpen(true);
   };
@@ -37,14 +70,6 @@ const AddGeoLocation = () => {
       lng: e.latLng.lng(),
     };
     setSelectedLocation(clickedLocation);
-  };
-
-  const handleConfirmLocation = () => {
-    if (selectedLocation) {
-      console.log("Selected Location:", selectedLocation);
-      // You can perform any other actions with the selected location here
-    }
-    // closeDialog();
   };
 
   return (
@@ -98,7 +123,7 @@ const AddGeoLocation = () => {
           </button>
           <button
             className="px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white"
-            onClick={handleConfirmLocation}
+            onClick={addLocation}
           >
             Confirm Location
           </button>
