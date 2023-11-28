@@ -6,6 +6,7 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import { useDarkMode } from "../context/darkModeContext";
 import { useLocation } from "react-router-dom";
+import Skeleton from "@mui/material/Skeleton";
 
 const LatestActivities = () => {
   const { darkMode } = useDarkMode();
@@ -60,6 +61,26 @@ const LatestActivities = () => {
     console.log("Selected Value:", value);
   };
 
+  const skeletons = [];
+  for (let i = 0; i < 4; i++) {
+    skeletons.push(
+      <div className="p-3 border-b rounded-lg flex items-center gap-2">
+        <Skeleton
+          key={i}
+          variant="circular"
+          width={24}
+          height={24}
+          className="mr-2"
+        />
+
+        <span className="w-full">
+          <Skeleton className="w-3/5" height={20} />
+          <Skeleton className="w-2/5" height={20} />
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div className={`${isUserProfile ? "w-full" : "w-2/5"}`}>
       <Paper elevation={isUserProfile ? 0 : 1} className="h-72 ">
@@ -87,7 +108,7 @@ const LatestActivities = () => {
         </div>
 
         <div className="h-56 overflow-y-scroll scrollbar-hide">
-          {logs &&
+          {logs.length ? (
             logs?.map((log, index) => (
               <div key={index} className="border-b">
                 <span className="flex flex-row gap-2 p-2">
@@ -112,7 +133,12 @@ const LatestActivities = () => {
                   </span>
                 </span>
               </div>
-            ))}
+            ))
+          ) : (
+            <div className="h-56 overflow-y-scroll scrollbar-hide">
+              {skeletons}
+            </div>
+          )}
         </div>
       </Paper>
     </div>

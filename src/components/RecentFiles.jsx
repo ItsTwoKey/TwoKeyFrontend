@@ -7,10 +7,12 @@ import { useDarkMode } from "../context/darkModeContext";
 import { Skeleton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import { useAuth } from "../context/authContext";
+import { supabase } from "../helper/supabaseClient";
 
 const RecentFiles = () => {
   const { darkMode } = useDarkMode();
-  const { filteredData } = useAuth();
+  const { formatFileSize } = useAuth();
+  const [filteredData, setFilteredData] = useState([]);
   const [selectedFileInfo, setSelectedFileInfo] = useState({
     name: "",
     size: "",
@@ -22,6 +24,75 @@ const RecentFiles = () => {
   const [loading, setLoading] = useState(true);
   const [sharedFileInfo, setSharedFileInfo] = useState({});
   const [isFileViewOpen, setIsFileViewOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchRecentFiles = async () => {
+      try {
+        let token = JSON.parse(sessionStorage.getItem("token"));
+
+        const recentFilesFromBackend = await axios.get(
+          "https://twokeybackend.onrender.com/file/files/",
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+
+        console.log(
+          "recentFilesFromBackend recent filess",
+          recentFilesFromBackend
+        );
+
+        if (recentFilesFromBackend) {
+          const mappedFiles = recentFilesFromBackend.data.map(async (file) => {
+            try {
+              const { data } = await supabase.storage
+                .from("avatar")
+                .getPublicUrl(file.owner_email);
+
+              return {
+                id: file.id,
+                name: file.name.substring(0, 80),
+                size: formatFileSize(file.metadata.size),
+                dept: file.dept_name,
+                publicUrl: data.publicUrl,
+                owner: file.owner_email,
+                mimetype: file.metadata.mimetype,
+                status: "Team",
+                security: "Enhanced",
+                lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+                  "en-IN",
+                  {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  }
+                ),
+              };
+            } catch (error) {
+              console.log("Error while getting public URL:", error);
+              return null;
+            }
+          });
+
+          const resolvedFiles = await Promise.all(mappedFiles);
+          const filteredFiles = resolvedFiles.filter((file) => file !== null);
+          // console.log("Files:", filteredFiles);
+
+          setFilteredData(filteredFiles);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching files:", error);
+      }
+    };
+
+    fetchRecentFiles();
+  }, []);
 
   const getSharedFileInfo = async (fileId) => {
     try {
@@ -64,20 +135,6 @@ const RecentFiles = () => {
     setIsFileViewOpen(false);
   };
 
-  useEffect(() => {
-    async function fetchRecentFiles() {
-      try {
-        // Fetch recent files logic
-        console.log("Recent files:", filteredData);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching files:", error);
-        setLoading(false);
-      }
-    }
-    fetchRecentFiles();
-  }, []);
-
   return (
     <div>
       <div
@@ -113,12 +170,18 @@ const RecentFiles = () => {
                   <h5 className="font-semibold">
                     <Skeleton height={28} width={160} />
                   </h5>
-                  <h6 className="text-sm font-semibold">
-                    <Skeleton height={22} width={70} />
-                  </h6>
-                  <p className="text-xs text-gray-500 font-light">
-                    <Skeleton height={18} width={60} />
-                  </p>
+                  <span className="flex flex-row justify-between items-center">
+                    <span>
+                      <h6 className="text-sm font-semibold">
+                        <Skeleton height={22} width={70} />
+                      </h6>
+
+                      <p className="text-xs text-gray-500 font-light">
+                        <Skeleton height={18} width={60} />
+                      </p>
+                    </span>
+                    <Skeleton variant="circular" height={20} width={20} />
+                  </span>
                 </span>
               </div>
             ))

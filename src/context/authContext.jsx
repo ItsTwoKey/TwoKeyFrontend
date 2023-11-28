@@ -151,72 +151,71 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
-    async function fetchRecentFiles() {
-      try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+  // useEffect(() => {
+  async function fetchRecentFiles() {
+    try {
+      let token = JSON.parse(sessionStorage.getItem("token"));
 
-        const recentFilesFromBackend = await axios.get(
-          "https://twokeybackend.onrender.com/file/files/",
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
-
-        // console.log("recentFilesFromBackend", recentFilesFromBackend);
-
-        if (recentFilesFromBackend) {
-          const mappedFiles = recentFilesFromBackend.data.map(async (file) => {
-            try {
-              const { data } = await supabase.storage
-                .from("avatar")
-                .getPublicUrl(file.owner_email);
-
-              return {
-                id: file.id,
-                name: file.name.substring(0, 80),
-                size: formatFileSize(file.metadata.size),
-                dept: file.dept_name,
-                publicUrl: data.publicUrl,
-                owner: file.owner_email,
-                mimetype: file.metadata.mimetype,
-                status: "Team",
-                security: "Enhanced",
-                lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
-                  "en-IN",
-                  {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                    hour: "numeric",
-                    minute: "numeric",
-                    hour12: true,
-                  }
-                ),
-              };
-            } catch (error) {
-              console.log("Error while getting public URL:", error);
-              return null;
-            }
-          });
-
-          const resolvedFiles = await Promise.all(mappedFiles);
-          const filteredFiles = resolvedFiles.filter((file) => file !== null);
-          // console.log("Files:", filteredFiles);
-
-          // Set the filtered files to the state
-          setFilteredData(filteredFiles);
-          // localStorage.setItem("filteredFiles", JSON.stringify(filteredFiles));
+      const recentFilesFromBackend = await axios.get(
+        "https://twokeybackend.onrender.com/file/files/",
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
         }
-      } catch (error) {
-        console.error("Error fetching files:", error);
-      }
-    }
+      );
 
-    fetchRecentFiles();
-  }, []);
+      console.log("recentFilesFromBackend", recentFilesFromBackend);
+
+      if (recentFilesFromBackend) {
+        const mappedFiles = recentFilesFromBackend.data.map(async (file) => {
+          try {
+            const { data } = await supabase.storage
+              .from("avatar")
+              .getPublicUrl(file.owner_email);
+
+            return {
+              id: file.id,
+              name: file.name.substring(0, 80),
+              size: formatFileSize(file.metadata.size),
+              dept: file.dept_name,
+              publicUrl: data.publicUrl,
+              owner: file.owner_email,
+              mimetype: file.metadata.mimetype,
+              status: "Team",
+              security: "Enhanced",
+              lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+                "en-IN",
+                {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                }
+              ),
+            };
+          } catch (error) {
+            console.log("Error while getting public URL:", error);
+            return null;
+          }
+        });
+
+        const resolvedFiles = await Promise.all(mappedFiles);
+        const filteredFiles = resolvedFiles.filter((file) => file !== null);
+        // console.log("Files:", filteredFiles);
+
+        setFilteredData(filteredFiles);
+        // localStorage.setItem("filteredFiles", JSON.stringify(filteredFiles));
+      }
+    } catch (error) {
+      console.error("Error fetching files:", error);
+    }
+  }
+
+  //   fetchRecentFiles();
+  // }, []);
 
   function formatFileSize(sizeInBytes) {
     const units = ["B", "KB", "MB", "GB"];
@@ -343,6 +342,7 @@ export const AuthProvider = ({ children }) => {
     getProfileData,
     listLocations,
     coordinates,
+    fetchRecentFiles,
     filteredData,
     screenshotAlert,
     formatFileSize,

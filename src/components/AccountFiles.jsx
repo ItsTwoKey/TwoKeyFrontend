@@ -21,12 +21,85 @@ import ReadIcon from "../assets/read.svg";
 import UnfoldIcon from "../assets/unfold.svg";
 import { useDarkMode } from "../context/darkModeContext";
 import { useAuth } from "../context/authContext";
+import { supabase } from "../helper/supabaseClient";
 import Avatar from "@mui/material/Avatar";
+import { Skeleton } from "@mui/material";
 
 const AccountFiles = () => {
   const { darkMode } = useDarkMode();
-  const { filteredData } = useAuth();
+  const { formatFileSize } = useAuth();
+  const [filteredData, setFilteredData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
+
+  useEffect(() => {
+    const fetchRecentFiles = async () => {
+      try {
+        let token = JSON.parse(sessionStorage.getItem("token"));
+
+        const recentFilesFromBackend = await axios.get(
+          "https://twokeybackend.onrender.com/file/files/",
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+
+        console.log(
+          "recentFilesFromBackend Account filess",
+          recentFilesFromBackend
+        );
+
+        if (recentFilesFromBackend) {
+          const mappedFiles = recentFilesFromBackend.data.map(async (file) => {
+            try {
+              const { data } = await supabase.storage
+                .from("avatar")
+                .getPublicUrl(file.owner_email);
+
+              return {
+                id: file.id,
+                name: file.name.substring(0, 80),
+                size: formatFileSize(file.metadata.size),
+                dept: file.dept_name,
+                publicUrl: data.publicUrl,
+                owner: file.owner_email,
+                mimetype: file.metadata.mimetype,
+                status: "Team",
+                security: "Enhanced",
+                lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+                  "en-IN",
+                  {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  }
+                ),
+              };
+            } catch (error) {
+              console.log("Error while getting public URL:", error);
+              return null;
+            }
+          });
+
+          const resolvedFiles = await Promise.all(mappedFiles);
+          const filteredFiles = resolvedFiles.filter((file) => file !== null);
+          // console.log("Files:", filteredFiles);
+
+          setFilteredData(filteredFiles);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching files:", error);
+      }
+    };
+
+    fetchRecentFiles();
+  }, []);
 
   return (
     <div className={`${darkMode ? "bg-gray-800 text-white" : "text-gray-800"}`}>
@@ -69,8 +142,11 @@ const AccountFiles = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredData &&
-                filteredData.map((row) => <Row key={row.id} row={row} />)}
+              {loading
+                ? Array.from({ length: 10 }).map((_, index) => (
+                    <Row key={index} row={null} />
+                  ))
+                : filteredData.map((row) => <Row key={row.id} row={row} />)}
             </TableBody>
           </Table>
         </TableContainer>
@@ -129,55 +205,107 @@ function Row(props) {
 
   return (
     <React.Fragment>
-      <TableRow
-        sx={{
-          "& > *": { borderBottom: "unset" },
-          cursor: "pointer",
-        }}
-        onClick={handleRowClick}
-      >
-        <TableCell sx={{ padding: "7px" }}>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowRightIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
+      {!row && (
+        <TableRow
+          sx={{
+            "& > *": { borderBottom: "unset" },
+            cursor: "pointer",
+          }}
+          onClick={handleRowClick}
+        >
+          <TableCell sx={{ padding: "7px" }}>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
+            </IconButton>
+          </TableCell>
 
-        <TableCell component="th" scope="row" sx={{ padding: "7px" }}>
-          <p className="text-indigo-600 font-medium">{row.name.slice(0, 15)}</p>
-        </TableCell>
-        <TableCell align="center" sx={{ padding: "7px" }}>
-          <Tooltip title={row.owner} arrow>
-            <Avatar
-              sx={{ width: "30px", height: "30px" }}
-              src={row.publicUrl}
-              alt="Owner"
+          <TableCell component="th" scope="row" sx={{ padding: "7px" }}>
+            <Skeleton variant="rounded" height={15} />
+          </TableCell>
+          <TableCell align="center" sx={{ padding: "7px" }}>
+            <Skeleton variant="rounded" height={30} width={30} />
+          </TableCell>
+          <TableCell align="center" sx={{ padding: "7px 20px" }}>
+            <Skeleton variant="rounded" height={25} />
+          </TableCell>
+          <TableCell align="center" sx={{ padding: "7px" }}>
+            <Skeleton variant="rounded" height={25} />
+          </TableCell>
+          <TableCell align="center" sx={{ padding: "7px" }}>
+            <Skeleton
               variant="rounded"
+              height={25}
+              width={100}
+              className="mx-auto"
             />
-          </Tooltip>
-        </TableCell>
-        <TableCell align="center" sx={{ padding: "7px 20px" }}>
-          <p className="bg-gray-100 text-gray-800 rounded-md py-1">
-            {row.status}
-          </p>
-        </TableCell>
-        <TableCell align="center" sx={{ padding: "7px" }}>
-          <p className="bg-gray-100 text-gray-800 rounded-md py-1">
-            {row.size}
-          </p>
-        </TableCell>
-        <TableCell align="center" sx={{ padding: "7px" }}>
-          <strong className="bg-green-100 text-green-700  rounded-md py-[8px] px-4">
-            {row.security}
-          </strong>
-        </TableCell>
-        <TableCell align="center">
-          <p className="">{row.lastUpdate}</p>
-        </TableCell>
-      </TableRow>
+          </TableCell>
+          <TableCell align="center">
+            <Skeleton
+              variant="rounded"
+              height={15}
+              width={150}
+              className="mx-auto"
+            />
+          </TableCell>
+        </TableRow>
+      )}
+      {row && (
+        <TableRow
+          sx={{
+            "& > *": { borderBottom: "unset" },
+            cursor: "pointer",
+          }}
+          onClick={handleRowClick}
+        >
+          <TableCell sx={{ padding: "7px" }}>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
+            </IconButton>
+          </TableCell>
+
+          <TableCell component="th" scope="row" sx={{ padding: "7px" }}>
+            <p className="text-indigo-600 font-medium">
+              {row.name.slice(0, 15)}
+            </p>
+          </TableCell>
+          <TableCell align="center" sx={{ padding: "7px" }}>
+            <Tooltip title={row.owner} arrow>
+              <Avatar
+                sx={{ width: "30px", height: "30px" }}
+                src={row.publicUrl}
+                alt="Owner"
+                variant="rounded"
+              />
+            </Tooltip>
+          </TableCell>
+          <TableCell align="center" sx={{ padding: "7px 20px" }}>
+            <p className="bg-gray-100 text-gray-800 rounded-md py-1">
+              {row.status}
+            </p>
+          </TableCell>
+          <TableCell align="center" sx={{ padding: "7px" }}>
+            <p className="bg-gray-100 text-gray-800 rounded-md py-1">
+              {row.size}
+            </p>
+          </TableCell>
+          <TableCell align="center" sx={{ padding: "7px" }}>
+            <strong className="bg-green-100 text-green-700  rounded-md py-[8px] px-4">
+              {row.security}
+            </strong>
+          </TableCell>
+          <TableCell align="center">
+            <p className="">{row.lastUpdate}</p>
+          </TableCell>
+        </TableRow>
+      )}
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
           <Collapse in={open} timeout="auto" unmountOnExit>

@@ -35,7 +35,19 @@ const DueDate = () => {
   const skeletons = [];
   for (let i = 0; i < 4; i++) {
     skeletons.push(
-      <Skeleton key={i} variant="rounded" height={50} className="w-full my-2" />
+      <div className="border shadow p-3 my-2 rounded-lg flex items-center gap-2">
+        <Skeleton
+          key={i}
+          variant="rounded"
+          width={24}
+          height={24}
+          className="mr-2"
+        />
+
+        <Skeleton className="w-1/5" height={28} />
+        <Skeleton className="w-1/5" height={25} />
+        <Skeleton className="w-2/5" height={28} />
+      </div>
     );
   }
 
