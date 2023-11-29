@@ -64,7 +64,7 @@ const LatestActivities = () => {
   const skeletons = [];
   for (let i = 0; i < 4; i++) {
     skeletons.push(
-      <div className="p-3 border-b rounded-lg flex items-center gap-2">
+      <div key={i} className="p-3 border-b rounded-lg flex items-center gap-2">
         <Skeleton
           key={i}
           variant="circular"
@@ -125,7 +125,8 @@ const LatestActivities = () => {
                       {log.event === "screenshot"
                         ? "took Screenshot of"
                         : "accessed"}
-                      <span className="font-semibold"> {log.file}</span> file.
+                      <span className="font-semibold"> {log.file_name}</span>{" "}
+                      file.
                     </p>
                     <p className="text-sm text-gray-400 mt-2">
                       {formatTimestamp(log.timestamp)}

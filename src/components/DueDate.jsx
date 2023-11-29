@@ -35,7 +35,10 @@ const DueDate = () => {
   const skeletons = [];
   for (let i = 0; i < 4; i++) {
     skeletons.push(
-      <div className="border shadow p-3 my-2 rounded-lg flex items-center gap-2">
+      <div
+        key={i}
+        className="border shadow p-3 my-2 rounded-lg flex items-center gap-2"
+      >
         <Skeleton
           key={i}
           variant="rounded"

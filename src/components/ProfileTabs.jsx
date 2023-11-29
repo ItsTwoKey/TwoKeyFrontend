@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import ProfileLogs from "../components/ProfileLogs";
 import axios from "axios";
 import LatestActivities from "../components/LatestActivities";
+import CustomLogs from "./CustomLogs";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -59,8 +60,7 @@ export default function ProfileTabs() {
             url = "https://twokeybackend.onrender.com/file/files?type=received";
             break;
           case 3:
-            url =
-              "https://twokeybackend.onrender.com/file/getLogs?event=download";
+            url = "https://twokeybackend.onrender.com/file/getLogs/download/";
             break;
 
           default:
@@ -140,7 +140,7 @@ export default function ProfileTabs() {
         <LatestActivities />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
-        Download
+        <CustomLogs logs={logs} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={4}>
         Edited Files
