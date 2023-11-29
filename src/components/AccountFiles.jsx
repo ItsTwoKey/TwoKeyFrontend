@@ -47,50 +47,37 @@ const AccountFiles = () => {
         );
 
         console.log(
-          "recentFilesFromBackend Account filess",
-          recentFilesFromBackend
+          "recentFilesFromBackend Account files",
+          recentFilesFromBackend.data
         );
 
         if (recentFilesFromBackend) {
-          const mappedFiles = recentFilesFromBackend.data.map(async (file) => {
-            try {
-              const { data } = await supabase.storage
-                .from("avatar")
-                .getPublicUrl(file.owner_email);
-
-              return {
-                id: file.id,
-                name: file.name.substring(0, 80),
-                size: formatFileSize(file.metadata.size),
-                dept: file.dept_name,
-                publicUrl: data.publicUrl,
-                owner: file.owner_email,
-                mimetype: file.metadata.mimetype,
-                status: "Team",
-                security: "Enhanced",
-                lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
-                  "en-IN",
-                  {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                    hour: "numeric",
-                    minute: "numeric",
-                    hour12: true,
-                  }
-                ),
-              };
-            } catch (error) {
-              console.log("Error while getting public URL:", error);
-              return null;
-            }
+          const mappedFiles = recentFilesFromBackend.data.map((file) => {
+            return {
+              id: file.id,
+              name: file.name.substring(0, 80),
+              profilePic: file.profile_pic,
+              size: formatFileSize(file.metadata.size),
+              dept: file.dept_name,
+              owner: file.owner_email,
+              mimetype: file.metadata.mimetype,
+              status: "Team",
+              security: "Enhanced",
+              lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+                "en-IN",
+                {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                }
+              ),
+            };
           });
 
-          const resolvedFiles = await Promise.all(mappedFiles);
-          const filteredFiles = resolvedFiles.filter((file) => file !== null);
-          // console.log("Files:", filteredFiles);
-
-          setFilteredData(filteredFiles);
+          setFilteredData(mappedFiles);
           setLoading(false);
         }
       } catch (error) {
@@ -280,7 +267,7 @@ function Row(props) {
             <Tooltip title={row.owner} arrow>
               <Avatar
                 sx={{ width: "30px", height: "30px" }}
-                src={row.publicUrl}
+                src={row.profilePic}
                 alt="Owner"
                 variant="rounded"
               />

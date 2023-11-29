@@ -155,7 +155,7 @@ function Row(props) {
           <Tooltip title={row.owner_email} arrow>
             <Avatar
               sx={{ width: "30px", height: "30px" }}
-              src={row.publicUrl}
+              src={row.profile_pic}
               alt="Owner"
               variant="rounded"
             />

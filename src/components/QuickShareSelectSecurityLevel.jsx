@@ -96,16 +96,16 @@ export default function QuickShareSelectSecurityLevel({
       }
 
       showSnackbar("Upload successful", "success");
-      // setTimeout(() => {
-      //   onClose();
-      // }, 3000);
+      setTimeout(() => {
+        onClose();
+      }, 3000);
     } catch (error) {
       console.error("Error occurred in file upload:", error);
 
       showSnackbar("Upload failed. Please try again.", "error");
-      // setTimeout(() => {
-      //   onClose();
-      // }, 3000);
+      setTimeout(() => {
+        onClose();
+      }, 3000);
     } finally {
       // setProgress(0); // Reset progress after upload is complete
     }

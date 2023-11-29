@@ -72,7 +72,7 @@ export default function TeamManagementTable() {
   ];
 
   const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "numeric", day: "numeric" };
+    const options = { day: "numeric", month: "numeric", year: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
@@ -156,7 +156,6 @@ export default function TeamManagementTable() {
     } catch (error) {
       console.log(error);
     }
-    // Add logic to handle the deletion if needed
   };
 
   return (

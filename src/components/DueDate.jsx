@@ -54,29 +54,20 @@ const DueDate = () => {
     );
   }
 
-  const convertMinutesToDaysAndMinutes = (minutes) => {
-    const days = Math.floor(minutes / 1440); // 1 day = 24 hours * 60 minutes
-    const remainingMinutes = minutes % 1440;
-    const hours = Math.floor(remainingMinutes / 60);
-    const remainingSeconds = remainingMinutes % 60;
+  const convertSecondsToDaysHours = (seconds) => {
+    const days = Math.floor(seconds / (24 * 3600));
+    const hours = Math.floor((seconds % (24 * 3600)) / 3600);
 
-    const formattedTime = [];
-
+    let result = "";
     if (days > 0) {
-      formattedTime.push(`${days} day${days > 1 ? "s" : ""}`);
+      result += `${days} ${days === 1 ? "day" : "days"}`;
     }
 
     if (hours > 0) {
-      formattedTime.push(`${hours} hour${hours > 1 ? "s" : ""}`);
+      result += ` ${hours} ${hours === 1 ? "hour" : "hours"}`;
     }
 
-    if (remainingSeconds > 0) {
-      formattedTime.push(
-        `${remainingSeconds} minute${remainingSeconds > 1 ? "s" : ""}`
-      );
-    }
-
-    return formattedTime.join(", ");
+    return result.trim();
   };
 
   return (
@@ -110,7 +101,7 @@ const DueDate = () => {
                 </strong>
                 's access to{" "}
                 <strong className="font-semibold">{due.file_name}</strong> ends
-                in {convertMinutesToDaysAndMinutes(due.expiration_time)}.
+                in {convertSecondsToDaysHours(due.expiration_time)}.
               </p>
             </div>
           ))

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../context/authContext";
 import axios from "axios";
 import { supabase } from "../helper/supabaseClient";
-
+import FileViewer from "../components/FileViewer";
 import ErrorPage from "../components/ErrorPage";
 
 const Test = () => {
@@ -330,6 +330,8 @@ const Test = () => {
           <p key={index}>{dep.name}</p>
         ))}
       </div>
+
+      <FileViewer />
 
       {picture && (
         <img

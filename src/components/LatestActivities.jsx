@@ -24,7 +24,7 @@ const LatestActivities = () => {
         // Use the appropriate URL based on the user's location
         const logsEndpoint = isUserProfile
           ? "https://twokeybackend.onrender.com/file/getLogs?global=0&recs=5"
-          : "https://twokeybackend.onrender.com/file/getLogs/?recs=5";
+          : "https://twokeybackend.onrender.com/file/getLogs/?recs=10";
 
         const accessLogs = await axios.get(logsEndpoint, {
           headers: {
@@ -100,10 +100,6 @@ const LatestActivities = () => {
               <option value="Requested">Requested</option>
               <option value="Access">Access</option>
             </select>
-          </span>
-          <span className="flex items-center gap-1 cursor-pointer">
-            <p className="text-xs text-gray-500">Mark all as read</p>
-            <img src={Checkmark} alt="✔" className="text-sm" />
           </span>
         </div>
 

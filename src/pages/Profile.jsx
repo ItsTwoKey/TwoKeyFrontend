@@ -6,11 +6,10 @@ import ProfileAddressInformation from "../components/ProfileAddressInformation";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import ProfileTabs from "../components/ProfileTabs";
 import Pen from "../assets/pen.svg";
-
+import axios from "axios";
 import ErrorPage from "../components/ErrorPage";
 
 const Profile = () => {
-  const [picture, setPicture] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedPicture, setSelectedPicture] = useState(null);
   const [profileData, setProfileData] = useState({});
@@ -48,18 +47,43 @@ const Profile = () => {
   const handleProfilePicUpdate = async () => {
     try {
       let token = JSON.parse(sessionStorage.getItem("token"));
+
+      const timestamp = Date.now();
+      const emailWithTimestamp = `${token.user.email}_${timestamp}`;
+
       const { data, error } = await supabase.storage
         .from("avatar")
-        .upload(token.user.email, selectedPicture, {
+        .upload(emailWithTimestamp, selectedPicture, {
           cacheControl: "3600",
           upsert: true,
         });
 
-      if (error) {
-        console.error("Error occurred in file upload:", error);
-      } else {
-        setPicture(data.publicURL);
-        console.log("File uploaded successfully:", data);
+      console.log("picture:", data);
+
+      const { data: url } = await supabase.storage
+        .from("avatar")
+        .getPublicUrl(emailWithTimestamp);
+
+      console.log("Public URL:", url.publicUrl);
+
+      if (url) {
+        const res = await axios.put(
+          "https://twokeybackend.onrender.com/users/updateProfile/",
+          {
+            id: token.user.id,
+            profile_pic: url.publicUrl,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+
+        console.log("Profile pic change success:", res);
+        setProfileData(res.data);
+
+        localStorage.setItem("profileData", JSON.stringify(res.data));
       }
     } catch (error) {
       console.error(
@@ -68,6 +92,7 @@ const Profile = () => {
       );
     }
   };
+
   if (!sessionStorage.getItem("token")) {
     return <ErrorPage error="You are not authorised" />;
   }
@@ -95,23 +120,22 @@ const Profile = () => {
       </div>
       <div className="p-4 border shadow-lg bg-[#F7F8FA] border-gray-200 w-full rounded-xl ">
         <div className="flex flex-row items-center space-x-4">
-          {profileData && (
-            <div
-              className="relative"
-              onClick={isEditing ? handleImageInputChange : null}
-            >
-              <img
-                src={profileData ? profileData.profile_pic : ProfilePicDummy}
-                alt="ProfilePic"
-                className="rounded-full w-24 h-24"
-              />
-              {isEditing && (
-                <button className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white rounded-full w-6 h-6 flex justify-center items-center text-lg">
-                  +
-                </button>
-              )}
-            </div>
-          )}
+          <div
+            className="relative"
+            onClick={isEditing ? handleImageInputChange : null}
+          >
+            <img
+              src={profileData ? profileData.profile_pic : ProfilePicDummy}
+              alt="ProfilePic"
+              className="rounded-full w-24 h-24"
+            />
+            {isEditing && (
+              <button className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white rounded-full w-6 h-6 flex justify-center items-center text-lg">
+                +
+              </button>
+            )}
+          </div>
+
           <div className="flex flex-col leading-9">
             <h3 className="text-lg font-semibold">
               {profileData.username ? `#${profileData.username}` : "UserName"}
