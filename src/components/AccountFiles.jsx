@@ -96,8 +96,8 @@ const AccountFiles = () => {
         <p className="text-lg text-left font-semibold my-6">Account Files</p>
       )}
 
-      <Box sx={{ width: "100%" }}>
-        <TableContainer component={Paper}>
+      <div>
+        <TableContainer>
           <Table aria-label="collapsible table">
             <TableHead>
               <TableRow sx={{ backgroundColor: "#F7F9FCCC" }}>
@@ -137,7 +137,7 @@ const AccountFiles = () => {
             </TableBody>
           </Table>
         </TableContainer>
-      </Box>
+      </div>
     </div>
   );
 };

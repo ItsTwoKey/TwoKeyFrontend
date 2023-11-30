@@ -352,7 +352,7 @@ export const AuthProvider = ({ children }) => {
   //   if (!user) {
   //     console.log("if user", user);
 
-  //     const currentTime = Math.floor(new Date().getTime() / 1000); // Current time in seconds
+  //     const currentTime = Math.floor(new Date().getTime() / 1000);
   //     const expiresIn = data.session.expires_at - currentTime;
 
   //     if (expiresIn <= 0) {
