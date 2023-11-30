@@ -6,7 +6,14 @@ import FileViewer from "../components/FileViewer";
 import ErrorPage from "../components/ErrorPage";
 
 const Test = () => {
-  const { token, location, error, getGeolocation, listLocations } = useAuth();
+  const {
+    token,
+    location,
+    error,
+    getGeolocation,
+    listLocations,
+    refreshAccessToken,
+  } = useAuth();
   const [picture, setPicture] = useState(null);
 
   const [imageURL, setImageURL] = useState(null);
@@ -320,6 +327,13 @@ const Test = () => {
         getSharedFileInfo
       </button>
 
+      {/* <button
+        className="py-2 px-4 bg-red-400 text-white rounded-md"
+        onClick={refreshAccessToken}
+      >
+        refreshAccessToken
+      </button> */}
+
       <div>
         <button onClick={handleClipboardRead}>Read Clipboard</button>
         {imageURL && <img src={imageURL} alt="Clipboard Img" />}
@@ -331,7 +345,7 @@ const Test = () => {
         ))}
       </div>
 
-      <FileViewer />
+      {/* <FileViewer /> */}
 
       {picture && (
         <img

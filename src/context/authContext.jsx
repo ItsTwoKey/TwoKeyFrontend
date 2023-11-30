@@ -327,6 +327,50 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // const refreshAccessToken = async () => {
+  //   let token = JSON.parse(sessionStorage.getItem("token"));
+
+  //   if (!token) {
+  //     // Token doesn't exist, handle accordingly
+  //     console.log("No token available.");
+  //     return;
+  //   }
+
+  //   const jwt = token.session.access_token;
+  //   const refreshToken = token.session.refresh_token;
+
+  //   const {
+  //     data: { user },
+  //   } = await supabase.auth.getUser(jwt);
+
+  //   console.log("user", user);
+
+  //   const { data, error } = await supabase.auth.getSession();
+  //   console.log("session", data);
+  //   console.log("error", error);
+
+  //   if (!user) {
+  //     console.log("if user", user);
+
+  //     const currentTime = Math.floor(new Date().getTime() / 1000); // Current time in seconds
+  //     const expiresIn = data.session.expires_at - currentTime;
+
+  //     if (expiresIn <= 0) {
+  //       // Token has already expired, handle accordingly
+  //       console.log("Token has already expired");
+  //     } else if (expiresIn <= 300) {
+  //       // Refresh when it's about to expire, e.g., 5 minutes left
+  //       const { data, error } = await supabase.auth.refreshSession();
+  //       if (data) {
+  //         console.log("refreshSession", data);
+  //         sessionStorage.setItem("token", JSON.stringify(data));
+  //       }
+  //     } else {
+  //       console.log("user token is still valid");
+  //     }
+  //   }
+  // };
+
   const contextValue = {
     isFileViewerOpen,
     openFileViewer,
