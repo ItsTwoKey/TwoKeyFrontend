@@ -44,6 +44,7 @@ function SideBar() {
   }
 
   let departments = [
+    { name: "UserManagement", path: "/user-management" },
     { name: "Account", path: "/account" },
     { name: "Finance", path: "/finance" },
     { name: "Development", path: "/development" },

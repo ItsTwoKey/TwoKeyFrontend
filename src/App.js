@@ -7,6 +7,7 @@ import SideBar from "./components/SideBar";
 import TopBar from "./components/TopBar";
 import Onboarding from "./pages/Onboarding";
 import Profile from "./pages/Profile";
+import UserManagement from "./pages/UserManagement";
 import Test from "./pages/Test";
 import Finance from "./pages/Finance";
 import Development from "./pages/Development";
@@ -35,6 +36,7 @@ const App = () => {
           <Routes>
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/user-management" element={<UserManagement />} />
               <Route path="/account" element={<Account />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/finance" element={<Finance />} />
