@@ -345,7 +345,7 @@ const Test = () => {
         ))}
       </div>
 
-      {/* <FileViewer /> */}
+      <FileViewer />
 
       {picture && (
         <img
