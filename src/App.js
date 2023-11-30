@@ -19,6 +19,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuth } from "./context/authContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import ErrorPage from "./components/ErrorPage";
+import TestDocEditor from "./pages/TestDocEditor";
 
 const App = () => {
   const { token } = useAuth();
@@ -48,10 +49,12 @@ const App = () => {
               <Route path="/manufacturing" element={<Manufacturing />} />
               <Route path="/humanresources" element={<HR />} />
               <Route path="/test" element={<Test />} />
+              <Route path="/doc" element={<TestDocEditor/>} />
             </Route>
             {/* Public Routes should go below */}
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/signup" element={<SignUp />} />
+
             <Route path="/" element={<Login />} exact />
             <Route
               path="/*"
