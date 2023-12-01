@@ -10,9 +10,9 @@ const FileViewer = () => {
 
   const containerStyles = {
     width: "100%",
-    height: "800px", // Fixed height
-    overflow: "hidden", // Hide content that overflows
-    position: "relative", // Required for absolute positioning
+    height: "800px",
+    overflow: "hidden",
+    position: "relative",
   };
 
   const iframeStyles = {
@@ -26,8 +26,8 @@ const FileViewer = () => {
     right: "0",
     width: "25%",
     height: "7%",
-    backgroundColor: "#323639",
-    zIndex: 1, // Ensure it's above the iframe content
+    backgroundColor: "inherit",
+    zIndex: 1,
   };
 
   return (
