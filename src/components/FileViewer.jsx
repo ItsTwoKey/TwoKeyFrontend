@@ -10,7 +10,7 @@ const FileViewer = () => {
 
   const containerStyles = {
     width: "100%",
-    height: "800px",
+    height: "100%",
     overflow: "hidden",
     position: "relative",
   };

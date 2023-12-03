@@ -32,7 +32,7 @@ const Dashboard = () => {
         darkMode ? "bg-gray-800 text-white" : "text-gray-800"
       }`}
     >
-      <div className="flex flex-row gap-4">
+      <div className="flex flex-col md:flex-row gap-4">
         <DueDate />
         <LatestActivities />
       </div>

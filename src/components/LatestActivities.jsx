@@ -82,7 +82,7 @@ const LatestActivities = () => {
   }
 
   return (
-    <div className={`${isUserProfile ? "w-full" : "w-2/5"}`}>
+    <div className={`${isUserProfile ? "w-full" : "w-full md:w-2/5"}`}>
       <Paper elevation={isUserProfile ? 0 : 1} className="h-72 ">
         <div
           className={`flex justify-between items-center p-4 ${

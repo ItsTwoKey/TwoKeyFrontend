@@ -1,7 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
-import NotificationsIcon from "../assets/notification.svg";
 import LightMode from "../assets/lightMode.svg";
 import DarkMode from "../assets/darkMode.svg";
 import { useDarkMode } from "../context/darkModeContext";
@@ -41,8 +40,8 @@ const TopBar = () => {
             ? "Overview / Dashboard"
             : `${location.pathname}`.slice(1)}
         </p>
-        <div className="flex justify-between gap-24">
-          <div className="relative w-96">
+        <div className="flex justify-between gap-2 md:gap-24">
+          <div className="relative w-10 md:w-96">
             <SearchIcon
               sx={{
                 position: "absolute",
@@ -60,19 +59,13 @@ const TopBar = () => {
               } rounded-md`}
             ></input>
           </div>
-          <span className="flex gap-2">
-            <img
-              src={darkMode ? DarkMode : LightMode}
-              alt="LightMode"
-              className="cursor-pointer"
-              onClick={toggleDarkMode}
-            />
-            <img
-              src={NotificationsIcon}
-              alt="notifications"
-              className="cursor-pointer"
-            />
-          </span>
+
+          <img
+            src={darkMode ? DarkMode : LightMode}
+            alt="LightMode"
+            className="cursor-pointer"
+            onClick={toggleDarkMode}
+          />
         </div>
       </div>
     </nav>

@@ -152,7 +152,6 @@ const SignUp = () => {
                 Email
               </InputLabel>
               <span id="email" className="flex flex-row gap-2">
-
                 <TextField
                   id="outlined-basic-email"
                   variant="outlined"
@@ -189,7 +188,7 @@ const SignUp = () => {
           </button>
           <p className="text-gray-500 mt-4 text-center">
             Already have an account?{" "}
-            <Link to="/" className="text-indigo-600 font-semibold">
+            <Link to="/login" className="text-indigo-600 font-semibold">
               Log in
             </Link>
           </p>
