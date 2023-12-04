@@ -27,8 +27,8 @@ const TopBar = () => {
 
   return (
     <nav
-      className={`sticky top-0 z-50 h-[72px] backdrop-blur-sm ${
-        darkMode ? "bg-gray-800" : ""
+      className={`sticky top-0 z-50 h-[72px] ${
+        darkMode ? "bg-gray-800" : "bg-[#F1F1FF]"
       } p-1`}
     >
       <div className="container mx-auto flex flex-row items-center justify-between h-16 px-8">

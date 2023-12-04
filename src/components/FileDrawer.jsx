@@ -6,17 +6,31 @@ import { supabase } from "../helper/supabaseClient";
 import { useAuth } from "../context/authContext";
 import PDFPreview from "../assets/pdfPreview.jpg";
 import axios from "axios";
+import Avatar from "@mui/material/Avatar";
+import Tooltip from "@mui/material/Tooltip";
 
 const FileDrawer = ({
   isDrawerOpen,
   closeDrawer,
-  selectedFileName,
-  selectedFileSize,
-  selectedFileId,
+  selectedFileInfo,
+  sharedFileInfo,
 }) => {
-  const [screenshotDetected, setScreenshotDetected] = useState(false);
+  const [sharedWith, setSharedWith] = useState({});
+  const {
+    isFileViewerOpen,
+    openFileViewer,
+    closeFileViewer,
+    screenshotDetected,
+    screenshotAlert,
+  } = useAuth();
 
-  const { isFileViewerOpen, openFileViewer, closeFileViewer } = useAuth();
+  useEffect(() => {
+    if (screenshotDetected) {
+      screenshotAlert(selectedFileInfo.id);
+    }
+  }, [screenshotDetected, selectedFileInfo.id, screenshotAlert]);
+
+  // console.log("getSharedFileInfo filedrawer:", sharedFileInfo.shared_with);
 
   const toggleFileViewer = () => {
     if (isFileViewerOpen) {
@@ -26,51 +40,11 @@ const FileDrawer = ({
     }
   };
 
-  useEffect(() => {
-    const preventPrintScreen = (e) => {
-      try {
-        const forbiddenKeys = [
-          "PrintScreen",
-          "Snapshot",
-          "PrtSc",
-          "Meta",
-          "Escape",
-          "PrtSc",
-          "Control",
-          "Alt",
-          "Shift",
-          "Insert",
-        ];
-        if (forbiddenKeys.includes(e.key)) {
-          e.preventDefault();
-
-          setScreenshotDetected(true);
-
-          // Remove the blur class after 2 seconds
-          setTimeout(() => {
-            setScreenshotDetected(false);
-          }, 2000);
-        }
-      } catch (error) {
-        console.error(
-          "An error occurred while preventing Print Screen:",
-          error
-        );
-      }
-    };
-
-    document.addEventListener("keydown", preventPrintScreen);
-
-    return () => {
-      document.removeEventListener("keydown", preventPrintScreen);
-    };
-  }, []);
-
   const handleDownload = async () => {
     try {
       const { data, error } = await supabase.storage
         .from("TwoKey")
-        .download(selectedFileName);
+        .download(selectedFileInfo.name);
       console.log("Download success", data);
     } catch (error) {
       console.log("Error occured while downloading the file.");
@@ -81,7 +55,7 @@ const FileDrawer = ({
     try {
       const { data, error } = await supabase.storage
         .from("TwoKey")
-        .remove(selectedFileName);
+        .remove(selectedFileInfo.name);
       console.log("Delete success", data);
     } catch (error) {
       console.log("Error occured while deleting the file.");
@@ -97,7 +71,7 @@ const FileDrawer = ({
         longitude: 73.82762833796289,
       };
       const presignedUrl = await axios.post(
-        `https://twokeybackend.onrender.com/file/getPresigned/${selectedFileId}/`,
+        `https://twokeybackend.onrender.com/file/getPresigned/${selectedFileInfo.id}/`,
         body,
         {
           headers: {
@@ -129,7 +103,7 @@ const FileDrawer = ({
           <div className="bg-gray-100 my-2 rounded-md shadow-md">
             <img src={PDFPreview} alt="preview" />
           </div>
-          <h2>{selectedFileName}</h2>
+          <h2>{selectedFileInfo.name.slice(0, 15)}</h2>
           {/* <h2>{selectedFileId}</h2> */}
         </div>
         <hr className="my-2" />
@@ -146,8 +120,30 @@ const FileDrawer = ({
         <h4 className="font-semibold text-sm my-2 text-gray-900">
           File Information
         </h4>
-        <p className="text-xs font-bold">Who has access</p>
-        <p className="text-xs font-bold">File Owner</p>
+
+        <span className="flex flex-col gap-1">
+          <p className="text-xs font-bold">Who has access</p>
+
+          {sharedFileInfo?.shared_with?.map((user) => (
+            <Tooltip key={user.user_id} title={user.user_email} arrow>
+              <Avatar
+                src={user.profile_pic}
+                alt="owner pic"
+                sx={{ width: 20, height: 20 }}
+              />
+            </Tooltip>
+          ))}
+        </span>
+        <span className="flex flex-col gap-1 my-2">
+          <p className="text-xs font-bold">File Owner</p>
+          <Tooltip title={selectedFileInfo.owner} arrow>
+            <Avatar
+              src={selectedFileInfo.ownerProfileUrl}
+              alt="owner pic"
+              sx={{ width: 20, height: 20 }}
+            />
+          </Tooltip>
+        </span>
 
         <hr className="my-2" />
         <h4 className="font-semibold text-sm my-2 text-gray-900">Properties</h4>
@@ -158,11 +154,11 @@ const FileDrawer = ({
           </span>
           <span className="flex justify-between items-center">
             <p className="">Size</p>
-            <p>{selectedFileSize}</p>
+            <p>{selectedFileInfo.size}</p>
           </span>
           <span className="flex justify-between items-center">
             <p className="">Last modified</p>
-            <p>date</p>
+            <p>{selectedFileInfo.lastUpdate}</p>
           </span>
         </span>
         {/* <button

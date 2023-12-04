@@ -8,11 +8,14 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import twokeyLanding from "../assets/twokeyLanding.png";
 import ErrorPage from "../components/ErrorPage";
+import { useMediaQuery } from "@mui/material";
 import { useAuth } from "../context/authContext";
 
 const Login = () => {
   let navigate = useNavigate();
   const { getProfileData } = useAuth();
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -65,8 +68,6 @@ const Login = () => {
 
   useEffect(() => {
     const orgData = async () => {
-      // catching the errors if the api call fails
-      // set the error message to page error state to be used for displaying error page.
       try {
         const org = await axios.get(
           "https://twokeybackend.onrender.com/org/list_orgs"
@@ -102,23 +103,22 @@ const Login = () => {
   // }
   return (
     <div className="flex flex-col md:flex-row">
-      <div className="w-full md:w-1/2 ">
-        <img
-          className="h-screen w-screen"
-          src={twokeyLanding}
-          alt="twokeyLandingImage"
-        />
-      </div>
+      {!isSmallScreen && (
+        <div className="w-full md:w-1/2 ">
+          <img
+            className="h-screen w-full object-cover"
+            src={twokeyLanding}
+            alt="twokeyLandingImage"
+          />
+        </div>
+      )}
 
-      <div className="bg-white flex flex-col justify-center items-center w-full md:w-1/2">
+      <div className="bg-white flex flex-col justify-center items-center w-full md:w-1/2 p-4">
         <h1 className="text-5xl text-center mt-4 font-semibold ">
           Welcome to Twokey
         </h1>
 
-        <form
-          onSubmit={handleSubmit}
-          className="p-4 text-center w-full md:w-11/12"
-        >
+        <form onSubmit={handleSubmit} className="text-center w-full md:w-11/12">
           <span className="my-4 flex flex-col justify-center ">
             <InputLabel
               className="text-md text-left mb-2 mt-4"

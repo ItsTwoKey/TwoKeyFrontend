@@ -5,14 +5,15 @@ function Background() {
   const hideBackground =
     location.pathname === "/" ||
     location.pathname === "/signup" ||
-    location.pathname === "/onboarding";
+    location.pathname === "/onboarding" ||
+    location.pathname === "/settings";
 
   if (hideBackground) {
     return null;
   }
   return (
     <div
-      className="fixed w-full inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden"
+      className="absolute w-full inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden"
       aria-hidden="true"
     >
       <div

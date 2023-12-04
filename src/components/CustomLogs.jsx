@@ -8,38 +8,8 @@ import { useDarkMode } from "../context/darkModeContext";
 import { useLocation } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 
-const LatestActivities = () => {
+const CustomLogs = ({ logs }) => {
   const { darkMode } = useDarkMode();
-  const [selectedValue, setSelectedValue] = useState("");
-  const [logs, setLogs] = useState([]);
-  const location = useLocation();
-  const isUserProfile = location.pathname.includes("/profile");
-  useEffect(() => {
-    const getCommonLogs = async () => {
-      try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
-
-        // Check if the user is on the profile
-
-        // Use the appropriate URL based on the user's location
-        const logsEndpoint = isUserProfile
-          ? "https://twokeybackend.onrender.com/file/getLogs?global=0&recs=5"
-          : "https://twokeybackend.onrender.com/file/getLogs/?recs=10";
-
-        const accessLogs = await axios.get(logsEndpoint, {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        });
-
-        setLogs(accessLogs.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getCommonLogs();
-  }, []);
 
   const formatTimestamp = (timestamp) => {
     const options = {
@@ -53,12 +23,6 @@ const LatestActivities = () => {
     };
 
     return new Date(timestamp).toLocaleString("en-IN", options);
-  };
-
-  const handleSelectChange = (event) => {
-    const value = event.target.value;
-    setSelectedValue(value);
-    console.log("Selected Value:", value);
   };
 
   const skeletons = [];
@@ -82,29 +46,10 @@ const LatestActivities = () => {
   }
 
   return (
-    <div className={`${isUserProfile ? "w-full" : "w-2/5"}`}>
-      <Paper elevation={isUserProfile ? 0 : 1} className="h-72 ">
-        <div
-          className={`flex justify-between items-center p-4 ${
-            darkMode ? "bg-gray-600 text-gray-200" : " "
-          }`}
-        >
-          <span className="flex flex-row items-center gap-1">
-            <p className="text-sm font-semibold">Latest Activities</p>
-            <select
-              className="text-sm text-gray-400"
-              onChange={handleSelectChange}
-              value={selectedValue}
-            >
-              <option value="All">All</option>
-              <option value="Requested">Requested</option>
-              <option value="Access">Access</option>
-            </select>
-          </span>
-        </div>
-
+    <div className="w-full">
+      <Paper elevation={0} className="h-72 ">
         <div className="h-56 overflow-y-scroll scrollbar-hide">
-          {logs.length ? (
+          {logs && logs.length ? (
             logs?.map((log, index) => (
               <div key={index} className="border-b">
                 <span className="flex flex-row gap-2 p-2">
@@ -118,10 +63,11 @@ const LatestActivities = () => {
                   <span>
                     <p className="text-sm">
                       <span className="font-semibold">{log.username}</span>{" "}
-                      {log.event === "screenshot"
-                        ? "took Screenshot of"
-                        : "accessed"}
-                      <span className="font-semibold"> {log.file_name}</span>{" "}
+                      {log.event === "download" ? "downloaded" : "edited"}
+                      <span className="font-semibold">
+                        {" "}
+                        {log.file_name}
+                      </span>{" "}
                       file.
                     </p>
                     <p className="text-sm text-gray-400 mt-2">
@@ -142,4 +88,4 @@ const LatestActivities = () => {
   );
 };
 
-export default LatestActivities;
+export default CustomLogs;

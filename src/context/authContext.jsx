@@ -12,96 +12,137 @@ export const AuthProvider = ({ children }) => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [coordinates, setCoordinates] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+
+  const detectPrintScreen = (event) => {
+    const { key, code, metaKey, shiftKey, ctrlKey, altKey } = event;
+
+    switch (true) {
+      case metaKey && shiftKey && key === "3":
+      case metaKey && shiftKey && key === "4":
+      case metaKey && shiftKey && key === "6":
+      case ctrlKey && key === "p":
+      case altKey && (key === "PrintScreen" || key === "Insert"):
+      case metaKey && (key === "PrintScreen" || key === "Insert"):
+      case altKey && metaKey && (key === "PrintScreen" || key === "Insert"):
+      case key === "PrintScreen" || key === "Insert":
+      case metaKey && shiftKey && key === "s":
+      case metaKey && shiftKey:
+        event.preventDefault();
+        console.log(`${event.key} pressed!`);
+
+        setScreenshotDetected(true);
+
+        // Remove the blur class after 3 seconds
+        setTimeout(() => {
+          setScreenshotDetected(false);
+        }, 3000);
+        // monitorClipboard();
+        // checkClipboardForImage();
+        screenshotAlert();
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const handleContextMenu = (event) => {
+    event.preventDefault();
+    console.log("Right-click prevented!");
+  };
 
   useEffect(() => {
-    // Prevent right-click
-    const preventRightClick = (e) => {
-      e.preventDefault();
-    };
-
-    document.addEventListener("contextmenu", preventRightClick);
-
-    // Detect keypress
-    const handleKeyPress = (e) => {
-      console.log("Key pressed:", e.key);
-
-      // check the data type of the clipboard item
-      // navigator.clipboard.read().then((data) => {
-      //   const types = data[0].types;
-      //   let hasImageType = false;
-
-      //   for (const type of types) {
-      //     if (type.startsWith("image")) {
-      //       hasImageType = true;
-      //       break;
-      //     }
-      //   }
-
-      //   if (hasImageType) {
-      //     console.log("ScreenShot captured.", types);
-      //   } else {
-      //     console.log("Clipboard data does not contain an image type.");
-      //   }
-      // });
-    };
-
-    document.addEventListener("keydown", handleKeyPress);
+    document.addEventListener("keydown", detectPrintScreen);
+    document.addEventListener("contextmenu", handleContextMenu);
 
     return () => {
-      document.removeEventListener("contextmenu", preventRightClick);
-      document.removeEventListener("keydown", handleKeyPress);
+      document.removeEventListener("keydown", detectPrintScreen);
+      document.removeEventListener("contextmenu", handleContextMenu);
     };
   }, []);
 
-  useEffect(() => {
-    const preventPrintScreen = (e) => {
-      try {
-        const forbiddenKeys = [
-          "PrintScreen",
-          "Snapshot",
-          "PrtSc",
-          "Meta",
-          "Escape",
-          "PrtSc",
-          "Control",
-          "Alt",
-          "Insert",
-        ];
+  const monitorClipboard = async () => {
+    // Delay to allow the clipboard to update
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
-        // if (e.keyCode === 114) {
-        //   //keyCode for Print Screen key
-        //   e.preventDefault();
-        // }
+    navigator.clipboard
+      .read()
+      .then((clipText) => {
+        console.log("Clipboard content changed:", clipText[0].types);
+      })
+      .catch((error) => {
+        console.error("Error reading clipboard:", error);
+      });
+  };
 
-        if (forbiddenKeys.includes(e.key)) {
-          e.preventDefault();
+  const checkClipboardForImage = async () => {
+    try {
+      const data = await navigator.clipboard.read();
+      const types = data[0].types;
+      let hasImageType = false;
 
-          console.log(
-            token ? token.user.user_metadata.full_name : "Unknown User",
-            "took the ScreenShot."
-          );
-
-          setScreenshotDetected(true);
-
-          // Remove the blur class after 3 seconds
-          setTimeout(() => {
-            setScreenshotDetected(false);
-          }, 3000);
+      for (const type of types) {
+        if (type.startsWith("image")) {
+          hasImageType = true;
+          break;
         }
-      } catch (error) {
-        console.error(
-          "An error occurred while preventing Print Screen:",
-          error
-        );
       }
-    };
 
-    document.addEventListener("keypress", preventPrintScreen);
+      if (hasImageType) {
+        console.log("Screenshot captured.", types);
 
-    return () => {
-      document.removeEventListener("keypress", preventPrintScreen);
-    };
-  }, [token]);
+        // Assuming the first item in the clipboard data is the image
+        const imageBlob = await data[0].getType("image/png");
+        await uploadImageToSupabase(imageBlob);
+      } else {
+        console.log("Clipboard data does not contain an image type.", types);
+      }
+    } catch (error) {
+      console.error("Error reading clipboard:", error);
+    }
+  };
+
+  const screenshotAlert = async (fileId) => {
+    try {
+      let token = JSON.parse(sessionStorage.getItem("token"));
+
+      if (fileId) {
+        const img = await axios.get(
+          `https://twokeybackend.onrender.com/file/screenShotAlert/${fileId}/`,
+
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+        console.log("img :", img);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const uploadImageToSupabase = async (imageBlob) => {
+    try {
+      let token = JSON.parse(sessionStorage.getItem("token"));
+
+      const { data, error } = await supabase.storage
+        .from("screenshots") // specify the bucket name
+        .upload(`screenshot-${token.user.email}-${Date.now()}.png`, imageBlob, {
+          contentType: "image/png",
+        });
+
+      if (error) {
+        console.error("Error uploading image to Supabase:", error);
+      } else {
+        console.log("Image uploaded successfully:", data);
+      }
+    } catch (error) {
+      console.error("Error uploading image to Supabase:", error);
+    }
+  };
 
   useEffect(() => {
     const sessionToken = sessionStorage.getItem("token");
@@ -110,72 +151,71 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
-    async function fetchRecentFiles() {
-      try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+  // useEffect(() => {
+  async function fetchRecentFiles() {
+    try {
+      let token = JSON.parse(sessionStorage.getItem("token"));
 
-        const recentFilesFromBackend = await axios.get(
-          "https://twokeybackend.onrender.com/file/files/",
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
-
-        // console.log("recentFilesFromBackend", recentFilesFromBackend);
-
-        if (recentFilesFromBackend) {
-          const mappedFiles = recentFilesFromBackend.data.map(async (file) => {
-            try {
-              const { data } = await supabase.storage
-                .from("avatar")
-                .getPublicUrl(file.owner_email);
-
-              return {
-                id: file.id,
-                name: file.name.substring(0, 80),
-                size: formatFileSize(file.metadata.size),
-                dept: file.dept_name,
-                publicUrl: data.publicUrl,
-                owner: file.owner_email,
-                mimetype: file.metadata.mimetype,
-                status: "Team",
-                security: "Enhanced",
-                lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
-                  "en-IN",
-                  {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                    hour: "numeric",
-                    minute: "numeric",
-                    hour12: true,
-                  }
-                ),
-              };
-            } catch (error) {
-              console.log("Error while getting public URL:", error);
-              return null;
-            }
-          });
-
-          const resolvedFiles = await Promise.all(mappedFiles);
-          const filteredFiles = resolvedFiles.filter((file) => file !== null);
-          // console.log("Files:", filteredFiles);
-
-          // Set the filtered files to the state
-          // setFilteredData(filteredFiles);
-          localStorage.setItem("filteredFiles", JSON.stringify(filteredFiles));
+      const recentFilesFromBackend = await axios.get(
+        "https://twokeybackend.onrender.com/file/files/",
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
         }
-      } catch (error) {
-        console.error("Error fetching files:", error);
-      }
-    }
+      );
 
-    fetchRecentFiles();
-  }, []);
+      console.log("recentFilesFromBackend", recentFilesFromBackend);
+
+      if (recentFilesFromBackend) {
+        const mappedFiles = recentFilesFromBackend.data.map(async (file) => {
+          try {
+            const { data } = await supabase.storage
+              .from("avatar")
+              .getPublicUrl(file.owner_email);
+
+            return {
+              id: file.id,
+              name: file.name.substring(0, 80),
+              size: formatFileSize(file.metadata.size),
+              dept: file.dept_name,
+              publicUrl: data.publicUrl,
+              owner: file.owner_email,
+              mimetype: file.metadata.mimetype,
+              status: "Team",
+              security: "Enhanced",
+              lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+                "en-IN",
+                {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                }
+              ),
+            };
+          } catch (error) {
+            console.log("Error while getting public URL:", error);
+            return null;
+          }
+        });
+
+        const resolvedFiles = await Promise.all(mappedFiles);
+        const filteredFiles = resolvedFiles.filter((file) => file !== null);
+        // console.log("Files:", filteredFiles);
+
+        setFilteredData(filteredFiles);
+        // localStorage.setItem("filteredFiles", JSON.stringify(filteredFiles));
+      }
+    } catch (error) {
+      console.error("Error fetching files:", error);
+    }
+  }
+
+  //   fetchRecentFiles();
+  // }, []);
 
   function formatFileSize(sizeInBytes) {
     const units = ["B", "KB", "MB", "GB"];
@@ -287,6 +327,50 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // const refreshAccessToken = async () => {
+  //   let token = JSON.parse(sessionStorage.getItem("token"));
+
+  //   if (!token) {
+  //     // Token doesn't exist, handle accordingly
+  //     console.log("No token available.");
+  //     return;
+  //   }
+
+  //   const jwt = token.session.access_token;
+  //   const refreshToken = token.session.refresh_token;
+
+  //   const {
+  //     data: { user },
+  //   } = await supabase.auth.getUser(jwt);
+
+  //   console.log("user", user);
+
+  //   const { data, error } = await supabase.auth.getSession();
+  //   console.log("session", data);
+  //   console.log("error", error);
+
+  //   if (!user) {
+  //     console.log("if user", user);
+
+  //     const currentTime = Math.floor(new Date().getTime() / 1000);
+  //     const expiresIn = data.session.expires_at - currentTime;
+
+  //     if (expiresIn <= 0) {
+  //       // Token has already expired, handle accordingly
+  //       console.log("Token has already expired");
+  //     } else if (expiresIn <= 300) {
+  //       // Refresh when it's about to expire, e.g., 5 minutes left
+  //       const { data, error } = await supabase.auth.refreshSession();
+  //       if (data) {
+  //         console.log("refreshSession", data);
+  //         sessionStorage.setItem("token", JSON.stringify(data));
+  //       }
+  //     } else {
+  //       console.log("user token is still valid");
+  //     }
+  //   }
+  // };
+
   const contextValue = {
     isFileViewerOpen,
     openFileViewer,
@@ -294,7 +378,6 @@ export const AuthProvider = ({ children }) => {
     token,
     setSessionToken,
     screenshotDetected,
-    setScreenshotDetected,
     location,
     error,
     getGeolocation,
@@ -303,6 +386,10 @@ export const AuthProvider = ({ children }) => {
     getProfileData,
     listLocations,
     coordinates,
+    fetchRecentFiles,
+    filteredData,
+    screenshotAlert,
+    formatFileSize,
   };
 
   return (

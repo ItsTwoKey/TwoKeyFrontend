@@ -2,58 +2,62 @@ import React, { useState } from "react";
 import { useAuth } from "../context/authContext";
 import axios from "axios";
 import { supabase } from "../helper/supabaseClient";
-
+import FileViewer from "../components/FileViewer";
 import ErrorPage from "../components/ErrorPage";
 
 const Test = () => {
-  const { token, location, error, getGeolocation, listLocations } = useAuth();
+  const {
+    token,
+    location,
+    error,
+    getGeolocation,
+    listLocations,
+    refreshAccessToken,
+  } = useAuth();
   const [picture, setPicture] = useState(null);
 
-  // console.log("position in profile", location);
-  // console.log("watchError in profile", error);
+  const [imageURL, setImageURL] = useState(null);
 
-  // const getFileUrl = async () => {
-  //   const data = {
-  //     latitude: 18.6161,
-  //     longitude: 73.7286,
-  //   };
-  //   try {
-  //     console.log("token :", token.session.access_token);
-  //     const fileUrl = await axios.post(
-  //       "https://twokeybackend.onrender.com/file/getPresigned/cb06a3b6-9240-4912-9d7e-80d44e2d5dec/",
-  //       data,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token.session.access_token}`,
-  //         },
-  //       }
-  //     );
-  //     console.log("fileUrl :", fileUrl);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const handleClipboardRead = async () => {
+    try {
+      const clipboardItems = await navigator.clipboard.read();
+      for (const item of clipboardItems) {
+        for (const type of item.types) {
+          if (type.startsWith("image/")) {
+            // Handle image data here
+            const blob = await item.getType(type);
+            const url = URL.createObjectURL(blob);
+            setImageURL(url);
 
-  // const handleFinalUpload = async () => {
-  //   try {
-  //     for (const file of droppedFiles) {
-  //       const { data, error } = await supabase.storage
-  //         .from("TwoKey")
-  //         .upload(file.name, file, {
-  //           cacheControl: "3600",
-  //           upsert: false,
-  //         });
+            // Upload image to Supabase Storage
+            await uploadImageToSupabase(blob);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error reading clipboard:", error);
+    }
+  };
 
-  //       if (error) {
-  //         throw new Error("File upload failed");
-  //       }
-  //     }
-  //     showSnackbar("Upload successful", "success");
-  //   } catch (error) {
-  //     console.error("Error occurred in file upload:", error);
-  //     showSnackbar("Upload failed. Please try again.", "error");
-  //   }
-  // };
+  const uploadImageToSupabase = async (imageBlob) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from("avatar") // specify the bucket name
+        .upload(`avatar-${Date.now()}.png`, imageBlob, {
+          contentType: "image/png",
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (error) {
+        console.error("Error uploading image to Supabase:", error);
+      } else {
+        console.log("Image uploaded successfully:", data);
+      }
+    } catch (error) {
+      console.error("Error uploading image to Supabase:", error);
+    }
+  };
 
   let departments = [
     { name: "Account", path: "/account" },
@@ -93,6 +97,54 @@ const Test = () => {
         }
       );
       console.log("users :", users);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getCommonLogs = async () => {
+    try {
+      const users = await axios.get(
+        "https://twokeybackend.onrender.com/file/getLogs/access",
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+      console.log("users :", users);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // const getCommonLogs = async () => {
+  //   try {
+  //     const users = await axios.get(
+  //       "https://twokeybackend.onrender.com/users/list_users/{dept}/",
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token.session.access_token}`,
+  //         },
+  //       }
+  //     );
+  //     console.log("users :", users);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const getSharedFileInfo = async () => {
+    try {
+      const info = await axios.get(
+        "https://twokeybackend.onrender.com/file/sharedFileInfo/2fa789e7-7443-4c7c-8297-53a932982481",
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+      console.log("getSharedFileInfo :", info);
     } catch (error) {
       console.log(error);
     }
@@ -240,6 +292,12 @@ const Test = () => {
       >
         Get Logs
       </button>
+      <button
+        className="py-2 px-4 bg-orange-400 text-white rounded-md"
+        onClick={getCommonLogs}
+      >
+        getCommonLogs
+      </button>
 
       <button
         className="py-2 px-4 bg-pink-400 text-white rounded-md"
@@ -262,11 +320,32 @@ const Test = () => {
         listLocations
       </button>
 
+      <button
+        className="py-2 px-4 bg-purple-400 text-white rounded-md"
+        onClick={getSharedFileInfo}
+      >
+        getSharedFileInfo
+      </button>
+
+      {/* <button
+        className="py-2 px-4 bg-red-400 text-white rounded-md"
+        onClick={refreshAccessToken}
+      >
+        refreshAccessToken
+      </button> */}
+
+      <div>
+        <button onClick={handleClipboardRead}>Read Clipboard</button>
+        {imageURL && <img src={imageURL} alt="Clipboard Img" />}
+      </div>
+
       <div className="h-24 border overflow-y-scroll scrollbar-hide">
         {departments.map((dep, index) => (
           <p key={index}>{dep.name}</p>
         ))}
       </div>
+
+      {/* <FileViewer /> */}
 
       {picture && (
         <img
@@ -280,80 +359,3 @@ const Test = () => {
 };
 
 export default Test;
-
-// useEffect(() => {
-//   const updateProfile = async() =>{
-//     let token = JSON.parse(sessionStorage.getItem("token"));
-//       if (token) {
-//         const res = await axios.put(
-//           "https://twokeybackend.onrender.com/users/updateProfile/",
-//           {
-//             id: token.user.id,
-//             username: formData.username,
-//             name: formData.firstName,
-//             last_name: formData.lastName,
-//             dept: "7075576d-bbbc-47f7-9b50-a272e93dc66f",
-//           },
-//           {
-//             headers: {
-//               Authorization: `Bearer ${token.session.access_token}`,
-//             },
-//           }
-//         );
-
-//         console.log("onboarding success:", res);
-
-//         // console.log("Profile data:", res.data);
-//         // localStorage.setItem("profileData", JSON.stringify(res.data));
-//       }
-//   }
-// },[])
-
-// useEffect(() => {
-//   let data = localStorage.getItem("filteredFiles");
-//   const parsedData = JSON.parse(data);
-//   const filteredByLocation = parsedData.filter((file) =>
-//     file.dept.toLowerCase() === location.pathname.slice(1).toLowerCase()
-//   );
-
-//   console.log("filtered files:", filteredByLocation);
-//   setFilteredData(filteredByLocation);
-// }, [location.pathname]);
-
-{
-  /* <MenuItem disabled>
-                  <span className="flex justify-between items-center w-full">
-                    <span className="flex flex-row items-center gap-2">
-                      <Skeleton
-                        variant="circular"
-                        height={35}
-                        width={35}
-                        sx={{ bgcolor: "grey.500" }}
-                      />
-                      <span>
-                        <p className="text-sm font-semibold">
-                          <Skeleton
-                            width={100}
-                            height={25}
-                            sx={{ bgcolor: "grey.500" }}
-                          />
-                        </p>
-                        <p className="text-xs font-light text-gray-500">
-                          <Skeleton
-                            width={150}
-                            height={20}
-                            sx={{ bgcolor: "grey.500" }}
-                          />
-                        </p>
-                      </span>
-                    </span>
-                    <p className="text-sm font-semibold">
-                      <Skeleton
-                        width={60}
-                        height={30}
-                        sx={{ bgcolor: "grey.500" }}
-                      />
-                    </p>
-                  </span>
-                </MenuItem> */
-}

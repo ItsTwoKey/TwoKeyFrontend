@@ -30,43 +30,9 @@ function SideBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    console.log(profileData, "profile");
     let data = localStorage.getItem("profileData");
     setProfileData(JSON.parse(data));
   }, []);
-
-  // useEffect(() => {
-  //   const getProfilePic = async () => {
-  //     try {
-  //       const { data } = supabase.storage
-  //         .from("avatar")
-  //         .getPublicUrl("onlyforsave1@gmail.com");
-
-  //       setPicture(data.publicUrl);
-
-  //       // console.log(data.publicUrl);
-  //     } catch (error) {
-  //       console.log("Error while getting ProfilePic.");
-  //     }
-  //   };
-
-  //   getProfilePic();
-  // }, []);
-
-  // useEffect(() => {
-  //   async function fetchUser() {
-  //     try {
-  //       let token = JSON.parse(sessionStorage.getItem("token"));
-  //       setData(token.user.user_metadata.full_name);
-
-  //       // console.log("sidebar token :", token.user.user_metadata.full_name);
-  //     } catch (error) {
-  //       console.log("Error while fetching the user profile data.");
-  //     }
-  //   }
-
-  //   fetchUser();
-  // }, []);
 
   const hideSideBar =
     location.pathname === "/" ||
@@ -78,6 +44,7 @@ function SideBar() {
   }
 
   let departments = [
+    { name: "UserManagement", path: "/user-management" },
     { name: "Account", path: "/account" },
     { name: "Finance", path: "/finance" },
     { name: "Development", path: "/development" },
@@ -279,6 +246,7 @@ function SideBarContents({ departments, darkMode }) {
   function handleLogout() {
     navigate("/");
     sessionStorage.removeItem("token");
+    localStorage.removeItem("profileData");
   }
 
   return (
