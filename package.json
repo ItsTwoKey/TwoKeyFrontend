@@ -21,6 +21,7 @@
     "axios": "^1.5.1",
     "file-type": "^18.5.0",
     "leaflet": "^1.9.4",
+    "lottie-react": "^2.4.0",
     "notistack": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
