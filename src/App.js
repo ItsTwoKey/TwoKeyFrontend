@@ -22,6 +22,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuth } from "./context/authContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import ErrorPage from "./components/ErrorPage";
+import TestPage from "./components/TestRefreshToken";
 
 const App = () => {
   const { token } = useAuth();
@@ -46,8 +47,8 @@ const App = () => {
               <Route path="/manufacturing" element={<Manufacturing />} />
               <Route path="/humanresources" element={<HR />} />
               <Route path="/settings" element={<Settings />} />
-
               <Route path="/test" element={<Test />} />
+              <Route path="/test-page" element={<TestPage/>} />
             </Route>
             {/* Public Routes should go below */}
 
