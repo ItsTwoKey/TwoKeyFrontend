@@ -71,7 +71,7 @@ const DueDate = () => {
   };
 
   return (
-    <div className="w-3/5">
+    <div className="w-full md:w-3/5">
       <Paper className="h-72 p-4">
         <div className="flex justify-between items-center">
           <p className="text-sm font-semibold">Due Date</p>

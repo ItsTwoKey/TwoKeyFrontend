@@ -1,8 +1,38 @@
 import React from "react";
 import RoleCount from "../components/RoleCount";
 import UserManagementTable from "../components/UserManagementTable";
+import { supabase } from "../helper/supabaseClient";
 
 const UserManagement = () => {
+  const downloadData = async () => {
+    try {
+      let { data: user_info, error } = await supabase
+        .from("user_info")
+        .select("*");
+
+      if (error) {
+        throw error;
+      }
+
+      // Convert the data to CSV format
+      const csvContent =
+        "data:text/csv;charset=utf-8," +
+        Object.keys(user_info[0]).join(",") +
+        "\n" +
+        user_info.map((row) => Object.values(row).join(",")).join("\n");
+
+      // Create a CSV file and trigger download
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "user_info.csv");
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error("Error fetching data:", error.message);
+    }
+  };
+
   return (
     <div className="p-4">
       <RoleCount />
@@ -17,7 +47,10 @@ const UserManagement = () => {
             </p>
           </span>
 
-          <button className="border border-gray-300 px-4 py-1 text-sm rounded-md mx-2">
+          <button
+            onClick={downloadData}
+            className="border border-gray-300 px-4 py-1 text-sm rounded-md mx-2"
+          >
             Export
           </button>
         </div>

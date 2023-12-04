@@ -1,4 +1,5 @@
 import React from "react";
+import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -49,10 +50,12 @@ const App = () => {
               <Route path="/test" element={<Test />} />
             </Route>
             {/* Public Routes should go below */}
+
+            <Route path="/" element={<Home />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/signup" element={<SignUp />} />
 
-            <Route path="/" element={<Login />} exact />
+            <Route path="/login" element={<Login />} exact />
             <Route
               path="/*"
               element={

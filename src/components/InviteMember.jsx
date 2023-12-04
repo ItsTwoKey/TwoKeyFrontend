@@ -43,9 +43,17 @@ const InviteMember = () => {
     });
   };
 
-  const handleInvite = () => {
+  const handleInvite = async () => {
     console.log("Invite button clicked. Data:", formData);
-    // Additional logic for sending the invite can be added here
+
+    try {
+      const { data, error } = await supabase.auth.admin.inviteUserByEmail(
+        "trimbakeakash5@gmail.com"
+      );
+      console.log("Invite", data);
+    } catch (error) {
+      console.log(error);
+    }
     // closeDialog();
   };
 

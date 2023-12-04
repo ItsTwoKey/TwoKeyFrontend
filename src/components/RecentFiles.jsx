@@ -103,7 +103,7 @@ const RecentFiles = () => {
     fileSize,
     fileId,
     owner,
-    publicUrl,
+    profilePic,
     lastUpdate
   ) => {
     getSharedFileInfo(fileId);
@@ -112,7 +112,7 @@ const RecentFiles = () => {
       size: fileSize,
       id: fileId,
       owner: owner,
-      ownerProfileUrl: publicUrl,
+      ownerProfileUrl: profilePic,
       lastUpdate: lastUpdate,
     });
     setIsFileViewOpen(true);
@@ -184,7 +184,7 @@ const RecentFiles = () => {
                     file.size,
                     file.id,
                     file.owner,
-                    file.publicUrl,
+                    file.profilePic,
                     file.lastUpdate
                   )
                 }
@@ -203,7 +203,7 @@ const RecentFiles = () => {
                     </span>
 
                     <Avatar
-                      src={file.publicUrl}
+                      src={file.profilePic}
                       alt="owner pic"
                       sx={{ width: 20, height: 20 }}
                       className={`${darkMode && "border border-white "}`}
