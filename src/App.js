@@ -35,7 +35,7 @@ const App = () => {
 
           <Background />
           <Routes>
-            <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/user-management" element={<UserManagement />} />
               <Route path="/account" element={<Account />} />
@@ -54,7 +54,6 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/signup" element={<SignUp />} />
-
             <Route path="/login" element={<Login />} exact />
             <Route
               path="/*"
