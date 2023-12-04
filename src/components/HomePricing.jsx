@@ -3,6 +3,7 @@ import Switch from "@mui/material/Switch";
 import { styled } from "@mui/material/styles";
 import Cross from "../assets/cross.svg";
 import Tick from "../assets/tick.svg";
+import CurlyArrow from "../assets/curlyArrow.svg";
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -99,7 +100,7 @@ const HomePricing = () => {
 
   return (
     <div id="pricing" className="bg-[#FAF8F7] h-full py-16">
-      <div className="flex flex-col justify-center items-center w-1/3 mx-auto pb-16 text-center">
+      <div className="flex flex-col justify-center items-center w-1/3 mx-auto text-center">
         <h2 className="text-4xl font-bold">
           Powerful features for{" "}
           <span
@@ -114,12 +115,20 @@ const HomePricing = () => {
         </h2>
         <p className="my-3 text-lg">Choose a plan that’s right for you</p>
 
-        <span className="flex flex-row gap-4 items-center">
-          <p>Pay Monthly</p>
+        <div className="mt-12 relative flex flex-col">
+          <div className="flex flex-row gap-4 items-center">
+            <p>Pay Monthly</p>
+            <IOSSwitch onChange={handleChange} />
+            <p>Pay Yearly</p>
+          </div>
+        </div>
+      </div>
 
-          <IOSSwitch onChange={handleChange} />
-          <p>Pay Yearly</p>
-        </span>
+      <div className="flex justify-center ml-96">
+        <div className="flex justify-center items-baseline w-[180px]">
+          <img src={CurlyArrow} alt="" className="h-16 " />
+          <p className="text-[#5E5ADB] text-lg font-semibold">Save 25%</p>
+        </div>
       </div>
 
       <div className="flex mx-auto w-5/6">
