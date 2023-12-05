@@ -6,10 +6,15 @@ import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import IconButton from "@mui/material/IconButton";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import twokeyLanding from "../assets/twokeyLanding.png";
 import ErrorPage from "../components/ErrorPage";
 import { useMediaQuery } from "@mui/material";
 import { useAuth } from "../context/authContext";
+import HidePassword from "../assets/hidePassword.svg";
+import ShowPassword from "../assets/showPassword.svg";
 
 const Login = () => {
   let navigate = useNavigate();
@@ -23,6 +28,11 @@ const Login = () => {
   });
   const [organizationData, setOrganizationData] = useState("");
   const [pageErr, setPageErr] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const toggleShowPassword = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
 
   console.log(formData);
 
@@ -87,7 +97,7 @@ const Login = () => {
   }, []);
 
   /**
-   * if user is already logged in then redirect to dashboard,
+   * if the user is already logged in then redirect to the dashboard,
    * instead of returning the login page
    */
   if (sessionStorage.getItem("token")) {
@@ -101,6 +111,7 @@ const Login = () => {
   // if (pageErr) {
   //   return <ErrorPage error={pageErr} />;
   // }
+
   return (
     <div className="flex flex-col md:flex-row">
       {!isSmallScreen && (
@@ -168,16 +179,30 @@ const Login = () => {
               Password
             </InputLabel>
 
-            <TextField
-              id="password"
-              variant="outlined"
-              placeholder="Enter your Password"
-              className="w-full bg-gray-100"
-              name="password"
-              type="password"
-              onChange={handleChange}
-              size="small"
-            />
+            <div className="relative w-full">
+              <TextField
+                id="password"
+                variant="outlined"
+                placeholder="Enter your Password"
+                className="w-full bg-gray-100 pr-10"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                onChange={handleChange}
+                size="small"
+              />
+
+              <IconButton
+                onClick={toggleShowPassword}
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </IconButton>
+            </div>
           </span>
 
           <button
