@@ -102,7 +102,7 @@ const HomePricing = () => {
     <div id="pricing" className="bg-[#FAF8F7] h-full py-16">
       <div className="flex flex-col justify-center items-center w-1/3 mx-auto text-center">
         <h2 className="text-4xl font-bold">
-          Powerful features for{" "}
+          Powerful features for <br />
           <span
             style={{
               backgroundImage: "linear-gradient(90deg,#1D4ED8, #55CBFB)",

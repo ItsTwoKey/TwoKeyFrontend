@@ -1,5 +1,10 @@
 import React from "react";
 import Vector from "../assets/Vector.svg";
+import TwoPersonPermission from "../assets/twopersonPermission.gif";
+import AccessTimeWindow from "../assets/accessTimeWindow.gif";
+import CustomizableSecurity from "../assets/customizableSecurity.gif";
+import LocationBasedAccess from "../assets/locationBasedAccess.gif";
+import TrackingAndAudit from "../assets/trackingAndAudit.gif";
 
 const security = [
   { level: "Low" },
@@ -43,7 +48,12 @@ const HomeProduct = () => {
 
       <div className="flex justify-center items-center pb-16">
         <div className="grid grid-cols-2 gap-6">
-          <span className="w-[500px] bg-[#9F9CFF5C] rounded-2xl p-4">
+          <span className="w-[500px] bg-[#9F9CFF5C] rounded-[24px] p-4">
+            <img
+              src={TwoPersonPermission}
+              alt=""
+              className="h-48 p-2 rounded-t-[14px] w-full"
+            />
             <h4 className="text-md font-semibold">Two-Person Permission</h4>
             <p className="text-sm text-gray-600">
               Enforces dual authentication from both the sender and recipient
@@ -52,14 +62,24 @@ const HomeProduct = () => {
           </span>
 
           <span className="w-[500px] flex flex-row gap-6">
-            <span className="bg-[#9F9CFF5C] rounded-2xl p-4 w-1/2">
+            <span className="bg-[#9F9CFF5C] rounded-[24px] p-4 w-1/2">
+              <img
+                src={AccessTimeWindow}
+                alt=""
+                className="h-48 p-2 rounded-t-[14px] w-full"
+              />
               <h4 className="text-md font-semibold ">Two-Person Permission</h4>
               <p className="text-sm text-gray-600 line-clamp-2">
                 Allows senders to specify access time frames, further
                 controlling when recipients can view shared content.
               </p>
             </span>
-            <span className="bg-[#9F9CFF5C] rounded-2xl p-4 w-1/2">
+            <span className="bg-[#9F9CFF5C] rounded-[24px] p-4 w-1/2">
+              <img
+                src={CustomizableSecurity}
+                alt=""
+                className="h-48 p-2 rounded-t-[14px] w-full"
+              />
               <h4 className="text-md font-semibold ">Customizable Security </h4>
               <p className="text-sm text-gray-600 line-clamp-2">
                 Offers a suite of options to tailor security settings, including
@@ -69,7 +89,12 @@ const HomeProduct = () => {
             </span>
           </span>
 
-          <span className="w-[500px] bg-[#9F9CFF5C] rounded-2xl p-4">
+          <span className="w-[500px] bg-[#9F9CFF5C] rounded-[24px] p-4">
+            <img
+              src={LocationBasedAccess}
+              alt=""
+              className="h-56 p-2 rounded-t-[14px] w-full"
+            />
             <h4 className="text-md font-semibold">
               Location-Based Access Notifications
             </h4>
@@ -79,7 +104,12 @@ const HomeProduct = () => {
               integrity.
             </p>
           </span>
-          <span className="w-[500px] bg-[#9F9CFF5C] rounded-2xl p-4">
+          <span className="w-[500px] bg-[#9F9CFF5C] rounded-[24px] p-4">
+            <img
+              src={TrackingAndAudit}
+              alt=""
+              className="h-56 p-2 rounded-t-[14px] w-full"
+            />
             <h4 className="text-md font-semibold">Tracking and Audit Trails</h4>
             <p className="text-sm text-gray-600">
               Maintains a comprehensive log of file access, enhancing
