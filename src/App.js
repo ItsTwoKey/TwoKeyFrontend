@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
@@ -24,8 +24,16 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import ErrorPage from "./components/ErrorPage";
 import TestPage from "./components/TestRefreshToken";
 
+const REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
+
 const App = () => {
-  const { token } = useAuth();
+  const { token, refreshAccessToken } = useAuth();
+  useEffect(()=>{
+    const intervalId = setInterval(() => {
+      refreshAccessToken()
+    }, REFRESH_INTERVAL)
+    return () => clearInterval(intervalId)
+  },[refreshAccessToken])
 
   return (
     <Router>

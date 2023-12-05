@@ -328,27 +328,19 @@ export const AuthProvider = ({ children }) => {
   };
 
   const refreshAccessToken = async () => {
-    const REFRESH_THRESHOLD = 1800;
     try {
+      console.log("Refreshing token...");
       let token = JSON.parse(sessionStorage.getItem("token"));
 
       if(!token) {
         console.log("No token available");
         return;
       }
-      
       const refresh_token = token.session.refresh_token;
-      const currentTimeStamp = Math.floor(Date.now() / 1000);
-      const timeUntilExpiration = token.session.expires_at - currentTimeStamp;
-      console.log("token", token, currentTimeStamp, timeUntilExpiration);
-      if (timeUntilExpiration > REFRESH_THRESHOLD) {
-        console.log("Token is still valid");
-        return;
-      }
       const {data, error} = await supabase.auth.refreshSession({ refresh_token });
-      if(data) {
-        const newExpirationTime = currentTimeStamp + data.session.expires_in;
-        data.session.expires_at = newExpirationTime;
+      if(data && data.session) {
+        data.session.expires_at = Math.floor(Date.now() / 1000) + (48 * 60 * 60);
+        data.session.expires_in = 48 * 60 * 60 * 1000;
         console.log("Token Refreshed Successfully", data);
         setSessionToken(data);
       } else if(error || !data) {

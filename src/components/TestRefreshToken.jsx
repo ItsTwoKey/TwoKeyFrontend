@@ -8,9 +8,14 @@ export default function TestPage() {
   useEffect(() => {
     const fetchToken = async () => {
       const session_token = sessionStorage.getItem("token");
-      setToken(JSON.parse(session_token));
-      console.log(token && token.session);
+      if (session_token) {
+        setToken(JSON.parse(session_token));
+        console.log(token && token.session);
+      } else {
+        console.log("No token available");
+      }
     };
+    
 
     fetchToken();
   }, []);
