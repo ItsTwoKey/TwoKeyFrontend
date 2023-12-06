@@ -63,6 +63,7 @@ const Onboarding = () => {
   const [isPictureSelected, setIsPictureSelected] = useState(false);
   const [departmentList, setDepartmentList] = useState([]);
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     const depData = async () => {
@@ -85,6 +86,14 @@ const Onboarding = () => {
 
     depData();
   }, []);
+
+  /**
+   * if user is already logged in then redirect to dashboard,
+   * instead of returning the login page
+   */
+  if (sessionStorage.getItem("token")) {
+    navigate("/dashboard");
+  }
 
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
