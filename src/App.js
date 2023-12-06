@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
@@ -23,8 +23,16 @@ import { useAuth } from "./context/authContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import ErrorPage from "./components/ErrorPage";
 
+const REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
+
 const App = () => {
-  const { token } = useAuth();
+  const { token, refreshAccessToken } = useAuth();
+  useEffect(()=>{
+    const intervalId = setInterval(() => {
+      refreshAccessToken()
+    }, REFRESH_INTERVAL)
+    return () => clearInterval(intervalId)
+  },[refreshAccessToken])
 
   return (
     <Router>
@@ -35,7 +43,7 @@ const App = () => {
 
           <Background />
           <Routes>
-            <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/user-management" element={<UserManagement />} />
               <Route path="/account" element={<Account />} />
@@ -46,7 +54,6 @@ const App = () => {
               <Route path="/manufacturing" element={<Manufacturing />} />
               <Route path="/humanresources" element={<HR />} />
               <Route path="/settings" element={<Settings />} />
-
               <Route path="/test" element={<Test />} />
             </Route>
             {/* Public Routes should go below */}
