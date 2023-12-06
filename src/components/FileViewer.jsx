@@ -35,6 +35,16 @@ const FileViewer = ({ preUrl }) => {
     height: "100%",
   };
 
+  const overlayStyles = {
+    position: "absolute",
+    top: "0",
+    right: "0",
+    width: "25%",
+    height: "7%",
+    backgroundColor: "inherit",
+    zIndex: 1,
+  };
+
   // Use a Blob URL if available, otherwise use the original preUrl
   const srcUrl = fileBlob ? URL.createObjectURL(fileBlob) : preUrl;
 
@@ -43,6 +53,7 @@ const FileViewer = ({ preUrl }) => {
       {/* Render iframe with Blob URL or original preUrl */}
       <div style={{ ...containerStyles, ...iframeStyles }}>
         <iframe title="Document Viewer" src={srcUrl} style={iframeStyles} />
+        <div style={overlayStyles}></div>
       </div>
     </div>
   );
