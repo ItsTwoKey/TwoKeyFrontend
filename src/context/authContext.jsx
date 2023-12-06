@@ -340,8 +340,6 @@ export const AuthProvider = ({ children }) => {
       const refresh_token = token.session.refresh_token;
       const {data, error} = await supabase.auth.refreshSession({ refresh_token });
       if(data && data.session) {
-        data.session.expires_at = Math.floor(Date.now() / 1000) + (48 * 60 * 60);
-        data.session.expires_in = 48 * 60 * 60 * 1000;
         console.log("Token Refreshed Successfully", data);
         setSessionToken(data);
       } else if(error || !data) {
@@ -353,8 +351,6 @@ export const AuthProvider = ({ children }) => {
       console.error("Error refreshing token:", error);
     }
   }
-
-
 
   // const refreshAccessToken = async () => {
   //   let token = JSON.parse(sessionStorage.getItem("token"));
