@@ -40,7 +40,7 @@ const FileViewer = ({ preUrl }) => {
     top: "0",
     right: "0",
     width: "25%",
-    height: "7%",
+    height: "10%",
     backgroundColor: "inherit",
     zIndex: 1,
   };
