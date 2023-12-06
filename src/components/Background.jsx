@@ -4,6 +4,7 @@ function Background() {
   const location = useLocation();
   const hideBackground =
     location.pathname === "/" ||
+    location.pathname === "/login" ||
     location.pathname === "/signup" ||
     location.pathname === "/onboarding" ||
     location.pathname === "/settings";

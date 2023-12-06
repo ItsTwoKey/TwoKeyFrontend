@@ -36,6 +36,7 @@ function SideBar() {
 
   const hideSideBar =
     location.pathname === "/" ||
+    location.pathname === "/login" ||
     location.pathname === "/signup" ||
     location.pathname === "/onboarding";
 

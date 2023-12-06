@@ -79,8 +79,8 @@ const FileDrawer = ({
           },
         }
       );
-      console.log("presignedUrl:", presignedUrl.data.signed_url);
-      localStorage.setItem("preUrl", presignedUrl.data.signed_url);
+      // console.log("presignedUrl:", presignedUrl.data.signed_url);
+      // localStorage.setItem("preUrl", presignedUrl.data.signed_url);
 
       toggleFileViewer();
     } catch (error) {

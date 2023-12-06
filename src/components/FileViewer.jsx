@@ -1,12 +1,27 @@
-import React from "react";
-import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import React, { useEffect, useState } from "react";
 
-const FileViewer = () => {
-  let docs = [
-    {
-      uri: "https://dxqrkmzagreeiyncplzx.supabase.co/storage/v1/object/sign/TwoKey/BTL1Syllabus.pdf?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJUd29LZXkvQlRMMVN5bGxhYnVzLnBkZiIsImlhdCI6MTcwMTI2NTA0NiwiZXhwIjoxNzAxODY5ODQ2fQ.FIjyI2qc30Sdrcf3D1hERYpCCaj166LlOBk1TPwC5xw&t=2023-11-29T13%3A37%3A26.209Z",
-    },
-  ];
+const FileViewer = ({ preUrl }) => {
+  const [fileBlob, setFileBlob] = useState(null);
+
+  useEffect(() => {
+    const fetchFileBlob = async () => {
+      try {
+        // Fetch the data associated with the URL
+        const response = await fetch(preUrl);
+
+        // Get the data as a Blob
+        const blob = await response.blob();
+
+        // Set the Blob in the component state
+        setFileBlob(blob);
+      } catch (error) {
+        console.error("Error fetching or creating Blob:", error);
+      }
+    };
+
+    // Call the fetchFileBlob function only once when the component mounts
+    fetchFileBlob();
+  }, [preUrl]);
 
   const containerStyles = {
     width: "100%",
@@ -25,27 +40,19 @@ const FileViewer = () => {
     top: "0",
     right: "0",
     width: "25%",
-    height: "7%",
+    height: "10%",
     backgroundColor: "inherit",
     zIndex: 1,
   };
 
+  // Use a Blob URL if available, otherwise use the original preUrl
+  const srcUrl = fileBlob ? URL.createObjectURL(fileBlob) : preUrl;
+
   return (
     <div style={containerStyles}>
-      {/* Render DocViewer */}
-      {/* <DocViewer
-        prefetchMethod="GET"
-        documents={docs}
-        pluginRenderers={DocViewerRenderers}
-      /> */}
-
-      {/* Render iframe with overlay */}
+      {/* Render iframe with Blob URL or original preUrl */}
       <div style={{ ...containerStyles, ...iframeStyles }}>
-        <iframe
-          title="Document Viewer"
-          src={docs[0].uri}
-          style={iframeStyles}
-        />
+        <iframe title="Document Viewer" src={srcUrl} style={iframeStyles} />
         <div style={overlayStyles}></div>
       </div>
     </div>

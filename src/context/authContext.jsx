@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const checkClipboardForImage = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 200));
     try {
       const data = await navigator.clipboard.read();
       const types = data[0].types;
@@ -108,8 +109,8 @@ export const AuthProvider = ({ children }) => {
       let token = JSON.parse(sessionStorage.getItem("token"));
 
       if (fileId) {
-        const img = await axios.get(
-          `https://twokeybackend.onrender.com/file/screenShotAlert/${fileId}/`,
+        const res = await axios.get(
+          `https://twokeybackend.onrender.com/file/logEvent/${fileId}?event=screenshot`,
 
           {
             headers: {
@@ -117,7 +118,7 @@ export const AuthProvider = ({ children }) => {
             },
           }
         );
-        console.log("img :", img);
+        console.log("screenshot log :", res);
       }
     } catch (error) {
       console.log(error);

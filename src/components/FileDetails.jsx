@@ -114,8 +114,8 @@ const FileDetails = ({ fileInfo, sharedFileInfo, closeDrawer }) => {
           <p className="text-sm text-gray-400 font-semibold">Who has access</p>
 
           {sharedFileInfo?.shared_with?.map((user) => (
-            <span className="flex flex-row items-center">
-              <Tooltip key={user.user_id} title={user.user_email} arrow>
+            <span key={user.user_id} className="flex flex-row items-center">
+              <Tooltip title={user.user_email} arrow>
                 <Avatar
                   src={user.profile_pic}
                   alt="owner pic"
