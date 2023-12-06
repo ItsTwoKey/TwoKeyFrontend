@@ -32,6 +32,10 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   }, []);
 
   useEffect(() => {
+    openDialog();
+  }, []);
+
+  useEffect(() => {
     const getPresignedUrl = async () => {
       try {
         let token = JSON.parse(sessionStorage.getItem("token"));
@@ -49,7 +53,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
             },
           }
         );
-        console.log("presignedUrl:", presignedUrl.data.signed_url);
+        // console.log("presignedUrl:", presignedUrl.data.signed_url);
         setPreUrl(presignedUrl.data.signed_url);
         setLoadingUrl(false);
       } catch (error) {
@@ -71,8 +75,8 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
             padding: 0,
           }}
         >
-          <div className={`flex ${screenshotDetected ? "blur" : ""}`}>
-            <div className="w-4/5">
+          <div className={`flex `}>
+            <div className={`w-4/5 ${screenshotDetected ? "blur" : ""}`}>
               {loadingUrl ? (
                 <div className="text-center pt-20">Fetching URL...</div>
               ) : preUrl.length ? (

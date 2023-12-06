@@ -200,7 +200,11 @@ const Login = () => {
                   transform: "translateY(-50%)",
                 }}
               >
-                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                {showPassword ? (
+                  <img src={ShowPassword} alt="Show" />
+                ) : (
+                  <img src={HidePassword} alt="Hide" />
+                )}
               </IconButton>
             </div>
           </span>

@@ -1,14 +1,27 @@
-import React from "react";
-import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import React, { useEffect, useState } from "react";
 
 const FileViewer = ({ preUrl }) => {
-  // Check if the URL is empty
+  const [fileBlob, setFileBlob] = useState(null);
 
-  let docs = [
-    {
-      uri: preUrl,
-    },
-  ];
+  useEffect(() => {
+    const fetchFileBlob = async () => {
+      try {
+        // Fetch the data associated with the URL
+        const response = await fetch(preUrl);
+
+        // Get the data as a Blob
+        const blob = await response.blob();
+
+        // Set the Blob in the component state
+        setFileBlob(blob);
+      } catch (error) {
+        console.error("Error fetching or creating Blob:", error);
+      }
+    };
+
+    // Call the fetchFileBlob function only once when the component mounts
+    fetchFileBlob();
+  }, [preUrl]);
 
   const containerStyles = {
     width: "100%",
@@ -22,33 +35,14 @@ const FileViewer = ({ preUrl }) => {
     height: "100%",
   };
 
-  const overlayStyles = {
-    position: "absolute",
-    top: "0",
-    right: "0",
-    width: "25%",
-    height: "7%",
-    backgroundColor: "inherit",
-    zIndex: 1,
-  };
+  // Use a Blob URL if available, otherwise use the original preUrl
+  const srcUrl = fileBlob ? URL.createObjectURL(fileBlob) : preUrl;
 
   return (
     <div style={containerStyles}>
-      {/* Render DocViewer */}
-      {/* <DocViewer
-        prefetchMethod="GET"
-        documents={docs}
-        pluginRenderers={DocViewerRenderers}
-      /> */}
-
-      {/* Render iframe with overlay */}
+      {/* Render iframe with Blob URL or original preUrl */}
       <div style={{ ...containerStyles, ...iframeStyles }}>
-        <iframe
-          title="Document Viewer"
-          src={docs[0].uri}
-          style={iframeStyles}
-        />
-        <div style={overlayStyles}></div>
+        <iframe title="Document Viewer" src={srcUrl} style={iframeStyles} />
       </div>
     </div>
   );
