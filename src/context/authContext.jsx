@@ -109,7 +109,7 @@ export const AuthProvider = ({ children }) => {
 
       if (fileId) {
         const img = await axios.get(
-          `https://twokeybackend.onrender.com/file/screenShotAlert/${fileId}/`,
+          `https://twokeybackend.onrender.com/file/logEvent/${fileId}?event=screenshot`,
 
           {
             headers: {
