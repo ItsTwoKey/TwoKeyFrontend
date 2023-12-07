@@ -6,7 +6,23 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import { useDarkMode } from "../context/darkModeContext";
 import { useLocation } from "react-router-dom";
+// import { supabase } from "../helper/supabaseClient";
 import Skeleton from "@mui/material/Skeleton";
+
+import { createClient } from "@supabase/supabase-js";
+// Initialize the Supabase client with your Supabase URL and API key
+// export function supabaseAuth() {
+const supabase = createClient(
+  process.env.REACT_APP_SUPABASE_URL,
+  process.env.REACT_APP_SUPABASE_ANON_KEY,
+  {
+    global: {
+      headers: {
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IjN2ZzladWc1Y3lPbitFd20iLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzAyMDE1MzE5LCJpYXQiOjE3MDE5MjUzMjAsImlzcyI6Imh0dHBzOi8vZHhxcmttemFncmVlaXluY3Bsenguc3VwYWJhc2UuY28vYXV0aC92MSIsInN1YiI6ImQyYTA2NWUzLTQ3ODMtNDdkOS04YTQ5LWI2ZmY4NzBkNzA3NSIsImVtYWlsIjoib25seWZvcnNhdmUxQGdtYWlsLmNvbSIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZnVsbF9uYW1lIjoiYWthc2giLCJvcmdhbml6YXRpb24iOiJiY2MzODIxMC0yNTFiLTQwOTAtOGExMC1lMjE5NjVmY2VjNDgifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTcwMTkyNTMyMH1dLCJzZXNzaW9uX2lkIjoiOGJmMWUyNTQtNjc4My00OTVlLWIwMzAtNGRmMzZkNmZlMDAyIn0.xt1VjCcdsT7xfYTIluyCEda5GHNSegQ0Hk1hVcUYkL4`,
+      },
+    },
+  }
+);
 
 const LatestActivities = () => {
   const { darkMode } = useDarkMode();
@@ -14,14 +30,39 @@ const LatestActivities = () => {
   const [logs, setLogs] = useState([]);
   const location = useLocation();
   const isUserProfile = location.pathname.includes("/profile");
+
+  // useEffect(() => {
+  //   const getCommonLogs = async () => {
+  //     try {
+  //       let token = JSON.parse(sessionStorage.getItem("token"));
+
+  //       // Check if the user is on the profile
+
+  //       // Use the appropriate URL based on the user's location
+  //       const logsEndpoint = isUserProfile
+  //         ? "https://twokeybackend.onrender.com/file/getLogs?global=0&recs=5"
+  //         : "https://twokeybackend.onrender.com/file/getLogs/?recs=10";
+
+  //       const accessLogs = await axios.get(logsEndpoint, {
+  //         headers: {
+  //           Authorization: `Bearer ${token.session.access_token}`,
+  //         },
+  //       });
+
+  //       setLogs(accessLogs.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+
+  //   getCommonLogs();
+  // }, []);
+
   useEffect(() => {
     const getCommonLogs = async () => {
       try {
         let token = JSON.parse(sessionStorage.getItem("token"));
 
-        // Check if the user is on the profile
-
-        // Use the appropriate URL based on the user's location
         const logsEndpoint = isUserProfile
           ? "https://twokeybackend.onrender.com/file/getLogs?global=0&recs=5"
           : "https://twokeybackend.onrender.com/file/getLogs/?recs=10";
@@ -38,8 +79,20 @@ const LatestActivities = () => {
       }
     };
 
+    const channel = supabase
+      .channel("custom-all-channel")
+      .on("postgres_changes", { event: "*", schema: "public" }, (payload) => {
+        console.log("Change received!", payload);
+        // setLogs((prevLogs) => [payload.new, ...prevLogs]);
+      })
+      .subscribe();
+
     getCommonLogs();
-  }, []);
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [isUserProfile]); // Added isUserProfile to the dependency array
 
   const formatTimestamp = (timestamp) => {
     const options = {
@@ -143,3 +196,5 @@ const LatestActivities = () => {
 };
 
 export default LatestActivities;
+
+// service role key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4cXJrbXphZ3JlZWl5bmNwbHp4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY5NzQ1MDU2NiwiZXhwIjoyMDEzMDI2NTY2fQ.biLOfzpkrpp3zJ74xblbHwUJg1bziRwRzcUomcJKZo0"
