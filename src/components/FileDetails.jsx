@@ -7,7 +7,7 @@ import Trash from "../assets/trash.svg";
 import DownloadFile from "../assets/downloadFile.svg";
 import { supabase } from "../helper/supabaseClient";
 
-const FileDetails = ({ fileInfo, sharedFileInfo, closeDrawer }) => {
+const FileDetails = ({ fileInfo, sharedFileInfo, closeDrawer, preUrl }) => {
   console.log("fileInfo", fileInfo);
   console.log("sharedFileInfo", sharedFileInfo);
 
@@ -26,14 +26,26 @@ const FileDetails = ({ fileInfo, sharedFileInfo, closeDrawer }) => {
     closeDrawer();
   };
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     try {
-      const { data, error } = await supabase.storage
-        .from("TwoKey")
-        .download(fileInfo.name);
-      console.log("Download success", data);
+      // Create a temporary anchor element
+      const downloadLink = document.createElement("a");
+      downloadLink.href = preUrl;
+      downloadLink.download = fileInfo.name;
+
+      // Append the anchor element to the document and click it to trigger the download
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+
+      // Remove the anchor element from the document
+      document.body.removeChild(downloadLink);
+
+      console.log("Download success");
     } catch (error) {
-      console.log("Error occured while downloading the file.");
+      console.error(
+        "Error occurred while downloading the file:",
+        error.message
+      );
     }
   };
 

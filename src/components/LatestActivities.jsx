@@ -7,22 +7,8 @@ import Tooltip from "@mui/material/Tooltip";
 import { useDarkMode } from "../context/darkModeContext";
 import { useLocation } from "react-router-dom";
 // import { supabase } from "../helper/supabaseClient";
-import Skeleton from "@mui/material/Skeleton";
 
-import { createClient } from "@supabase/supabase-js";
-// Initialize the Supabase client with your Supabase URL and API key
-// export function supabaseAuth() {
-const supabase = createClient(
-  process.env.REACT_APP_SUPABASE_URL,
-  process.env.REACT_APP_SUPABASE_ANON_KEY,
-  {
-    global: {
-      headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IjN2ZzladWc1Y3lPbitFd20iLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzAyMDE1MzE5LCJpYXQiOjE3MDE5MjUzMjAsImlzcyI6Imh0dHBzOi8vZHhxcmttemFncmVlaXluY3Bsenguc3VwYWJhc2UuY28vYXV0aC92MSIsInN1YiI6ImQyYTA2NWUzLTQ3ODMtNDdkOS04YTQ5LWI2ZmY4NzBkNzA3NSIsImVtYWlsIjoib25seWZvcnNhdmUxQGdtYWlsLmNvbSIsInBob25lIjoiIiwiYXBwX21ldGFkYXRhIjp7InByb3ZpZGVyIjoiZW1haWwiLCJwcm92aWRlcnMiOlsiZW1haWwiXX0sInVzZXJfbWV0YWRhdGEiOnsiZnVsbF9uYW1lIjoiYWthc2giLCJvcmdhbml6YXRpb24iOiJiY2MzODIxMC0yNTFiLTQwOTAtOGExMC1lMjE5NjVmY2VjNDgifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTcwMTkyNTMyMH1dLCJzZXNzaW9uX2lkIjoiOGJmMWUyNTQtNjc4My00OTVlLWIwMzAtNGRmMzZkNmZlMDAyIn0.xt1VjCcdsT7xfYTIluyCEda5GHNSegQ0Hk1hVcUYkL4`,
-      },
-    },
-  }
-);
+import Skeleton from "@mui/material/Skeleton";
 
 const LatestActivities = () => {
   const { darkMode } = useDarkMode();
@@ -79,20 +65,20 @@ const LatestActivities = () => {
       }
     };
 
-    const channel = supabase
-      .channel("custom-all-channel")
-      .on("postgres_changes", { event: "*", schema: "public" }, (payload) => {
-        console.log("Change received!", payload);
-        // setLogs((prevLogs) => [payload.new, ...prevLogs]);
-      })
-      .subscribe();
+    // const channel = supabase
+    //   .channel("custom-all-channel")
+    //   .on("postgres_changes", { event: "*", schema: "public" }, (payload) => {
+    //     console.log("Change received!", payload);
+    //     // setLogs((prevLogs) => [payload.new, ...prevLogs]);
+    //   })
+    //   .subscribe();
 
-    getCommonLogs();
+    // getCommonLogs();
 
-    return () => {
-      channel.unsubscribe();
-    };
-  }, [isUserProfile]); // Added isUserProfile to the dependency array
+    // return () => {
+    //   channel.unsubscribe();
+    // };
+  }, [isUserProfile]);
 
   const formatTimestamp = (timestamp) => {
     const options = {

@@ -1,28 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 const FileViewer = ({ preUrl }) => {
-  const [fileBlob, setFileBlob] = useState(null);
-
-  useEffect(() => {
-    const fetchFileBlob = async () => {
-      try {
-        // Fetch the data associated with the URL
-        const response = await fetch(preUrl);
-
-        // Get the data as a Blob
-        const blob = await response.blob();
-
-        // Set the Blob in the component state
-        setFileBlob(blob);
-      } catch (error) {
-        console.error("Error fetching or creating Blob:", error);
-      }
-    };
-
-    // Call the fetchFileBlob function only once when the component mounts
-    fetchFileBlob();
-  }, [preUrl]);
-
   const containerStyles = {
     width: "100%",
     height: "100%",
@@ -45,14 +23,11 @@ const FileViewer = ({ preUrl }) => {
     zIndex: 1,
   };
 
-  // Use a Blob URL if available, otherwise use the original preUrl
-  const srcUrl = fileBlob ? URL.createObjectURL(fileBlob) : preUrl;
-
   return (
     <div style={containerStyles}>
       {/* Render iframe with Blob URL or original preUrl */}
       <div style={{ ...containerStyles, ...iframeStyles }}>
-        <iframe title="Document Viewer" src={srcUrl} style={iframeStyles} />
+        <iframe title="Document Viewer" src={preUrl} style={iframeStyles} />
         <div style={overlayStyles}></div>
       </div>
     </div>

@@ -35,6 +35,36 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
     openDialog();
   }, []);
 
+  // useEffect(() => {
+  //   const getPresignedUrl = async () => {
+  //     try {
+  //       let token = JSON.parse(sessionStorage.getItem("token"));
+
+  //       const body = {
+  //         latitude: 18.44623721673684,
+  //         longitude: 73.82762833796289,
+  //       };
+  //       const presignedUrl = await axios.post(
+  //         `https://twokeybackend.onrender.com/file/getPresigned/${fileInfo.id}/`,
+  //         body,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token.session.access_token}`,
+  //           },
+  //         }
+  //       );
+  //       console.log("presignedUrl:", presignedUrl.data.signed_url);
+  //       setPreUrl(presignedUrl.data.signed_url);
+  //       setLoadingUrl(false);
+  //     } catch (error) {
+  //       console.log("Error while getPresignedUrl", error);
+  //       setLoadingUrl(false);
+  //     }
+  //   };
+
+  //   getPresignedUrl();
+  // }, [fileInfo.id]);
+
   useEffect(() => {
     const getPresignedUrl = async () => {
       try {
@@ -53,8 +83,24 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
             },
           }
         );
-        // console.log("presignedUrl:", presignedUrl.data.signed_url);
-        setPreUrl(presignedUrl.data.signed_url);
+
+        const url = presignedUrl.data.signed_url;
+
+        // Fetch data from the URL
+        const response = await axios.get(url, {
+          responseType: "arraybuffer",
+        });
+
+        // Convert array buffer to blob
+        const blob = new Blob([response.data], {
+          type: response.headers["content-type"],
+        });
+
+        // Convert blob to data URL
+        const dataUrl = URL.createObjectURL(blob);
+        // console.log("blob", dataUrl);
+
+        setPreUrl(dataUrl);
         setLoadingUrl(false);
       } catch (error) {
         console.log("Error while getPresignedUrl", error);
@@ -92,6 +138,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
                 fileInfo={fileInfo}
                 sharedFileInfo={sharedFileInfo}
                 closeDrawer={closeDrawer}
+                preUrl={preUrl}
               />
             </div>
           </div>
