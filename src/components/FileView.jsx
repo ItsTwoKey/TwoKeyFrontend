@@ -35,36 +35,6 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
     openDialog();
   }, []);
 
-  // useEffect(() => {
-  //   const getPresignedUrl = async () => {
-  //     try {
-  //       let token = JSON.parse(sessionStorage.getItem("token"));
-
-  //       const body = {
-  //         latitude: 18.44623721673684,
-  //         longitude: 73.82762833796289,
-  //       };
-  //       const presignedUrl = await axios.post(
-  //         `https://twokeybackend.onrender.com/file/getPresigned/${fileInfo.id}/`,
-  //         body,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token.session.access_token}`,
-  //           },
-  //         }
-  //       );
-  //       console.log("presignedUrl:", presignedUrl.data.signed_url);
-  //       setPreUrl(presignedUrl.data.signed_url);
-  //       setLoadingUrl(false);
-  //     } catch (error) {
-  //       console.log("Error while getPresignedUrl", error);
-  //       setLoadingUrl(false);
-  //     }
-  //   };
-
-  //   getPresignedUrl();
-  // }, [fileInfo.id]);
-
   useEffect(() => {
     const getPresignedUrl = async () => {
       try {

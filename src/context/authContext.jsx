@@ -310,6 +310,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const listLocations = async () => {
+    let token = JSON.parse(sessionStorage.getItem("token"));
     try {
       const locations = await axios.get(
         "https://twokeybackend.onrender.com/file/file/listLocation/",
@@ -333,24 +334,25 @@ export const AuthProvider = ({ children }) => {
       console.log("Refreshing token...");
       let token = JSON.parse(sessionStorage.getItem("token"));
 
-      if(!token) {
+      if (!token) {
         console.log("No token available");
         return;
       }
       const refresh_token = token.session.refresh_token;
-      const {data, error} = await supabase.auth.refreshSession({ refresh_token });
-      if(data && data.session) {
+      const { data, error } = await supabase.auth.refreshSession({
+        refresh_token,
+      });
+      if (data && data.session) {
         console.log("Token Refreshed Successfully", data);
         setSessionToken(data);
-      } else if(error || !data) {
+      } else if (error || !data) {
         console.error("Error refreshing token:", error);
       }
-      
     } catch (error) {
       // handle error accordingly
       console.error("Error refreshing token:", error);
     }
-  }
+  };
 
   // const refreshAccessToken = async () => {
   //   let token = JSON.parse(sessionStorage.getItem("token"));
@@ -395,8 +397,6 @@ export const AuthProvider = ({ children }) => {
   //     }
   //   }
   // };
-
-
 
   const contextValue = {
     isFileViewerOpen,

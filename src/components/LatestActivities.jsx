@@ -17,36 +17,19 @@ const LatestActivities = () => {
   const location = useLocation();
   const isUserProfile = location.pathname.includes("/profile");
 
-  // useEffect(() => {
-  //   const getCommonLogs = async () => {
-  //     try {
-  //       let token = JSON.parse(sessionStorage.getItem("token"));
-
-  //       // Check if the user is on the profile
-
-  //       // Use the appropriate URL based on the user's location
-  //       const logsEndpoint = isUserProfile
-  //         ? "https://twokeybackend.onrender.com/file/getLogs?global=0&recs=5"
-  //         : "https://twokeybackend.onrender.com/file/getLogs/?recs=10";
-
-  //       const accessLogs = await axios.get(logsEndpoint, {
-  //         headers: {
-  //           Authorization: `Bearer ${token.session.access_token}`,
-  //         },
-  //       });
-
-  //       setLogs(accessLogs.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   getCommonLogs();
-  // }, []);
-
   useEffect(() => {
     const getCommonLogs = async () => {
       try {
+        const cacheKey = isUserProfile ? "userLogs" : "commonLogs";
+
+        // Check if data is available in localStorage
+        const cachedLogs = localStorage.getItem(cacheKey);
+
+        if (cachedLogs) {
+          console.log("Using cached logs:", JSON.parse(cachedLogs));
+          setLogs(JSON.parse(cachedLogs));
+        }
+
         let token = JSON.parse(sessionStorage.getItem("token"));
 
         const logsEndpoint = isUserProfile
@@ -59,25 +42,18 @@ const LatestActivities = () => {
           },
         });
 
+        console.log("Common logs", accessLogs.data);
+
+        // Replace the cached data with the new data
+        localStorage.setItem(cacheKey, JSON.stringify(accessLogs.data));
+
         setLogs(accessLogs.data);
       } catch (error) {
         console.log(error);
       }
     };
 
-    // const channel = supabase
-    //   .channel("custom-all-channel")
-    //   .on("postgres_changes", { event: "*", schema: "public" }, (payload) => {
-    //     console.log("Change received!", payload);
-    //     // setLogs((prevLogs) => [payload.new, ...prevLogs]);
-    //   })
-    //   .subscribe();
-
-    // getCommonLogs();
-
-    // return () => {
-    //   channel.unsubscribe();
-    // };
+    getCommonLogs();
   }, [isUserProfile]);
 
   const formatTimestamp = (timestamp) => {
@@ -159,6 +135,8 @@ const LatestActivities = () => {
                       <span className="font-semibold">{log.username}</span>{" "}
                       {log.event === "screenshot"
                         ? "took Screenshot of"
+                        : log.event === "download"
+                        ? "downloaded"
                         : "accessed"}
                       <span className="font-semibold"> {log.file_name}</span>{" "}
                       file.
@@ -182,5 +160,3 @@ const LatestActivities = () => {
 };
 
 export default LatestActivities;
-
-// service role key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4cXJrbXphZ3JlZWl5bmNwbHp4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY5NzQ1MDU2NiwiZXhwIjoyMDEzMDI2NTY2fQ.biLOfzpkrpp3zJ74xblbHwUJg1bziRwRzcUomcJKZo0"

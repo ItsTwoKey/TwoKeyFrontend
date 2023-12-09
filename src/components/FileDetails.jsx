@@ -6,6 +6,8 @@ import LeftArrow from "../assets/leftArrow.svg";
 import Trash from "../assets/trash.svg";
 import DownloadFile from "../assets/downloadFile.svg";
 import { supabase } from "../helper/supabaseClient";
+import axios from "axios";
+import AI from "../assets/ai.svg";
 
 const FileDetails = ({ fileInfo, sharedFileInfo, closeDrawer, preUrl }) => {
   console.log("fileInfo", fileInfo);
@@ -26,7 +28,28 @@ const FileDetails = ({ fileInfo, sharedFileInfo, closeDrawer, preUrl }) => {
     closeDrawer();
   };
 
-  const handleDownload = () => {
+  const downloadAlert = async (fileId) => {
+    try {
+      let token = JSON.parse(sessionStorage.getItem("token"));
+
+      if (fileId) {
+        const res = await axios.get(
+          `https://twokeybackend.onrender.com/file/logEvent/${fileId}?event=download`,
+
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+        console.log("download log :", res);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDownload = async () => {
     try {
       // Create a temporary anchor element
       const downloadLink = document.createElement("a");
@@ -41,6 +64,7 @@ const FileDetails = ({ fileInfo, sharedFileInfo, closeDrawer, preUrl }) => {
       document.body.removeChild(downloadLink);
 
       console.log("Download success");
+      await downloadAlert(fileInfo.id);
     } catch (error) {
       console.error(
         "Error occurred while downloading the file:",
@@ -146,7 +170,7 @@ const FileDetails = ({ fileInfo, sharedFileInfo, closeDrawer, preUrl }) => {
           className="h-12 w-12 shadow-lg border border-gray-500 bg-[#3C4042] rounded-full"
           onClick={() => alert("AI clicked")}
         >
-          AI
+          <img src={AI} alt="AI" className="mx-auto" />
         </button>
       </div>
     </div>

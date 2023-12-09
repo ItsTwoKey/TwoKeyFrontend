@@ -28,10 +28,24 @@ const RecentFiles = () => {
   useEffect(() => {
     const fetchRecentFiles = async () => {
       try {
+        const cacheKey = "recentFilesCache";
+
+        // Check if recent files data is available in localStorage
+        const cachedRecentFiles = localStorage.getItem(cacheKey);
+
+        if (cachedRecentFiles) {
+          console.log(
+            "Using cached recent files:",
+            JSON.parse(cachedRecentFiles)
+          );
+          setFilteredData(JSON.parse(cachedRecentFiles));
+          setLoading(false);
+        }
+
         let token = JSON.parse(sessionStorage.getItem("token"));
 
         const recentFilesFromBackend = await axios.get(
-          "https://twokeybackend.onrender.com/file/files/",
+          "https://twokeybackend.onrender.com/file/files/?recs=5",
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -39,12 +53,9 @@ const RecentFiles = () => {
           }
         );
 
-        console.log(
-          "recentFilesFromBackend Recent files",
-          recentFilesFromBackend.data
-        );
+        console.log("Recent files from backend", recentFilesFromBackend.data);
 
-        if (recentFilesFromBackend) {
+        if (recentFilesFromBackend.data) {
           const mappedFiles = recentFilesFromBackend.data.map((file) => {
             return {
               id: file.id,
@@ -70,9 +81,14 @@ const RecentFiles = () => {
             };
           });
 
+          // Replace the cached recent files data with the new data
+          localStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
+
+          // Update the state with the new data
           setFilteredData(mappedFiles);
-          setLoading(false);
         }
+
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching files:", error);
       }

@@ -9,9 +9,46 @@ const DueDate = () => {
   const [dues, setDues] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // useEffect(() => {
+  //   const getDueDates = async () => {
+  //     try {
+  //       let token = JSON.parse(sessionStorage.getItem("token"));
+
+  //       const dueDates = await axios.get(
+  //         "https://twokeybackend.onrender.com/file/getLogs/dues/",
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token.session.access_token}`,
+  //           },
+  //         }
+  //       );
+
+  //       console.log("dueDates", dueDates.data);
+  //       setDues(dueDates.data);
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.log(error);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   getDueDates();
+  // }, []);
+
   useEffect(() => {
-    const getDueDates = async () => {
+    const fetchDueDates = async () => {
       try {
+        const cacheKey = "dueDatesCache";
+
+        // Check if due dates data is available in localStorage
+        const cachedDueDates = localStorage.getItem(cacheKey);
+
+        if (cachedDueDates) {
+          console.log("Using cached due dates:", JSON.parse(cachedDueDates));
+          setDues(JSON.parse(cachedDueDates));
+          setLoading(false);
+        }
+
         let token = JSON.parse(sessionStorage.getItem("token"));
 
         const dueDates = await axios.get(
@@ -23,16 +60,24 @@ const DueDate = () => {
           }
         );
 
-        console.log("dueDates", dueDates.data);
-        setDues(dueDates.data);
+        console.log("Due dates", dueDates.data);
+
+        if (dueDates.data) {
+          // Replace the cached due dates data with the new data
+          localStorage.setItem(cacheKey, JSON.stringify(dueDates.data));
+
+          // Update the state with the new data
+          setDues(dueDates.data);
+        }
+
         setLoading(false);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching due dates:", error);
         setLoading(false);
       }
     };
 
-    getDueDates();
+    fetchDueDates();
   }, []);
 
   const skeletons = Array.from({ length: 4 }, (_, i) => (

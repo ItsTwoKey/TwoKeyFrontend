@@ -2,6 +2,7 @@ import React from "react";
 import RoleCount from "../components/RoleCount";
 import UserManagementTable from "../components/UserManagementTable";
 import { supabase } from "../helper/supabaseClient";
+import DownloadCloud from "../assets/downloadCloud.svg";
 
 const UserManagement = () => {
   const downloadData = async () => {
@@ -49,8 +50,9 @@ const UserManagement = () => {
 
           <button
             onClick={downloadData}
-            className="border border-gray-300 px-4 py-1 text-sm rounded-md mx-2"
+            className="border border-gray-300 px-4 py-1.5 text-sm rounded-md mx-2 flex items-center gap-2"
           >
+            <img src={DownloadCloud} alt="" />
             Export
           </button>
         </div>

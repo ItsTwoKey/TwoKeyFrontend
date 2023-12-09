@@ -216,34 +216,6 @@ const Test = () => {
     }
   };
 
-  // const listLocations = async () => {
-  //   try {
-  //     const locations = await axios.get(
-  //       "https://twokeybackend.onrender.com/file/file/listLocation/",
-
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token.session.access_token}`,
-  //         },
-  //       }
-  //     );
-
-  //     // locations.data.features.map((items) =>
-  //     //   console.log(
-  //     //     "id:",
-  //     //     items.id,
-  //     //     "location:",
-  //     //     items.geometry.coordinates[0],
-  //     //     items.geometry.coordinates[1]
-  //     //   )
-  //     // );
-
-  //     console.log("locations :", locations.data.features);
-  //   } catch (error) {
-  //     console.log("Error while listing location Coordinates.", error);
-  //   }
-  // };
-
   if (!sessionStorage.getItem("token")) {
     return <ErrorPage error="You are not authorised" />;
   }

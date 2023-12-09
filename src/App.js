@@ -17,6 +17,7 @@ import Sales from "./pages/Sales";
 import HR from "./pages/HR";
 import Background from "./components/Background";
 import Settings from "./pages/Settings";
+import UserProfile from "./pages/UserProfile";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuth } from "./context/authContext";
@@ -27,12 +28,12 @@ const REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
 
 const App = () => {
   const { token, refreshAccessToken } = useAuth();
-  useEffect(()=>{
+  useEffect(() => {
     const intervalId = setInterval(() => {
-      refreshAccessToken()
-    }, REFRESH_INTERVAL)
-    return () => clearInterval(intervalId)
-  },[refreshAccessToken])
+      refreshAccessToken();
+    }, REFRESH_INTERVAL);
+    return () => clearInterval(intervalId);
+  }, [refreshAccessToken]);
 
   return (
     <Router>
@@ -43,9 +44,10 @@ const App = () => {
 
           <Background />
           <Routes>
-          <Route element={<ProtectedRoute />}>
+            <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/user-management" element={<UserManagement />} />
+              <Route path="/user-profile" element={<UserProfile />} />
               <Route path="/account" element={<Account />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/finance" element={<Finance />} />
@@ -54,6 +56,7 @@ const App = () => {
               <Route path="/manufacturing" element={<Manufacturing />} />
               <Route path="/humanresources" element={<HR />} />
               <Route path="/settings" element={<Settings />} />
+
               <Route path="/test" element={<Test />} />
             </Route>
             {/* Public Routes should go below */}
