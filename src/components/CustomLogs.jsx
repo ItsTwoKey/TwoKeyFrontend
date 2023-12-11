@@ -63,11 +63,12 @@ const CustomLogs = ({ logs }) => {
                   <span>
                     <p className="text-sm">
                       <span className="font-semibold">{log.username}</span>{" "}
-                      {log.event === "download" ? "downloaded" : "edited"}
-                      <span className="font-semibold">
-                        {" "}
-                        {log.file_name}
-                      </span>{" "}
+                      {log.event === "screenshot"
+                        ? "took Screenshot of"
+                        : log.event === "download"
+                        ? "downloaded"
+                        : "accessed"}
+                      <span className="font-semibold"> {log.file_name}</span>{" "}
                       file.
                     </p>
                     <p className="text-sm text-gray-400 mt-2">
