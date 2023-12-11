@@ -247,7 +247,8 @@ function SideBarContents({ departments, darkMode }) {
   function handleLogout() {
     navigate("/");
     sessionStorage.removeItem("token");
-    localStorage.removeItem("profileData");
+    // localStorage.removeItem("profileData");
+    localStorage.clear();
   }
 
   return (

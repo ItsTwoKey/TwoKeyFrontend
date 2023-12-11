@@ -3,13 +3,14 @@ import axios from "axios";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import ProfileTabsOfUser from "../components/ProfileTabsOfUser";
 
 const UserProfile = () => {
   const [userProfileData, setUserProfileData] = useState([]);
   const [roles, setRoles] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [selectedRole, setSelectedRole] = useState("");
-  const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -45,6 +46,7 @@ const UserProfile = () => {
           }
         );
 
+        // console.log(dep.data);
         setDepartments(dep.data);
       } catch (error) {
         console.log("Error fetching departments");
@@ -74,12 +76,62 @@ const UserProfile = () => {
     getRoles();
   }, []);
 
+  const elevateUserRole = async (selectedRole) => {
+    let token = JSON.parse(sessionStorage.getItem("token"));
+    if (token) {
+      try {
+        const res = await axios.put(
+          `https://twokeybackend.onrender.com/users/elevate/${userProfileData.id}`,
+          {
+            role_priv: selectedRole,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+        // console.log("elevate user:", res);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const changeDept = async (selectedDepartment) => {
+    let token = JSON.parse(sessionStorage.getItem("token"));
+    if (token) {
+      try {
+        const res = await axios.put(
+          `https://twokeybackend.onrender.com/users/elevate/${userProfileData.id}`,
+          {
+            dept: selectedDepartment,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+        // console.log("User's dept changes:", res);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   const handleRoleChange = (event) => {
     setSelectedRole(event.target.value);
+    elevateUserRole(event.target.value);
   };
 
   const handleDepartmentChange = (event) => {
-    setSelectedDepartment(event.target.value);
+    const selectedDepartmentObject = departments.find(
+      (department) => department.name === event.target.value
+    );
+
+    setSelectedDepartment(selectedDepartmentObject);
+    changeDept(selectedDepartmentObject.id);
   };
 
   const toggleEditing = () => {
@@ -206,6 +258,9 @@ const UserProfile = () => {
 
           <button onClick={toggleEditing}>toggle</button>
         </div>
+      </div>
+      <div className="pt-4">
+        <ProfileTabsOfUser />
       </div>
     </div>
   );
