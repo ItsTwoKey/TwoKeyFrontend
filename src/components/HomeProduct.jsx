@@ -17,15 +17,15 @@ const HomeProduct = () => {
   return (
     <div
       id="product"
-      className="bg-[#F1F1FF] h-full"
+      className="bg-[#F1F1FF] h-full w-full px-2 md:px-0"
       style={{
         backgroundImage: `url(${Vector})`,
         backgroundRepeat: "no-repeat",
         backgroundPosition: "top right",
       }}
     >
-      <div className="text-center w-1/2 mx-auto py-20 flex flex-col gap-6">
-        <h1 className="text-6xl font-semibold ">
+      <div className="text-center w-full md:w-1/2 mx-auto py-20 flex flex-col gap-6">
+        <h1 className="text-4xl md:text-6xl font-semibold ">
           Where innovation meets security
         </h1>
         <span>
@@ -46,76 +46,76 @@ const HomeProduct = () => {
         </span>
       </div>
 
-      <div className="flex justify-center items-center pb-16">
-        <div className="grid grid-cols-2 gap-6">
-          <span className="w-[500px] bg-[#9F9CFF5C] rounded-[24px] p-4">
+      <div className="md:flex md:justify-center md:items-center pb-16 max-w-full text-center md:text-left">
+        <div className="md:grid md:grid-cols-2 gap-6">
+          <div className="w-full md:w-[500px] bg-[#9F9CFF5C] rounded-[24px]   p-4 my-4 md:my-auto">
             <img
               src={TwoPersonPermission}
               alt=""
               className="h-48 p-2 rounded-t-[14px] w-full"
             />
-            <h4 className="text-md font-semibold">Two-Person Permission</h4>
-            <p className="text-sm text-gray-600">
+            <h4 className="px-2 text-md font-semibold">Two-Person Permission</h4>
+            <p className="px-2 text-sm text-gray-600">
               Enforces dual authentication from both the sender and recipient
               before granting access to shared files.
             </p>
-          </span>
+          </div>
 
-          <span className="w-[500px] flex flex-row gap-6">
-            <span className="bg-[#9F9CFF5C] rounded-[24px] p-4 w-1/2">
+          <div className="w-full md:w-[500px] flex flex-row gap-6 my-4 md:my-auto">
+            <div className="bg-[#9F9CFF5C] rounded-[24px] p-4 w-1/2">
               <img
                 src={AccessTimeWindow}
                 alt=""
-                className="h-48 p-2 rounded-t-[14px] w-full"
+                className="h-36 md:h-48 p-2 rounded-t-[14px] w-full"
               />
-              <h4 className="text-md font-semibold ">Two-Person Permission</h4>
-              <p className="text-sm text-gray-600 line-clamp-2">
+              <h4 className="px-2 text-md font-semibold ">Two-Person Permission</h4>
+              <p className="px-2 text-sm text-gray-600 line-clamp-2">
                 Allows senders to specify access time frames, further
                 controlling when recipients can view shared content.
               </p>
-            </span>
-            <span className="bg-[#9F9CFF5C] rounded-[24px] p-4 w-1/2">
+            </div>
+            <div className="bg-[#9F9CFF5C] rounded-[24px] p-4 w-1/2">
               <img
                 src={CustomizableSecurity}
                 alt=""
-                className="h-48 p-2 rounded-t-[14px] w-full"
+                className="h-36 md:h-48 p-2 rounded-t-[14px] w-full"
               />
-              <h4 className="text-md font-semibold ">Customizable Security </h4>
-              <p className="text-sm text-gray-600 line-clamp-2">
+              <h4 className="px-2 text-md font-semibold ">Customizable Security </h4>
+              <p className="px-2 text-sm text-gray-600 line-clamp-2">
                 Offers a suite of options to tailor security settings, including
                 blocking screenshots, tracking replay attempts, controlling
                 downloading, and more.
               </p>
-            </span>
-          </span>
+            </div>
+          </div>
 
-          <span className="w-[500px] bg-[#9F9CFF5C] rounded-[24px] p-4">
+          <div className="w-full md:w-[500px] bg-[#9F9CFF5C] rounded-[24px] p-4 my-4 md:my-auto">
             <img
               src={LocationBasedAccess}
               alt=""
               className="h-56 p-2 rounded-t-[14px] w-full"
             />
-            <h4 className="text-md font-semibold">
+            <h4 className="px-2 text-md font-semibold">
               Location-Based Access Notifications
             </h4>
-            <p className="text-sm text-gray-600">
+            <p className="px-2 text-sm text-gray-600">
               Alerts senders when shared content is accessed from an unfamiliar
               location, preventing unauthorized usage and promoting access
               integrity.
             </p>
-          </span>
-          <span className="w-[500px] bg-[#9F9CFF5C] rounded-[24px] p-4">
+          </div>
+          <div className="w-full md:w-[500px] bg-[#9F9CFF5C] rounded-[24px] p-4 my-4 md:my-auto">
             <img
               src={TrackingAndAudit}
               alt=""
               className="h-56 p-2 rounded-t-[14px] w-full"
             />
-            <h4 className="text-md font-semibold">Tracking and Audit Trails</h4>
-            <p className="text-sm text-gray-600">
+            <h4 className="px-2 text-md font-semibold">Tracking and Audit Trails</h4>
+            <p className="px-2 text-sm text-gray-600">
               Maintains a comprehensive log of file access, enhancing
               transparency and accountability in content interactions.
             </p>
-          </span>
+          </div>
         </div>
       </div>
     </div>

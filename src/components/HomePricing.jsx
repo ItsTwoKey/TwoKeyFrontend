@@ -99,10 +99,10 @@ const HomePricing = () => {
   };
 
   return (
-    <div id="pricing" className="bg-[#FAF8F7] h-full py-16">
-      <div className="flex flex-col justify-center items-center w-1/3 mx-auto text-center">
+    <div id="pricing" className="bg-[#FAF8F7] h-full py-16 px-2 md:px-0">
+      <div className="flex flex-col justify-center items-center w-full md:w-1/3 mx-auto text-center">
         <h2 className="text-4xl font-bold">
-          Powerful features for <br />
+          Powerful Features for <br />
           <span
             style={{
               backgroundImage: "linear-gradient(90deg,#1D4ED8, #55CBFB)",
@@ -110,7 +110,7 @@ const HomePricing = () => {
               color: "transparent",
             }}
           >
-            powerful creators
+            Powerful Creators
           </span>
         </h2>
         <p className="my-3 text-lg">Choose a plan that’s right for you</p>
@@ -124,19 +124,19 @@ const HomePricing = () => {
         </div>
       </div>
 
-      <div className="flex justify-center ml-96">
+      <div className="flex justify-center md:ml-96">
         <div className="flex justify-center items-baseline w-[180px]">
           <img src={CurlyArrow} alt="" className="h-16 " />
           <p className="text-[#5E5ADB] text-lg font-semibold">Save 25%</p>
         </div>
       </div>
 
-      <div className="flex mx-auto w-5/6">
-        <div className="grid grid-cols-3 gap-4 w-full">
+      <div className="flex mx-auto w-full md:w-5/6">
+        <div className="md:grid md:grid-cols-3 gap-4 w-full">
           {PricingDetails.map((pricing, index) => (
             <div
               key={index}
-              className={`rounded-lg px-4 py-6 ${
+              className={`my-4 md:my-auto text-center md:text-left rounded-lg px-4 py-6 ${
                 pricing.name === "Professional"
                   ? "bg-[#C8C6FF] shadow-lg"
                   : "bg-white"

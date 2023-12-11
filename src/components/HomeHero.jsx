@@ -4,11 +4,11 @@ import Vector from "../assets/Vector.svg";
 
 const HomeHero = () => {
   return (
-    <div id="hero" className="bg-[#FAF8F7] h-full">
+    <div id="hero" className="bg-[#FAF8F7] h-full w-screen">
       <div className="w-screen flex justify-between p-2">
-        <div className="w-[584px] p-16">
-          <h1 className="text-6xl font-semibold">Safety, Security, Privacy</h1>
-          <div className="py-16">
+        <div className="w-full md:w-1/2 px-4 py-16 md:px-16">
+          <h1 className="text-center md:text-left text-4xl md:text-6xl font-semibold">Safety, Security, Privacy</h1>
+          <div className="text-center md:text-left py-16">
             <p>
               TwoKey is a cutting-edge platform that revolutionizes the way
               media files are shared by introducing a suite of robust security

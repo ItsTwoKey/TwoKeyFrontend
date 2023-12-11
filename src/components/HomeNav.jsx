@@ -11,19 +11,19 @@ const HomeNav = () => {
   return (
     <nav
       id="nav"
-      className="bg-[#FAF8F7] h-24 flex justify-between items-center px-12"
+      className="bg-[#FAF8F7] h-24 flex justify-between items-center px-4 md:px-12"
     >
       <h4 className="text-lg font-bold">Twokey</h4>
       <span className="flex gap-8 py-2">
-        <button onClick={() => scrollToSection("about")} className="">
+        <button onClick={() => scrollToSection("about")} className="hidden md:block">
           About Us
         </button>
 
-        <button onClick={() => scrollToSection("product")} className="">
+        <button onClick={() => scrollToSection("product")} className="hidden md:block">
           Product
         </button>
 
-        <button onClick={() => scrollToSection("pricing")} className="">
+        <button onClick={() => scrollToSection("pricing")} className="hidden md:block">
           Pricing
         </button>
       </span>

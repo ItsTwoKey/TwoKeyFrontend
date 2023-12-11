@@ -2,9 +2,9 @@ import React from "react";
 
 const HomeContactUs = () => {
   return (
-    <div className="h-full bg-[#9F9CFF]">
+    <div className="h-full bg-[#9F9CFF] px-2 md:px-0">
       <div className="flex flex-col justify-center items-center gap-3 py-16">
-        <h1 className="text-6xl text-white text-center">
+        <h1 className="text-4xl md:text-6xl text-white text-center">
           Redefining Media Sharing with <br /> Unparalleled Security and
           Control.
         </h1>
