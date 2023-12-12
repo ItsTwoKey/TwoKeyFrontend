@@ -89,10 +89,14 @@ function SideBar() {
         sx={{
           display: { md: "none", xs: "block" },
           borderBottom: 2,
+
+          "& .MuiDrawer-paper": {
+            backgroundColor:`${darkMode ? "#1f2937": "white"}`
+          },
         }}
       >
         <nav
-          className={`w-[60vw] px-2 h-screen  bg-gray-10 ${
+          className={`w-[60vw] px-2 h-screen  ${
             darkMode ? "bg-gray-800" : "bg-white"
           } `}
         >
@@ -158,8 +162,12 @@ function SideBar() {
         sx={{
           width: { md: 224, lg: 240, xs: "auto" },
           flexShrink: 0,
+          
           "& .MuiDrawer-paper": {
             width: { md: 224, lg: 240, xs: "auto" },
+            
+            backgroundColor:`${darkMode ? "#1f2937": "white"}`
+            
           },
           "& .MuiDrawer-paper::-webkit-scrollbar": {
             display: "none" /* Hide scrollbar for Chrome, Safari, and Edge */,
@@ -167,9 +175,9 @@ function SideBar() {
         }}
       >
         <nav
-          className={`h-screen ${
+          className={` ${
             !isMenuOpen && "hidden md:block md:w-56 lg:w-60"
-          }  px-4 bg-gray-100  border-r border-r-gray-200 ${
+          }  px-4   border-r border-r-gray-200 ${
             darkMode ? "bg-gray-800" : "bg-white"
           }`}
         >

@@ -33,7 +33,7 @@ code {
 
 .activeSetting {
   background-color: #d0d7de3d;
-  /* border-left: 4px solid #0969da; */
+ 
 }
 
 @media only screen and (max-width: 600px) {

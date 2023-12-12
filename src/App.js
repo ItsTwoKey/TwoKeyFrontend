@@ -23,11 +23,13 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuth } from "./context/authContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import ErrorPage from "./components/ErrorPage";
+import { useDarkMode } from "./context/darkModeContext";
 
 const REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
 
 const App = () => {
   const { token, refreshAccessToken } = useAuth();
+  const isDarkMode = useDarkMode();
   useEffect(() => {
     const intervalId = setInterval(() => {
       refreshAccessToken();
@@ -37,7 +39,7 @@ const App = () => {
 
   return (
     <Router>
-      <div className="flex">
+      <div className={`flex ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
         <SideBar />
         <div className="w-full">
           <TopBar />
