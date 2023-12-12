@@ -11,9 +11,9 @@ const HomeNav = () => {
   return (
     <nav
       id="nav"
-      className="bg-[#FAF8F7] h-24 flex justify-between items-center px-4 md:px-12"
+      className="bg-[#FAF8F7] h-24 flex justify-between items-center px-4 md:px-12 font-tahoma"
     >
-      <h4 className="text-lg font-bold">Twokey</h4>
+      <h4 className="text-lg font-[400] font-allertaStencil">Twokey</h4>
       <span className="flex gap-8 py-2">
         <button onClick={() => scrollToSection("about")} className="hidden md:block">
           About Us

@@ -19,7 +19,7 @@ const HomeFooter = () => {
     <div className="h-full bg-[#9F9CFF] px-8 md:px-20 py-16 border-t border-[#F7F7F821] text-center md:text-left font-plusJakartaSans">
       <div className="md:flex md:justify-between md:items-start ">
         <div className="w-full md:w-1/2">
-          <h4 className="text-white text-lg font-semibold font-allertaStencil">TWOKEY</h4>
+          <h4 className="text-white text-lg font-[400] font-allertaStencil">TWOKEY</h4>
           <p className="text-sm text-[#5E5ADB] w-full md:w-4/5 my-8 text-justify md:text-left">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
             dictum aliquet accumsan porta lectus ridiculus in mattis. Netus
