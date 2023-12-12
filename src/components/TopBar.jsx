@@ -25,6 +25,10 @@ const TopBar = () => {
   const topBarPath = location.pathname === "/dashboard";
   let currentLocation = location.pathname;
 
+  const isUserProfile = /^\/User-Profile\/[0-9a-fA-F-]+$/i.test(
+    location.pathname
+  );
+
   return (
     <nav
       className={`sticky top-0 z-50 h-[72px] ${
@@ -37,7 +41,9 @@ const TopBar = () => {
             darkMode ? "text-gray-300" : "text-gray-800"
           } capitalize`}
         >
-          {topBarPath
+          {isUserProfile
+            ? "User-Profile"
+            : location.pathname === "/dashboard"
             ? "Overview / Dashboard"
             : `${location.pathname}`.slice(1)}
         </p>

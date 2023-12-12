@@ -254,7 +254,7 @@ const UserProfile = () => {
             </Select>
           </span>
 
-          <button onClick={toggleEditing}>toggle</button>
+          {/* <button onClick={toggleEditing}>toggle</button> */}
         </div>
       </div>
       <div className="pt-4">
