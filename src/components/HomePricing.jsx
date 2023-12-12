@@ -100,9 +100,9 @@ const HomePricing = () => {
 
   return (
     <div id="pricing" className="bg-[#FAF8F7] h-full py-16 px-2 md:px-0">
-      <div className="flex flex-col justify-center items-center w-full md:w-1/3 mx-auto text-center">
+      <div className="flex flex-col justify-center items-center w-full md:w-1/3 mx-auto text-center font-inter font-[700]">
         <h2 className="text-4xl font-bold">
-          Powerful Features for <br />
+          Powerful features for <br />
           <span
             style={{
               backgroundImage: "linear-gradient(90deg,#1D4ED8, #55CBFB)",
@@ -110,12 +110,12 @@ const HomePricing = () => {
               color: "transparent",
             }}
           >
-            Powerful Creators
+            powerful creators
           </span>
         </h2>
-        <p className="my-3 text-lg">Choose a plan that’s right for you</p>
+        <p className="my-3 text-lg font-[400]">Choose a plan that’s right for you</p>
 
-        <div className="mt-12 relative flex flex-col">
+        <div className="mt-12 relative flex flex-col font-[400] text-[#191D23]">
           <div className="flex flex-row gap-4 items-center">
             <p>Pay Monthly</p>
             <IOSSwitch onChange={handleChange} />
@@ -124,26 +124,26 @@ const HomePricing = () => {
         </div>
       </div>
 
-      <div className="flex justify-center md:ml-96">
+      <div className="flex justify-center mt-4 md:mt-auto md:ml-96">
         <div className="flex justify-center items-baseline w-[180px]">
-          <img src={CurlyArrow} alt="" className="h-16 " />
-          <p className="text-[#5E5ADB] text-lg font-semibold">Save 25%</p>
+          <img src={CurlyArrow} alt="" className="relative left-16 md:static h-16 flip-image" />
+          <p className="relative top-2 right-10 md:static text-[#5E5ADB] text-lg font-semibold">Save 25%</p>
         </div>
       </div>
 
-      <div className="flex mx-auto w-full md:w-5/6">
+      <div className="flex mx-auto w-full md:w-5/6 font-inter font-[500]">
         <div className="md:grid md:grid-cols-3 gap-4 w-full">
           {PricingDetails.map((pricing, index) => (
             <div
               key={index}
-              className={`my-4 md:my-auto text-center md:text-left rounded-lg px-4 py-6 ${
+              className={`my-4  text-center md:text-left rounded-lg px-4 py-6 ${
                 pricing.name === "Professional"
                   ? "bg-[#C8C6FF] shadow-lg"
                   : "bg-white"
               }`}
             >
               <h4 className="text-lg font-bold">{pricing.name}</h4>
-              <p className="text-sm line-clamp-2 pt-2 text-gray-700">
+              <p className="text-sm line-clamp-2 pt-2 text-gray-600 font-[400]">
                 {pricing.description}
               </p>
               <span className="flex items-center gap-2 my-6">

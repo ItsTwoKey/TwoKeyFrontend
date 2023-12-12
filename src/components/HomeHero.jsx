@@ -4,17 +4,17 @@ import Vector from "../assets/Vector.svg";
 
 const HomeHero = () => {
   return (
-    <div id="hero" className="bg-[#FAF8F7] h-full w-screen">
+    <div id="hero" className="bg-[#FAF8F7] h-full w-screen font-[400] text-[#273720] font-tahoma">
       <div className="w-screen flex justify-between p-2">
-        <div className="w-full md:w-1/2 px-4 py-16 md:px-16">
-          <h1 className="text-center md:text-left text-4xl md:text-6xl font-semibold">Safety, Security, Privacy</h1>
+        <div className="w-full md:w-[584px] px-4 py-16 md:px-16">
+          <h1 className="text-center md:text-left text-4xl md:text-6xl ">Safety, Security, Privacy</h1>
           <div className="text-center md:text-left py-16">
-            <p>
+            <p className="">
               TwoKey is a cutting-edge platform that revolutionizes the way
               media files are shared by introducing a suite of robust security
               features
             </p>
-            <button className="bg-[#C8C6FF] border rounded-md border-[#131149] my-4 py-2 px-4 text-sm font-semibold">
+            <button className="bg-[#C8C6FF] border rounded-md border-[#131149] my-4 py-2 px-4 text-sm font-[700] text-[#1C1C1C]">
               Request a demo
             </button>
           </div>

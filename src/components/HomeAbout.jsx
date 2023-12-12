@@ -24,10 +24,10 @@ const Securities = [
 
 const HomeAbout = () => {
   return (
-    <div id="about" className="h-full bg-[#F1F1FF] px-4 md:px-16 py-16 text-center md:text-left">
+    <div id="about" className="h-full bg-[#F1F1FF] px-4 md:px-16 py-16 text-center md:text-left font-tahoma font-[400] text-[#273720]">
       <div className="flex flex-col justify-center items-center">
         <h5 className="font-medium">SECURITY LEVELS</h5>
-        <h1 className="text-5xl font-medium my-6">
+        <h1 className="text-5xl my-6">
           Your content's security at a glance
         </h1>
         <p className="text-sm">
@@ -62,7 +62,7 @@ const HomeAbout = () => {
             </span>
           ))}
 
-          <button className="bg-[#C8C6FF] rounded-md py-2 px-4 text-sm mx-auto mt-9 md:mx-9 ">
+          <button className="bg-[#C8C6FF] rounded-md py-2 px-4 text-sm mx-auto mt-9 md:mx-9 text-[#1C1C1C]">
             Get Started for free
           </button>
         </div>
