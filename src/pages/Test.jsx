@@ -4,6 +4,7 @@ import axios from "axios";
 import { supabase } from "../helper/supabaseClient";
 import FileViewer from "../components/FileViewer";
 import ErrorPage from "../components/ErrorPage";
+import TestPdfExtractor from "../components/TestPdfExtractor";
 
 const Test = () => {
   const {
@@ -59,33 +60,6 @@ const Test = () => {
     }
   };
 
-  let departments = [
-    { name: "Account", path: "/account" },
-    { name: "Finance", path: "/finance" },
-    { name: "Development", path: "/development" },
-    { name: "Manufacturing", path: "/manufacturing" },
-    { name: "Sales", path: "/sales" },
-    { name: "Human Resources", path: "/humanresources" },
-    { name: "Account", path: "/account" },
-    { name: "Finance", path: "/finance" },
-    { name: "Development", path: "/development" },
-    { name: "Manufacturing", path: "/manufacturing" },
-    { name: "Sales", path: "/sales" },
-    { name: "Human Resources", path: "/humanresources" },
-    { name: "Account", path: "/account" },
-    { name: "Finance", path: "/finance" },
-    { name: "Development", path: "/development" },
-    { name: "Manufacturing", path: "/manufacturing" },
-    { name: "Sales", path: "/sales" },
-    { name: "Human Resources", path: "/humanresources" },
-    { name: "Account", path: "/account" },
-    { name: "Finance", path: "/finance" },
-    { name: "Development", path: "/development" },
-    { name: "Manufacturing", path: "/manufacturing" },
-    { name: "Sales", path: "/sales" },
-    { name: "Human Resources", path: "/humanresources" },
-  ];
-
   const getLogs = async () => {
     try {
       const users = await axios.get(
@@ -117,22 +91,6 @@ const Test = () => {
       console.log(error);
     }
   };
-
-  // const getCommonLogs = async () => {
-  //   try {
-  //     const users = await axios.get(
-  //       "https://twokeybackend.onrender.com/users/list_users/{dept}/",
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token.session.access_token}`,
-  //         },
-  //       }
-  //     );
-  //     console.log("users :", users);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   const getSharedFileInfo = async () => {
     try {
@@ -299,25 +257,14 @@ const Test = () => {
         getSharedFileInfo
       </button>
 
-      {/* <button
-        className="py-2 px-4 bg-red-400 text-white rounded-md"
-        onClick={refreshAccessToken}
-      >
-        refreshAccessToken
-      </button> */}
-
       <div>
         <button onClick={handleClipboardRead}>Read Clipboard</button>
         {imageURL && <img src={imageURL} alt="Clipboard Img" />}
       </div>
 
-      <div className="h-24 border overflow-y-scroll scrollbar-hide">
-        {departments.map((dep, index) => (
-          <p key={index}>{dep.name}</p>
-        ))}
-      </div>
-
       {/* <FileViewer /> */}
+
+      <TestPdfExtractor />
 
       {picture && (
         <img

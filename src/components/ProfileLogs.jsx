@@ -31,7 +31,7 @@ const ProfileLogs = ({ logs }) => {
   return (
     <div className={`${darkMode ? "bg-gray-800 text-white" : "text-gray-800"}`}>
       <Box sx={{ width: "100%" }}>
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{ height: "300px" }}>
           <Table aria-label="collapsible table">
             <TableHead>
               <TableRow sx={{ backgroundColor: "#F7F9FCCC" }}>

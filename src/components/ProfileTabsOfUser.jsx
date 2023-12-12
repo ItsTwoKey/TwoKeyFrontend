@@ -7,6 +7,7 @@ import ProfileLogs from "../components/ProfileLogs";
 import axios from "axios";
 import LatestActivities from "../components/LatestActivities";
 import CustomLogs from "./CustomLogs";
+import { useParams } from "react-router-dom";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -48,6 +49,7 @@ export default function ProfileTabs() {
   const [receivedLogs, setReceivedLogs] = useState([]);
   const [latestLogs, setLatestLogs] = useState([]);
   const [downloadLogs, setDownloadLogs] = useState([]);
+  const { userId } = useParams();
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -57,7 +59,7 @@ export default function ProfileTabs() {
         const [sharedLogsResponse, receivedLogsResponse, latestLogsResponse] =
           await Promise.all([
             axios.get(
-              "https://twokeybackend.onrender.com/users/getUserInfo/a1a3d4ac-9574-4791-9148-3c1583b1fd20?type=shared",
+              `https://twokeybackend.onrender.com/users/getUserInfo/${userId}?type=shared`,
               {
                 headers: {
                   Authorization: `Bearer ${token.session.access_token}`,
@@ -65,7 +67,7 @@ export default function ProfileTabs() {
               }
             ),
             axios.get(
-              "https://twokeybackend.onrender.com/users/getUserInfo/a1a3d4ac-9574-4791-9148-3c1583b1fd20?type=received",
+              `https://twokeybackend.onrender.com/users/getUserInfo/${userId}?type=received`,
               {
                 headers: {
                   Authorization: `Bearer ${token.session.access_token}`,
@@ -73,7 +75,7 @@ export default function ProfileTabs() {
               }
             ),
             axios.get(
-              "https://twokeybackend.onrender.com/users/getUserInfo/a1a3d4ac-9574-4791-9148-3c1583b1fd20/?logs=1&recs=15",
+              `https://twokeybackend.onrender.com/users/getUserInfo/${userId}/?logs=1&recs=15`,
               {
                 headers: {
                   Authorization: `Bearer ${token.session.access_token}`,
@@ -97,7 +99,7 @@ export default function ProfileTabs() {
     };
 
     fetchLogs();
-  }, []);
+  }, [userId]);
 
   const handleChange = (event, newValue) => {
     // Reset logs state to null when changing tabs

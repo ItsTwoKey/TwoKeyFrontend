@@ -48,7 +48,7 @@ const CustomLogs = ({ logs }) => {
   return (
     <div className="w-full">
       <Paper elevation={0} className="h-72 ">
-        <div className="h-56 overflow-y-scroll scrollbar-hide">
+        <div className="h-60 overflow-y-scroll scrollbar-hide">
           {logs && logs.length ? (
             logs?.map((log, index) => (
               <div key={index} className="border-b">
@@ -79,8 +79,8 @@ const CustomLogs = ({ logs }) => {
               </div>
             ))
           ) : (
-            <div className="h-56 overflow-y-scroll scrollbar-hide">
-              {skeletons}
+            <div className="h-56 overflow-y-scroll scrollbar-hide flex items-center justify-center">
+              <p className="text-lg font-semibold">No logs to show!</p>
             </div>
           )}
         </div>

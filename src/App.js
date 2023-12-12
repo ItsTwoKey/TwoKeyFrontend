@@ -49,7 +49,7 @@ const App = () => {
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/user-management" element={<UserManagement />} />
-              <Route path="/user-profile" element={<UserProfile />} />
+              <Route path="/user-profile/:userId" element={<UserProfile />} />
               <Route path="/account" element={<Account />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/finance" element={<Finance />} />

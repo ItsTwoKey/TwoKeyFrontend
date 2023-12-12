@@ -4,8 +4,10 @@ import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import ProfileTabsOfUser from "../components/ProfileTabsOfUser";
+import { useParams } from "react-router-dom";
 
 const UserProfile = () => {
+  const { userId } = useParams(); // Use useParams to get the user ID from the route parameters
   const [userProfileData, setUserProfileData] = useState([]);
   const [roles, setRoles] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -18,14 +20,13 @@ const UserProfile = () => {
       let token = JSON.parse(sessionStorage.getItem("token"));
       try {
         const user = await axios.get(
-          "https://twokeybackend.onrender.com/users/getUserInfo/a1a3d4ac-9574-4791-9148-3c1583b1fd20/",
+          `https://twokeybackend.onrender.com/users/getUserInfo/${userId}/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
             },
           }
         );
-        // console.log(user.data.user_info);
         setUserProfileData(user.data.user_info);
         setSelectedRole(user.data.user_info.role_priv);
         setSelectedDepartment(user.data.user_info.dept);
@@ -45,8 +46,6 @@ const UserProfile = () => {
             },
           }
         );
-
-        // console.log(dep.data);
         setDepartments(dep.data);
       } catch (error) {
         console.log("Error fetching departments");
@@ -64,7 +63,6 @@ const UserProfile = () => {
             },
           }
         );
-        // console.log("roles", rolesData.data);
         setRoles(rolesData.data);
       } catch (error) {
         console.log("Error fetching roles");
@@ -74,7 +72,7 @@ const UserProfile = () => {
     getUserProfile();
     fetchDepartments();
     getRoles();
-  }, []);
+  }, [userId]);
 
   const elevateUserRole = async (selectedRole) => {
     let token = JSON.parse(sessionStorage.getItem("token"));
@@ -256,7 +254,7 @@ const UserProfile = () => {
             </Select>
           </span>
 
-          <button onClick={toggleEditing}>toggle</button>
+          {/* <button onClick={toggleEditing}>toggle</button> */}
         </div>
       </div>
       <div className="pt-4">
