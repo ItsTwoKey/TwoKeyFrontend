@@ -4,9 +4,11 @@ import { DataGrid } from "@mui/x-data-grid";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Edit from "../assets/edit.svg";
+import { useNavigate } from "react-router-dom";
 
 export default function UserManagementTable() {
   const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const listUsers = async () => {
@@ -31,8 +33,10 @@ export default function UserManagementTable() {
   }, []);
 
   const handleEditClick = (params) => {
-    console.log("Edit clicked for user:", params.row);
-    // Add any additional logic or actions you want to perform on edit click
+    // console.log("Edit clicked for user:", params.row);
+
+    // Navigate to the "user-profile" route with the user ID or any relevant parameter
+    navigate(`/user-profile/${params.row.id}`);
   };
 
   const columns = [
