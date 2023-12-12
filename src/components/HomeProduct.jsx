@@ -17,7 +17,7 @@ const HomeProduct = () => {
   return (
     <div
       id="product"
-      className="bg-[#F1F1FF] h-full w-full px-2 md:px-0"
+      className="bg-[#F1F1FF] h-full w-full px-2 md:px-0 text-[#1C1C1C]"
       style={{
         backgroundImage: `url(${Vector})`,
         backgroundRepeat: "no-repeat",
