@@ -43,14 +43,14 @@ const HomeFooter = () => {
             </span>
           </span>
           <span>
-            <h5 className="text-white mb-8 font-bold">Company</h5>
+            <h5 className="text-white mb-8 font-bold">Contact</h5>
             <span className="flex flex-col leading-8">
               <a onClick={() => scrollTo("email-us")}>Email Us</a>
               <a onClick={() => scrollTo("support")}>Support</a>
             </span>
           </span>
           <span>
-            <h5 className="text-white mb-8 font-bold">Company</h5>
+            <h5 className="text-white mb-8 font-bold">Product</h5>
             <span className="flex flex-col leading-8">
               <a onClick={() => scrollTo("pricing")}>Pricing</a>
             </span>
