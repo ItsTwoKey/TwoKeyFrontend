@@ -24,10 +24,10 @@ const Securities = [
 
 const HomeAbout = () => {
   return (
-    <div id="about" className="h-full bg-[#F1F1FF] p-16">
+    <div id="about" className="h-full bg-[#F1F1FF] px-4 md:px-16 py-16 text-center md:text-left font-tahoma font-[400] text-[#273720]">
       <div className="flex flex-col justify-center items-center">
         <h5 className="font-medium">SECURITY LEVELS</h5>
-        <h1 className="text-5xl font-medium my-6">
+        <h1 className="text-5xl my-6">
           Your content's security at a glance
         </h1>
         <p className="text-sm">
@@ -36,31 +36,33 @@ const HomeAbout = () => {
         </p>
       </div>
 
-      <div className="flex justify-between  p-8">
-        <div className="px-24 my-8 relative flex">
-          <img src={QuickShare} alt="" className="h-[450px] z-20" />
+      <div className=" md:flex md:justify-between px-4 md:px-8 py-8">
+        <div className="px-4 md:px-24 my-8 relative flex ">
+          <img src={QuickShare} alt="" className=" h-[450px] z-20" />
           <img
             src={QuickShareBg}
             alt=""
-            className="absolute h-[450px] w-64 top-8 right-12 rounded-lg shadow-2xl"
+            className="absolute h-[450px]  w-64 top-8  right-0 md:right-12 rounded-lg shadow-2xl"
           />
         </div>
-        <div className="w-1/2 ">
+        <div className="w-full md:w-1/2 py-8 text-center md:text-left">
           {Securities.map((security, index) => (
-            <span key={index} className="flex flex-row items-center gap-3 py-2">
-              <img
-                src={GreenTick}
-                alt=""
-                className="bg-white rounded-full p-0.5 w-5 h-5"
-              />
-              <span className="">
+            <span key={index} className="gap-3 py-2">
+              <span className="flex justify-center md:justify-start items-center w-full">
+
+                <img
+                  src={GreenTick}
+                  alt=""
+                  className="bg-white rounded-full p-0.5 w-5 h-5 mr-4"
+                />
                 <h5 className="text-sm font-bold py-1">{security.level}</h5>
-                <p className="text-md">{security.desc}</p>
               </span>
+
+              <p className="text-md ml-auto md:ml-9">{security.desc}</p>
             </span>
           ))}
 
-          <button className="bg-[#C8C6FF] rounded-md py-2 px-4 text-sm my-6">
+          <button className="bg-[#C8C6FF] rounded-md py-2 px-4 text-sm mx-auto mt-9 md:mx-9 text-[#1C1C1C]">
             Get Started for free
           </button>
         </div>

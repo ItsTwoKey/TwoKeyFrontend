@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Allerta+Stencil&family=Familjen+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -31,12 +33,12 @@ code {
 
 .activeSetting {
   background-color: #d0d7de3d;
-  /* border-left: 4px solid #0969da; */
+ 
 }
 
-
-
-
-
-
-
+@media only screen and (max-width: 600px) {
+  .flip-image {
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1) rotate(10deg);
+  }
+}
