@@ -39,7 +39,7 @@ const App = () => {
 
   return (
     <Router>
-      <div className={`flex ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+      <div className="flex">
         <SideBar />
         <div className="w-full">
           <TopBar />
