@@ -4,8 +4,8 @@ import Vector from "../assets/Vector.svg";
 
 const HomeHero = () => {
   return (
-    <div id="hero" className="bg-[#FAF8F7] h-full w-screen font-[400] text-[#273720] font-tahoma">
-      <div className="w-screen flex justify-between p-2">
+    <div id="hero" className="bg-[#FAF8F7] h-full  font-[400] text-[#273720] font-tahoma">
+      <div className="w-full flex justify-between p-2">
         <div className="w-full md:w-[584px] px-4 py-16 md:px-16">
           <h1 className="text-center md:text-left text-4xl md:text-6xl ">Safety, Security, Privacy</h1>
           <div className="text-center md:text-left py-16">
