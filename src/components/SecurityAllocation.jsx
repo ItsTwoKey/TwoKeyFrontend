@@ -45,9 +45,14 @@ const AccordionSummary = styled((props) => (
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(2),
   borderTop: "1px solid inherit",
+  backgroundColor: "#F7F9FC",
 }));
 
-const SecurityAllocation = ({ handleSecurityAllocation, selectedUsers }) => {
+const SecurityAllocation = ({
+  handleSecurityAllocation,
+  selectedUsers,
+  checkboxValues,
+}) => {
   const [inputData, setInputData] = useState("");
   const [expanded, setExpanded] = useState(null);
   const [formData, setFormData] = useState({});
@@ -163,38 +168,29 @@ const SecurityAllocation = ({ handleSecurityAllocation, selectedUsers }) => {
     const handleConsoleUserData = () => {
       const userTimeData = selectedUsers.map((user, index) => {
         const location = formData[index]?.location;
-        const timePeriod = formData[index]?.timePeriod;
-        if (timePeriod === "certainPeriod") {
-          const selectedDateTime = new Date(
-            `${formData[index]?.selectedDate}T${formData[index]?.selectedTime}`
-          );
-          const currentTime = new Date();
 
-          if (selectedDateTime < currentTime) {
-            // Handle invalid time
-            return null;
-          }
+        const selectedDateTime = new Date(
+          `${formData[index]?.selectedDate}T${formData[index]?.selectedTime}`
+        );
+        const currentTime = new Date();
 
-          const timeDiff = (selectedDateTime - currentTime) / (1000 * 60); // Convert milliseconds to minutes
-          return {
-            user: user.id,
-            location,
-            timePeriod,
-            timeDifference: `${Math.floor(timeDiff)}`,
-          };
-        } else if (timePeriod === "permanently") {
-          return {
-            user: user.id,
-            location,
-            timePeriod,
-            timeDifference: "52560000",
-          };
+        if (selectedDateTime < currentTime) {
+          // Handle invalid time
+          return null;
         }
 
-        return null;
+        const timeDiffInSeconds = Math.floor(
+          (selectedDateTime - currentTime) / 1000
+        ); // Convert milliseconds to seconds
+
+        return {
+          user: user.id,
+          location,
+          timeDifference: `${timeDiffInSeconds}`,
+        };
       });
 
-      //   console.log(userTimeData);
+      console.log(userTimeData);
       handleSecurityAllocation(userTimeData);
       console.log("at security", coordinates);
     };
@@ -206,12 +202,13 @@ const SecurityAllocation = ({ handleSecurityAllocation, selectedUsers }) => {
 
   return (
     <div>
-      <div>
+      <div className="">
         {selectedUsers.map((user, index) => (
           <Accordion
             key={index}
             expanded={expanded === `panel${index}`}
             onChange={handleAccordionChange(`panel${index}`)}
+            className="my-1"
           >
             <AccordionSummary
               aria-controls={`panel${index}-content`}
@@ -222,7 +219,7 @@ const SecurityAllocation = ({ handleSecurityAllocation, selectedUsers }) => {
                 {user.name} {user.last_name}
               </p>
 
-              <span className="flex flex-row gap-2 items-center">
+              <span className="flex flex-row gap-4 items-center">
                 <img
                   src={user.profile_pic ? user.profile_pic : ProfilePicDummy}
                   alt="Profile pic"
@@ -234,26 +231,36 @@ const SecurityAllocation = ({ handleSecurityAllocation, selectedUsers }) => {
               </span>
             </AccordionSummary>
             <AccordionDetails className="bg-gray-100">
-              <div>
-                <p className="text-sm my-2">How do you share your file</p>
-                <Select
-                  name="timePeriod"
-                  value={formData[index]?.timePeriod || ""}
-                  onChange={(e) => handleFormdataChange(e, index)}
-                  displayEmpty
-                  size="small"
-                  fullWidth
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="permanently">Permanently</MenuItem>
-                  <MenuItem value="certainPeriod">Certain Period</MenuItem>
-                </Select>
-              </div>
-
-              {formData[index]?.timePeriod === "certainPeriod" && (
+              {checkboxValues.geoLocation && (
                 <div>
+                  <p className="text-sm my-2 font-semibold">Location</p>
+
+                  <Select
+                    name="location"
+                    value={formData[index]?.location || ""}
+                    onChange={(e) => handleFormdataChange(e, index)}
+                    displayEmpty
+                    size="small"
+                    fullWidth
+                    className="bg-white"
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {coordinates.map((location) => (
+                      <MenuItem key={location.id} value={location.id}>
+                        {location.properties.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </div>
+              )}
+
+              {checkboxValues.accessControl && (
+                <div>
+                  <p className="text-sm my-2 font-semibold">
+                    How do you share your file
+                  </p>
                   <span className="flex justify-between my-4">
                     <input
                       type="date"
@@ -291,28 +298,6 @@ const SecurityAllocation = ({ handleSecurityAllocation, selectedUsers }) => {
                   </span>
                 </div>
               )}
-
-              <div>
-                <p className="text-sm my-2">Location</p>
-
-                <Select
-                  name="location"
-                  value={formData[index]?.location || ""}
-                  onChange={(e) => handleFormdataChange(e, index)}
-                  displayEmpty
-                  size="small"
-                  fullWidth
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  {coordinates.map((location) => (
-                    <MenuItem key={location.id} value={location.id}>
-                      {location.properties.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </div>
             </AccordionDetails>
           </Accordion>
         ))}

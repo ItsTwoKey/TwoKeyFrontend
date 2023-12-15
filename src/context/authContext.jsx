@@ -292,23 +292,6 @@ export const AuthProvider = ({ children }) => {
     };
   }
 
-  const listUsers = async () => {
-    try {
-      const userList = await axios.get(
-        "https://twokeybackend.onrender.com/users/list_users/",
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
-      console.log("users :", userList.data);
-      setUsers(userList.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const listLocations = async () => {
     let token = JSON.parse(sessionStorage.getItem("token"));
     try {
@@ -408,7 +391,6 @@ export const AuthProvider = ({ children }) => {
     location,
     error,
     getGeolocation,
-    listUsers,
     users,
     getProfileData,
     listLocations,

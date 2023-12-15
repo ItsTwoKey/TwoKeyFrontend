@@ -3,6 +3,7 @@ import axios from "axios";
 import FileView from "./FileView";
 import PDFPreview from "../assets/pdfPreviewDummy.jpg";
 import QuickShare from "../components/QuickShare";
+import SecureShare from "./SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
 import { Skeleton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
@@ -147,13 +148,15 @@ const RecentFiles = () => {
       >
         <p className="text-lg font-semibold my-4 ">Recent Files</p>
         <span className="flex gap-2">
-          <button
+          {/* <button
             className={`py-1 px-4 rounded-md border ${
               darkMode ? "bg-gray-600 border-gray-500" : "bg-gray-50"
             } `}
           >
             + Share
-          </button>
+          </button> */}
+
+          <SecureShare />
           <QuickShare />
         </span>
       </div>
