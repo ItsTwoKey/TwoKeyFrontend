@@ -10,11 +10,13 @@ import Chip from "@mui/material/Chip";
 import axios from "axios";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import FileIcon from "../assets/fileIcon.svg";
+import { useDropzone } from "react-dropzone";
 
 const ShareFile = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [users, setUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [droppedFiles, setDroppedFiles] = useState([]);
 
   useEffect(() => {
     let token = JSON.parse(sessionStorage.getItem("token"));
@@ -39,6 +41,14 @@ const ShareFile = () => {
       listUsers();
     }
   }, [isOpen]);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: (acceptedFiles) => {
+      // Handle dropped files here
+      console.log("Accepted Files:", acceptedFiles);
+      setDroppedFiles(acceptedFiles);
+    },
+  });
 
   const shareFiles = async (fileId) => {
     try {
@@ -73,6 +83,7 @@ const ShareFile = () => {
   const closeDialog = () => {
     setIsOpen(false);
     setSelectedUsers([]);
+    setDroppedFiles([]);
   };
 
   const handleRemoveUser = (index) => {
@@ -82,13 +93,24 @@ const ShareFile = () => {
     setSelectedUsers(updatedUsers);
   };
 
+  function formatFileSize(sizeInBytes) {
+    const units = ["B", "KB", "MB", "GB"];
+    let size = sizeInBytes;
+    let unitIndex = 0;
+    while (size >= 1024 && unitIndex < units.length - 1) {
+      size /= 1024;
+      unitIndex++;
+    }
+    return size.toFixed(2) + " " + units[unitIndex];
+  }
+
   return (
     <div className="">
       <button
         onClick={openDialog}
         className="text-sm rounded-md py-[5px] px-3 border border-gray-300 bg-white"
       >
-        Share File
+        Quick Share
       </button>
 
       <Dialog
@@ -96,13 +118,13 @@ const ShareFile = () => {
         onClose={closeDialog}
         PaperProps={{
           style: {
-            borderRadius: "16spx",
+            borderRadius: "16px",
           },
         }}
       >
         <DialogTitle>
           <span>
-            <h4 className="font-semibold text-md">Share File</h4>
+            <h4 className="font-semibold text-md">Quick Share</h4>
             <p className="text-sm">
               Share your project collaborate with your team
             </p>
@@ -115,21 +137,39 @@ const ShareFile = () => {
             borderBottom: "1px solid #ddd",
           }}
         >
-          <div className="my-2 w-[486px]">
-            <div className="py-2">
-              <div className="flex flex-row justify-between items-center my-2">
-                <span className="flex flex-row items-center gap-2">
-                  <img src={FileIcon} alt="." />
-                  <p className="text-sm font-bold">Project1_Watefall.doc</p>
-                </span>
-                <p className="text-sm">25.45 MB</p>
+          <div className="my-4 w-[486px]">
+            <div
+              {...getRootProps()}
+              className={`dropzone mt-4 h-48 w-full flex items-center justify-center border-2 border-dashed border-blue-500 text-[#2C6ECB] bg-[#F2F7FE] p-4 rounded-md text-center cursor-pointer`}
+            >
+              <input {...getInputProps()} />
+              <p className="text-sm">
+                Drag and drop files here, or click to select files
+              </p>
+            </div>
+            {droppedFiles.length > 0 && (
+              <div>
+                {droppedFiles.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-row justify-between items-center my-2"
+                  >
+                    <span className="flex flex-row items-center gap-2">
+                      <img src={FileIcon} alt="." />
+                      <p className="text-sm font-bold">{file.name}</p>
+                    </span>
+                    <p className="text-sm">{formatFileSize(file.size)}</p>
+                  </div>
+                ))}
               </div>
+            )}
+            {/* <div className="py-2">
               <p className="text-[#5E5ADB] underline cursor-pointer" href="#">
                 Add more files
               </p>
-            </div>
+            </div> */}
 
-            <div className="bg-[#E5E5FF] w-full rounded-lg my-3 py-2 px-4 flex justify-between items-center">
+            <div className="bg-[#E5E5FF] w-full rounded-lg my-6 py-2 px-4 flex justify-between items-center">
               <span className="flex flex-col gap-1">
                 <p className="text-sm font-semibold">
                   Invite members via a sharable link
@@ -260,7 +300,7 @@ const ShareFile = () => {
             </button>
             <button
               className="px-3 py-1.5 rounded-lg shadow-sm border border-[#5E5ADB] text-[#5E5ADB] text-sm font-semibold"
-              onClick={() => alert("Done Clicked!")}
+              onClick={() => alert("Files shared successfully!")}
             >
               Done
             </button>
