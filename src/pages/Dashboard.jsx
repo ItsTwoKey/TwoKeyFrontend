@@ -28,7 +28,7 @@ const Dashboard = () => {
   }
   return (
     <div
-      className={`w-full p-4 h-full ${
+      className={`w-full p-4 h-full overflow-clip ${
         darkMode ? "bg-gray-800 text-white" : "text-gray-800"
       }`}
     >
