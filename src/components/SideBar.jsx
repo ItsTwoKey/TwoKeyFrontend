@@ -44,7 +44,6 @@ function SideBar() {
     return null;
   }
 
-  
   let departments = [
     { name: "UserManagement", path: "/user-management" },
     { name: "Account", path: "/account" },
