@@ -38,7 +38,8 @@ function SideBar() {
     location.pathname === "/" ||
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
-    location.pathname === "/onboarding";
+    location.pathname === "/onboarding" ||
+    location.pathname.startsWith("/ai");
 
   if (hideSideBar) {
     return null;
@@ -91,7 +92,7 @@ function SideBar() {
           borderBottom: 2,
 
           "& .MuiDrawer-paper": {
-            backgroundColor:`${darkMode ? "#1f2937": "white"}`
+            backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
           },
         }}
       >
@@ -162,12 +163,11 @@ function SideBar() {
         sx={{
           width: { md: 224, lg: 240, xs: "auto" },
           flexShrink: 0,
-          
+
           "& .MuiDrawer-paper": {
             width: { md: 224, lg: 240, xs: "auto" },
-            
-            backgroundColor:`${darkMode ? "#1f2937": "white"}`
-            
+
+            backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
           },
           "& .MuiDrawer-paper::-webkit-scrollbar": {
             display: "none" /* Hide scrollbar for Chrome, Safari, and Edge */,

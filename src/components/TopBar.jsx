@@ -13,7 +13,8 @@ const TopBar = () => {
     location.pathname === "/" ||
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
-    location.pathname === "/onboarding";
+    location.pathname === "/onboarding" ||
+    location.pathname.startsWith("/ai");
 
   if (hideTopBar) {
     return null;

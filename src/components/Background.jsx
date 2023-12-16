@@ -7,7 +7,8 @@ function Background() {
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
     location.pathname === "/onboarding" ||
-    location.pathname === "/settings";
+    location.pathname === "/settings" ||
+    location.pathname.startsWith("/ai");
 
   if (hideBackground) {
     return null;

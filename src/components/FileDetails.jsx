@@ -8,8 +8,10 @@ import DownloadFile from "../assets/downloadFile.svg";
 import { supabase } from "../helper/supabaseClient";
 import axios from "axios";
 import AI from "../assets/ai.svg";
+import { useNavigate } from "react-router-dom";
 
 const FileDetails = ({ fileInfo, sharedFileInfo, closeDrawer, preUrl }) => {
+  const navigate = useNavigate();
   console.log("fileInfo", fileInfo);
   console.log("sharedFileInfo", sharedFileInfo);
 
@@ -26,6 +28,10 @@ const FileDetails = ({ fileInfo, sharedFileInfo, closeDrawer, preUrl }) => {
 
   const handleBackButtonClick = () => {
     closeDrawer();
+  };
+
+  const handleAIClick = (params) => {
+    navigate(`/ai/${fileInfo.id}`);
   };
 
   const downloadAlert = async (fileId) => {
@@ -168,7 +174,7 @@ const FileDetails = ({ fileInfo, sharedFileInfo, closeDrawer, preUrl }) => {
       <div className="text-right">
         <button
           className="h-12 w-12 shadow-lg border border-gray-500 bg-[#3C4042] rounded-full"
-          onClick={() => alert("AI clicked")}
+          onClick={handleAIClick}
         >
           <img src={AI} alt="AI" className="mx-auto" />
         </button>
