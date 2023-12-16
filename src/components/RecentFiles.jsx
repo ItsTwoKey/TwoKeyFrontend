@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import FileView from "./FileView";
 import PDFPreview from "../assets/pdfPreviewDummy.jpg";
-import QuickShare from "../components/QuickShare";
+import ShareFile from "./ShareFile";
 import SecureShare from "./SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
 import { Skeleton } from "@mui/material";
@@ -157,7 +157,7 @@ const RecentFiles = () => {
           </button> */}
 
           <SecureShare />
-          <QuickShare />
+          <ShareFile />
         </span>
       </div>
       <div
