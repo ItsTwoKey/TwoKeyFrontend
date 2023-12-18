@@ -45,6 +45,7 @@ function SideBar() {
     return null;
   }
 
+  
   let departments = [
     { name: "UserManagement", path: "/user-management" },
     { name: "Account", path: "/account" },
@@ -64,14 +65,14 @@ function SideBar() {
   }
 
   return (
-    <nav className={`h-screen ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+    <nav className={`min-h-[100%] ${darkMode ? "bg-gray-800" : "bg-white"} `}>
       <div
-        className={`w-[72px] h-[72px] p-4 flex justify-center items-center ${
+        className={`w-[72px] h-[72px] p-4 flex justify-center items-center sticky top-0 ${
           darkMode && "text-white"
         }`}
       >
         <IconButton
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          onClick={() => { setIsMenuOpen(!isMenuOpen)}}
           color="inherit"
           edge="start"
           sx={{
@@ -81,7 +82,10 @@ function SideBar() {
           <MenuIcon />
         </IconButton>
       </div>
-
+     
+      {/* 
+      Small screen Drawer
+       */}
       <Drawer
         anchor="left"
         open={isMenuOpen}
@@ -90,14 +94,16 @@ function SideBar() {
         sx={{
           display: { md: "none", xs: "block" },
           borderBottom: 2,
+          minHeight: "100%",
 
           "& .MuiDrawer-paper": {
-            backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
+            backgroundColor:`${darkMode ? "#1f2937": "white"}`,
+            minHeight: "100%",
           },
         }}
       >
         <nav
-          className={`w-[60vw] px-2 h-screen  ${
+          className={`sm-width md-width px-2 h-screen  ${
             darkMode ? "bg-gray-800" : "bg-white"
           } `}
         >
@@ -156,18 +162,25 @@ function SideBar() {
           </div>
         </nav>
       </Drawer>
+      {/* 
+      Medium and Large screen Drawer
+       */}
       <Drawer
         anchor="top"
         open
         variant="persistent"
         sx={{
-          width: { md: 224, lg: 240, xs: "auto" },
+          width: { md:224 , lg: 240, xs: 72 },
+          display: {md:"block", xs:"none"},
           flexShrink: 0,
-
+          backgroundColor:`${darkMode ? "#1f2937": "white"}`,
+          
           "& .MuiDrawer-paper": {
-            width: { md: 224, lg: 240, xs: "auto" },
-
-            backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
+            width: { md: 224, lg: 240, xs: 72 },
+            display: {md:"block", xs:"none"},
+            backgroundColor:`${darkMode ? "#1f2937": "white"}`,
+            minHeight: "auto",
+            
           },
           "& .MuiDrawer-paper::-webkit-scrollbar": {
             display: "none" /* Hide scrollbar for Chrome, Safari, and Edge */,
@@ -176,7 +189,7 @@ function SideBar() {
       >
         <nav
           className={` ${
-            !isMenuOpen && "hidden md:block md:w-56 lg:w-60"
+            !isMenuOpen && "hide-sidebar h-screen w-full"
           }  px-4   border-r border-r-gray-200 ${
             darkMode ? "bg-gray-800" : "bg-white"
           }`}
