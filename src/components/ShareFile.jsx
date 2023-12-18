@@ -11,12 +11,18 @@ import axios from "axios";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import FileIcon from "../assets/fileIcon.svg";
 import { useDropzone } from "react-dropzone";
+import { supabase } from "../helper/supabaseClient";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 
 const ShareFile = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [users, setUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [droppedFiles, setDroppedFiles] = useState([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
     let token = JSON.parse(sessionStorage.getItem("token"));
@@ -50,6 +56,67 @@ const ShareFile = () => {
     },
   });
 
+  const handleFinalUpload = async () => {
+    try {
+      for (const file of droppedFiles) {
+        console.log("upload started");
+        const { data, error } = await supabase.storage
+          .from("TwoKey")
+          .upload(file.name, file, {
+            //   .upload(customFileName || file.name, file, {
+            cacheControl: "3600",
+            upsert: false,
+
+            onProgress: (event) => {
+              const progress = (event.loaded / event.total) * 100;
+              console.log(`File uploading... ${progress.toFixed(2)}%`);
+            },
+          });
+        console.log("uploaded file:", data.path);
+        handleFileIdRetrieval(data.path);
+
+        if (error) {
+          throw new Error("File upload failed");
+        }
+      }
+
+      showSnackbar("Upload successful", "success");
+      setTimeout(() => {
+        closeDialog();
+      }, 3000);
+    } catch (error) {
+      console.error("Error occurred in file upload:", error);
+
+      showSnackbar("Upload failed. Please try again.", "error");
+      setTimeout(() => {
+        closeDialog();
+      }, 3000);
+    } finally {
+      // setProgress(0); // Reset progress after upload is complete
+    }
+  };
+
+  const handleFileIdRetrieval = async (desiredFileName) => {
+    try {
+      const { data, error } = await supabase.storage.from("TwoKey").list();
+
+      if (data && data.length > 0) {
+        const file = data.find((item) => item.name === desiredFileName);
+
+        if (file) {
+          console.log("Object id found:", file.id);
+          shareFiles(file.id);
+        } else {
+          console.log(`Object with name "${desiredFileName}" not found.`);
+        }
+      } else {
+        console.log("No objects found in the 'TwoKey' bucket.");
+      }
+    } catch (error) {
+      console.log("Error occurred while retrieving the file list:", error);
+    }
+  };
+
   const shareFiles = async (fileId) => {
     try {
       let token = JSON.parse(sessionStorage.getItem("token"));
@@ -61,7 +128,8 @@ const ShareFile = () => {
         {
           file: [fileId],
           shared_with: sharedWithIds,
-          expiration_time: "315,360,000",
+          expiration_time: 315360000,
+          security_check: {},
         },
         {
           headers: {
@@ -74,6 +142,16 @@ const ShareFile = () => {
     } catch (error) {
       console.log("error occurred while setting the permissions", error);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const showSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
   };
 
   const openDialog = () => {
@@ -300,12 +378,25 @@ const ShareFile = () => {
             </button>
             <button
               className="px-3 py-1.5 rounded-lg shadow-sm border border-[#5E5ADB] text-[#5E5ADB] text-sm font-semibold"
-              onClick={() => alert("Files shared successfully!")}
+              onClick={handleFinalUpload}
             >
               Done
             </button>
           </div>
         </DialogActions>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+        >
+          <MuiAlert
+            onClose={handleSnackbarClose}
+            severity={snackbarSeverity}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </MuiAlert>
+        </Snackbar>
       </Dialog>
     </div>
   );

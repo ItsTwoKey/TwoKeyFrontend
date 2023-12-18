@@ -400,7 +400,7 @@ const SecureShare = () => {
             </div>
           </div>
         </DialogContent>
-        <DialogActions sx={{ padding: "10px" }}>
+        <DialogActions sx={{ padding: "10px", backgroundColor: "#F7F8FA" }}>
           <button
             className="px-4 py-1 mx-2 rounded-lg shadow-sm border bg-[#D1293D] text-white"
             onClick={closeDialog}
