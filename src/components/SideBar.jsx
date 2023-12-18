@@ -44,6 +44,7 @@ function SideBar() {
     return null;
   }
 
+  
   let departments = [
     { name: "UserManagement", path: "/user-management" },
     { name: "Account", path: "/account" },
@@ -168,12 +169,13 @@ function SideBar() {
         open
         variant="persistent"
         sx={{
-          width: { md: 192, lg: 240, xs: 72 },
+          width: { md:224 , lg: 240, xs: 72 },
           display: {md:"block", xs:"none"},
           flexShrink: 0,
+          backgroundColor:`${darkMode ? "#1f2937": "white"}`,
           
           "& .MuiDrawer-paper": {
-            width: { md: 192, lg: 240, xs: 72 },
+            width: { md: 224, lg: 240, xs: 72 },
             display: {md:"block", xs:"none"},
             backgroundColor:`${darkMode ? "#1f2937": "white"}`,
             minHeight: "auto",
@@ -186,7 +188,7 @@ function SideBar() {
       >
         <nav
           className={` ${
-            !isMenuOpen && "hide-sidebar w-full"
+            !isMenuOpen && "hide-sidebar h-screen w-full"
           }  px-4   border-r border-r-gray-200 ${
             darkMode ? "bg-gray-800" : "bg-white"
           }`}
