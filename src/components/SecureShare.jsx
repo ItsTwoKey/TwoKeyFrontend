@@ -409,8 +409,11 @@ const SecureShare = () => {
             Discard
           </button>
           <button
-            className="px-4 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white"
+            className={`px-4 py-1 rounded-lg shadow-sm text-white ${
+              selectedFiles.length ? "bg-[#5E5ADB]" : "bg-gray-400"
+            } `}
             onClick={handleFinalUpload}
+            disabled={!selectedFiles.length}
           >
             Share
           </button>
