@@ -66,7 +66,7 @@ function SideBar() {
   return (
     <nav className={`min-h-[100%] ${darkMode ? "bg-gray-800" : "bg-white"} `}>
       <div
-        className={`w-[72px] h-[72px] p-4 flex justify-center items-center ${
+        className={`w-[72px] h-[72px] p-4 flex justify-center items-center sticky top-0 ${
           darkMode && "text-white"
         }`}
       >
