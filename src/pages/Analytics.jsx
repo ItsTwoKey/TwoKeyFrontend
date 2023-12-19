@@ -8,6 +8,7 @@ import LinearProgress, {
 import { styled } from "@mui/material/styles";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
+import GeographicalMap from "../components/GeographicalMap";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 5,
@@ -108,6 +109,7 @@ const Analytics = () => {
           }}
         />
       </div>
+      <GeographicalMap />
     </div>
   );
 };

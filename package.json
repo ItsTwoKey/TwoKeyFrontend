@@ -20,6 +20,7 @@
     "@uiw/react-color-chrome": "^2.0.2",
     "axios": "^1.5.1",
     "chart.js": "^4.4.1",
+    "d3-scale": "^4.0.2",
     "file-type": "^18.5.0",
     "leaflet": "^1.9.4",
     "lottie-react": "^2.4.0",
@@ -30,6 +31,7 @@
     "react-dropzone": "^14.2.3",
     "react-router-dom": "^6.17.0",
     "react-scripts": "5.0.1",
+    "react-simple-maps": "^3.0.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
