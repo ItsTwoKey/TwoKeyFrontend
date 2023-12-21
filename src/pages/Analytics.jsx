@@ -6,9 +6,8 @@ import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import { styled } from "@mui/material/styles";
-import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS } from "chart.js/auto";
 import GeographicalMap from "../components/GeographicalMap";
+import FileTypeDoughnut from "../components/FileTypeDoughnut";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 5,
@@ -24,22 +23,6 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 }));
 
 const Analytics = () => {
-  const data = {
-    labels: ["Red", "Blue", "Yellow"],
-    datasets: [
-      {
-        label: "My First Dataset",
-        data: [300, 50, 100],
-        backgroundColor: [
-          "rgb(255, 99, 132)",
-          "rgb(54, 162, 235)",
-          "rgb(255, 205, 86)",
-        ],
-        hoverOffset: 4,
-      },
-    ],
-  };
-
   return (
     <div className="p-4">
       <div className="grid grid-cols-3 gap-6">
@@ -101,15 +84,15 @@ const Analytics = () => {
         </div>
       </div>
 
-      <div className="w-48">
-        <Doughnut
-          data={data}
-          options={{
-            responsive: true,
-          }}
-        />
+      <div className="grid grid-cols-3 gap-4 my-4">
+        <span className="shadow-lg border border-gray-100 rounded-md py-6">
+          <FileTypeDoughnut />
+        </span>
+
+        <span className="col-span-2 ">
+          <GeographicalMap />
+        </span>
       </div>
-      <GeographicalMap />
     </div>
   );
 };
