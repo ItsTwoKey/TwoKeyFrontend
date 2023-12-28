@@ -1,13 +1,35 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import LightMode from "../assets/lightMode.svg";
 import DarkMode from "../assets/darkMode.svg";
 import { useDarkMode } from "../context/darkModeContext";
+import { supabase } from "../helper/supabaseClient";
 
 const TopBar = () => {
   const location = useLocation();
   const { darkMode, toggleDarkMode } = useDarkMode();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // Fetch data from Supabase with text search
+      const { data, error } = await supabase
+        .from("user_info") // Replace 'your_table' with your actual Supabase table name
+        .select("*")
+        .ilike("name", `%${searchTerm}%`);
+
+      if (error) {
+        console.error(error);
+      } else {
+        setSearchResults(data);
+        // console.log(data);
+      }
+    };
+
+    fetchData();
+  }, [searchTerm]);
 
   const hideTopBar =
     location.pathname === "/" ||
@@ -19,6 +41,7 @@ const TopBar = () => {
   if (hideTopBar) {
     return null;
   }
+
   if (!sessionStorage.getItem("token")) {
     return null;
   }
@@ -29,6 +52,10 @@ const TopBar = () => {
   const isUserProfile = /^\/User-Profile\/[0-9a-fA-F-]+$/i.test(
     location.pathname
   );
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
   return (
     <nav
@@ -65,6 +92,8 @@ const TopBar = () => {
               className={`w-full p-1 pl-12 ${
                 darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-700"
               } rounded-md`}
+              value={searchTerm}
+              onChange={handleSearchChange}
             ></input>
           </div>
 
@@ -76,6 +105,12 @@ const TopBar = () => {
           />
         </div>
       </div>
+      {/* Display search results */}
+      {/* <ul>
+        {searchResults.map((result) => (
+          <li key={result.id}>{result.name}</li>
+        ))}
+      </ul> */}
     </nav>
   );
 };
