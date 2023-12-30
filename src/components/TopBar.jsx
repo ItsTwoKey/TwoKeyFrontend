@@ -1,35 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
+
 import LightMode from "../assets/lightMode.svg";
 import DarkMode from "../assets/darkMode.svg";
 import { useDarkMode } from "../context/darkModeContext";
-import { supabase } from "../helper/supabaseClient";
+
+import SearchBar from "./SearchBar";
 
 const TopBar = () => {
   const location = useLocation();
   const { darkMode, toggleDarkMode } = useDarkMode();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      // Fetch data from Supabase with text search
-      const { data, error } = await supabase
-        .from("user_info") // Replace 'your_table' with your actual Supabase table name
-        .select("*")
-        .ilike("name", `%${searchTerm}%`);
-
-      if (error) {
-        console.error(error);
-      } else {
-        setSearchResults(data);
-        // console.log(data);
-      }
-    };
-
-    fetchData();
-  }, [searchTerm]);
 
   const hideTopBar =
     location.pathname === "/" ||
@@ -53,10 +33,6 @@ const TopBar = () => {
     location.pathname
   );
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
   return (
     <nav
       className={`sticky top-0 z-50 h-[72px] ${
@@ -76,26 +52,7 @@ const TopBar = () => {
             : `${location.pathname}`.slice(1)}
         </p>
         <div className="flex justify-between gap-2 md:gap-24">
-          <div className="relative w-10 md:w-96">
-            <SearchIcon
-              sx={{
-                position: "absolute",
-                top: "50%",
-                transform: "translateY(-50%)",
-                left: "10px",
-                color: "#808080",
-              }}
-            />
-            <input
-              type="search"
-              placeholder="Search"
-              className={`w-full p-1 pl-12 ${
-                darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-700"
-              } rounded-md`}
-              value={searchTerm}
-              onChange={handleSearchChange}
-            ></input>
-          </div>
+          <SearchBar />
 
           <img
             src={darkMode ? DarkMode : LightMode}
@@ -105,12 +62,6 @@ const TopBar = () => {
           />
         </div>
       </div>
-      {/* Display search results */}
-      {/* <ul>
-        {searchResults.map((result) => (
-          <li key={result.id}>{result.name}</li>
-        ))}
-      </ul> */}
     </nav>
   );
 };

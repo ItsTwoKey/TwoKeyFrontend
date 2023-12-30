@@ -6,13 +6,12 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import { useDarkMode } from "../context/darkModeContext";
 import { useLocation } from "react-router-dom";
-// import { supabase } from "../helper/supabaseClient";
 
 import Skeleton from "@mui/material/Skeleton";
 
 const LatestActivities = () => {
   const { darkMode } = useDarkMode();
-  const [selectedValue, setSelectedValue] = useState("");
+  const [selectedValue, setSelectedValue] = useState("all");
   const [logs, setLogs] = useState([]);
   const location = useLocation();
   const isUserProfile = location.pathname.includes("/profile");
@@ -22,7 +21,6 @@ const LatestActivities = () => {
       try {
         const cacheKey = isUserProfile ? "userLogs" : "commonLogs";
 
-        // Check if data is available in localStorage
         const cachedLogs = localStorage.getItem(cacheKey);
 
         if (cachedLogs) {
@@ -44,7 +42,6 @@ const LatestActivities = () => {
 
         console.log("Common logs", accessLogs.data);
 
-        // Replace the cached data with the new data
         localStorage.setItem(cacheKey, JSON.stringify(accessLogs.data));
 
         setLogs(accessLogs.data);
@@ -58,7 +55,7 @@ const LatestActivities = () => {
 
   const formatTimestamp = (timestamp) => {
     const options = {
-      timeZone: "Asia/Kolkata", // Indian Standard Time (IST)
+      timeZone: "Asia/Kolkata",
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -110,44 +107,54 @@ const LatestActivities = () => {
               className="text-sm text-gray-400"
               onChange={handleSelectChange}
               value={selectedValue}
+              style={{ outline: "none" }}
             >
-              <option value="All">All</option>
-              <option value="Requested">Requested</option>
-              <option value="Access">Access</option>
+              <option value="all">All</option>
+              <option value="file_access">Access</option>
+              <option value="screenshot">Screenshot</option>
+              <option value="download">Download</option>
             </select>
           </span>
         </div>
 
         <div className="h-56 overflow-y-scroll scrollbar-hide">
           {logs.length ? (
-            logs?.map((log, index) => (
-              <div key={index} className="border-b">
-                <span className="flex flex-row gap-2 p-2">
-                  <Tooltip title={log.user} arrow>
-                    <Avatar
-                      src={log.profile_pic}
-                      alt="owner pic"
-                      sx={{ width: 25, height: 25 }}
-                    />
-                  </Tooltip>
-                  <span>
-                    <p className="text-sm">
-                      <span className="font-semibold">{log.username}</span>{" "}
-                      {log.event === "screenshot"
-                        ? "took Screenshot of"
-                        : log.event === "download"
-                        ? "downloaded"
-                        : "accessed"}
-                      <span className="font-semibold"> {log.file_name}</span>{" "}
-                      file.
-                    </p>
-                    <p className="text-sm text-gray-400 mt-2">
-                      {formatTimestamp(log.timestamp)}
-                    </p>
+            logs
+              .filter((log) => {
+                if (selectedValue === "all") {
+                  return true;
+                } else {
+                  return log.event === selectedValue;
+                }
+              })
+              .map((log, index) => (
+                <div key={index} className="border-b">
+                  <span className="flex flex-row gap-2 p-2">
+                    <Tooltip title={log.user} arrow>
+                      <Avatar
+                        src={log.profile_pic}
+                        alt="owner pic"
+                        sx={{ width: 25, height: 25 }}
+                      />
+                    </Tooltip>
+                    <span>
+                      <p className="text-sm">
+                        <span className="font-semibold">{log.username}</span>{" "}
+                        {log.event === "screenshot"
+                          ? "took Screenshot of"
+                          : log.event === "download"
+                          ? "downloaded"
+                          : "accessed"}{" "}
+                        <span className="font-semibold">{log.file_name}</span>{" "}
+                        file.
+                      </p>
+                      <p className="text-sm text-gray-400 mt-2">
+                        {formatTimestamp(log.timestamp)}
+                      </p>
+                    </span>
                   </span>
-                </span>
-              </div>
-            ))
+                </div>
+              ))
           ) : (
             <div className="h-56 overflow-y-scroll scrollbar-hide">
               {skeletons}

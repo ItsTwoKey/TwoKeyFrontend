@@ -14,6 +14,8 @@ import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
 import MenuIcon from "@mui/icons-material/MenuRounded";
 import IconButton from "@mui/material/IconButton";
 import Drawer from "@mui/material/Drawer";
+import Analytics from "../assets/Analytics.svg";
+import UserMgmt from "../assets/userMgmt.svg";
 
 /**
  * Sidebar component for navigation and user-related actions.
@@ -45,10 +47,9 @@ function SideBar() {
     return null;
   }
 
-  
   let departments = [
-    { name: "UserManagement", path: "/user-management" },
-    { name: "Analytics", path: "/analytics" },
+    // { name: "UserManagement", path: "/user-management" },
+    // { name: "Analytics", path: "/analytics" },
     { name: "Account", path: "/account" },
     { name: "Finance", path: "/finance" },
     { name: "Development", path: "/development" },
@@ -73,7 +74,9 @@ function SideBar() {
         }`}
       >
         <IconButton
-          onClick={() => { setIsMenuOpen(!isMenuOpen)}}
+          onClick={() => {
+            setIsMenuOpen(!isMenuOpen);
+          }}
           color="inherit"
           edge="start"
           sx={{
@@ -83,7 +86,7 @@ function SideBar() {
           <MenuIcon />
         </IconButton>
       </div>
-     
+
       {/* 
       Small screen Drawer
        */}
@@ -98,7 +101,7 @@ function SideBar() {
           minHeight: "100%",
 
           "& .MuiDrawer-paper": {
-            backgroundColor:`${darkMode ? "#1f2937": "white"}`,
+            backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
             minHeight: "100%",
           },
         }}
@@ -171,17 +174,16 @@ function SideBar() {
         open
         variant="persistent"
         sx={{
-          width: { md:224 , lg: 240, xs: 72 },
-          display: {md:"block", xs:"none"},
+          width: { md: 224, lg: 240, xs: 72 },
+          display: { md: "block", xs: "none" },
           flexShrink: 0,
-          backgroundColor:`${darkMode ? "#1f2937": "white"}`,
-          
+          backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
+
           "& .MuiDrawer-paper": {
             width: { md: 224, lg: 240, xs: 72 },
-            display: {md:"block", xs:"none"},
-            backgroundColor:`${darkMode ? "#1f2937": "white"}`,
+            display: { md: "block", xs: "none" },
+            backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
             minHeight: "auto",
-            
           },
           "& .MuiDrawer-paper::-webkit-scrollbar": {
             display: "none" /* Hide scrollbar for Chrome, Safari, and Edge */,
@@ -311,6 +313,71 @@ function SideBarContents({ departments, darkMode }) {
             </a>
           </li>
         </div>
+
+        <p
+          className={`text-xs p-2 ${
+            darkMode ? "text-gray-200" : "text-gray-600"
+          }`}
+        >
+          Organization
+        </p>
+        <div className="flex items-center">
+          <li className="min-w-full">
+            <a
+              href="/user-management"
+              alt="user Management"
+              className={`flex justify-start items-center min-w-full ${
+                location.pathname === "/user-management"
+                  ? ` p-2 rounded-md text-sm ${
+                      darkMode
+                        ? "hover:bg-gray-700 bg-gray-600"
+                        : "bg-gray-200  hover:bg-gray-100"
+                    } duration-200`
+                  : `${
+                      darkMode
+                        ? "hover:bg-gray-700 text-gray-100"
+                        : "hover:bg-gray-100"
+                    } p-2 rounded-md text-sm duration-200`
+              }`}
+            >
+              <img src={UserMgmt} alt="." />
+              <p className="px-2">user-management</p>
+            </a>
+          </li>
+        </div>
+
+        <p
+          className={`text-xs p-2 ${
+            darkMode ? "text-gray-200" : "text-gray-600"
+          }`}
+        >
+          Analytics
+        </p>
+        <div className="flex items-center">
+          <li className="min-w-full">
+            <a
+              href="/analytics"
+              alt="Analytics"
+              className={`flex justify-start items-center min-w-full ${
+                location.pathname === "/analytics"
+                  ? ` p-2 rounded-md text-sm ${
+                      darkMode
+                        ? "hover:bg-gray-700 bg-gray-600"
+                        : "bg-gray-200  hover:bg-gray-100"
+                    } duration-200`
+                  : `${
+                      darkMode
+                        ? "hover:bg-gray-700 text-gray-100"
+                        : "hover:bg-gray-100"
+                    } p-2 rounded-md text-sm duration-200`
+              }`}
+            >
+              <img src={Analytics} alt="." />
+              <p className="px-2">Analytics & Report</p>
+            </a>
+          </li>
+        </div>
+
         <p
           className={`text-xs  mt-4  p-2 ${
             darkMode ? "text-gray-200" : "text-gray-600"
