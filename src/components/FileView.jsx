@@ -10,6 +10,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   const { screenshotDetected, screenshotAlert } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [preUrl, setPreUrl] = useState("");
+  const [signedUrl, setSignedUrl] = useState("");
   const [loadingUrl, setLoadingUrl] = useState(true);
 
   const openDialog = () => {
@@ -55,6 +56,8 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
         );
 
         const url = presignedUrl.data.signed_url;
+
+        setSignedUrl(url);
 
         // Fetch data from the URL
         const response = await axios.get(url, {
@@ -109,6 +112,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
                 sharedFileInfo={sharedFileInfo}
                 closeDrawer={closeDrawer}
                 preUrl={preUrl}
+                signedUrl={signedUrl}
               />
             </div>
           </div>

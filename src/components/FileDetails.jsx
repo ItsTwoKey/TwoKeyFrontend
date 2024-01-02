@@ -8,9 +8,16 @@ import DownloadFile from "../assets/downloadFile.svg";
 import { supabase } from "../helper/supabaseClient";
 import axios from "axios";
 import AI from "../assets/ai.svg";
+import AIChat from "./AIChat";
 import { useNavigate } from "react-router-dom";
 
-const FileDetails = ({ fileInfo, sharedFileInfo, closeDrawer, preUrl }) => {
+const FileDetails = ({
+  fileInfo,
+  sharedFileInfo,
+  closeDrawer,
+  preUrl,
+  signedUrl,
+}) => {
   const navigate = useNavigate();
   console.log("fileInfo", fileInfo);
   console.log("sharedFileInfo", sharedFileInfo);
@@ -172,12 +179,14 @@ const FileDetails = ({ fileInfo, sharedFileInfo, closeDrawer, preUrl }) => {
         </span>
       </div>
       <div className="text-right">
-        <button
+        {/* <button
           className="h-12 w-12 shadow-lg border border-gray-500 bg-[#3C4042] rounded-full"
           onClick={handleAIClick}
         >
           <img src={AI} alt="AI" className="mx-auto" />
-        </button>
+        </button> */}
+
+        <AIChat signedUrl={signedUrl} />
       </div>
     </div>
   );
