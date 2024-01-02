@@ -266,6 +266,7 @@ function SideBar() {
  * @returns {JSX.Element} The SidebarContents component.
  */
 function SideBarContents({ departments, darkMode }) {
+  const [profileData, setProfileData] = useState({});
   const location = useLocation();
   const navigate = useNavigate();
   function handleLogout() {
@@ -274,6 +275,11 @@ function SideBarContents({ departments, darkMode }) {
     // localStorage.removeItem("profileData");
     localStorage.clear();
   }
+
+  useEffect(() => {
+    let data = localStorage.getItem("profileData");
+    setProfileData(JSON.parse(data));
+  }, []);
 
   return (
     <>
@@ -314,69 +320,75 @@ function SideBarContents({ departments, darkMode }) {
           </li>
         </div>
 
-        <p
-          className={`text-xs p-2 ${
-            darkMode ? "text-gray-200" : "text-gray-600"
-          }`}
-        >
-          Organization
-        </p>
-        <div className="flex items-center">
-          <li className="min-w-full">
-            <a
-              href="/user-management"
-              alt="user Management"
-              className={`flex justify-start items-center min-w-full ${
-                location.pathname === "/user-management"
-                  ? ` p-2 rounded-md text-sm ${
-                      darkMode
-                        ? "hover:bg-gray-700 bg-gray-600"
-                        : "bg-gray-200  hover:bg-gray-100"
-                    } duration-200`
-                  : `${
-                      darkMode
-                        ? "hover:bg-gray-700 text-gray-100"
-                        : "hover:bg-gray-100"
-                    } p-2 rounded-md text-sm duration-200`
+        {profileData && profileData.role_priv === "org_admin" ? (
+          <div>
+            <p
+              className={`text-xs p-2 ${
+                darkMode ? "text-gray-200" : "text-gray-600"
               }`}
             >
-              <img src={UserMgmt} alt="." />
-              <p className="px-2">user-management</p>
-            </a>
-          </li>
-        </div>
+              Organization
+            </p>
+            <div className="flex items-center">
+              <li className="min-w-full">
+                <a
+                  href="/user-management"
+                  alt="user Management"
+                  className={`flex justify-start items-center min-w-full ${
+                    location.pathname === "/user-management"
+                      ? ` p-2 rounded-md text-sm ${
+                          darkMode
+                            ? "hover:bg-gray-700 bg-gray-600"
+                            : "bg-gray-200  hover:bg-gray-100"
+                        } duration-200`
+                      : `${
+                          darkMode
+                            ? "hover:bg-gray-700 text-gray-100"
+                            : "hover:bg-gray-100"
+                        } p-2 rounded-md text-sm duration-200`
+                  }`}
+                >
+                  <img src={UserMgmt} alt="." />
+                  <p className="px-2">user-management</p>
+                </a>
+              </li>
+            </div>
 
-        <p
-          className={`text-xs p-2 ${
-            darkMode ? "text-gray-200" : "text-gray-600"
-          }`}
-        >
-          Analytics
-        </p>
-        <div className="flex items-center">
-          <li className="min-w-full">
-            <a
-              href="/analytics"
-              alt="Analytics"
-              className={`flex justify-start items-center min-w-full ${
-                location.pathname === "/analytics"
-                  ? ` p-2 rounded-md text-sm ${
-                      darkMode
-                        ? "hover:bg-gray-700 bg-gray-600"
-                        : "bg-gray-200  hover:bg-gray-100"
-                    } duration-200`
-                  : `${
-                      darkMode
-                        ? "hover:bg-gray-700 text-gray-100"
-                        : "hover:bg-gray-100"
-                    } p-2 rounded-md text-sm duration-200`
+            <p
+              className={`text-xs p-2 ${
+                darkMode ? "text-gray-200" : "text-gray-600"
               }`}
             >
-              <img src={Analytics} alt="." />
-              <p className="px-2">Analytics & Report</p>
-            </a>
-          </li>
-        </div>
+              Analytics
+            </p>
+            <div className="flex items-center">
+              <li className="min-w-full">
+                <a
+                  href="/analytics"
+                  alt="Analytics"
+                  className={`flex justify-start items-center min-w-full ${
+                    location.pathname === "/analytics"
+                      ? ` p-2 rounded-md text-sm ${
+                          darkMode
+                            ? "hover:bg-gray-700 bg-gray-600"
+                            : "bg-gray-200  hover:bg-gray-100"
+                        } duration-200`
+                      : `${
+                          darkMode
+                            ? "hover:bg-gray-700 text-gray-100"
+                            : "hover:bg-gray-100"
+                        } p-2 rounded-md text-sm duration-200`
+                  }`}
+                >
+                  <img src={Analytics} alt="." />
+                  <p className="px-2">Analytics & Report</p>
+                </a>
+              </li>
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
 
         <p
           className={`text-xs  mt-4  p-2 ${
