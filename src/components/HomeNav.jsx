@@ -13,17 +13,32 @@ const HomeNav = () => {
       id="nav"
       className="bg-[#FAF8F7] h-24 flex justify-between items-center px-4 md:px-12 font-tahoma"
     >
-      <h4 className="text-lg font-[400] font-allertaStencil">Twokey</h4>
+      <a
+        href="/"
+        alt="Twokey"
+        className="text-lg font-[400] font-allertaStencil"
+      >
+        Twokey
+      </a>
       <span className="flex gap-8 py-2">
-        <button onClick={() => scrollToSection("about")} className="hidden md:block">
+        <button
+          onClick={() => scrollToSection("about")}
+          className="hidden md:block"
+        >
           About Us
         </button>
 
-        <button onClick={() => scrollToSection("product")} className="hidden md:block">
+        <button
+          onClick={() => scrollToSection("product")}
+          className="hidden md:block"
+        >
           Product
         </button>
 
-        <button onClick={() => scrollToSection("pricing")} className="hidden md:block">
+        <button
+          onClick={() => scrollToSection("pricing")}
+          className="hidden md:block"
+        >
           Pricing
         </button>
       </span>

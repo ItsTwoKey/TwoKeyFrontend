@@ -20,6 +20,7 @@ import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile";
 import AI from "./pages/AI";
 import Analytics from "./pages/Analytics";
+import ContactUs from "./pages/ContactUs";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuth } from "./context/authContext";
@@ -68,6 +69,7 @@ const App = () => {
             {/* Public Routes should go below */}
 
             <Route path="/" element={<Home />} />
+            <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} exact />
