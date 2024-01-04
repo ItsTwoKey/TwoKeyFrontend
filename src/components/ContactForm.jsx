@@ -155,7 +155,7 @@ const ContactForm = () => {
             />
             <label htmlFor="agreeToPrivacyPolicy" className="ml-2">
               You agree to our friendly{" "}
-              <a href="#" alt="privacy policy" className="underline">
+              <a href="/" alt="privacy policy" className="underline">
                 privacy policy
               </a>
               .

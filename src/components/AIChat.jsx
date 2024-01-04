@@ -7,6 +7,7 @@ import AI from "../assets/ai.svg";
 import axios from "axios";
 import LeftArrowBlack from "../assets/leftArrowBlack.svg";
 import Restart from "../assets/restart.svg";
+import Cross from "../assets/cross.svg";
 import Copy from "../assets/copy.svg";
 import AskAI from "../assets/askAi.svg";
 import Assistant from "../assets/assistant.svg";
@@ -100,11 +101,31 @@ const AIChat = ({ signedUrl }) => {
         onClose={closeDialog}
         PaperProps={{
           style: {
-            borderRadius: "5px",
+            borderRadius: "22px",
+            position: "absolute",
+            bottom: "0px",
+            right: "0px",
           },
         }}
       >
-        <DialogTitle>Ask AI</DialogTitle>
+        <DialogTitle
+          sx={{
+            backgroundColor: "#F9F9F9",
+          }}
+        >
+          <div className="flex justify-between items-center">
+            <button className="flex justify-center items-center gap-1 text-sm font-semibold rounded-full bg-[#F1F1FF] px-4 py-2 shadow-xl">
+              <img className="w-4 h-4" src={Restart} alt="." />
+              Restart
+            </button>
+            <button
+              className="flex justify-center items-center bg-black text-white rounded-full px-[6px] py-[2px] text-xs"
+              onClick={closeDialog}
+            >
+              X
+            </button>
+          </div>
+        </DialogTitle>
         <DialogContent
           style={{
             backgroundColor: "#F7F8FA",
@@ -134,9 +155,10 @@ const AIChat = ({ signedUrl }) => {
         </DialogContent>
         <DialogActions
           sx={{
-            padding: "10px",
+            padding: "15px",
             display: "flex",
             justifyContent: "center",
+            backgroundColor: "#F9F9F9",
           }}
         >
           {/* <span className="flex justify-center items-center gap-4 "> */}
@@ -145,12 +167,12 @@ const AIChat = ({ signedUrl }) => {
             placeholder="Send a message......."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="w-full py-2 px-6 rounded-lg border border-black"
+            className="w-full py-2 px-6 rounded-[8px] border border-black"
           />
           <button
             onClick={handleAskAiClick}
             type="submit"
-            className="bg-[#A4A4A4] p-2 rounded-lg "
+            className="bg-[#A4A4A4] p-2 rounded-[8px] "
           >
             <img src={AskAI} alt="ask" />
           </button>
