@@ -15,6 +15,18 @@ export default function SearchBar() {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [filteredFiles, setFilteredFiles] = useState([]);
+
+  useEffect(() => {
+    const filesData = JSON.parse(localStorage.getItem("accountFilesCache"));
+    console.log("filesData", filesData);
+
+    // Filter files based on the search term
+    const filteredFiles = filesData.filter((file) =>
+      file.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredFiles(filteredFiles);
+  }, [searchTerm]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,7 +88,7 @@ export default function SearchBar() {
         maxWidth={"sm"}
         PaperProps={{
           style: {
-            borderRadius: "15px",
+            borderRadius: "8px",
           },
         }}
       >
@@ -102,21 +114,50 @@ export default function SearchBar() {
           <DialogContent
             style={{
               margin: 0,
+              padding: 0,
             }}
           >
             <div className="">
-              <ul>
-                {searchResults.map((result, index) => (
-                  <li key={index}>{result.name}</li>
-                ))}
-              </ul>
+              {filteredFiles && (
+                <div className="my-2">
+                  <h3 className="text-md font-semibold p-4 border-b-[1px] border-gray-100">
+                    Files:
+                  </h3>
+                  <ul>
+                    {filteredFiles.map((file, index) => (
+                      <li
+                        key={index}
+                        className="p-4 border-b-[1px] border-gray-100 hover:bg-gray-50 cursor-pointer"
+                      >
+                        {file.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* <hr className="" /> */}
+
+              {searchResults && (
+                <div className="my-2">
+                  <h3 className="text-md font-semibold p-4 border-b-[1px] border-gray-100">
+                    Users:
+                  </h3>
+                  <ul>
+                    {searchResults.map((result, index) => (
+                      <li
+                        key={index}
+                        className="p-4 border-b-[1px] border-gray-100 hover:bg-gray-50 cursor-pointer"
+                      >
+                        {result.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </DialogContent>
         )}
-        {/* <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Subscribe</Button>
-        </DialogActions> */}
       </Dialog>
     </React.Fragment>
   );
