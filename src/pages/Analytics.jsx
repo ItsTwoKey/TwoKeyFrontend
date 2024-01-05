@@ -84,13 +84,13 @@ const Analytics = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 my-4">
-        <span className="shadow-lg border border-gray-100 rounded-md py-6">
-          <FileTypeDoughnut />
-        </span>
-
-        <span className="col-span-2 ">
+      <div className="my-4">
+        <span className="">
           <GeographicalMap />
+        </span>
+        <span className="shadow-lg border border-gray-100 rounded-md py-6 flex gap-2">
+          <FileTypeDoughnut />
+          <FileTypeDoughnut />
         </span>
       </div>
     </div>

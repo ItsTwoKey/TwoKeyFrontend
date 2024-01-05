@@ -37,7 +37,7 @@ const GeographicalMap = () => {
   };
 
   return (
-    <div className="shadow-lg rounded-md py-6 border border-gray-100">
+    <div className="shadow-lg rounded-md py-6 border border-gray-100 ">
       <span className="px-4 flex justify-between items-center">
         <p className="text-sm font-semibold">Recent File access location</p>
         <button className="flex items-center gap-2">
@@ -49,9 +49,10 @@ const GeographicalMap = () => {
       <hr className="border border-[#F6F6F6] mt-2" />
 
       <ComposableMap
+        height={380}
         projectionConfig={{
           rotate: [-10, 0, 0],
-          scale: 175,
+          scale: 142,
         }}
         // className="my-[-30px]"
       >
