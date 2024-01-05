@@ -19,13 +19,14 @@ export default function SearchBar() {
 
   useEffect(() => {
     const filesData = JSON.parse(localStorage.getItem("accountFilesCache"));
-    console.log("filesData", filesData);
 
-    // Filter files based on the search term
-    const filteredFiles = filesData.filter((file) =>
-      file.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredFiles(filteredFiles);
+    if (filesData) {
+      // Filter files based on the search term
+      const filteredFiles = filesData.filter((file) =>
+        file.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredFiles(filteredFiles);
+    }
   }, [searchTerm]);
 
   useEffect(() => {

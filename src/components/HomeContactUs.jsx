@@ -10,7 +10,9 @@ const HomeContactUs = () => {
         </h1>
 
         <button className="bg-[#C8C6FF] rounded-md py-2 px-6 text-sm font-bold my-6">
-          Contact Us
+          <a href="/contact-us" alt=".">
+            Contact Us
+          </a>
         </button>
       </div>
     </div>
