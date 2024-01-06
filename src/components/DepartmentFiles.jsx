@@ -24,7 +24,7 @@ import Avatar from "@mui/material/Avatar";
 import { Skeleton } from "@mui/material";
 import FileView from "./FileView";
 
-const AccountFiles = () => {
+const DepartmentFiles = ({ filesFromBackend }) => {
   const { darkMode } = useDarkMode();
   const { formatFileSize } = useAuth();
   const [filteredData, setFilteredData] = useState([]);
@@ -44,76 +44,40 @@ const AccountFiles = () => {
   const [sharedFileInfo, setSharedFileInfo] = useState({});
 
   useEffect(() => {
-    const cacheKey = "accountFilesCache";
+    if (filesFromBackend && filesFromBackend.length > 0) {
+      const mappedFiles = filesFromBackend.map((file) => {
+        return {
+          id: file.id,
+          name: file.name.substring(0, 80),
+          profilePic: file.profile_pic,
+          size: formatFileSize(file.metadata.size),
+          dept: file.dept_name,
+          owner: file.owner_email,
+          mimetype: file.metadata.mimetype,
+          status: "Team",
+          security: "Enhanced",
+          lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+            "en-IN",
+            {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true,
+            }
+          ),
+        };
+      });
 
-    // Check if account files data is available in localStorage
-    const cachedAccountFiles = localStorage.getItem(cacheKey);
-
-    if (cachedAccountFiles) {
-      console.log(
-        "Using cached account files:",
-        JSON.parse(cachedAccountFiles)
-      );
-      setFilteredData(JSON.parse(cachedAccountFiles));
+      setFilteredData(mappedFiles);
+      setLoading(false);
+    } else {
+      // Handle the case when filesFromBackend is empty
+      setFilteredData([]);
       setLoading(false);
     }
-
-    const fetchAccountFiles = async () => {
-      try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
-
-        const accountFilesFromBackend = await axios.get(
-          "https://twokeybackend.onrender.com/file/files/?recs=25",
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
-
-        console.log("Account files from backend", accountFilesFromBackend.data);
-
-        if (accountFilesFromBackend.data) {
-          const mappedFiles = accountFilesFromBackend.data.map((file) => {
-            return {
-              id: file.id,
-              name: file.name.substring(0, 80),
-              profilePic: file.profile_pic,
-              size: formatFileSize(file.metadata.size),
-              dept: file.dept_name,
-              owner: file.owner_email,
-              mimetype: file.metadata.mimetype,
-              status: "Team",
-              security: "Enhanced",
-              lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
-                "en-IN",
-                {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                }
-              ),
-            };
-          });
-
-          // Replace the cached account files data with the new data
-          localStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
-
-          // Update the state with the new data
-          setFilteredData(mappedFiles);
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching files:", error);
-      }
-    };
-
-    fetchAccountFiles();
-  }, []);
+  }, [filesFromBackend]);
 
   const handleSort = (column) => {
     setSortOrder((prevSortOrder) => (prevSortOrder === "asc" ? "desc" : "asc"));
@@ -166,83 +130,87 @@ const AccountFiles = () => {
       {location.pathname === "/profile" ? (
         ""
       ) : (
-        <p className="text-lg text-left font-semibold my-6">Account Files</p>
+        <p className="text-lg text-left font-semibold my-6">
+          {filteredData.length > 0 ? "Account Files" : "No Files"}
+        </p>
       )}
 
       <div>
-        <TableContainer>
-          <Table aria-label="collapsible table">
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#F7F9FCCC" }}>
-                <TableCell />
-                <TableCell>
-                  <p
-                    className="flex flex-row items-center"
-                    onClick={() => handleSort("name")}
+        {filteredData.length > 0 ? (
+          <TableContainer>
+            <Table aria-label="collapsible table">
+              <TableHead>
+                <TableRow sx={{ backgroundColor: "#F7F9FCCC" }}>
+                  <TableCell />
+                  <TableCell>
+                    <p
+                      className="flex flex-row items-center"
+                      onClick={() => handleSort("name")}
+                    >
+                      FILE NAME <img src={UnfoldIcon} alt="↓" />
+                    </p>
+                  </TableCell>
+                  <TableCell>OWNER</TableCell>
+                  <TableCell align="center">
+                    STATUS
+                    <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
+                      i
+                    </b>
+                  </TableCell>
+                  <TableCell align="center" onClick={() => handleSort("size")}>
+                    SIZE
+                    <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
+                      i
+                    </b>
+                  </TableCell>
+                  <TableCell align="center">
+                    SECURITY
+                    <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
+                      i
+                    </b>
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    onClick={() => handleSort("lastUpdate")}
                   >
-                    FILE NAME <img src={UnfoldIcon} alt="↓" />
-                  </p>
-                </TableCell>
-                <TableCell>OWNER</TableCell>
-                <TableCell align="center">
-                  STATUS
-                  <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
-                    i
-                  </b>
-                </TableCell>
-                <TableCell align="center" onClick={() => handleSort("size")}>
-                  SIZE
-                  <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
-                    i
-                  </b>
-                </TableCell>
-                <TableCell align="center">
-                  SECURITY
-                  <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
-                    i
-                  </b>
-                </TableCell>
-                <TableCell
-                  align="center"
-                  onClick={() => handleSort("lastUpdate")}
-                >
-                  <p className="flex flex-row items-center">
-                    LAST UPDATED <img src={UnfoldIcon} alt="↓" />
-                  </p>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {loading
-                ? Array.from({ length: 10 }).map((_, index) => (
-                    <Row key={index} row={null} />
-                  ))
-                : filteredData
-                    .slice()
-                    .sort((a, b) => {
-                      if (sortColumn === "lastUpdate") {
-                        return sortOrder === "asc"
-                          ? new Date(a.lastUpdate) - new Date(b.lastUpdate)
-                          : new Date(b.lastUpdate) - new Date(a.lastUpdate);
-                      } else if (sortColumn === "name") {
-                        return sortOrder === "asc"
-                          ? a.name.localeCompare(b.name)
-                          : b.name.localeCompare(a.name);
-                      } else if (sortColumn === "size") {
-                        return sortOrder === "asc"
-                          ? a.size - b.size
-                          : b.size - a.size;
-                      }
-                      // Add similar sorting logic for other columns as needed
-
-                      return 0;
-                    })
-                    .map((row) => (
-                      <Row key={row.id} row={row} openDrawer={openDrawer} />
-                    ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                    <p className="flex flex-row items-center">
+                      LAST UPDATED <img src={UnfoldIcon} alt="↓" />
+                    </p>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {loading
+                  ? Array.from({ length: 10 }).map((_, index) => (
+                      <Row key={index} row={null} />
+                    ))
+                  : filteredData
+                      .slice()
+                      .sort((a, b) => {
+                        if (sortColumn === "lastUpdate") {
+                          return sortOrder === "asc"
+                            ? new Date(a.lastUpdate) - new Date(b.lastUpdate)
+                            : new Date(b.lastUpdate) - new Date(a.lastUpdate);
+                        } else if (sortColumn === "name") {
+                          return sortOrder === "asc"
+                            ? a.name.localeCompare(b.name)
+                            : b.name.localeCompare(a.name);
+                        } else if (sortColumn === "size") {
+                          return sortOrder === "asc"
+                            ? a.size - b.size
+                            : b.size - a.size;
+                        }
+                        return 0;
+                      })
+                      .map((row) => (
+                        <Row key={row.id} row={row} openDrawer={openDrawer} />
+                      ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <p className="text-center">No files found!</p>
+        )}
       </div>
 
       {isFileViewOpen && (
@@ -284,7 +252,6 @@ function Row(props) {
 
   const handleRowClick = async () => {
     setOpen(!open);
-    // Call getLogs only if the row is opened
     if (!open) {
       await getLogs(row.id);
     }
@@ -292,7 +259,7 @@ function Row(props) {
 
   const formatTimestamp = (timestamp) => {
     const options = {
-      timeZone: "Asia/Kolkata", // Indian Standard Time (IST)
+      timeZone: "Asia/Kolkata",
       year: "numeric",
       month: "numeric",
       day: "numeric",
@@ -469,4 +436,4 @@ function Row(props) {
   );
 }
 
-export default AccountFiles;
+export default DepartmentFiles;
