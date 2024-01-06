@@ -6,7 +6,7 @@ import { Dialog } from "@mui/material";
 import FileViewer from "../components/FileViewer";
 import { useAuth } from "../context/authContext";
 import DueDate from "../components/DueDate";
-import AccountFiles from "../components/AccountFiles";
+import DashboardFiles from "../components/DashboardFiles";
 import LatestActivities from "../components/LatestActivities";
 
 import ErrorPage from "../components/ErrorPage";
@@ -38,7 +38,7 @@ const Dashboard = () => {
       </div>
       <div>
         <RecentFiles />
-        <AccountFiles />
+        <DashboardFiles />
       </div>
       {/* <div className={`${screenshotDetected ? "blur" : ""}`}> */}
       <Dialog open={isFileViewerOpen} onClose={closeFileViewer} maxWidth="lg">

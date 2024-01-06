@@ -5,7 +5,7 @@ import { useDarkMode } from "../context/darkModeContext";
 import { useAuth } from "../context/authContext";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import { supabase } from "../helper/supabaseClient";
-
+import axios from "axios";
 // Mui Icons And Drawers
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import { departmentIcons } from "../utils/iconComponents";
@@ -269,7 +269,28 @@ function SideBarContents({ departments, darkMode }) {
   const [profileData, setProfileData] = useState({});
   const location = useLocation();
   const navigate = useNavigate();
+
   function handleLogout() {
+    // change the active status
+    let token = JSON.parse(sessionStorage.getItem("token"));
+    let body = {
+      id: token.user.id,
+      is_active: false,
+    };
+    console.log("onboarding body:", body);
+    try {
+      const res = axios.put(
+        "https://twokeybackend.onrender.com/users/updateProfile/",
+        body,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
     navigate("/");
     sessionStorage.removeItem("token");
     // localStorage.removeItem("profileData");

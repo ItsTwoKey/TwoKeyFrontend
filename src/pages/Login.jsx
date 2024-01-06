@@ -70,6 +70,27 @@ const Login = () => {
         sessionStorage.setItem("token", JSON.stringify(data));
         getProfileData();
       }
+
+      // change the active status
+      let body = {
+        id: data.user.id,
+        is_active: true,
+      };
+      console.log("onboarding body:", body);
+      try {
+        const res = await axios.put(
+          "https://twokeybackend.onrender.com/users/updateProfile/",
+          body,
+          {
+            headers: {
+              Authorization: `Bearer ${data.session.access_token}`,
+            },
+          }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+
       navigate("/dashboard");
     } catch (error) {
       alert(error.message);

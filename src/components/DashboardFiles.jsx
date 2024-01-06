@@ -24,7 +24,7 @@ import Avatar from "@mui/material/Avatar";
 import { Skeleton } from "@mui/material";
 import FileView from "./FileView";
 
-const AccountFiles = () => {
+const DashboardFiles = () => {
   const { darkMode } = useDarkMode();
   const { formatFileSize } = useAuth();
   const [filteredData, setFilteredData] = useState([]);
@@ -469,4 +469,4 @@ function Row(props) {
   );
 }
 
-export default AccountFiles;
+export default DashboardFiles;

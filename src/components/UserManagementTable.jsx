@@ -24,6 +24,7 @@ export default function UserManagementTable() {
         );
 
         setUsers(response.data);
+        console.log("users:", response.data);
       } catch (error) {
         console.log(error);
       }
@@ -70,8 +71,14 @@ export default function UserManagementTable() {
       headerName: "Status",
       width: 100,
       renderCell: (params) => (
-        <p className="bg-[#ECFDF3] text-center text-green-700 rounded-full py-1 px-4">
-          Active
+        <p
+          className={`text-center  rounded-full py-1 px-4 ${
+            params.row.is_active
+              ? "text-green-700 bg-[#ECFDF3]"
+              : "text-red-500 bg-red-50"
+          }`}
+        >
+          {params.row.is_active ? "Online" : "Offline"}
         </p>
       ),
     },
