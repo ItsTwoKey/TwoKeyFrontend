@@ -4,6 +4,7 @@ import { styled } from "@mui/material/styles";
 import Cross from "../assets/cross.svg";
 import Tick from "../assets/tick.svg";
 import CurlyArrow from "../assets/curlyArrow.svg";
+import { useNavigate } from "react-router-dom";
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -93,9 +94,15 @@ const Features = [
 
 const HomePricing = () => {
   const [isYearly, setIsYearly] = useState(false);
+  let navigate = useNavigate();
 
   const handleChange = () => {
     setIsYearly((prevValue) => !prevValue);
+  };
+
+  const handleGetStarted = () => {
+    // Handle navigation to the signup page here
+    navigate("/signup");
   };
 
   return (
@@ -113,7 +120,9 @@ const HomePricing = () => {
             powerful creators
           </span>
         </h2>
-        <p className="my-3 text-lg font-[400]">Choose a plan that’s right for you</p>
+        <p className="my-3 text-lg font-[400]">
+          Choose a plan that’s right for you
+        </p>
 
         <div className="mt-12 relative flex flex-col font-[400] text-[#191D23]">
           <div className="flex flex-row gap-4 items-center">
@@ -126,8 +135,14 @@ const HomePricing = () => {
 
       <div className="flex justify-center mt-4 md:mt-auto md:ml-96">
         <div className="flex justify-center items-baseline w-[180px]">
-          <img src={CurlyArrow} alt="" className="relative left-16 md:static h-16 flip-image" />
-          <p className="relative top-2 right-10 md:static text-[#5E5ADB] text-lg font-semibold">Save 25%</p>
+          <img
+            src={CurlyArrow}
+            alt=""
+            className="relative left-16 md:static h-16 flip-image"
+          />
+          <p className="relative top-2 right-10 md:static text-[#5E5ADB] text-lg font-semibold">
+            Save 25%
+          </p>
         </div>
       </div>
 
@@ -148,7 +163,7 @@ const HomePricing = () => {
               </p>
               <span className="flex items-center gap-2 my-6">
                 <p className="text-4xl text-gray-600 font-extralight">
-                  ${pricing.price}
+                  ${isYearly ? pricing.price * 12 : pricing.price}
                 </p>
                 <p
                   className={`text-sm font-light ${
@@ -157,11 +172,12 @@ const HomePricing = () => {
                       : "text-gray-600"
                   }`}
                 >
-                  / Month
+                  / {isYearly ? "Year" : "Month"}
                 </p>
               </span>
 
               <button
+                onClick={handleGetStarted}
                 className={`w-full py-2 px-4 text-sm rounded-sm text-[#5E5ADB] bg-white ${
                   pricing.name === "Professional"
                     ? ""

@@ -1,6 +1,11 @@
 import React from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const HomeNav = () => {
+  const location = useLocation();
+
+  const isOnContactUs = location.pathname === "/contact-us";
+
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
@@ -20,28 +25,46 @@ const HomeNav = () => {
       >
         Twokey
       </a>
-      <span className="flex gap-8 py-2">
-        <button
-          onClick={() => scrollToSection("about")}
-          className="hidden md:block"
-        >
-          About Us
-        </button>
 
-        <button
-          onClick={() => scrollToSection("product")}
-          className="hidden md:block"
-        >
-          Product
-        </button>
+      {isOnContactUs ? (
+        <span className="flex gap-8 py-2">
+          <Link to="/" className="hidden md:block">
+            About Us
+          </Link>
 
-        <button
-          onClick={() => scrollToSection("pricing")}
-          className="hidden md:block"
-        >
-          Pricing
-        </button>
-      </span>
+          <Link to="/" className="hidden md:block">
+            Product
+          </Link>
+
+          <Link to="/" className="hidden md:block">
+            Pricing
+          </Link>
+        </span>
+      ) : (
+        <span className="flex gap-8 py-2">
+          <button
+            onClick={() => scrollToSection("about")}
+            className="hidden md:block"
+          >
+            About Us
+          </button>
+
+          <button
+            onClick={() => scrollToSection("product")}
+            className="hidden md:block"
+          >
+            Product
+          </button>
+
+          <button
+            onClick={() => scrollToSection("pricing")}
+            className="hidden md:block"
+          >
+            Pricing
+          </button>
+        </span>
+      )}
+
       <span className="flex gap-4">
         <a href="/login" className="py-2">
           Sign in
