@@ -24,6 +24,7 @@ import { useAuth } from "../context/authContext";
 import { supabase } from "../helper/supabaseClient";
 import Avatar from "@mui/material/Avatar";
 import { Skeleton } from "@mui/material";
+import FileView from "./FileView";
 
 const AccountFiles = () => {
   const { darkMode } = useDarkMode();
@@ -33,6 +34,16 @@ const AccountFiles = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [sortColumn, setSortColumn] = useState("name");
   const location = useLocation();
+  const [isFileViewOpen, setIsFileViewOpen] = useState(false);
+  const [selectedFileInfo, setSelectedFileInfo] = useState({
+    name: "",
+    size: "",
+    id: "",
+    owner: "",
+    profileUrl: "",
+    lastUpdate: "",
+  });
+  const [sharedFileInfo, setSharedFileInfo] = useState({});
 
   useEffect(() => {
     const cacheKey = "accountFilesCache";
@@ -111,6 +122,47 @@ const AccountFiles = () => {
     setSortColumn(column);
   };
 
+  const getSharedFileInfo = async (fileId) => {
+    try {
+      let token = JSON.parse(sessionStorage.getItem("token"));
+      const info = await axios.get(
+        `https://twokeybackend.onrender.com/file/sharedFileInfo/${fileId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+      setSharedFileInfo(info.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const openDrawer = (
+    fileName,
+    fileSize,
+    fileId,
+    owner,
+    profilePic,
+    lastUpdate
+  ) => {
+    getSharedFileInfo(fileId);
+    setSelectedFileInfo({
+      name: fileName,
+      size: fileSize,
+      id: fileId,
+      owner: owner,
+      ownerProfileUrl: profilePic,
+      lastUpdate: lastUpdate,
+    });
+    setIsFileViewOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setIsFileViewOpen(false);
+  };
+
   return (
     <div className={`${darkMode ? "bg-gray-800 text-white" : "text-gray-800"}`}>
       {location.pathname === "/profile" ? (
@@ -187,11 +239,21 @@ const AccountFiles = () => {
 
                       return 0;
                     })
-                    .map((row) => <Row key={row.id} row={row} />)}
+                    .map((row) => (
+                      <Row key={row.id} row={row} openDrawer={openDrawer} />
+                    ))}
             </TableBody>
           </Table>
         </TableContainer>
       </div>
+
+      {isFileViewOpen && (
+        <FileView
+          fileInfo={selectedFileInfo}
+          closeDrawer={closeDrawer}
+          sharedFileInfo={sharedFileInfo}
+        />
+      )}
     </div>
   );
 };
@@ -313,7 +375,19 @@ function Row(props) {
           </TableCell>
 
           <TableCell component="th" scope="row" sx={{ padding: "7px" }}>
-            <p className="text-indigo-600 font-medium">
+            <p
+              className="text-indigo-600 font-medium"
+              onClick={() =>
+                props.openDrawer(
+                  row.name,
+                  row.size,
+                  row.id,
+                  row.owner,
+                  row.profilePic,
+                  row.lastUpdate
+                )
+              }
+            >
               {row.name.slice(0, 15)}
             </p>
           </TableCell>
