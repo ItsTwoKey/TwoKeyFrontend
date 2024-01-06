@@ -119,7 +119,7 @@ const DueDate = () => {
       <Paper className="h-72 p-4">
         <div className="flex justify-between items-center">
           <p className="text-sm font-semibold">Due Date</p>
-          <b className="rotate-90">...</b>
+          {/* <b className="rotate-90">...</b> */}
         </div>
         {!loading ? (
           dues.length ? (

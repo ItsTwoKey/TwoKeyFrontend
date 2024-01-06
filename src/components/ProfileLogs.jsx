@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
@@ -25,19 +25,30 @@ import Avatar from "@mui/material/Avatar";
 
 const ProfileLogs = ({ logs }) => {
   const { darkMode } = useDarkMode();
-
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortColumn, setSortColumn] = useState("name");
   const location = useLocation();
+
+  const handleSort = (column) => {
+    setSortOrder((prevSortOrder) => (prevSortOrder === "asc" ? "desc" : "asc"));
+    setSortColumn(column);
+  };
+
+  const { formatFileSize } = useAuth();
 
   return (
     <div className={`${darkMode ? "bg-gray-800 text-white" : "text-gray-800"}`}>
       <Box sx={{ width: "100%" }}>
         <TableContainer component={Paper} sx={{ height: "300px" }}>
           <Table aria-label="collapsible table">
-            <TableHead>
+            <TableHead className="cursor-pointer">
               <TableRow sx={{ backgroundColor: "#F7F9FCCC" }}>
                 <TableCell />
                 <TableCell>
-                  <p className="flex flex-row items-center">
+                  <p
+                    className="flex flex-row items-center"
+                    onClick={() => handleSort("name")}
+                  >
                     FILE NAME <img src={UnfoldIcon} alt="↓" />
                   </p>
                 </TableCell>
@@ -48,7 +59,15 @@ const ProfileLogs = ({ logs }) => {
                     i
                   </b>
                 </TableCell>
-                <TableCell align="center">SIZE</TableCell>
+                <TableCell
+                  align="center"
+                  onClick={() => handleSort("metadata.size")}
+                >
+                  SIZE
+                  <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
+                    i
+                  </b>
+                </TableCell>
                 <TableCell align="center">
                   SECURITY
                   <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
@@ -56,7 +75,10 @@ const ProfileLogs = ({ logs }) => {
                   </b>
                 </TableCell>
                 <TableCell align="center">
-                  <p className="flex flex-row items-center">
+                  <p
+                    className="flex flex-row items-center"
+                    onClick={() => handleSort("metadata.lastModified")}
+                  >
                     LAST UPDATED <img src={UnfoldIcon} alt="↓" />
                   </p>
                 </TableCell>
@@ -64,7 +86,27 @@ const ProfileLogs = ({ logs }) => {
             </TableHead>
             <TableBody>
               {logs && logs.length > 0 ? (
-                logs.map((row) => <Row key={row.id} row={row} />)
+                logs
+                  .slice()
+                  .sort((a, b) => {
+                    if (sortColumn === "metadata.lastModified") {
+                      return sortOrder === "asc"
+                        ? a.metadata.lastModified - b.metadata.lastModified
+                        : b.metadata.lastModified - a.metadata.lastModified;
+                    } else if (sortColumn === "name") {
+                      return sortOrder === "asc"
+                        ? a.name.localeCompare(b.name)
+                        : b.name.localeCompare(a.name);
+                    } else if (sortColumn === "metadata.size") {
+                      return sortOrder === "asc"
+                        ? a.metadata.size - b.metadata.size
+                        : b.metadata.size - a.metadata.size;
+                    }
+                    // Add similar sorting logic for other columns as needed
+
+                    return 0;
+                  })
+                  .map((row) => <Row key={row.id} row={row} />)
               ) : (
                 <TableRow>
                   <TableCell colSpan={7} align="center">
