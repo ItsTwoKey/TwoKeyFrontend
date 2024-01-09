@@ -42,7 +42,7 @@ const App = () => {
 
   return (
     <Router>
-      <div className="flex">
+      <div className="md:flex ">
         <SideBar />
         <div className="w-full">
           <TopBar />

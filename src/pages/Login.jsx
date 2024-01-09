@@ -24,7 +24,6 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    organization: "",
   });
   const [organizationData, setOrganizationData] = useState("");
   const [pageErr, setPageErr] = useState(null);
@@ -48,11 +47,7 @@ const Login = () => {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (
-      formData.email.trim() === "" ||
-      formData.password.trim() === "" ||
-      formData.organization.trim() === ""
-    ) {
+    if (formData.email.trim() === "" || formData.password.trim() === "") {
       alert("Please fill in all fields.");
       return;
     }
@@ -97,26 +92,6 @@ const Login = () => {
     }
   }
 
-  useEffect(() => {
-    const orgData = async () => {
-      try {
-        const org = await axios.get(
-          "https://twokeybackend.onrender.com/org/list_orgs"
-        );
-        console.log(org.data);
-        setOrganizationData(org.data);
-        setPageErr(null);
-      } catch (error) {
-        const errMsg = error.message + "\n" + "Please try again later.";
-        alert(errMsg);
-        console.log(error.message);
-        setPageErr(errMsg);
-      }
-    };
-
-    orgData();
-  }, []);
-
   /**
    * if the user is already logged in then redirect to the dashboard,
    * instead of returning the login page
@@ -152,33 +127,6 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="text-center w-full md:w-11/12">
           <span className="my-4 flex flex-col justify-center ">
-            <InputLabel
-              className="text-md text-left mb-2 mt-4"
-              id="demo-select-small-label"
-            >
-              Organization
-            </InputLabel>
-            <Select
-              className="w-full bg-gray-100"
-              labelId="demo-select-small-label"
-              id="demo-select-small"
-              value={formData.organization}
-              label="organizations"
-              name="organization"
-              onChange={handleChange}
-              size="small"
-            >
-              <MenuItem value="None">
-                <em>None</em>
-              </MenuItem>
-
-              {organizationData.length &&
-                organizationData.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {item.name}
-                  </MenuItem>
-                ))}
-            </Select>
             <div className="w-full">
               <InputLabel className="text-md text-left mb-2 mt-4" id="email">
                 Email
