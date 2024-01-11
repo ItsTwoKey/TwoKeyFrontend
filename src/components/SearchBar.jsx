@@ -1,11 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import SearchIcon from "@mui/icons-material/Search";
 import { useDarkMode } from "../context/darkModeContext";
 import { supabase } from "../helper/supabaseClient";
@@ -61,8 +54,8 @@ export default function SearchBar() {
   };
 
   return (
-    <React.Fragment>
-      <div onClick={handleClickOpen} className="relative w-10 md:w-96">
+    <div className="relative">
+      <div className="w-10 md:w-96">
         <SearchIcon
           sx={{
             position: "absolute",
@@ -79,87 +72,53 @@ export default function SearchBar() {
             darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-700"
           } rounded-md`}
           style={{ outline: "none" }}
-          readOnly
+          value={searchTerm}
+          onChange={handleSearchChange}
         ></input>
       </div>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        fullWidth
-        maxWidth={"sm"}
-        PaperProps={{
-          style: {
-            borderRadius: "8px",
-          },
-        }}
-      >
-        <DialogTitle
-          style={{
-            borderBottom: "1px solid #464F6029",
-            margin: 0,
-          }}
-        >
-          <input
-            type="search"
-            placeholder="Search"
-            className={`w-full p-1 border-none ${
-              darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-700"
-            }`}
-            style={{ outline: "none" }}
-            value={searchTerm}
-            onChange={handleSearchChange}
-            autoFocus
-          ></input>
-        </DialogTitle>
-        {searchTerm && (
-          <DialogContent
-            style={{
-              margin: 0,
-              padding: 0,
-            }}
-          >
-            <div className="">
-              {filteredFiles && (
-                <div className="my-2">
-                  <h3 className="text-md font-semibold p-4 border-b-[1px] border-gray-100">
-                    Files:
-                  </h3>
-                  <ul>
-                    {filteredFiles.map((file, index) => (
-                      <li
-                        key={index}
-                        className="p-4 border-b-[1px] border-gray-100 hover:bg-gray-50 cursor-pointer"
-                      >
-                        {file.name}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
 
-              {/* <hr className="" /> */}
-
-              {searchResults && (
-                <div className="my-2">
-                  <h3 className="text-md font-semibold p-4 border-b-[1px] border-gray-100">
-                    Users:
-                  </h3>
-                  <ul>
-                    {searchResults.map((result, index) => (
-                      <li
-                        key={index}
-                        className="p-4 border-b-[1px] border-gray-100 hover:bg-gray-50 cursor-pointer"
-                      >
-                        {result.name}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+      {/* Display search results */}
+      {searchTerm && (
+        <div className="absolute mt-2 rounded-sm overflow-y-scroll scrollbar-hide shadow-xl bg-white w-10 md:w-96 h-80">
+          {filteredFiles && (
+            <div className="my-2">
+              <h3 className="text-md font-semibold p-4 border-b-[1px] border-gray-100">
+                Files:
+              </h3>
+              <ul>
+                {filteredFiles.map((file, index) => (
+                  <li
+                    key={index}
+                    className="p-4 border-b-[1px] border-gray-100 hover:bg-gray-50 cursor-pointer"
+                  >
+                    {file.name}
+                  </li>
+                ))}
+              </ul>
             </div>
-          </DialogContent>
-        )}
-      </Dialog>
-    </React.Fragment>
+          )}
+
+          {/* <hr className="" /> */}
+
+          {searchResults && (
+            <div className="my-2">
+              <h3 className="text-md font-semibold p-4 border-b-[1px] border-gray-100">
+                Users:
+              </h3>
+              <ul>
+                {searchResults.map((result, index) => (
+                  <li
+                    key={index}
+                    className="p-4 border-b-[1px] border-gray-100 hover:bg-gray-50 cursor-pointer"
+                  >
+                    {result.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

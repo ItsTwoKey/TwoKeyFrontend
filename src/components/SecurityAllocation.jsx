@@ -86,22 +86,6 @@ const SecurityAllocation = ({
     setExpanded(newExpanded ? panel : null);
   };
 
-  //   useEffect(() => {
-  //     handleSecurityAllocation(inputData);
-  //     // Update the current time every second
-  //     const intervalId = setInterval(() => {
-  //       const now = new Date();
-  //       setCurrentTime(
-  //         `${now.getHours().toString().padStart(2, "0")}:${now
-  //           .getMinutes()
-  //           .toString()
-  //           .padStart(2, "0")}`
-  //       );
-  //     }, 1000);
-
-  //     return () => clearInterval(intervalId);
-  //   }, [handleSecurityAllocation, inputData]);
-
   useEffect(() => {
     // Set the initial current time when the component mounts
     const now = new Date();
@@ -111,58 +95,15 @@ const SecurityAllocation = ({
         .toString()
         .padStart(2, "0")}`
     );
-  }, []);
+
+    if (selectedUsers.length > 0) {
+      setExpanded(`panel0`);
+    }
+  }, [selectedUsers]);
 
   const handleInputChange = (e) => {
     setInputData(e.target.value);
   };
-
-  //   useEffect(() => {
-  //     const handleConsoleUserData = () => {
-  //       const userTimeData = selectedUsers.map((user, index) => {
-  //         const location = formData[index]?.location;
-  //         const timePeriod = formData[index]?.timePeriod;
-  //         if (timePeriod === "certainPeriod") {
-  //           const selectedDateTime = new Date(
-  //             `${formData[index]?.selectedDate}T${formData[index]?.selectedTime}`
-  //           );
-  //           const currentTime = new Date();
-
-  //           if (selectedDateTime < currentTime) {
-  //             // Handle invalid time
-  //             return null;
-  //           }
-
-  //           const timeDiff = selectedDateTime - currentTime;
-  //           const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-  //           const minutes = Math.floor(
-  //             (timeDiff % (1000 * 60 * 60)) / (1000 * 60)
-  //           );
-
-  //           return {
-  //             user: user.id,
-  //             location,
-  //             timePeriod,
-  //             timeDifference: `${hours} hours ${minutes} minutes`,
-  //           };
-  //         } else if (timePeriod === "permanently") {
-  //           return {
-  //             user: user.id,
-  //             location,
-  //             timePeriod,
-  //             timeDifference: "Permanently",
-  //           };
-  //         }
-
-  //         return null;
-  //       });
-
-  //       //   console.log(userTimeData);
-  //       handleSecurityAllocation(userTimeData);
-  //     };
-
-  //     handleConsoleUserData();
-  //   }, [formData, selectedUsers]);
 
   useEffect(() => {
     const handleConsoleUserData = () => {
