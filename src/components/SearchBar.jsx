@@ -153,7 +153,7 @@ export default function SearchBar() {
                     key={index}
                     onClick={() =>
                       openDrawer(
-                        file.name,
+                        file.name.split("_TS=")[0],
                         file.size,
                         file.id,
                         file.owner,
@@ -163,7 +163,7 @@ export default function SearchBar() {
                     }
                     className="p-4 border-b-[1px] border-gray-100 hover:bg-gray-50 cursor-pointer"
                   >
-                    {file.name}
+                    {file.name.split("_TS=")[0]}
                   </li>
                 ))}
               </ul>

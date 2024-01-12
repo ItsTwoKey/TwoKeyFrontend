@@ -77,10 +77,13 @@ const ShareFile = () => {
   const handleFinalUpload = async () => {
     try {
       for (const file of droppedFiles) {
+        const timestamp = Date.now(); // Get current timestamp
+        const fileNameWithTimestamp = `${file.name}_TS=${timestamp}`; // Modify file name
+
         console.log("upload started");
         const { data, error } = await supabase.storage
           .from("TwoKey")
-          .upload(file.name, file, {
+          .upload(fileNameWithTimestamp, file, {
             //   .upload(customFileName || file.name, file, {
             cacheControl: "3600",
             upsert: false,

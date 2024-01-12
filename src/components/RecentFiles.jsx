@@ -199,7 +199,7 @@ const RecentFiles = () => {
                 }`}
                 onClick={() =>
                   openDrawer(
-                    file.name,
+                    file.name.split("_TS=")[0],
                     file.size,
                     file.id,
                     file.owner,
@@ -214,7 +214,9 @@ const RecentFiles = () => {
                   className="rounded-md"
                 />
                 <span>
-                  <h5 className="font-semibold">{file.name.slice(0, 15)}</h5>
+                  <h5 className="font-semibold line-clamp-1">
+                    {file.name.split("_TS=")[0]}
+                  </h5>
                   <span className="flex flex-row justify-between items-center">
                     <span>
                       <h6 className="text-sm font-semibold">File Info:</h6>

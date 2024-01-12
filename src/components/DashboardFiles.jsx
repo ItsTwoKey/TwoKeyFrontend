@@ -29,8 +29,8 @@ const DashboardFiles = () => {
   const { formatFileSize } = useAuth();
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [sortColumn, setSortColumn] = useState("name");
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [sortColumn, setSortColumn] = useState("lastUpdate");
   const location = useLocation();
   const [isFileViewOpen, setIsFileViewOpen] = useState(false);
   const [selectedFileInfo, setSelectedFileInfo] = useState({
@@ -377,7 +377,7 @@ function Row(props) {
               className="text-indigo-600 font-medium"
               onClick={() =>
                 props.openDrawer(
-                  row.name,
+                  row.name.split("_TS=")[0],
                   row.size,
                   row.id,
                   row.owner,
@@ -386,7 +386,7 @@ function Row(props) {
                 )
               }
             >
-              {row.name.slice(0, 15)}
+              {row.name.split("_TS=")[0].slice(0, 15)}
             </p>
           </TableCell>
           <TableCell align="center" sx={{ padding: "7px" }}>
