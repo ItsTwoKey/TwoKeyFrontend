@@ -15,6 +15,7 @@ import { useMediaQuery } from "@mui/material";
 import { useAuth } from "../context/authContext";
 import HidePassword from "../assets/hidePassword.svg";
 import ShowPassword from "../assets/showPassword.svg";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Login = () => {
   let navigate = useNavigate();
@@ -28,6 +29,7 @@ const Login = () => {
   const [organizationData, setOrganizationData] = useState("");
   const [pageErr, setPageErr] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const toggleShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -53,6 +55,8 @@ const Login = () => {
     }
 
     try {
+      setLoading(true);
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
@@ -89,6 +93,8 @@ const Login = () => {
       navigate("/dashboard");
     } catch (error) {
       alert(error.message);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -178,12 +184,19 @@ const Login = () => {
             </div>
           </span>
 
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-1 px-10 text-center mt-16 rounded-sm"
-          >
-            Sign In
-          </button>
+          {loading ? (
+            <CircularProgress
+              style={{ color: "#000", height: 25, width: 25 }}
+            />
+          ) : (
+            <button
+              type="submit"
+              className="bg-blue-600 text-white py-1 px-10 text-center mt-16 rounded-sm hover:bg-blue-500"
+            >
+              Sign In
+            </button>
+          )}
+
           <p className="text-gray-500 mt-4 text-center">
             Don't have an account?{" "}
             <Link to="/signup" className="text-indigo-600 font-semibold">

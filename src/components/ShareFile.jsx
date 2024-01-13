@@ -14,8 +14,24 @@ import { useDropzone } from "react-dropzone";
 import { supabase } from "../helper/supabaseClient";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import LinearProgress from "@mui/material/LinearProgress";
 import * as tus from "tus-js-client";
+import { styled } from "@mui/material/styles";
+import LinearProgress, {
+  linearProgressClasses,
+} from "@mui/material/LinearProgress";
+
+const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+  height: 10,
+  borderRadius: 5,
+  [`&.${linearProgressClasses.colorPrimary}`]: {
+    backgroundColor:
+      theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
+  },
+  [`& .${linearProgressClasses.bar}`]: {
+    borderRadius: 5,
+    backgroundColor: theme.palette.mode === "light" ? "green" : "green",
+  },
+}));
 
 const ShareFile = () => {
   const projectId = process.env.REACT_APP_SUPABASE_PROJECT_REF;
@@ -201,6 +217,7 @@ const ShareFile = () => {
     setIsOpen(false);
     setSelectedUsers([]);
     setDroppedFiles([]);
+    setUploadProgress(0);
   };
 
   function formatFileSize(sizeInBytes) {
@@ -398,7 +415,10 @@ const ShareFile = () => {
                 ))}
             </div>
             {uploadProgress > 0 && (
-              <LinearProgress variant="determinate" value={uploadProgress} />
+              <BorderLinearProgress
+                variant="determinate"
+                value={uploadProgress}
+              />
             )}
           </div>
         </DialogContent>

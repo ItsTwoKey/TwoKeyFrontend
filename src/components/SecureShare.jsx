@@ -14,8 +14,27 @@ import { supabase } from "../helper/supabaseClient";
 import SecurityAllocation from "./SecurityAllocation";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import * as tus from "tus-js-client";
+import { styled } from "@mui/material/styles";
+import LinearProgress, {
+  linearProgressClasses,
+} from "@mui/material/LinearProgress";
+
+const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+  height: 10,
+  borderRadius: 5,
+  [`&.${linearProgressClasses.colorPrimary}`]: {
+    backgroundColor:
+      theme.palette.grey[theme.palette.mode === "light" ? 200 : 800],
+  },
+  [`& .${linearProgressClasses.bar}`]: {
+    borderRadius: 5,
+    backgroundColor: theme.palette.mode === "light" ? "green" : "green",
+  },
+}));
 
 const SecureShare = () => {
+  const projectId = process.env.REACT_APP_SUPABASE_PROJECT_REF;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const { listLocations } = useAuth();
@@ -31,6 +50,7 @@ const SecureShare = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
     let token = JSON.parse(sessionStorage.getItem("token"));
@@ -57,43 +77,71 @@ const SecureShare = () => {
     }
   }, [isOpen]);
 
+  const uploadFile = async (bucketName, fileName, file, index) => {
+    try {
+      let token = JSON.parse(sessionStorage.getItem("token"));
+
+      const upload = new tus.Upload(file, {
+        endpoint: `https://${projectId}.supabase.co/storage/v1/upload/resumable`,
+        retryDelays: [0, 3000, 5000, 10000, 20000],
+        headers: {
+          authorization: `Bearer ${token.session.access_token}`,
+          "x-upsert": "true",
+        },
+        uploadDataDuringCreation: true,
+        removeFingerprintOnSuccess: true,
+        metadata: {
+          bucketName: bucketName,
+          objectName: fileName,
+          contentType: file.type,
+          cacheControl: 3600,
+        },
+        chunkSize: 6 * 1024 * 1024,
+        onError: function (error) {
+          console.error("Failed because:", error);
+        },
+        onProgress: function (bytesUploaded, bytesTotal) {
+          const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
+          setUploadProgress(Number(percentage));
+        },
+        onSuccess: function () {
+          console.log(`Download ${upload.file.name} from ${upload.url}`);
+        },
+      });
+
+      // Check if there are any previous uploads to continue.
+      const previousUploads = await upload.findPreviousUploads();
+      if (previousUploads.length) {
+        upload.resumeFromPreviousUpload(previousUploads[0]);
+      }
+
+      // Start the upload
+      upload.start();
+    } catch (error) {
+      console.error("Error during file upload:", error);
+    }
+  };
+
   const handleFinalUpload = async () => {
     try {
       for (const file of selectedFiles) {
+        const timestamp = Date.now(); // Get current timestamp
+        const fileNameWithTimestamp = `${file.name}_TS=${timestamp}`; // Modify file name
+
         console.log("upload started");
-        const { data, error } = await supabase.storage
-          .from("TwoKey")
-          .upload(file.name, file, {
-            //   .upload(customFileName || file.name, file, {
-            cacheControl: "3600",
-            upsert: false,
-
-            onProgress: (event) => {
-              const progress = (event.loaded / event.total) * 100;
-              console.log(`File uploading... ${progress.toFixed(2)}%`);
-            },
-          });
-        console.log("uploaded file:", data.path);
-        handleFileIdRetrieval(data.path);
-
-        if (error) {
-          throw new Error("File upload failed");
-        }
+        await uploadFile("TwoKey", fileNameWithTimestamp, file);
+        console.log("uploaded file:", fileNameWithTimestamp);
+        handleFileIdRetrieval(fileNameWithTimestamp);
       }
 
+      // Show success snackbar after successful file upload
+
       showSnackbar("Upload successful", "success");
-      setTimeout(() => {
-        closeDialog();
-      }, 3000);
     } catch (error) {
       console.error("Error occurred in file upload:", error);
-
       showSnackbar("Upload failed. Please try again.", "error");
-      setTimeout(() => {
-        closeDialog();
-      }, 3000);
     } finally {
-      // setProgress(0); // Reset progress after upload is complete
+      setUploadProgress(0); // Reset progress after upload is complete
     }
   };
 
@@ -182,6 +230,7 @@ const SecureShare = () => {
   const closeDialog = () => {
     setIsOpen(false);
     setSelectedFiles([]);
+    setUploadProgress(0);
   };
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -397,6 +446,12 @@ const SecureShare = () => {
                   />
                 </div>
               </div>
+              {uploadProgress > 0 && (
+                <BorderLinearProgress
+                  variant="determinate"
+                  value={uploadProgress}
+                />
+              )}
             </div>
           </div>
         </DialogContent>
@@ -419,19 +474,21 @@ const SecureShare = () => {
           </button>
         </DialogActions>
 
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={handleSnackbarClose}
-        >
-          <MuiAlert
+        {uploadProgress > 90 && (
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={6000}
             onClose={handleSnackbarClose}
-            severity={snackbarSeverity}
-            sx={{ width: "100%" }}
           >
-            {snackbarMessage}
-          </MuiAlert>
-        </Snackbar>
+            <MuiAlert
+              onClose={handleSnackbarClose}
+              severity={snackbarSeverity}
+              sx={{ width: "100%" }}
+            >
+              {snackbarMessage}
+            </MuiAlert>
+          </Snackbar>
+        )}
       </Dialog>
     </div>
   );
