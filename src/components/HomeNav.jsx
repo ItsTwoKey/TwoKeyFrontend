@@ -28,15 +28,15 @@ const HomeNav = () => {
 
       {isOnContactUs ? (
         <span className="flex gap-8 py-2">
-          <Link to="/" className="hidden md:block">
+          <Link to="/" className="hidden md:block hover:underline">
             About Us
           </Link>
 
-          <Link to="/" className="hidden md:block">
+          <Link to="/" className="hidden md:block hover:underline">
             Product
           </Link>
 
-          <Link to="/" className="hidden md:block">
+          <Link to="/" className="hidden md:block hover:underline">
             Pricing
           </Link>
         </span>
@@ -44,21 +44,21 @@ const HomeNav = () => {
         <span className="flex gap-8 py-2">
           <button
             onClick={() => scrollToSection("about")}
-            className="hidden md:block"
+            className="hidden md:block hover:underline"
           >
             About Us
           </button>
 
           <button
             onClick={() => scrollToSection("product")}
-            className="hidden md:block"
+            className="hidden md:block hover:underline"
           >
             Product
           </button>
 
           <button
             onClick={() => scrollToSection("pricing")}
-            className="hidden md:block"
+            className="hidden md:block hover:underline"
           >
             Pricing
           </button>
@@ -66,7 +66,7 @@ const HomeNav = () => {
       )}
 
       <span className="flex gap-4">
-        <a href="/login" className="py-2">
+        <a href="/login" className="p-2 hover:border rounded-lg">
           Sign in
         </a>
         <a

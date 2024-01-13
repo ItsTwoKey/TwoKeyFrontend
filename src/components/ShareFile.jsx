@@ -105,6 +105,7 @@ const ShareFile = () => {
         },
         onSuccess: function () {
           console.log(`Download ${upload.file.name} from ${upload.url}`);
+          handleFileIdRetrieval(fileName);
         },
       });
 
@@ -130,7 +131,7 @@ const ShareFile = () => {
         console.log("upload started");
         await uploadFile("TwoKey", fileNameWithTimestamp, file);
         console.log("uploaded file:", fileNameWithTimestamp);
-        handleFileIdRetrieval(fileNameWithTimestamp);
+        // handleFileIdRetrieval(fileNameWithTimestamp);
       }
 
       // Show success snackbar after successful file upload
