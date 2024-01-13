@@ -191,7 +191,9 @@ function Row(props) {
         </TableCell>
 
         <TableCell component="th" scope="row">
-          <p className="text-indigo-600 font-medium">{row.name}</p>
+          <p className="text-indigo-600 font-medium">
+            {row.name.split("_TS=")[0].slice(0, 15)}
+          </p>
         </TableCell>
         <TableCell align="center">
           <Tooltip title={row.owner_email} arrow>

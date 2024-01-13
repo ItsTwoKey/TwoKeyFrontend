@@ -146,7 +146,9 @@ const DueDate = () => {
                     {due.shared_with[0].last_name}
                   </strong>
                   's access to{" "}
-                  <strong className="font-semibold">{due.file_name}</strong>{" "}
+                  <strong className="font-semibold">
+                    {due.file_name.split("_TS=")[0]}
+                  </strong>{" "}
                   ends in {convertSecondsToDaysHours(due.expiration_time)}.
                 </p>
               </div>

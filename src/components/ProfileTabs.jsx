@@ -104,12 +104,12 @@ export default function ProfileTabs() {
           aria-label="basic tabs example"
         >
           <Tab
-            label="File Shared to"
+            label="Shared"
             {...a11yProps(0)}
             sx={{ textTransform: "capitalize", fontSize: "small" }}
           />
           <Tab
-            label="File Shared from"
+            label="Received"
             {...a11yProps(1)}
             sx={{ textTransform: "capitalize", fontSize: "small" }}
           />

@@ -145,7 +145,9 @@ const LatestActivities = () => {
                           : log.event === "download"
                           ? "downloaded"
                           : "accessed"}{" "}
-                        <span className="font-semibold">{log.file_name}</span>{" "}
+                        <span className="font-semibold">
+                          {log.file_name.split("_TS=")[0]}
+                        </span>{" "}
                         file.
                       </p>
                       <p className="text-sm text-gray-400 mt-2">
