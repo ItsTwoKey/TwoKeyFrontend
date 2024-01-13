@@ -219,7 +219,12 @@ const RecentFiles = () => {
                   </h5>
                   <span className="flex flex-row justify-between items-center">
                     <span>
-                      <h6 className="text-sm font-semibold">File Info:</h6>
+                      <h6 className="text-sm font-semibold">
+                        File Info:{" "}
+                        <b className="text-gray-700 font-medium">
+                          {file.name.split(".").pop().split("_TS=")[0]}
+                        </b>
+                      </h6>
                       <p className="text-xs  font-light">{file.size}</p>
                     </span>
 
