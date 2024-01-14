@@ -163,11 +163,11 @@ const DashboardFiles = () => {
 
   return (
     <div className={`${darkMode ? "bg-gray-800 text-white" : "text-gray-800"}`}>
-      {location.pathname === "/profile" ? (
+      {/* {location.pathname === "/profile" ? (
         ""
       ) : (
         <p className="text-lg text-left font-semibold my-6">Account Files</p>
-      )}
+      )} */}
 
       <div>
         <TableContainer>
