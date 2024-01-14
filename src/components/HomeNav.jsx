@@ -66,15 +66,15 @@ const HomeNav = () => {
       )}
 
       <span className="flex gap-4">
-        <a href="/login" className="p-2 hover:border rounded-lg">
+        <Link to="/login" className="p-2 hover:border rounded-lg">
           Sign in
-        </a>
-        <a
-          href="/contact-us"
+        </Link>
+        <Link
+          to="/contact-us"
           className="bg-[#C8C6FF] border rounded-md border-[#131149] py-2 px-4 text-sm font-semibold"
         >
           Contact Us
-        </a>
+        </Link>
       </span>
     </nav>
   );
