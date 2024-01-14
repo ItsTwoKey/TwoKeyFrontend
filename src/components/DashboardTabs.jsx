@@ -58,6 +58,9 @@ export default function ProfileTabs() {
           case 2:
             url = "https://twokeybackend.onrender.com/file/files?type=received";
             break;
+          case 3:
+            url = "https://twokeybackend.onrender.com/file/files?type=owned";
+            break;
 
           default:
             url = "";
@@ -114,6 +117,11 @@ export default function ProfileTabs() {
             {...a11yProps(2)}
             sx={{ textTransform: "capitalize", fontSize: "small" }}
           />
+          <Tab
+            label="Owned"
+            {...a11yProps(3)}
+            sx={{ textTransform: "capitalize", fontSize: "small" }}
+          />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -123,6 +131,9 @@ export default function ProfileTabs() {
         <ProfileLogs logs={logs} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
+        <ProfileLogs logs={logs} />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={3}>
         <ProfileLogs logs={logs} />
       </CustomTabPanel>
     </Box>

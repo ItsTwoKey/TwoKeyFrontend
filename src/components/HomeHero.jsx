@@ -1,6 +1,7 @@
 import React from "react";
 import Hero from "../assets/hero.svg";
 import { useNavigate } from "react-router-dom";
+import HeroImg1 from "../assets/HeroAni/heroimg1.svg";
 
 const HomeHero = () => {
   const navigate = useNavigate();
@@ -33,6 +34,8 @@ const HomeHero = () => {
             </button>
           </div>
         </div>
+
+        <div>{/* <img src={HeroImg1} alt="." /> */}</div>
       </div>
     </div>
   );
