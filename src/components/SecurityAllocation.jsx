@@ -207,7 +207,7 @@ const SecurityAllocation = ({
                       type="date"
                       value={today}
                       disabled
-                      className="px-2 py-1 border-2 rounded-md bg-white text-xs font-semibold text-gray-600 w-32"
+                      className="px-2 py-1 border-2 rounded-md bg-[#f7f9fc] text-xs font-semibold text-gray-600 w-32"
                     />
                     <p>›</p>
                     <input
@@ -226,7 +226,7 @@ const SecurityAllocation = ({
                       name="selectedTime"
                       disabled
                       value={currentTime}
-                      className="px-2 py-1 border-2 rounded-md bg-white text-xs font-semibold text-gray-600 w-32"
+                      className="px-2 py-1 border-2 rounded-md bg-[#f7f9fc] text-xs font-semibold text-gray-600 w-32"
                     />
                     <p>›</p>
                     <input
