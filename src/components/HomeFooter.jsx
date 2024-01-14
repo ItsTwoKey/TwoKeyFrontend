@@ -39,22 +39,37 @@ const HomeFooter = () => {
           <span className="">
             <h5 className="text-white mb-8 font-bold">Company</h5>
             <span className="flex flex-col leading-8 cursor-pointer">
-              <a onClick={() => scrollTo("nav")}>Home</a>
-              <a onClick={() => scrollTo("about")}>About</a>
-              <a onClick={() => scrollTo("product")}>Product</a>
+              <a className="hover:text-violet-200" href="/">
+                Home
+              </a>
+              <a className="hover:text-violet-200" href="/">
+                About
+              </a>
+              <a className="hover:text-violet-200" href="/">
+                Product
+              </a>
             </span>
           </span>
           <span>
             <h5 className="text-white mb-8 font-bold">Contact</h5>
             <span className="flex flex-col leading-8">
-              <a href="/contact-us">Email Us</a>
-              <a onClick={() => scrollTo("support")}>Support</a>
+              <a className="hover:text-violet-200" href="/contact-us">
+                Email Us
+              </a>
+              <a
+                className="hover:text-violet-200"
+                onClick={() => scrollTo("support")}
+              >
+                Support
+              </a>
             </span>
           </span>
           <span>
             <h5 className="text-white mb-8 font-bold">Product</h5>
             <span className="flex flex-col leading-8 cursor-pointer">
-              <a onClick={() => scrollTo("pricing")}>Pricing</a>
+              <a className="hover:text-violet-200" href="/">
+                Pricing
+              </a>
             </span>
           </span>
         </div>

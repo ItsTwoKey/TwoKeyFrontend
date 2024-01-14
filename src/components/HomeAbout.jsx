@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import GreenTick from "../assets/greenTick.svg";
 import QuickShare from "../assets/quickShare.png";
 import QuickShareBg from "../assets/quickShareBg.png";
@@ -23,13 +24,19 @@ const Securities = [
 ];
 
 const HomeAbout = () => {
+  const navigate = useNavigate();
+
+  const handleButtonClick = (params) => {
+    navigate("/signup");
+  };
   return (
-    <div id="about" className="h-full bg-[#F1F1FF] px-4 md:px-16 py-16 text-center md:text-left font-tahoma font-[400] text-[#273720]">
+    <div
+      id="about"
+      className="h-full bg-[#F1F1FF] px-4 md:px-16 py-16 text-center md:text-left font-tahoma font-[400] text-[#273720]"
+    >
       <div className="flex flex-col justify-center items-center">
         <h5 className="font-medium">SECURITY LEVELS</h5>
-        <h1 className="text-5xl my-6">
-          Your content's security at a glance
-        </h1>
+        <h1 className="text-5xl my-6">Your content's security at a glance</h1>
         <p className="text-sm">
           Unlock peace of mind with just a glance; the more vibrant the colors,
           the tighter the security dance.
@@ -49,7 +56,6 @@ const HomeAbout = () => {
           {Securities.map((security, index) => (
             <span key={index} className="gap-3 py-2">
               <span className="flex justify-center md:justify-start items-center w-full">
-
                 <img
                   src={GreenTick}
                   alt=""
@@ -62,7 +68,10 @@ const HomeAbout = () => {
             </span>
           ))}
 
-          <button className="bg-[#C8C6FF] rounded-md py-2 px-4 text-sm mx-auto mt-9 md:mx-9 text-[#1C1C1C]">
+          <button
+            onClick={handleButtonClick}
+            className="bg-[#C8C6FF] hover:bg-violet-200 rounded-md py-2 px-4 text-sm mx-auto mt-9 md:mx-9 text-[#1C1C1C]"
+          >
             Get Started for free
           </button>
         </div>

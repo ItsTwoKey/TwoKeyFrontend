@@ -433,8 +433,13 @@ const ShareFile = () => {
               Cancel
             </button>
             <button
-              className="px-3 py-1.5 rounded-lg shadow-sm border border-[#5E5ADB] text-[#5E5ADB] hover:bg-blue-100 text-sm font-semibold"
+              className={`px-3 py-1.5 rounded-lg shadow-sm border ${
+                uploadProgress > 0
+                  ? "border-gray-500 text-gray-500 hover:bg-gray-200 cursor-progress"
+                  : "border-[#5E5ADB] text-[#5E5ADB] hover:bg-blue-100 "
+              } text-sm font-semibold`}
               onClick={handleFinalUpload}
+              disabled={uploadProgress > 0 ? true : false}
             >
               Done
             </button>
