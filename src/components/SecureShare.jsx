@@ -106,6 +106,7 @@ const SecureShare = () => {
         },
         onSuccess: function () {
           console.log(`Download ${upload.file.name} from ${upload.url}`);
+          handleFileIdRetrieval(fileName);
         },
       });
 
@@ -131,7 +132,7 @@ const SecureShare = () => {
         console.log("upload started");
         await uploadFile("TwoKey", fileNameWithTimestamp, file);
         console.log("uploaded file:", fileNameWithTimestamp);
-        handleFileIdRetrieval(fileNameWithTimestamp);
+        // handleFileIdRetrieval(fileNameWithTimestamp);
       }
 
       // Show success snackbar after successful file upload
@@ -257,7 +258,7 @@ const SecureShare = () => {
     <div className="">
       <button
         onClick={openDialog}
-        className="py-1 px-4 rounded-md border bg-blue-700 text-white"
+        className="py-1 px-4 rounded-md border bg-blue-700 hover:bg-blue-500 text-white"
       >
         Secure Share
       </button>
@@ -457,7 +458,7 @@ const SecureShare = () => {
         </DialogContent>
         <DialogActions sx={{ padding: "10px", backgroundColor: "#F7F8FA" }}>
           <button
-            className="px-4 py-1 mx-2 rounded-lg shadow-sm border bg-[#D1293D] text-white"
+            className="px-4 py-1 mx-2 rounded-lg shadow-sm border bg-[#D1293D] hover:bg-red-500 text-white"
             onClick={closeDialog}
             color="primary"
           >
@@ -465,7 +466,9 @@ const SecureShare = () => {
           </button>
           <button
             className={`px-4 py-1 rounded-lg shadow-sm text-white ${
-              selectedFiles.length ? "bg-[#5E5ADB]" : "bg-gray-400"
+              selectedFiles.length
+                ? "bg-[#5E5ADB] hover:bg-blue-500"
+                : "bg-gray-400"
             } `}
             onClick={handleFinalUpload}
             disabled={!selectedFiles.length}

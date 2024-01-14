@@ -163,7 +163,7 @@ const ContactForm = () => {
           </div>
 
           <button
-            className="w-full bg-[#C8C6FF] shadow border border-[#7F56D9] rounded-[8px] my-4 py-2 text-sm font-semibold"
+            className="w-full bg-[#C8C6FF] hover:bg-violet-200 shadow border border-[#7F56D9] rounded-[8px] my-4 py-2 text-sm font-semibold"
             onClick={handleButtonClick}
           >
             Send message

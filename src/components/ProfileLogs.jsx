@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
@@ -28,6 +28,16 @@ const ProfileLogs = ({ logs }) => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [sortColumn, setSortColumn] = useState("name");
   const location = useLocation();
+  const [tableHeight, setTableHeight] = useState("300px");
+
+  useEffect(() => {
+    // Check if the current path is "profile" and set the height accordingly
+    if (location.pathname === "/profile") {
+      setTableHeight("300px");
+    } else {
+      setTableHeight("auto"); // Set a different height for other paths if needed
+    }
+  }, [location.pathname]);
 
   const handleSort = (column) => {
     setSortOrder((prevSortOrder) => (prevSortOrder === "asc" ? "desc" : "asc"));
@@ -39,7 +49,7 @@ const ProfileLogs = ({ logs }) => {
   return (
     <div className={`${darkMode ? "bg-gray-800 text-white" : "text-gray-800"}`}>
       <Box sx={{ width: "100%" }}>
-        <TableContainer component={Paper} sx={{ height: "300px" }}>
+        <TableContainer component={Paper} sx={{ height: tableHeight }}>
           <Table aria-label="collapsible table">
             <TableHead className="cursor-pointer">
               <TableRow sx={{ backgroundColor: "#F7F9FCCC" }}>
@@ -110,7 +120,7 @@ const ProfileLogs = ({ logs }) => {
               ) : (
                 <TableRow>
                   <TableCell colSpan={7} align="center">
-                    loading...
+                    {logs ? "No files found!" : "Loading..."}
                   </TableCell>
                 </TableRow>
               )}

@@ -7,6 +7,7 @@ import FileViewer from "../components/FileViewer";
 import { useAuth } from "../context/authContext";
 import DueDate from "../components/DueDate";
 import DashboardFiles from "../components/DashboardFiles";
+import DashboardTabs from "../components/DashboardTabs";
 import LatestActivities from "../components/LatestActivities";
 
 import ErrorPage from "../components/ErrorPage";
@@ -38,7 +39,8 @@ const Dashboard = () => {
       </div>
       <div>
         <RecentFiles />
-        <DashboardFiles />
+        {/* <DashboardFiles /> */}
+        <DashboardTabs />
       </div>
       {/* <div className={`${screenshotDetected ? "blur" : ""}`}> */}
       <Dialog open={isFileViewerOpen} onClose={closeFileViewer} maxWidth="lg">

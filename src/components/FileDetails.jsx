@@ -138,7 +138,7 @@ const FileDetails = ({
         <span className="flex flex-row justify-between text-xs font-semibold text-gray-400 leading-6 my-2">
           <span className="flex flex-col items-center">
             <p className="">Type</p>
-            <p className="text-gray-300">pdf</p>
+            <p className="text-gray-300">{fileInfo.name.split(".").pop()}</p>
           </span>
           <span className="flex flex-col items-center">
             <p className="">Size</p>

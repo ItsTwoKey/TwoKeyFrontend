@@ -68,7 +68,7 @@ const PricingDetails = [
   {
     name: "Professional",
     description:
-      "Ideal for individuals who who need advanced features and tools for client work.",
+      "Ideal for individuals who need advanced features and tools for client work.",
     price: "25",
     featureCount: 6,
   },
@@ -178,7 +178,7 @@ const HomePricing = () => {
 
               <button
                 onClick={handleGetStarted}
-                className={`w-full py-2 px-4 text-sm rounded-sm text-[#5E5ADB] bg-white ${
+                className={`w-full py-2 px-4 text-sm rounded-sm text-[#5E5ADB] bg-white hover:bg-violet-100 ${
                   pricing.name === "Professional"
                     ? ""
                     : "border-[1.5px] border-[#5E5ADB]"

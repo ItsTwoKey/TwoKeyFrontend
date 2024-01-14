@@ -236,7 +236,7 @@ const ShareFile = () => {
     <div className="">
       <button
         onClick={openDialog}
-        className="text-sm rounded-md py-[5px] px-3 border border-gray-300 bg-white"
+        className="text-sm rounded-md py-[5px] px-3 border border-gray-300 hover:border-gray-500 bg-white hover:bg-slate-50"
       >
         Quick Share
       </button>
@@ -426,15 +426,20 @@ const ShareFile = () => {
         <DialogActions sx={{ padding: "10px" }}>
           <div className="flex justify-between w-full px-2">
             <button
-              className="px-3 py-1.5 rounded-lg shadow-sm border border-gray-300 text-sm font-semibold"
+              className="px-3 py-1.5 rounded-lg shadow-sm border border-gray-300 hover:bg-gray-100 text-sm font-semibold"
               onClick={closeDialog}
               color="primary"
             >
               Cancel
             </button>
             <button
-              className="px-3 py-1.5 rounded-lg shadow-sm border border-[#5E5ADB] text-[#5E5ADB] text-sm font-semibold"
+              className={`px-3 py-1.5 rounded-lg shadow-sm border ${
+                uploadProgress > 0
+                  ? "border-gray-500 text-gray-500 hover:bg-gray-200 cursor-progress"
+                  : "border-[#5E5ADB] text-[#5E5ADB] hover:bg-blue-100 "
+              } text-sm font-semibold`}
               onClick={handleFinalUpload}
+              disabled={uploadProgress > 0 ? true : false}
             >
               Done
             </button>
