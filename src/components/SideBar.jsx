@@ -6,6 +6,7 @@ import { useAuth } from "../context/authContext";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import { supabase } from "../helper/supabaseClient";
 import axios from "axios";
+import { Link } from 'react-router-dom';
 // Mui Icons And Drawers
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import { departmentIcons } from "../utils/iconComponents";
@@ -203,8 +204,8 @@ function SideBar() {
                 darkMode ? "bg-gray-800" : "bg-white"
               }`}
             >
-              <a
-                href="/dashboard"
+              <Link
+                to="/dashboard" // Use "to" instead of "href"
                 alt="LOGO"
                 className={`text-xl md:text-2xl ${
                   darkMode
@@ -213,7 +214,7 @@ function SideBar() {
                 }`}
               >
                 Twokey
-              </a>
+              </Link>
             </div>
             <SideBarContents departments={departments} darkMode={darkMode} />
           </div>
@@ -224,15 +225,15 @@ function SideBar() {
           >
             <footer className="w-full py-2 sticky bottom-0">
               <span>
-                <a
-                  href="/profile"
+                <Link
+                  to="/profile" // Use "to" instead of "href"
                   alt="Profile"
-                  className={` p-2 rounded-md  
-                  ${
-                    darkMode
-                      ? "text-gray-300 hover:bg-gray-700"
-                      : "hover:bg-gray-100"
-                  } flex justify-start items-center font-medium duration-200`}
+                  className={`p-2 rounded-md  
+                              ${
+                                darkMode
+                                  ? "text-gray-300 hover:bg-gray-700"
+                                  : "hover:bg-gray-100"
+                              } flex justify-start items-center font-medium duration-200`}
                 >
                   <img
                     src={
@@ -248,7 +249,7 @@ function SideBar() {
                   <p className="px-2">
                     #{profileData ? profileData.username : "Profile"}
                   </p>
-                </a>
+                </Link>
               </span>
             </footer>
           </div>
@@ -318,8 +319,8 @@ function SideBarContents({ departments, darkMode }) {
         </p>
         <div className="flex items-center">
           <li className="min-w-full">
-            <a
-              href="/dashboard"
+            <Link
+              to="/dashboard" // Use "to" instead of "href"
               alt="Dashboard"
               className={`flex justify-start items-center min-w-full ${
                 location.pathname === "/dashboard"
@@ -337,7 +338,7 @@ function SideBarContents({ departments, darkMode }) {
             >
               <DashboardRoundedIcon />
               <p className="px-2">Dashboard</p>
-            </a>
+            </Link>
           </li>
         </div>
 
@@ -352,9 +353,9 @@ function SideBarContents({ departments, darkMode }) {
             </p>
             <div className="flex items-center">
               <li className="min-w-full">
-                <a
-                  href="/user-management"
-                  alt="user Management"
+                <Link
+                  to="/user-management" // Use "to" instead of "href"
+                  alt="User Management"
                   className={`flex justify-start items-center min-w-full ${
                     location.pathname === "/user-management"
                       ? ` p-2 rounded-md text-sm ${
@@ -370,8 +371,8 @@ function SideBarContents({ departments, darkMode }) {
                   }`}
                 >
                   <img src={UserMgmt} alt="." />
-                  <p className="px-2">user-management</p>
-                </a>
+                  <p className="px-2">User Management</p>
+                </Link>
               </li>
             </div>
 
@@ -384,8 +385,8 @@ function SideBarContents({ departments, darkMode }) {
             </p>
             <div className="flex items-center">
               <li className="min-w-full">
-                <a
-                  href="/analytics"
+                <Link
+                  to="/analytics" // Use "to" instead of "href"
                   alt="Analytics"
                   className={`flex justify-start items-center min-w-full ${
                     location.pathname === "/analytics"
@@ -403,7 +404,7 @@ function SideBarContents({ departments, darkMode }) {
                 >
                   <img src={Analytics} alt="." />
                   <p className="px-2">Analytics & Report</p>
-                </a>
+                </Link>
               </li>
             </div>
           </div>
@@ -421,8 +422,8 @@ function SideBarContents({ departments, darkMode }) {
 
         {departments.map((department, index) => (
           <li key={index} className="min-w-full my-2">
-            <a
-              href={department.path}
+            <Link
+              to={department.path} // Use "to" instead of "href"
               alt={department.name}
               className={`flex justify-start items-center min-w-full ${
                 location.pathname === department.path
@@ -440,7 +441,7 @@ function SideBarContents({ departments, darkMode }) {
             >
               {departmentIcons[department.name]}
               <p className="px-2">{department.name}</p>
-            </a>
+            </Link>
           </li>
         ))}
 
@@ -452,9 +453,9 @@ function SideBarContents({ departments, darkMode }) {
           Settings
         </p>
         <li className="min-w-full my-2">
-          <div className="flex items-center">
-            <a
-              href="/settings"
+        <div className="flex items-center">
+            <Link
+              to="/settings" // Use "to" instead of "href"
               alt="settings"
               className={`flex justify-start items-center min-w-full ${
                 location.pathname === "/settings"
@@ -470,7 +471,7 @@ function SideBarContents({ departments, darkMode }) {
             >
               <TuneRoundedIcon />
               <p className="px-2">Settings</p>
-            </a>
+            </Link>
           </div>
         </li>
         <li className="min-w-full my-2">

@@ -186,6 +186,7 @@ const Login = () => {
 
           {loading ? (
             <CircularProgress
+              className="mt-16"
               style={{ color: "#000", height: 25, width: 25 }}
             />
           ) : (

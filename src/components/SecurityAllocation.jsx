@@ -207,7 +207,7 @@ const SecurityAllocation = ({
                       type="date"
                       value={today}
                       disabled
-                      className="px-2 py-1 border-2 rounded-md bg-white text-xs font-semibold text-gray-600 w-32"
+                      className="px-2 py-1 border-2 rounded-md bg-indigo-100 text-xs font-semibold text-gray-600 w-32"
                     />
                     <p>›</p>
                     <input
@@ -216,7 +216,9 @@ const SecurityAllocation = ({
                       value={formData[index]?.selectedDate || ""}
                       min={today} // Set the minimum date to today
                       onChange={(e) => handleFormdataChange(e, index)}
-                      className="px-2 py-1 border-2 rounded-md bg-white text-xs font-semibold text-gray-600 w-32"
+                      className={`px-2 py-1 border-2 rounded-md ${
+                        formData[index]?.selectedDate ? "bg-indigo-100" : "bg-white"
+                      } text-xs font-semibold text-gray-600 w-32`}
                     />
                   </span>
 
@@ -226,7 +228,7 @@ const SecurityAllocation = ({
                       name="selectedTime"
                       disabled
                       value={currentTime}
-                      className="px-2 py-1 border-2 rounded-md bg-white text-xs font-semibold text-gray-600 w-32"
+                      className="px-2 py-1 border-2 rounded-md bg-indigo-100 text-xs font-semibold text-gray-600 w-32"
                     />
                     <p>›</p>
                     <input
@@ -234,7 +236,9 @@ const SecurityAllocation = ({
                       name="selectedTime"
                       value={formData[index]?.selectedTime || ""}
                       onChange={(e) => handleFormdataChange(e, index)}
-                      className="px-2 py-1 border-2 rounded-md bg-white text-xs font-semibold text-gray-600 w-32"
+                      className={`px-2 py-1 border-2 rounded-md ${
+                        formData[index]?.selectedTime ? "bg-indigo-100" : "bg-white"
+                      } text-xs font-semibold text-gray-600 w-32`}
                     />
                   </span>
                 </div>
