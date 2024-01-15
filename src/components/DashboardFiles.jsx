@@ -58,7 +58,7 @@ const DashboardFiles = () => {
       setLoading(false);
     }
 
-    const fetchAccountFiles = async () => {
+    const fetchDashboardFiles = async () => {
       try {
         let token = JSON.parse(sessionStorage.getItem("token"));
 
@@ -112,7 +112,7 @@ const DashboardFiles = () => {
       }
     };
 
-    fetchAccountFiles();
+    fetchDashboardFiles();
   }, []);
 
   const handleSort = (column) => {
@@ -377,7 +377,7 @@ function Row(props) {
               className="text-indigo-600 font-medium"
               onClick={() =>
                 props.openDrawer(
-                  row.name.split("_TS=")[0],
+                  row.name,
                   row.size,
                   row.id,
                   row.owner,

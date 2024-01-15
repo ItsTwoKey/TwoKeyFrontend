@@ -90,10 +90,16 @@ const FileDetails = ({
     try {
       const { data, error } = await supabase.storage
         .from("TwoKey")
-        .remove(fileInfo.name);
-      console.log("Delete success", data);
+        .remove([fileInfo.name]);
+
+      if (error) {
+        console.error("Error deleting file:", error.message);
+      } else {
+        console.log("Delete success", data);
+        closeDrawer();
+      }
     } catch (error) {
-      console.log("Error occured while deleting the file.");
+      console.error("Error occurred while deleting the file:", error.message);
     }
   };
 
@@ -132,13 +138,17 @@ const FileDetails = ({
 
         <span className="my-2">
           <h2 className="text-sm text-gray-400 font-semibold">File Name</h2>
-          <p className="text-sm text-gray-300">{fileInfo.name.slice(0, 15)}</p>
+          <p className="text-sm text-gray-300">
+            {fileInfo.name.split("_TS=")[0].slice(0, 15)}
+          </p>
         </span>
 
         <span className="flex flex-row justify-between text-xs font-semibold text-gray-400 leading-6 my-2">
           <span className="flex flex-col items-center">
             <p className="">Type</p>
-            <p className="text-gray-300">{fileInfo.name.split(".").pop()}</p>
+            <p className="text-gray-300">
+              {fileInfo.name.split(".").pop().split("_TS=")[0]}
+            </p>
           </span>
           <span className="flex flex-col items-center">
             <p className="">Size</p>
@@ -152,11 +162,16 @@ const FileDetails = ({
 
         <span className="flex flex-col gap-2 my-2">
           <h2 className="text-sm text-gray-400 font-semibold">File Owner</h2>
-          <Avatar
-            src={fileInfo.ownerProfileUrl}
-            alt="owner pic"
-            sx={{ width: 20, height: 20 }}
-          />
+          <span className="flex flex-row items-center gap-2">
+            <Avatar
+              src={fileInfo.ownerProfileUrl}
+              alt="owner pic"
+              sx={{ width: 20, height: 20 }}
+            />
+            <p className="text-xs text-gray-300 font-semibold">
+              {sharedFileInfo.owner}
+            </p>
+          </span>
         </span>
 
         <span className="flex flex-col gap-2">

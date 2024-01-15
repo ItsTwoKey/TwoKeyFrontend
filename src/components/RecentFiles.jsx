@@ -199,7 +199,7 @@ const RecentFiles = () => {
                 }`}
                 onClick={() =>
                   openDrawer(
-                    file.name.split("_TS=")[0],
+                    file.name,
                     file.size,
                     file.id,
                     file.owner,

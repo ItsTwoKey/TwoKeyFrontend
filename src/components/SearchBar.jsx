@@ -59,6 +59,8 @@ export default function SearchBar() {
       lastUpdate: lastUpdate,
     });
     setIsFileViewOpen(true);
+    // Close the search bar when a file is selected
+    setSearchTerm("");
   };
 
   const closeDrawer = () => {
@@ -108,11 +110,11 @@ export default function SearchBar() {
     setOpen(false);
   };
 
-  const handleEditClick = (id) => {
-    // console.log("Edit clicked for user:", params.row);
-
+  const handleUserClick = (id) => {
     // Navigate to the "user-profile" route with the user ID or any relevant parameter
     navigate(`/user-profile/${id}`);
+    // Close the search bar when a user is selected
+    setSearchTerm("");
   };
 
   return (
@@ -153,7 +155,7 @@ export default function SearchBar() {
                     key={index}
                     onClick={() =>
                       openDrawer(
-                        file.name.split("_TS=")[0],
+                        file.name,
                         file.size,
                         file.id,
                         file.owner,
@@ -181,7 +183,7 @@ export default function SearchBar() {
                 {searchResults.map((result, index) => (
                   <li
                     key={index}
-                    onClick={() => handleEditClick(result.id)}
+                    onClick={() => handleUserClick(result.id)}
                     className="p-4 border-b-[1px] border-gray-100 hover:bg-gray-50 cursor-pointer"
                   >
                     {result.name}

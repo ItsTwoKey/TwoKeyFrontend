@@ -22,6 +22,7 @@ import UnfoldIcon from "../assets/unfold.svg";
 import { useDarkMode } from "../context/darkModeContext";
 import { useAuth } from "../context/authContext";
 import Avatar from "@mui/material/Avatar";
+import FileView from "./FileView";
 
 const ProfileLogs = ({ logs }) => {
   const { darkMode } = useDarkMode();
@@ -29,6 +30,16 @@ const ProfileLogs = ({ logs }) => {
   const [sortColumn, setSortColumn] = useState("name");
   const location = useLocation();
   const [tableHeight, setTableHeight] = useState("300px");
+  const [isFileViewOpen, setIsFileViewOpen] = useState(false);
+  const [selectedFileInfo, setSelectedFileInfo] = useState({
+    name: "",
+    size: "",
+    id: "",
+    owner: "",
+    profileUrl: "",
+    lastUpdate: "",
+  });
+  const [sharedFileInfo, setSharedFileInfo] = useState({});
 
   useEffect(() => {
     // Check if the current path is "profile" and set the height accordingly
@@ -42,6 +53,47 @@ const ProfileLogs = ({ logs }) => {
   const handleSort = (column) => {
     setSortOrder((prevSortOrder) => (prevSortOrder === "asc" ? "desc" : "asc"));
     setSortColumn(column);
+  };
+
+  const getSharedFileInfo = async (fileId) => {
+    try {
+      let token = JSON.parse(sessionStorage.getItem("token"));
+      const info = await axios.get(
+        `https://twokeybackend.onrender.com/file/sharedFileInfo/${fileId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+      setSharedFileInfo(info.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const openDrawer = (
+    fileName,
+    fileSize,
+    fileId,
+    owner,
+    profilePic,
+    lastUpdate
+  ) => {
+    getSharedFileInfo(fileId);
+    setSelectedFileInfo({
+      name: fileName,
+      size: fileSize,
+      id: fileId,
+      owner: owner,
+      ownerProfileUrl: profilePic,
+      lastUpdate: lastUpdate,
+    });
+    setIsFileViewOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setIsFileViewOpen(false);
   };
 
   const { formatFileSize } = useAuth();
@@ -116,7 +168,9 @@ const ProfileLogs = ({ logs }) => {
 
                     return 0;
                   })
-                  .map((row) => <Row key={row.id} row={row} />)
+                  .map((row) => (
+                    <Row key={row.id} row={row} openDrawer={openDrawer} />
+                  ))
               ) : (
                 <TableRow>
                   <TableCell colSpan={7} align="center">
@@ -128,6 +182,13 @@ const ProfileLogs = ({ logs }) => {
           </Table>
         </TableContainer>
       </Box>
+      {isFileViewOpen && (
+        <FileView
+          fileInfo={selectedFileInfo}
+          closeDrawer={closeDrawer}
+          sharedFileInfo={sharedFileInfo}
+        />
+      )}
     </div>
   );
 };
@@ -201,7 +262,19 @@ function Row(props) {
         </TableCell>
 
         <TableCell component="th" scope="row">
-          <p className="text-indigo-600 font-medium">
+          <p
+            className="text-indigo-600 font-medium"
+            onClick={() =>
+              props.openDrawer(
+                row.name,
+                row.size,
+                row.id,
+                row.owner,
+                row.profilePic,
+                row.lastUpdate
+              )
+            }
+          >
             {row.name.split("_TS=")[0].slice(0, 15)}
           </p>
         </TableCell>
