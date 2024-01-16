@@ -106,6 +106,7 @@ const SecureShare = () => {
         },
         onSuccess: function () {
           console.log(`Download ${upload.file.name} from ${upload.url}`);
+          closeDialog();
           handleFileIdRetrieval(fileName);
         },
       });

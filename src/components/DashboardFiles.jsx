@@ -177,7 +177,7 @@ const DashboardFiles = () => {
                 <TableCell />
                 <TableCell>
                   <p
-                    className="flex flex-row items-center"
+                    className="flex flex-row items-center cursor-pointer"
                     onClick={() => handleSort("name")}
                   >
                     FILE NAME <img src={UnfoldIcon} alt="↓" />
@@ -206,7 +206,7 @@ const DashboardFiles = () => {
                   align="center"
                   onClick={() => handleSort("lastUpdate")}
                 >
-                  <p className="flex flex-row items-center">
+                  <p className="flex flex-row items-center cursor-pointer">
                     LAST UPDATED <img src={UnfoldIcon} alt="↓" />
                   </p>
                 </TableCell>
@@ -414,7 +414,7 @@ function Row(props) {
               {row.security}
             </strong>
           </TableCell>
-          <TableCell align="center">
+          <TableCell align="left">
             <p className="">{row.lastUpdate}</p>
           </TableCell>
         </TableRow>
