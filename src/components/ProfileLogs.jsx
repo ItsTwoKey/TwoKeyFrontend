@@ -96,8 +96,6 @@ const ProfileLogs = ({ logs }) => {
     setIsFileViewOpen(false);
   };
 
-  const { formatFileSize } = useAuth();
-
   return (
     <div className={`${darkMode ? "bg-gray-800 text-white" : "text-gray-800"}`}>
       <Box sx={{ width: "100%" }}>
@@ -152,9 +150,11 @@ const ProfileLogs = ({ logs }) => {
                   .slice()
                   .sort((a, b) => {
                     if (sortColumn === "metadata.lastModified") {
+                      const dateA = new Date(a.metadata.lastModified);
+                      const dateB = new Date(b.metadata.lastModified);
                       return sortOrder === "asc"
-                        ? a.metadata.lastModified - b.metadata.lastModified
-                        : b.metadata.lastModified - a.metadata.lastModified;
+                        ? dateA - dateB
+                        : dateB - dateA;
                     } else if (sortColumn === "name") {
                       return sortOrder === "asc"
                         ? a.name.localeCompare(b.name)
@@ -165,7 +165,6 @@ const ProfileLogs = ({ logs }) => {
                         : b.metadata.size - a.metadata.size;
                     }
                     // Add similar sorting logic for other columns as needed
-
                     return 0;
                   })
                   .map((row) => (

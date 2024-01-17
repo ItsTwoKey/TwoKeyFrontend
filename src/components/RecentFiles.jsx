@@ -8,7 +8,6 @@ import { useDarkMode } from "../context/darkModeContext";
 import { Skeleton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import { useAuth } from "../context/authContext";
-import { supabase } from "../helper/supabaseClient";
 
 const RecentFiles = () => {
   const { darkMode } = useDarkMode();
@@ -222,7 +221,11 @@ const RecentFiles = () => {
                       <h6 className="text-sm font-semibold">
                         File Info:{" "}
                         <b className="text-gray-700 font-medium">
-                          {file.name.split(".").pop().split("_TS=")[0]}
+                          {file.name
+                            .split(".")
+                            .pop()
+                            .split("_TS=")[0]
+                            .slice(0, 5)}
                         </b>
                       </h6>
                       <p className="text-xs  font-light">{file.size}</p>
