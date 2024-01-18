@@ -26,8 +26,8 @@ import FileView from "./FileView";
 
 const ProfileLogs = ({ logs }) => {
   const { darkMode } = useDarkMode();
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [sortColumn, setSortColumn] = useState("name");
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [sortColumn, setSortColumn] = useState("lastUpdate");
   const location = useLocation();
   const [tableHeight, setTableHeight] = useState("300px");
   const [isFileViewOpen, setIsFileViewOpen] = useState(false);
@@ -149,7 +149,7 @@ const ProfileLogs = ({ logs }) => {
                 logs
                   .slice()
                   .sort((a, b) => {
-                    if (sortColumn === "metadata.lastModified") {
+                    if (sortColumn === "lastUpdate") {
                       const dateA = new Date(a.metadata.lastModified);
                       const dateB = new Date(b.metadata.lastModified);
                       return sortOrder === "asc"
