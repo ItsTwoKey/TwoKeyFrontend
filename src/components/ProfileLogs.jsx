@@ -137,7 +137,7 @@ const ProfileLogs = ({ logs }) => {
                 <TableCell align="center">
                   <p
                     className="flex flex-row items-center"
-                    onClick={() => handleSort("metadata.lastModified")}
+                    onClick={() => handleSort("lastUpdate")}
                   >
                     LAST UPDATED <img src={UnfoldIcon} alt="↓" />
                   </p>
