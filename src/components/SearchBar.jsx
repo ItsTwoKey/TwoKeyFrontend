@@ -91,7 +91,7 @@ export default function SearchBar() {
         console.error(error);
       } else {
         setSearchResults(data);
-        console.log(data);
+        // console.log(data);
       }
     };
 

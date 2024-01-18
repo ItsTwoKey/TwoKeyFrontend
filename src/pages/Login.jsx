@@ -35,7 +35,7 @@ const Login = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  console.log(formData);
+  // console.log(formData);
 
   function handleChange(event) {
     setFormData((prevFormData) => {

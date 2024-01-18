@@ -6,7 +6,7 @@ import { useAuth } from "../context/authContext";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import { supabase } from "../helper/supabaseClient";
 import axios from "axios";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 // Mui Icons And Drawers
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import { departmentIcons } from "../utils/iconComponents";
@@ -33,24 +33,26 @@ function SideBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    let data = localStorage.getItem("profileData");
-    setProfileData(JSON.parse(data));
-  }, []);
+    // Check if profileData is empty
+    if (!profileData || Object.keys(profileData).length === 0) {
+      let data = localStorage.getItem("profileData");
+      if (data) {
+        setProfileData(JSON.parse(data));
+      }
+    }
+  }, [profileData]);
 
   const hideSideBar =
     location.pathname === "/" ||
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
-    location.pathname === "/onboarding" ||
-    location.pathname.startsWith("/ai");
+    location.pathname === "/onboarding";
 
   if (hideSideBar) {
     return null;
   }
 
   let departments = [
-    // { name: "UserManagement", path: "/user-management" },
-    // { name: "Analytics", path: "/analytics" },
     { name: "Account", path: "/account" },
     { name: "Finance", path: "/finance" },
     { name: "Development", path: "/development" },
@@ -271,6 +273,16 @@ function SideBarContents({ departments, darkMode }) {
   const location = useLocation();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Check if profileData is empty
+    if (!profileData || Object.keys(profileData).length === 0) {
+      let data = localStorage.getItem("profileData");
+      if (data) {
+        setProfileData(JSON.parse(data));
+      }
+    }
+  }, [profileData]);
+
   function handleLogout() {
     // change the active status
     let token = JSON.parse(sessionStorage.getItem("token"));
@@ -297,11 +309,6 @@ function SideBarContents({ departments, darkMode }) {
     // localStorage.removeItem("profileData");
     localStorage.clear();
   }
-
-  useEffect(() => {
-    let data = localStorage.getItem("profileData");
-    setProfileData(JSON.parse(data));
-  }, []);
 
   return (
     <>
@@ -453,7 +460,7 @@ function SideBarContents({ departments, darkMode }) {
           Settings
         </p>
         <li className="min-w-full my-2">
-        <div className="flex items-center">
+          <div className="flex items-center">
             <Link
               to="/settings" // Use "to" instead of "href"
               alt="settings"
