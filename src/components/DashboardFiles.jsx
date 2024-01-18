@@ -196,12 +196,12 @@ const DashboardFiles = () => {
                     i
                   </b>
                 </TableCell>
-                <TableCell align="center">
+                {/* <TableCell align="center">
                   SECURITY
                   <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
                     i
                   </b>
-                </TableCell>
+                </TableCell> */}
                 <TableCell
                   align="center"
                   onClick={() => handleSort("lastUpdate")}
@@ -409,11 +409,11 @@ function Row(props) {
               {row.size}
             </p>
           </TableCell>
-          <TableCell align="center" sx={{ padding: "7px" }}>
+          {/* <TableCell align="center" sx={{ padding: "7px" }}>
             <strong className="bg-green-100 text-green-700  rounded-md py-[8px] px-4">
               {row.security}
             </strong>
-          </TableCell>
+          </TableCell> */}
           <TableCell align="left">
             <p className="">{row.lastUpdate}</p>
           </TableCell>

@@ -128,12 +128,12 @@ const ProfileLogs = ({ logs }) => {
                     i
                   </b>
                 </TableCell>
-                <TableCell align="center">
+                {/* <TableCell align="center">
                   SECURITY
                   <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
                     i
                   </b>
-                </TableCell>
+                </TableCell> */}
                 <TableCell align="center">
                   <p
                     className="flex flex-row items-center"
@@ -302,12 +302,11 @@ function Row(props) {
             <p className="bg-gray-100 text-gray-800 rounded-md py-1">N/A</p>
           )}
         </TableCell>
-        <TableCell align="center">
+        {/* <TableCell align="center">
           <strong className="bg-green-100 text-green-700  rounded-md py-1 px-4">
-            {/* {row.security} */}
             Enhanced
           </strong>
-        </TableCell>
+        </TableCell> */}
         <TableCell align="center">
           <p className="">{formatTimestamp(row.metadata.lastModified)}</p>
         </TableCell>
