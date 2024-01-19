@@ -1,5 +1,4 @@
 import React from "react";
-import QuickShare from "../components/QuickShare";
 import RecentFiles from "../components/RecentFiles";
 import { useDarkMode } from "../context/darkModeContext";
 import { Dialog } from "@mui/material";
