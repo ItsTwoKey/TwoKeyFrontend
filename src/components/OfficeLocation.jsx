@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { GoogleMap, Marker } from "@react-google-maps/api";
 import threeDots from '../assets/3dots.png'
 
@@ -15,6 +15,11 @@ export default function OfficeLocation(props) {
             );
         }
     }, []);
+
+    const opt = useRef(null);
+    const showOpt = ()=>{
+        console.log(opt.current)
+    }
 
     return (
         <div className='flex flex-col rounded-lg bg-[#F8F8FF] w-60'>
@@ -38,8 +43,12 @@ export default function OfficeLocation(props) {
                             <p className='font-bold text-base text-[#1C1C1C]'>{props.name}</p>
                             <p className='font-normal tracking-wider text-xs text-[#1C1C1C]'>Mumbai, Maharashtra</p>
                         </div>
-                        <div className='flex flex-col justify-center align-start'>
-                            <img src={threeDots} height={40} width={40} alt="" />
+                        <div className='flex flex-col justify-center align-start relative'>
+                            <img src={threeDots} height={40} width={40} alt="" onClick={showOpt} />
+                            <ul ref={opt} className="popup text-sm font-medium p-4 gap-1 w-26 z-7 border-2 flex flex-col absolute rounded-lg bg-[#FFFFFF] cursor-pointer" style={{ top: "78px", left: "-29px" }}>
+                                <li className='text-[#464F60]'>Edit</li>
+                                <li className='text-[#D1293D]'>Remove</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
