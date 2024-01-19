@@ -41,9 +41,9 @@ const Security = () => {
             <div key={index}>{location.properties.name}</div>
           ))}
 
-        <AddGeoLocation />
+        {/* <AddGeoLocation /> */}
 
-        {/* <MapComponent /> */}
+        <MapComponent />
       </div>
       <div>
         <h3 className="text-xl font-medium">Security Pre-sets</h3>
