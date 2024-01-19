@@ -6,10 +6,9 @@ import DialogActions from "@mui/material/DialogActions";
 import axios from "axios";
 import locatemeIcon from '../assets/locate_me.png';
 import DefaultMarkerComponent from '../assets/DefaultMarkerComponent.png';
-
-
 import { GoogleMap, LoadScript, Marker, Autocomplete, useJsApiLoader } from "@react-google-maps/api";
-import { useRef } from "react";
+// import { useRef } from "react";
+
 
 const MapComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,8 +22,16 @@ const MapComponent = () => {
     lng: 73.9223,
   });
 
+  // getting the users current location
   const currentLocation = (e) => {
-    setSelectedLocation();
+    navigator.geolocation.getCurrentPosition(position => {
+      console.log(position);
+
+      setSelectedLocation({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      });
+    })
   }
   useEffect(() => {
     const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -37,6 +44,7 @@ const MapComponent = () => {
   }, []);
 
 
+  // adding new geolacation into database
   const addLocation = async () => {
     try {
       let token = JSON.parse(sessionStorage.getItem("token"));
@@ -51,18 +59,18 @@ const MapComponent = () => {
           name: "office3",
         },
       };
-      //     if (selectedLocation) {
-      //       const addLocation = await axios.post(
-      //         `https://twokeybackend.onrender.com/file/createLocation/`,
-      //         body,
-      //         {
-      //           headers: {
-      //             Authorization: `Bearer ${token.session.access_token}`,
-      //           },
-      //         }
-      //       );
-      //       console.log("addLocation:", addLocation.data);
-      //     }
+      if (selectedLocation) {
+        const addLocation = await axios.post(
+          `https://twokeybackend.onrender.com/file/createLocation/`,
+          body,
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+        console.log("addLocation:", addLocation.data);
+      }
       console.log("addLocation:", body);
     } catch (error) {
       console.log("Error while adding Location", error);
@@ -84,6 +92,13 @@ const MapComponent = () => {
     };
     setSelectedLocation(clickedLocation);
   };
+
+  // fetching the readable from coordinates
+  const coordinateLocation = async () => {
+    const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+    const address = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${selectedLocation.lat}, ${selectedLocation.lng}&sensor=false&key=${apiKey}`)
+    console.log(address);
+  }
 
   return (
     <div className="">
@@ -118,9 +133,10 @@ const MapComponent = () => {
               mapContainerStyle={{ height: "320px", width: "100%" }}
               onClick={handleMapClick}
               center={selectedLocation}
-              zoom={13}
+              zoom={12}
               id={'map'}
               options={{
+                zoomControl: false,
                 fullscreenControl: false,
               }}
             >
