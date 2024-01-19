@@ -1,16 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../helper/supabaseClient";
 import axios from "axios";
 import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import IconButton from "@mui/material/IconButton";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import twokeyLanding from "../assets/twokeyLanding.png";
-import ErrorPage from "../components/ErrorPage";
 import { useMediaQuery } from "@mui/material";
 import { useAuth } from "../context/authContext";
 import HidePassword from "../assets/hidePassword.svg";
@@ -26,8 +21,6 @@ const Login = () => {
     email: "",
     password: "",
   });
-  const [organizationData, setOrganizationData] = useState("");
-  const [pageErr, setPageErr] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
