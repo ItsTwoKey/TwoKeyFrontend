@@ -3,6 +3,7 @@ import AddGeoLocation from "../components/AddGeoLocation";
 import AddSecPreSet from "../components/AddSecPreSet";
 import axios from "axios";
 import MapComponent from "./MapComponent";
+import OfficeLocation from "./OfficeLocation";
 
 const Security = () => {
   const [allowedLocations, setAllowedLocations] = useState([]);
@@ -38,12 +39,13 @@ const Security = () => {
           <MapComponent />
         </div>
         <hr className="border border-transparent border-b-gray-300 my-2" />
-
-        {allowedLocations &&
-          allowedLocations.map((location, index) => (
-            <div key={index}>{location.properties.name}</div>
-          ))}
-
+        <div className="flex flex-wrap gap-2">
+          {allowedLocations &&
+            allowedLocations.map((loc) => {
+              console.log(loc)
+              return <OfficeLocation key={loc.id} name={loc.properties.name} location={loc.geometry.coordinates} />
+            })}
+        </div>
         {/* <AddGeoLocation /> */}
 
       </div>
@@ -52,7 +54,7 @@ const Security = () => {
           <h3 className="text-xl font-medium">Security Pre-sets</h3>
           <AddSecPreSet />{" "}
         </div>
-          <hr className="border border-transparent border-b-gray-300 my-2" />
+        <hr className="border border-transparent border-b-gray-300 my-2" />
       </div>
     </div>
   );
