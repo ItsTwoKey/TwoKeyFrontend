@@ -12,6 +12,7 @@ import { useAuth } from "../context/authContext";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FileInfo from "./FileInfo";
+import UploadFile from "./UploadFile";
 
 const RecentFiles = () => {
   const { darkMode } = useDarkMode();
@@ -203,16 +204,9 @@ const RecentFiles = () => {
       >
         <p className="text-lg font-semibold my-4 ">Recent Files</p>
         <span className="flex gap-2">
-          {/* <button
-            className={`py-1 px-4 rounded-md border ${
-              darkMode ? "bg-gray-600 border-gray-500" : "bg-gray-50"
-            } `}
-          >
-            + Share
-          </button> */}
-
           <SecureShare />
-          <ShareFile />
+          <UploadFile />
+          {/* <ShareFile /> */}
         </span>
       </div>
       <div
