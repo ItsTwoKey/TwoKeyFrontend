@@ -31,9 +31,12 @@ const Security = () => {
     getLocations();
   }, []);
   return (
-    <div className="p-4">
+    <div className="p-4 b">
       <div>
-        <h3 className="text-xl font-medium">Geo - Location Settings</h3>
+        <div className="flex justify-between">
+          <h3 className="text-xl font-medium">Geo - Location Settings</h3>
+          <MapComponent />
+        </div>
         <hr className="border border-transparent border-b-gray-300 my-2" />
 
         {allowedLocations &&
@@ -43,12 +46,13 @@ const Security = () => {
 
         {/* <AddGeoLocation /> */}
 
-        <MapComponent />
       </div>
       <div>
-        <h3 className="text-xl font-medium">Security Pre-sets</h3>
-        <hr className="border border-transparent border-b-gray-300 my-2" />
-        <AddSecPreSet />{" "}
+        <div className="flex justify-between">
+          <h3 className="text-xl font-medium">Security Pre-sets</h3>
+          <AddSecPreSet />{" "}
+        </div>
+          <hr className="border border-transparent border-b-gray-300 my-2" />
       </div>
     </div>
   );
