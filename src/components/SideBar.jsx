@@ -374,7 +374,7 @@ function SideBarContents({ departments, darkMode }) {
                         } p-2 rounded-md text-sm duration-200`
                   }`}
                 >
-                  <img src={UserMgmt} alt="." />
+                  <img src={UserMgmt} style={darkMode?{filter:'invert()'}:{}} alt="." />
                   <p className="px-2">User Management</p>
                 </Link>
               </li>
@@ -406,7 +406,7 @@ function SideBarContents({ departments, darkMode }) {
                         } p-2 rounded-md text-sm duration-200`
                   }`}
                 >
-                  <img src={Analytics} alt="." />
+                  <img src={Analytics} style={darkMode?{filter:'invert()'}:{}} alt="." />
                   <p className="px-2">Analytics & Report</p>
                 </Link>
               </li>
