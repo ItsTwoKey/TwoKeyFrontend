@@ -3,12 +3,16 @@ import PasswordChangeForm from "../components/PasswordChangeForm";
 import Security from "../components/Security";
 import TeamManagement from "../components/TeamManagement";
 import Device from "../components/Device";
+import AccountSetIcon from '../assets/AccountSetting.svg'
+import DeviceIcon from '../assets/Devices.svg'
+import TeamIcon from '../assets/TeamManagement.svg'
+import SecurityIcon from '../assets/Security.svg'
 
 const navigationItems = [
-  { key: "PasswordChangeForm", label: "Account Settings" },
-  { key: "Device", label: "Device" },
-  { key: "TeamManagement", label: "Team Management" },
-  { key: "Security", label: "Security" },
+  { key: "PasswordChangeForm", label: "Account Settings", icon: AccountSetIcon },
+  { key: "Device", label: "Device", icon: DeviceIcon },
+  { key: "TeamManagement", label: "Team Management", icon: TeamIcon },
+  { key: "Security", label: "Security", icon: SecurityIcon },
 ];
 
 const Sidebar = () => {
@@ -53,12 +57,14 @@ const Sidebar = () => {
                 <span className="border-2 border-[#0969DA] rounded-full my-1"></span>
               )}
               <li
-                className={`px-2 py-1 w-full cursor-pointer rounded-md ${
-                  selectedNavItem === item.key ? "activeSetting" : ""
-                }`}
+                className={`px-2 py-1 w-full cursor-pointer rounded-md ${selectedNavItem === item.key ? "activeSetting" : ""
+                  }`}
                 onClick={() => handleNavItemClick(item.key)}
               >
-                {item.label}
+                <div className="flex gap-2">
+                  <img src={item.icon} alt="" />
+                  <div>{item.label}</div>
+                </div>
               </li>
             </div>
           ))}

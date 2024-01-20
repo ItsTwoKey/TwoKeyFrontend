@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { GoogleMap, Marker } from "@react-google-maps/api";
-import threeDots from '../assets/3dots.png'
+import threeDots from '../assets/threedots.svg'
 
 export default function OfficeLocation(props) {
     const [lat, lng] = props.location;

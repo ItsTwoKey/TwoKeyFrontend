@@ -4,9 +4,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import axios from "axios";
-import locatemeIcon from '../assets/locate_me.png';
-import DefaultMarkerComponent from '../assets/DefaultMarkerComponent.png';
-import { GoogleMap, LoadScript, Marker, Autocomplete, useJsApiLoader } from "@react-google-maps/api";
+import locatemeIcon from '../assets/locateme.svg';
+import DefaultMarkerComponent from '../assets/DefaultMarkerComponent.svg';
+import { GoogleMap, Marker, Autocomplete, useJsApiLoader } from "@react-google-maps/api";
 // import { useRef } from "react";
 
 
