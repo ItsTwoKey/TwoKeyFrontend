@@ -2,12 +2,10 @@ import React, { useState, useEffect } from "react";
 import AddGeoLocation from "../components/AddGeoLocation";
 import AddSecPreSet from "../components/AddSecPreSet";
 import axios from "axios";
-// <<<<<<< main
-// import MapComponent from "./MapComponent";
-// import OfficeLocation from "./securityPage/OfficeLocation";
-// import SecurityPresets from "./securityPage/SecurityPresets";
-// =======
-// >>>>>>> main
+import MapComponent from "./MapComponent";
+import OfficeLocation from "./securityPage/OfficeLocation";
+import SecurityPresets from "./securityPage/SecurityPresets";
+
 
 const Security = () => {
   const [allowedLocations, setAllowedLocations] = useState([]);
