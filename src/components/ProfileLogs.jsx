@@ -22,6 +22,7 @@ import { useDarkMode } from "../context/darkModeContext";
 import { useAuth } from "../context/authContext";
 import Avatar from "@mui/material/Avatar";
 import FileView from "./FileView";
+import Notes from "../assets/notes.svg";
 
 const ProfileLogs = ({ logs }) => {
   const { darkMode } = useDarkMode();
@@ -307,7 +308,10 @@ function Row(props) {
           </strong>
         </TableCell> */}
         <TableCell align="center" sx={{ padding: "7px" }}>
-          <p className="">{formatTimestamp(row.metadata.lastModified)}</p>
+          <span className="flex flex-row gap-2 justify-center items-center">
+            <img src={Notes} alt="." />
+            <p className="">{formatTimestamp(row.metadata.lastModified)}</p>
+          </span>
         </TableCell>
       </TableRow>
       <TableRow>

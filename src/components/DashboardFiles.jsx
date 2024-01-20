@@ -23,6 +23,7 @@ import { useAuth } from "../context/authContext";
 import Avatar from "@mui/material/Avatar";
 import { Skeleton } from "@mui/material";
 import FileView from "./FileView";
+import Notes from "../assets/notes.svg";
 
 const DashboardFiles = () => {
   const { darkMode } = useDarkMode();
@@ -369,7 +370,7 @@ function Row(props) {
 
           <TableCell component="th" scope="row" sx={{ padding: "7px" }}>
             <p
-              className="text-indigo-600 font-medium"
+              className="text-indigo-600 font-medium line-clamp-1"
               onClick={() =>
                 props.openDrawer(
                   row.name,
@@ -381,7 +382,7 @@ function Row(props) {
                 )
               }
             >
-              {row.name.split("_TS=")[0].slice(0, 15)}
+              {row.name.split("_TS=")[0]}
             </p>
           </TableCell>
           <TableCell align="center" sx={{ padding: "7px" }}>
@@ -410,7 +411,10 @@ function Row(props) {
             </strong>
           </TableCell> */}
           <TableCell align="center">
-            <p className="">{row.lastUpdate}</p>
+            <span className="flex flex-row gap-2 justify-center items-center">
+              <img src={Notes} alt="." />
+              <p className="">{row.lastUpdate}</p>
+            </span>
           </TableCell>
         </TableRow>
       )}

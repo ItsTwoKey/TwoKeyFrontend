@@ -23,6 +23,7 @@ import { useAuth } from "../context/authContext";
 import Avatar from "@mui/material/Avatar";
 import { Skeleton } from "@mui/material";
 import FileView from "./FileView";
+import Notes from "../assets/notes.svg";
 
 const DepartmentFiles = ({ filesFromBackend }) => {
   const { darkMode } = useDarkMode();
@@ -173,7 +174,7 @@ const DepartmentFiles = ({ filesFromBackend }) => {
                     align="center"
                     onClick={() => handleSort("lastUpdate")}
                   >
-                    <p className="flex flex-row items-center">
+                    <p className="flex flex-row justify-center items-center">
                       LAST UPDATED <img src={UnfoldIcon} alt="↓" />
                     </p>
                   </TableCell>
@@ -382,7 +383,10 @@ function Row(props) {
             </strong>
           </TableCell>
           <TableCell align="center">
-            <p className="">{row.lastUpdate}</p>
+            <span className="flex flex-row gap-2 justify-center items-center">
+              <img src={Notes} alt="." />
+              <p className="">{row.lastUpdate}</p>
+            </span>
           </TableCell>
         </TableRow>
       )}
