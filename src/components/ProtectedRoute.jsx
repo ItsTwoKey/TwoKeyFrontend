@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "../context/authContext";
 import Loading from "./Loading";
 
 /**

@@ -5,7 +5,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import ProfileLogs from "../components/ProfileLogs";
 import axios from "axios";
-import LatestActivities from "../components/LatestActivities";
+// import LatestActivities from "../components/LatestActivities";
 import CustomLogs from "./CustomLogs";
 import { useParams } from "react-router-dom";
 

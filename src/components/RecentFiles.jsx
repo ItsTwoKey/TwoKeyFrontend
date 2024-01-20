@@ -3,7 +3,7 @@ import axios from "axios";
 import FileView from "./FileView";
 import PDF from "../assets/pdf.svg";
 import { supabase } from "../helper/supabaseClient";
-import ShareFile from "./ShareFile";
+// import ShareFile from "./ShareFile";
 import SecureShare from "./SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
 import { Skeleton } from "@mui/material";
@@ -13,6 +13,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FileInfo from "./FileInfo";
 import UploadFile from "./UploadFile";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 
 const RecentFiles = () => {
   const { darkMode } = useDarkMode();
@@ -31,11 +33,13 @@ const RecentFiles = () => {
   const [isFileViewOpen, setIsFileViewOpen] = useState(false);
   const [isFileInfoOpen, setIsFileInfoOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [menuFile, setMenuFile] = useState({});
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" or "error"
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
   const open = Boolean(anchorEl);
 
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -177,22 +181,50 @@ const RecentFiles = () => {
     setIsFileInfoOpen(false);
   };
 
-  const handleDelete = async (fileName) => {
-    try {
-      console.log(fileName);
-      const { data, error } = await supabase.storage
-        .from("TwoKey")
-        .remove(fileName);
+  const handleDelete = async (fileName, owner) => {
+    let userMail = JSON.parse(localStorage.getItem("profileData"));
 
-      if (error) {
-        console.error("Error deleting file:", error.message);
-      } else {
-        console.log("Delete success", data);
-        setAnchorEl(null);
+    // Check if the user is the owner of the file
+    if (userMail.email === owner) {
+      try {
+        const { data, error } = await supabase.storage
+          .from("TwoKey")
+          .remove(fileName);
+
+        if (error) {
+          console.error("Error deleting file:", error.message);
+          setSnackbarSeverity("error");
+          setSnackbarMessage("Error deleting the file.");
+        } else {
+          console.log("Delete success", data);
+          setSnackbarSeverity("success");
+          setSnackbarMessage("File deleted successfully.");
+          setAnchorEl(null);
+        }
+
+        // Open the Snackbar
+        setSnackbarOpen(true);
+      } catch (error) {
+        console.error("Error occurred while deleting the file:", error.message);
       }
-    } catch (error) {
-      console.error("Error occurred while deleting the file:", error.message);
+    } else {
+      // Display Snackbar message if the user is not the owner of the file
+      setSnackbarSeverity("error");
+      setSnackbarMessage("You are not the owner of the file.");
+      setSnackbarOpen(true);
     }
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+    // console.log("fileName", fileName);
   };
 
   return (
@@ -266,7 +298,10 @@ const RecentFiles = () => {
                   <span>
                     <button
                       className="rotate-90 text-lg"
-                      onClick={handleMenuClick}
+                      onClick={(event) => {
+                        handleMenuClick(event);
+                        setMenuFile(file);
+                      }}
                     >
                       ...
                     </button>
@@ -304,19 +339,16 @@ const RecentFiles = () => {
                         <button
                           onClick={() => {
                             // Log the selected file's name when "Edit" is clicked
-                            console.log(
-                              "Edit file:",
-                              file.name,
-                              "Index:",
-                              index
-                            );
+                            console.log("Edit file:", menuFile.name);
                           }}
                         >
                           Edit
                         </button>
                       </MenuItem>
                       <MenuItem
-                        onClick={() => handleDelete(file.name)}
+                        onClick={() =>
+                          handleDelete(menuFile.name, menuFile.owner)
+                        }
                         style={{ padding: "0px 10px", color: "#D1293D" }}
                       >
                         Remove
@@ -371,6 +403,21 @@ const RecentFiles = () => {
                 </div>
               </div>
             ))}
+
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+        >
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            onClose={handleSnackbarClose}
+            severity={snackbarSeverity}
+          >
+            {snackbarMessage}
+          </MuiAlert>
+        </Snackbar>
       </div>
       {isFileInfoOpen && (
         <FileInfo

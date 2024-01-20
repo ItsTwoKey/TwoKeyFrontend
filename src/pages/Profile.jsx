@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "../helper/supabaseClient";
 import ProfilePersonalInfo from "../components/ProfilePersonalInfo";
-import ProfileWorkInformation from "../components/ProfileWorkInformation";
 import ProfileAddressInformation from "../components/ProfileAddressInformation";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import ProfileTabs from "../components/ProfileTabs";

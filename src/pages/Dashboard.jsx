@@ -5,24 +5,14 @@ import { Dialog } from "@mui/material";
 import FileViewer from "../components/FileViewer";
 import { useAuth } from "../context/authContext";
 import DueDate from "../components/DueDate";
-import DashboardFiles from "../components/DashboardFiles";
 import DashboardTabs from "../components/DashboardTabs";
 import LatestActivities from "../components/LatestActivities";
 
 import ErrorPage from "../components/ErrorPage";
 
-let folders = [
-  "Account",
-  "Finance",
-  "Development",
-  "Manufacturing",
-  "Sales",
-  "Human Resources",
-];
-
 const Dashboard = () => {
   const { darkMode } = useDarkMode();
-  const { isFileViewerOpen, closeFileViewer, screenshotDetected } = useAuth();
+  const { isFileViewerOpen, closeFileViewer } = useAuth();
   if (!sessionStorage.getItem("token")) {
     return <ErrorPage error="You are not authorised" />;
   }

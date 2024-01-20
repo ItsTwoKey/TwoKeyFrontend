@@ -89,7 +89,7 @@ const UserProfile = () => {
             },
           }
         );
-        // console.log("elevate user:", res);
+        console.log("elevate user successful");
       } catch (error) {
         console.log(error);
       }
@@ -111,7 +111,7 @@ const UserProfile = () => {
             },
           }
         );
-        // console.log("User's dept changes:", res);
+        console.log("User's dept changed");
       } catch (error) {
         console.log(error);
       }

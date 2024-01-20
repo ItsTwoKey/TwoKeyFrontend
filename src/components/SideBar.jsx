@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ProfilePic from "../assets/profilePic.png";
 import { useDarkMode } from "../context/darkModeContext";
-import { useAuth } from "../context/authContext";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
-import { supabase } from "../helper/supabaseClient";
 import axios from "axios";
 import { Link } from "react-router-dom";
 // Mui Icons And Drawers
@@ -27,7 +25,6 @@ function SideBar() {
 
   const [data, setData] = useState("");
   const { darkMode } = useDarkMode();
-  let navigate = useNavigate();
   const [picture, setPicture] = useState(null);
   const [profileData, setProfileData] = useState({});
   const [isMenuOpen, setIsMenuOpen] = useState(false);

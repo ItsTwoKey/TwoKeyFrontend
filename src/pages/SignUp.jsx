@@ -4,13 +4,9 @@ import { supabase } from "../helper/supabaseClient";
 import { TextField, useMediaQuery } from "@mui/material";
 import axios from "axios";
 
-import ErrorPage from "../components/ErrorPage";
-
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-
-import twokeyLanding from "../assets/twokeyLanding.png";
 import twokeySignup from "../assets/twokeySignup.png";
 
 const SignUp = () => {
@@ -66,7 +62,7 @@ const SignUp = () => {
         console.log(org.data);
         setOrganizationData(org.data);
       } catch (error) {
-        const errMsg = error.message + "\n" + "Please try again later.";
+        const errMsg = error.message + "Please try again later.";
         alert(errMsg);
         console.log(error.message);
         setPageErr(errMsg);

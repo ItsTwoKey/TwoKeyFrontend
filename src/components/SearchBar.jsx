@@ -7,9 +7,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export default function SearchBar() {
-  const { darkMode, toggleDarkMode } = useDarkMode();
+  const { darkMode } = useDarkMode();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [filteredFiles, setFilteredFiles] = useState([]);
@@ -100,14 +99,6 @@ export default function SearchBar() {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-  };
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
   const handleUserClick = (id) => {

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/authContext";
 import axios from "axios";
 
 const ProfilePersonalInfo = ({ profileData, isEditing }) => {
