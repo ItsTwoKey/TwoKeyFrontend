@@ -70,9 +70,10 @@ export default function UserManagementTable() {
       field: "status",
       headerName: "Status",
       width: 100,
+      valueGetter: (params) => (params.row.is_active ? "Online" : "Offline"),
       renderCell: (params) => (
         <p
-          className={`text-center  rounded-full py-1 px-4 ${
+          className={`text-center rounded-full py-1 px-4 ${
             params.row.is_active
               ? "text-green-700 bg-[#ECFDF3]"
               : "text-red-500 bg-red-50"

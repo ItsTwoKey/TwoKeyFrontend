@@ -133,8 +133,8 @@ const FileDetails = ({
 
         <span className="my-2">
           <h2 className="text-sm text-gray-400 font-semibold">File Name</h2>
-          <p className="text-sm text-gray-300">
-            {fileInfo.name.split("_TS=")[0].slice(0, 15)}
+          <p className="text-sm text-gray-300 line-clamp-1">
+            {fileInfo.name.split("_TS=")[0]}
           </p>
         </span>
 

@@ -392,8 +392,8 @@ const RecentFiles = () => {
                         src={file.profilePic}
                         alt="owner pic"
                         sx={{
-                          width: 20,
-                          height: 20,
+                          width: 24,
+                          height: 24,
                           border: "1px solid silver",
                         }}
                         className={`${darkMode && "border border-white "}`}
