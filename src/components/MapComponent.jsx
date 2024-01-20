@@ -149,7 +149,7 @@ const MapComponent = () => {
             </div>
           </div>
         </DialogContent>
-        <div className="flex py-1 flex-col bg-blue-50 px-2 py-4 gap-x-1.5">
+        <div className="flex flex-col bg-blue-50 px-2 py-4 gap-x-1.5">
           <div className="text-xs font-normal">Select Geo - Location</div>
           <div className="flex py-1 items-center justify-between">
             <div className="flex py-1 items-center">
