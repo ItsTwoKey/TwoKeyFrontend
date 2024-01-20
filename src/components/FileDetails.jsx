@@ -7,7 +7,6 @@ import Trash from "../assets/trash.svg";
 import DownloadFile from "../assets/downloadFile.svg";
 import { supabase } from "../helper/supabaseClient";
 import axios from "axios";
-import AI from "../assets/ai.svg";
 import AIChat from "./AIChat";
 import { useNavigate } from "react-router-dom";
 
@@ -35,10 +34,6 @@ const FileDetails = ({
 
   const handleBackButtonClick = () => {
     closeDrawer();
-  };
-
-  const handleAIClick = (params) => {
-    navigate(`/ai/${fileInfo.id}`);
   };
 
   const downloadAlert = async (fileId) => {

@@ -3,7 +3,7 @@ import axios from "axios";
 import FileView from "./FileView";
 import PDF from "../assets/pdf.svg";
 import { supabase } from "../helper/supabaseClient";
-import ShareFile from "./ShareFile";
+// import ShareFile from "./ShareFile";
 import SecureShare from "./SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
 import { Skeleton } from "@mui/material";

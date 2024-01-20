@@ -174,8 +174,8 @@ const DashboardFiles = () => {
           <Table aria-label="collapsible table">
             <TableHead>
               <TableRow sx={{ backgroundColor: "#F7F9FCCC" }}>
-                <TableCell />
-                <TableCell>
+                <TableCell sx={{ width: "5%" }} />
+                <TableCell align="center" sx={{ width: "20%" }}>
                   <p
                     className="flex flex-row items-center cursor-pointer"
                     onClick={() => handleSort("name")}
@@ -183,32 +183,27 @@ const DashboardFiles = () => {
                     FILE NAME <img src={UnfoldIcon} alt="↓" />
                   </p>
                 </TableCell>
-                <TableCell>OWNER</TableCell>
-                <TableCell align="center">
+                <TableCell sx={{ width: "5%" }}>OWNER</TableCell>
+                <TableCell align="center" sx={{ width: "10%" }}>
                   STATUS
                   <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
                     i
                   </b>
                 </TableCell>
-                <TableCell align="center" onClick={() => handleSort("size")}>
+                <TableCell align="center" sx={{ width: "10%" }}>
                   SIZE
                   <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
                     i
                   </b>
                 </TableCell>
-                {/* <TableCell align="center">
-                  SECURITY
-                  <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
-                    i
-                  </b>
-                </TableCell> */}
                 <TableCell
                   align="center"
+                  sx={{ width: "20%" }}
                   onClick={() => handleSort("lastUpdate")}
                 >
-                  <p className="flex flex-row items-center cursor-pointer">
+                  <span className="flex flex-row justify-center items-center cursor-pointer">
                     LAST UPDATED <img src={UnfoldIcon} alt="↓" />
-                  </p>
+                  </span>
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -414,7 +409,7 @@ function Row(props) {
               {row.security}
             </strong>
           </TableCell> */}
-          <TableCell align="left">
+          <TableCell align="center">
             <p className="">{row.lastUpdate}</p>
           </TableCell>
         </TableRow>

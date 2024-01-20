@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
@@ -99,7 +98,7 @@ const ProfileLogs = ({ logs }) => {
   return (
     <div className={`${darkMode ? "bg-gray-800 text-white" : "text-gray-800"}`}>
       <Box sx={{ width: "100%" }}>
-        <TableContainer component={Paper} sx={{ height: tableHeight }}>
+        <TableContainer sx={{ height: tableHeight }}>
           <Table aria-label="collapsible table">
             <TableHead className="cursor-pointer">
               <TableRow sx={{ backgroundColor: "#F7F9FCCC" }}>
@@ -136,7 +135,7 @@ const ProfileLogs = ({ logs }) => {
                 </TableCell> */}
                 <TableCell align="center">
                   <p
-                    className="flex flex-row items-center"
+                    className="flex flex-row justify-center items-center"
                     onClick={() => handleSort("lastUpdate")}
                   >
                     LAST UPDATED <img src={UnfoldIcon} alt="↓" />
@@ -250,7 +249,7 @@ function Row(props) {
         }}
         onClick={handleRowClick}
       >
-        <TableCell>
+        <TableCell sx={{ padding: "7px" }}>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -260,7 +259,7 @@ function Row(props) {
           </IconButton>
         </TableCell>
 
-        <TableCell component="th" scope="row">
+        <TableCell component="th" scope="row" sx={{ padding: "7px" }}>
           <p
             className="text-indigo-600 font-medium"
             onClick={() =>
@@ -277,7 +276,7 @@ function Row(props) {
             {row.name.split("_TS=")[0].slice(0, 15)}
           </p>
         </TableCell>
-        <TableCell align="center">
+        <TableCell align="center" sx={{ padding: "7px" }}>
           <Tooltip title={row.owner_email} arrow>
             <Avatar
               sx={{ width: "30px", height: "30px" }}
@@ -287,13 +286,13 @@ function Row(props) {
             />
           </Tooltip>
         </TableCell>
-        <TableCell align="center">
+        <TableCell align="center" sx={{ padding: "7px 20px" }}>
           <p className="bg-gray-100 text-gray-800 rounded-md py-1">
             {/* {row.status} */}
             Team
           </p>
         </TableCell>
-        <TableCell align="center">
+        <TableCell align="center" sx={{ padding: "7px" }}>
           {row.metadata && row.metadata.size ? (
             <p className="bg-gray-100 text-gray-800 rounded-md py-1">
               {formatFileSize(row.metadata.size)}
@@ -307,7 +306,7 @@ function Row(props) {
             Enhanced
           </strong>
         </TableCell> */}
-        <TableCell align="center">
+        <TableCell align="center" sx={{ padding: "7px" }}>
           <p className="">{formatTimestamp(row.metadata.lastModified)}</p>
         </TableCell>
       </TableRow>

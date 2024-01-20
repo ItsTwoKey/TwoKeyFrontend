@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Paper from "@mui/material/Paper";
-import Checkmark from "../assets/checkmark.svg";
 import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import InviteMember from "./InviteMember";
 
 import TeamManagementTable from "./TeamManagementTable";
@@ -7,8 +6,6 @@ import PendingInviteTable from "./PendingInviteTable";
 import { supabase } from "../helper/supabaseClient";
 
 const TeamManagement = () => {
-  const [data, setData] = useState([]);
-
   const downloadData = async () => {
     try {
       let { data: user_info, error } = await supabase
