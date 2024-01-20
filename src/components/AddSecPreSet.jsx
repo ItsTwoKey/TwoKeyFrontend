@@ -47,9 +47,9 @@ const AddSecPreSet = () => {
     <div className="">
       <button
         onClick={openDialog}
-        className="text-sm rounded-md py-[5px] px-3 border border-gray-300 bg-gray-50"
-      >
-        Add New Security Pre-sets
+        className="text-sm rounded-md py-[5px] px-3 bg-[#5E5ADB] text-white"
+        style={{ boxShadow: '0px 0px 0px 1px #5E5ADB, 0px 1px 1px 0px #0000001A' }}>
+        Add Security Pre-sets
       </button>
 
       <Dialog
