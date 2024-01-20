@@ -53,9 +53,7 @@ const Sidebar = () => {
         <ul>
           {filteredNavigationItems.map((item) => (
             <div key={item.key} className="flex flex-row gap-1">
-              {selectedNavItem === item.key && (
-                <span className="border-2 border-[#0969DA] rounded-full my-1"></span>
-              )}
+              <span className={`border-2 rounded-full my-1 ${selectedNavItem === item.key ? 'border-[#0969DA]' : 'border-white'}`}></span>
               <li
                 className={`px-2 py-1 w-full cursor-pointer rounded-md ${selectedNavItem === item.key ? "activeSetting" : ""
                   }`}
@@ -63,7 +61,7 @@ const Sidebar = () => {
               >
                 <div className="flex gap-2">
                   <img src={item.icon} alt="" />
-                  <div>{item.label}</div>
+                  <div className={selectedNavItem === item.key ? 'font-medium' : ''}>{item.label}</div>
                 </div>
               </li>
             </div>
@@ -71,7 +69,7 @@ const Sidebar = () => {
         </ul>
       </nav>
       <div className="w-4/5">{renderSelectedComponent()}</div>
-    </div>
+    </div >
   );
 };
 
