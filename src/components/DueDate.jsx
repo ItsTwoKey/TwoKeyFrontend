@@ -4,17 +4,21 @@ import Skeleton from "@mui/material/Skeleton";
 import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
+import threeDots from "../assets/threedots.svg";
 
 const DueDate = () => {
   const [dues, setDues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDue, setSelectedDue] = useState(null);
+  const now = new Date().toJSON();
+  const [extendedDate, setExtendedDate] = useState(
+    new Date().toISOString().slice(0, 16)
+  );
 
   useEffect(() => {
     const fetchDueDates = async () => {
       try {
         const cacheKey = "dueDatesCache";
-
         // Check if due dates data is available in localStorage
         const cachedDueDates = localStorage.getItem(cacheKey);
 
@@ -55,10 +59,18 @@ const DueDate = () => {
     fetchDueDates();
   }, []);
 
+  const handleExtendedDate = (e) => {
+    setExtendedDate(e.target.value);
+    console.log(e.target.value);
+  };
   const updateDueDate = async (Id) => {
     let token = JSON.parse(sessionStorage.getItem("token"));
+    // get time difference in seconds
+    const exp_time = parseInt(
+      new Date(extendedDate).getTime() / 1000 - selectedDue.expiration_time
+    );
     let body = {
-      expiration_time: 172800,
+      expiration_time: exp_time,
     };
     try {
       const res = await axios.put(
@@ -136,7 +148,8 @@ const DueDate = () => {
     <div className="w-full md:w-3/5">
       <Paper className="h-72 ">
         <div className="flex justify-between items-center p-4">
-          <p className="text-sm font-semibold">Due Date</p>
+          <p className="text-sm font-medium">Due Date</p>
+          <img src={threeDots} height={25} width={25} alt="" />
         </div>
         <div className="px-4 h-56 overflow-y-scroll scrollbar-hide">
           {!loading ? (
@@ -174,7 +187,8 @@ const DueDate = () => {
                       <strong className="font-semibold">
                         {due.file_name.split("_TS=")[0]}
                       </strong>{" "}
-                      ends in {convertSecondsToDaysHours(due.expiration_time)}.
+                      is end in {convertSecondsToDaysHours(due.expiration_time)}
+                      .
                     </p>
                   </div>
 
@@ -191,14 +205,24 @@ const DueDate = () => {
                             <p className="text-sm">
                               {convertDateFormat(selectedDue.last_updated)}
                             </p>
-                            <button
-                              onClick={() => updateDueDate(selectedDue.file)}
-                              className="text-[#E79800] underline text-sm"
-                            >
-                              Re-schedule
-                            </button>
                           </span>
                         </span>
+                      </div>
+                      <div className="flex justify-between px-5 py-3 my-2">
+                        <input
+                          type="datetime-local"
+                          value={extendedDate}
+                          onChange={handleExtendedDate}
+                          name="extendDate"
+                          id="extendDate"
+                        />
+                        <button
+                          onClick={() => updateDueDate(selectedDue.file)}
+                          className="text-[white] text-sm bg-[#5E5ADB]"
+                        >
+                          {/* previous color #E79800 */}
+                          Re-schedule
+                        </button>
                       </div>
                     </div>
                   )}
