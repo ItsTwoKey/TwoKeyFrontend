@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GoogleMap, Marker } from "@react-google-maps/api";
-import threeDots from "../assets/threedots.svg";
+import threeDots from "../../assets/threedots.svg";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 

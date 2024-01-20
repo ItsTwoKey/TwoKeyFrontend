@@ -3,10 +3,34 @@ import AddGeoLocation from "../components/AddGeoLocation";
 import AddSecPreSet from "../components/AddSecPreSet";
 import axios from "axios";
 import MapComponent from "./MapComponent";
-import OfficeLocation from "./OfficeLocation";
+import OfficeLocation from "./securityPage/OfficeLocation";
+import SecurityPresets from "./securityPage/SecurityPresets";
 
 const Security = () => {
   const [allowedLocations, setAllowedLocations] = useState([]);
+  const [presets, setPresets] = useState([]);
+
+  const getPresets = async () => {
+    let sample = [
+      {
+        name: "Low Level Security",
+        color: "#BC007C",
+        level: 30,
+      },
+      {
+        name: "Mid Level Security",
+        color: "#BCA900",
+        level: 60,
+      },
+      {
+        name: "High Level Security",
+        color: "#00BC35",
+        level: 100,
+      },
+    ];
+    // implement fetch data for actual presets
+    setPresets(sample);
+  };
 
   useEffect(() => {
     const getLocations = async () => {
@@ -28,8 +52,8 @@ const Security = () => {
         console.log(error);
       }
     };
-
     getLocations();
+    getPresets();
   }, []);
   return (
     <div className="p-4 b">
@@ -39,15 +63,20 @@ const Security = () => {
           <MapComponent />
         </div>
         <hr className="border border-transparent border-b-gray-300 my-2" />
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap my-6 gap-2">
           {allowedLocations &&
-            allowedLocations.map((loc) => {
-              console.log(loc)
-              return <OfficeLocation key={loc.id} name={loc.properties.name} location={loc.geometry.coordinates} />
+            allowedLocations.slice(0, 4).map((loc) => {
+              console.log(loc);
+              return (
+                <OfficeLocation
+                  key={loc.id}
+                  name={loc.properties.name}
+                  location={loc.geometry.coordinates}
+                />
+              );
             })}
         </div>
         {/* <AddGeoLocation /> */}
-
       </div>
       <div>
         <div className="flex justify-between">
@@ -55,6 +84,13 @@ const Security = () => {
           <AddSecPreSet />{" "}
         </div>
         <hr className="border border-transparent border-b-gray-300 my-2" />
+        <div className="flex flex-wrap my-6 gap-2">
+          {presets &&
+            presets.slice(0, 3).map((loc, index) => {
+              console.log(loc);
+              return <SecurityPresets key={index} preset={loc} />;
+            })}
+        </div>
       </div>
     </div>
   );
