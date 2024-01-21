@@ -1,90 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/authContext";
-import { styled } from "@mui/material/styles";
-import MuiAccordion from "@mui/material/Accordion";
-import MuiAccordionSummary from "@mui/material/AccordionSummary";
-import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import Chip from "@mui/material/Chip";
+import axios from "axios";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
-
-const Accordion = styled((props) => (
-  <MuiAccordion disableGutters elevation={0} {...props} />
-))(({ theme }) => ({
-  border: `1px solid ${theme.palette.divider}`,
-  "&:not(:last-child)": {
-    borderLeft: 0,
-    borderRight: 0,
-  },
-  "&:before": {
-    display: "none",
-  },
-}));
-
-const CustomExpandSymbol = ({ expanded }) => (
-  <div style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-    {expanded ? "›" : "›"}
-  </div>
-);
-
-const AccordionSummary = styled((props) => (
-  <MuiAccordionSummary expandIcon={<CustomExpandSymbol />} {...props} />
-))(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#EDEDFC" : "#EDEDFC",
-  flexDirection: "row-reverse",
-  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-    transform: "rotate(90deg)",
-  },
-  "& .MuiAccordionSummary-content": {
-    marginLeft: theme.spacing(1),
-    display: "flex",
-    justifyContent: "space-between",
-  },
-}));
-
-const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  padding: theme.spacing(2),
-  borderTop: "1px solid inherit",
-  backgroundColor: "#F7F9FC",
-}));
 
 const SecurityAllocation = ({
   handleSecurityAllocation,
-  selectedUsers,
+  isOpen,
   checkboxValues,
 }) => {
-  const [inputData, setInputData] = useState("");
-  const [expanded, setExpanded] = useState(null);
+  const { listLocations } = useAuth();
   const [formData, setFormData] = useState({});
   const [currentTime, setCurrentTime] = useState("");
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [users, setUsers] = useState([]);
   const { coordinates } = useAuth();
 
-  const handleFormdataChange = (event, index) => {
-    const { name, value } = event.target;
+  const sendDataToCallback = () => {
+    // Validate form data or perform any other necessary logic before sending it
+    const selectedUserIds = selectedUsers.map((user) => user.id);
+    handleSecurityAllocation({ ...formData, selectedUsers: selectedUserIds });
+  };
 
-    // Additional logic to validate the time input
-    if (name === "selectedTime") {
-      const selectedTime = new Date(today + "T" + value);
-      const currentTime = new Date();
-
-      if (selectedTime < currentTime) {
-        // Show an error message or handle invalid time here
-        return;
-      }
+  useEffect(() => {
+    // Fetch user data only when the component mounts or isOpen changes
+    if (isOpen) {
+      listLocations();
+      listUsers();
     }
+  }, [isOpen]);
 
-    setFormData({
-      ...formData,
-      [index]: {
-        ...formData[index],
-        [name]: value,
-      },
-    });
-  };
-
-  const handleAccordionChange = (panel) => (event, newExpanded) => {
-    setExpanded(newExpanded ? panel : null);
-  };
+  useEffect(() => {
+    // Fetch user data whenever formData or selectedUsers changes
+    if (isOpen) {
+      sendDataToCallback();
+    }
+  }, [formData, selectedUsers]);
 
   useEffect(() => {
     // Set the initial current time when the component mounts
@@ -95,66 +48,228 @@ const SecurityAllocation = ({
         .toString()
         .padStart(2, "0")}`
     );
-
-    if (selectedUsers.length > 0) {
-      setExpanded(`panel0`);
-    }
   }, [selectedUsers]);
 
-  const handleInputChange = (e) => {
-    setInputData(e.target.value);
+  const listUsers = async () => {
+    let token = JSON.parse(sessionStorage.getItem("token"));
+    try {
+      const userList = await axios.get(
+        "https://twokeybackend.onrender.com/users/list_users/",
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+      console.log("users :", userList.data);
+      setUsers(userList.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  useEffect(() => {
-    const handleConsoleUserData = () => {
-      const userTimeData = selectedUsers.map((user, index) => {
-        const location = formData[index]?.location;
+  const today = new Date().toISOString().split("T")[0];
 
-        const selectedDateTime = new Date(
-          `${formData[index]?.selectedDate}T${formData[index]?.selectedTime}`
-        );
-        const currentTime = new Date();
+  const calculateTimeDifference = (selectedDate, selectedTime) => {
+    if (!selectedDate || !selectedTime) {
+      // Set a default time difference or handle as needed
+      return null;
+    }
 
-        if (selectedDateTime < currentTime) {
-          // Handle invalid time
-          return null;
-        }
+    const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+    const currentTime = new Date();
 
-        const timeDiffInSeconds = Math.floor(
-          (selectedDateTime - currentTime) / 1000
-        ); // Convert milliseconds to seconds
+    if (selectedDateTime < currentTime) {
+      // Handle invalid time
+      return null;
+    }
 
-        return {
-          user: user.id,
-          location,
-          timeDifference: `${timeDiffInSeconds}`,
-        };
-      });
+    const timeDiffInSeconds = Math.floor(
+      (selectedDateTime - currentTime) / 1000
+    );
+    return timeDiffInSeconds;
+  };
 
-      console.log(userTimeData);
-      handleSecurityAllocation(userTimeData);
-      console.log("at security", coordinates);
-    };
+  const handleFormdataChange = (e) => {
+    const { name, value } = e.target;
+    let timeDifference;
 
-    handleConsoleUserData();
-  }, [formData, selectedUsers]);
+    if (name === "selectedDate") {
+      // Format date consistently before updating formData
+      const formattedDate = new Date(value).toISOString().split("T")[0];
+      timeDifference = calculateTimeDifference(
+        formattedDate,
+        formData.selectedTime
+      );
+    } else if (name === "selectedTime") {
+      timeDifference = calculateTimeDifference(formData.selectedDate, value);
+    }
 
-  const today = new Date().toISOString().split("T")[0]; // Get today's date in "YYYY-MM-DD" format
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+      timeDifference: timeDifference,
+    }));
+  };
 
   return (
     <div>
       <div className="">
-        {selectedUsers.map((user, index) => (
-          <Accordion
-            key={index}
-            expanded={expanded === `panel${index}`}
-            onChange={handleAccordionChange(`panel${index}`)}
-            className="my-1"
+        {checkboxValues.geoLocation && (
+          <div>
+            <p className="text-sm my-2 font-semibold">Location</p>
+
+            <Select
+              name="location"
+              value={formData?.location || ""}
+              onChange={(e) => handleFormdataChange(e)}
+              displayEmpty
+              size="small"
+              fullWidth
+              className="bg-white"
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {coordinates.map((location) => (
+                <MenuItem key={location.id} value={location.id}>
+                  {location.properties.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </div>
+        )}
+
+        {checkboxValues.accessControl && (
+          <div>
+            <p className="text-sm my-2 font-semibold">
+              How do you share your file
+            </p>
+            <span className="flex justify-between my-4">
+              <input
+                type="date"
+                value={today}
+                disabled
+                className="px-2 py-1 border-2 rounded-md bg-indigo-100 text-xs font-semibold text-gray-600 w-32"
+              />
+              <p>›</p>
+              <input
+                type="date"
+                name="selectedDate"
+                value={formData?.selectedDate || ""}
+                min={today} // Set the minimum date to today
+                onChange={(e) => handleFormdataChange(e)}
+                className={`px-2 py-1 border-2 rounded-md ${
+                  formData?.selectedDate ? "bg-indigo-100" : "bg-white"
+                } text-xs font-semibold text-gray-600 w-32`}
+              />
+            </span>
+
+            <span className="flex justify-between my-4">
+              <input
+                type="time"
+                name="selectedTime"
+                disabled
+                value={currentTime}
+                className="px-2 py-1 border-2 rounded-md bg-indigo-100 text-xs font-semibold text-gray-600 w-32"
+              />
+              <p>›</p>
+              <input
+                type="time"
+                name="selectedTime"
+                value={formData?.selectedTime || ""}
+                onChange={(e) => handleFormdataChange(e)}
+                className={`px-2 py-1 border-2 rounded-md ${
+                  formData?.selectedTime ? "bg-indigo-100" : "bg-white"
+                } text-xs font-semibold text-gray-600 w-32`}
+              />
+            </span>
+          </div>
+        )}
+
+        <div className="my-2">
+          <p className="text-gray-600 font-semibold my-1">Receiver</p>
+          <Select
+            multiple
+            value={selectedUsers.map((user) => user.id)}
+            onChange={(event) => {
+              const selectedUserIds = event.target.value;
+              const selectedUserObjects = users.filter((user) =>
+                selectedUserIds.includes(user.id)
+              );
+              setSelectedUsers(selectedUserObjects);
+            }}
+            displayEmpty
+            size="small"
+            fullWidth
+            renderValue={(selected) => (
+              <div>
+                {selected.map((userId) => {
+                  const { name, last_name, profile_pic } = users.find(
+                    (user) => user.id === userId
+                  );
+                  return (
+                    <Chip
+                      key={userId}
+                      avatar={
+                        <img
+                          src={profile_pic}
+                          alt={`${name}'s Profile Pic`}
+                          style={{
+                            borderRadius: "50%",
+                            width: "24px",
+                            height: "24px",
+                          }}
+                        />
+                      }
+                      label={
+                        <div className="flex gap-1">{`${name} ${last_name}`}</div>
+                      }
+                      className="mx-1"
+                    />
+                  );
+                })}
+              </div>
+            )}
           >
-            <AccordionSummary
-              aria-controls={`panel${index}-content`}
-              id={`panel${index}-header`}
-              sx={{ display: "flex", justifyContent: "flex-between" }}
+            <MenuItem value="" disabled>
+              <p>Select a user</p>
+            </MenuItem>
+            {users.length > 0 &&
+              users.map((user) => (
+                <MenuItem
+                  key={user.id}
+                  value={user.id}
+                  style={{
+                    borderRadius: "10px",
+                  }}
+                >
+                  <span className="flex justify-between items-center w-full">
+                    <span className="flex flex-row items-center gap-2">
+                      <img
+                        src={
+                          user.profile_pic ? user.profile_pic : ProfilePicDummy
+                        }
+                        alt="Profile pic"
+                        className="h-8 w-8 rounded-full"
+                      />
+                      <span>
+                        <p className="text-sm font-semibold">{user.name}</p>
+                        <p className="text-xs font-light text-gray-500">
+                          {user.email}
+                        </p>
+                      </span>
+                    </span>
+                    <p className="text-sm font-semibold">Invite › </p>
+                  </span>
+                </MenuItem>
+              ))}
+          </Select>
+
+          {selectedUsers.map((user, index) => (
+            <div
+              key={index}
+              className="flex justify-between my-2 bg-[#EDEDFC] p-2"
             >
               <p className="text-sm font-medium text-indigo-700">
                 {user.name} {user.last_name}
@@ -170,84 +285,10 @@ const SecurityAllocation = ({
                   Can Edit
                 </p>
               </span>
-            </AccordionSummary>
-            <AccordionDetails className="bg-gray-100">
-              {checkboxValues.geoLocation && (
-                <div>
-                  <p className="text-sm my-2 font-semibold">Location</p>
-
-                  <Select
-                    name="location"
-                    value={formData[index]?.location || ""}
-                    onChange={(e) => handleFormdataChange(e, index)}
-                    displayEmpty
-                    size="small"
-                    fullWidth
-                    className="bg-white"
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    {coordinates.map((location) => (
-                      <MenuItem key={location.id} value={location.id}>
-                        {location.properties.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </div>
-              )}
-
-              {checkboxValues.accessControl && (
-                <div>
-                  <p className="text-sm my-2 font-semibold">
-                    How do you share your file
-                  </p>
-                  <span className="flex justify-between my-4">
-                    <input
-                      type="date"
-                      value={today}
-                      disabled
-                      className="px-2 py-1 border-2 rounded-md bg-indigo-100 text-xs font-semibold text-gray-600 w-32"
-                    />
-                    <p>›</p>
-                    <input
-                      type="date"
-                      name="selectedDate"
-                      value={formData[index]?.selectedDate || ""}
-                      min={today} // Set the minimum date to today
-                      onChange={(e) => handleFormdataChange(e, index)}
-                      className={`px-2 py-1 border-2 rounded-md ${
-                        formData[index]?.selectedDate ? "bg-indigo-100" : "bg-white"
-                      } text-xs font-semibold text-gray-600 w-32`}
-                    />
-                  </span>
-
-                  <span className="flex justify-between my-4">
-                    <input
-                      type="time"
-                      name="selectedTime"
-                      disabled
-                      value={currentTime}
-                      className="px-2 py-1 border-2 rounded-md bg-indigo-100 text-xs font-semibold text-gray-600 w-32"
-                    />
-                    <p>›</p>
-                    <input
-                      type="time"
-                      name="selectedTime"
-                      value={formData[index]?.selectedTime || ""}
-                      onChange={(e) => handleFormdataChange(e, index)}
-                      className={`px-2 py-1 border-2 rounded-md ${
-                        formData[index]?.selectedTime ? "bg-indigo-100" : "bg-white"
-                      } text-xs font-semibold text-gray-600 w-32`}
-                    />
-                  </span>
-                </div>
-              )}
-            </AccordionDetails>
-          </Accordion>
-        ))}
+            </div>
+          ))}
+        </div>
       </div>
-      {/* <button onClick={handleConsoleUserData}>Console User Data</button> */}
     </div>
   );
 };
