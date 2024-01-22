@@ -132,7 +132,7 @@ const DepartmentFiles = ({ filesFromBackend }) => {
         ""
       ) : (
         <p className="text-lg text-left font-semibold my-6">
-          {filteredData.length > 0 ? "Account Files" : "No Files"}
+          {filteredData.length > 0 ? "Department Files" : "No Files"}
         </p>
       )}
 

@@ -40,6 +40,8 @@ const RecentFiles = () => {
 
   const open = Boolean(anchorEl);
 
+  const recentBgColor = ["#FFF6F6", "#FFF6FF", "#F6FFF6", "#F6F7FF", "#FFFFF6"];
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -275,7 +277,8 @@ const RecentFiles = () => {
           : filteredData.slice(0, 5).map((file, index) => (
               <div
                 key={index}
-                className={`border border-gray-200 bg-[#FFF6F6] p-3 rounded-[16px] cursor-pointer `}
+                className={`border border-gray-200 p-3 rounded-[16px] cursor-pointer`}
+                style={{ backgroundColor: recentBgColor[index] }}
               >
                 <span className="flex justify-between items-center">
                   <button
