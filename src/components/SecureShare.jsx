@@ -3,11 +3,7 @@ import axios from "axios";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import Chip from "@mui/material/Chip";
 import { useDropzone } from "react-dropzone";
-import { useAuth } from "../context/authContext";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import { supabase } from "../helper/supabaseClient";
 import SecurityAllocation from "./SecurityAllocation";
@@ -36,45 +32,17 @@ const SecureShare = () => {
   const projectId = process.env.REACT_APP_SUPABASE_PROJECT_REF;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const { listLocations } = useAuth();
   const [checkboxValues, setCheckboxValues] = useState({
     geoLocation: false,
     uniqueIdentifiers: false,
     accessControl: false,
   });
-  const [users, setUsers] = useState([]);
-  const [selectedUsers, setSelectedUsers] = useState([]);
   const [expanded, setExpanded] = useState(null);
   const [securityAllotmentData, setSecurityAllotmentData] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [uploadProgress, setUploadProgress] = useState(0);
-
-  useEffect(() => {
-    let token = JSON.parse(sessionStorage.getItem("token"));
-    const listUsers = async () => {
-      try {
-        const userList = await axios.get(
-          "https://twokeybackend.onrender.com/users/list_users/",
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
-        console.log("users :", userList.data);
-        setUsers(userList.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (isOpen) {
-      listLocations();
-      listUsers();
-    }
-  }, [isOpen]);
 
   const uploadFile = async (bucketName, fileName, file, index) => {
     try {
@@ -176,11 +144,11 @@ const SecureShare = () => {
         "https://twokeybackend.onrender.com/file/shareFile/",
         {
           file: [fileId],
-          shared_with: [securityAllotmentData[0].user],
-          expiration_time: securityAllotmentData[0].timeDifference,
+          shared_with: securityAllotmentData.selectedUsers,
+          expiration_time: securityAllotmentData.timeDifference,
           security_check: {
             download_enabled: true,
-            geo_enabled: securityAllotmentData[0].location,
+            geo_enabled: securityAllotmentData.location,
           },
         },
         {
@@ -242,17 +210,6 @@ const SecureShare = () => {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
   });
-
-  const addUserToSelectedUsers = (user) => {
-    const updatedUsers = [...selectedUsers, user];
-    setSelectedUsers(updatedUsers);
-  };
-
-  const handleRemoveUser = (index) => {
-    const updatedUsers = [...selectedUsers];
-    updatedUsers.splice(index, 1);
-    setSelectedUsers(updatedUsers);
-  };
 
   return (
     <div className="">
@@ -354,98 +311,11 @@ const SecureShare = () => {
               </div>
 
               <div className="my-2">
-                <p className="text-gray-600 font-semibold my-1">Receiver</p>
-
-                <Select
-                  multiple
-                  value={selectedUsers.map((user) => user.id)}
-                  onChange={(event) => {
-                    const selectedUserIds = event.target.value;
-                    const selectedUserObjects = users.filter((user) =>
-                      selectedUserIds.includes(user.id)
-                    );
-                    setSelectedUsers(selectedUserObjects);
-                  }}
-                  displayEmpty
-                  size="small"
-                  fullWidth
-                  renderValue={(selected) => (
-                    <div>
-                      {selected.map((userId) => {
-                        const { name, last_name, profile_pic } = users.find(
-                          (user) => user.id === userId
-                        );
-                        return (
-                          <Chip
-                            key={userId}
-                            avatar={
-                              <img
-                                src={profile_pic}
-                                alt={`${name}'s Profile Pic`}
-                                style={{
-                                  borderRadius: "50%",
-                                  width: "24px",
-                                  height: "24px",
-                                }}
-                              />
-                            }
-                            label={
-                              <div className="flex gap-1">
-                                {`${name} ${last_name}`}
-                              </div>
-                            }
-                            className="mx-1"
-                          />
-                        );
-                      })}
-                    </div>
-                  )}
-                >
-                  <MenuItem value="" disabled>
-                    <p>Select a user</p>
-                  </MenuItem>
-                  {users.length > 0 &&
-                    users.map((user) => (
-                      <MenuItem
-                        key={user.id}
-                        value={user.id}
-                        style={{
-                          borderRadius: "10px",
-                        }}
-                      >
-                        <span className="flex justify-between items-center w-full">
-                          <span className="flex flex-row items-center gap-2">
-                            <img
-                              src={
-                                user.profile_pic
-                                  ? user.profile_pic
-                                  : ProfilePicDummy
-                              }
-                              alt="Profile pic"
-                              className="h-8 w-8 rounded-full"
-                            />
-                            <span>
-                              <p className="text-sm font-semibold">
-                                {user.name}
-                              </p>
-                              <p className="text-xs font-light text-gray-500">
-                                {user.email}
-                              </p>
-                            </span>
-                          </span>
-                          <p className="text-sm font-semibold">Invite › </p>
-                        </span>
-                      </MenuItem>
-                    ))}
-                </Select>
-
-                <div className="my-4">
-                  <SecurityAllocation
-                    handleSecurityAllocation={handleSecurityAllocation}
-                    selectedUsers={selectedUsers}
-                    checkboxValues={checkboxValues}
-                  />
-                </div>
+                <SecurityAllocation
+                  handleSecurityAllocation={handleSecurityAllocation}
+                  isOpen={isOpen}
+                  checkboxValues={checkboxValues}
+                />
               </div>
               {uploadProgress > 0 && (
                 <BorderLinearProgress
