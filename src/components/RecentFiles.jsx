@@ -15,6 +15,29 @@ import FileInfo from "./FileInfo";
 import UploadFile from "./UploadFile";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import threeDots from "../assets/threedots.svg";
+
+import Doc from "../assets/doc.svg";
+import Image from "../assets/image.svg";
+import Ppt from "../assets/ppt.svg";
+import Txt from "../assets/txt.svg";
+import Video from "../assets/video.svg";
+
+// Define SVG icons for different file types
+const fileIcons = {
+  "image/png": Image,
+  "image/jpeg": Image,
+  "application/pdf": PDF,
+  "application/msword": Doc,
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+    Doc,
+  "application/vnd.ms-powerpoint": Ppt,
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+    Ppt,
+  "text/plain": Txt,
+  "video/mp4": Video,
+  // Add more as needed
+};
 
 const RecentFiles = () => {
   const { darkMode } = useDarkMode();
@@ -229,6 +252,11 @@ const RecentFiles = () => {
     // console.log("fileName", fileName);
   };
 
+  const getIconByMimeType = (mimeType) => {
+    // Use the fileIcons object to get the appropriate SVG icon
+    return fileIcons[mimeType] || PDF; // Default to PDF icon if not found
+  };
+
   return (
     <div>
       <div
@@ -300,13 +328,13 @@ const RecentFiles = () => {
 
                   <span>
                     <button
-                      className="rotate-90 text-lg"
+                      className=""
                       onClick={(event) => {
                         handleMenuClick(event);
                         setMenuFile(file);
                       }}
                     >
-                      ...
+                      <img src={threeDots} height={25} width={25} alt="" />
                     </button>
                     <Menu
                       id="basic-menu"
@@ -373,7 +401,15 @@ const RecentFiles = () => {
                   }
                 >
                   <span className="flex justify-center items-center">
-                    <img src={PDF} alt="File Preview" className="rounded-md" />
+                    {/* <img src={PDF} alt="File Preview" className="rounded-md" /> */}
+
+                    {/* Use the getIconByExtension function to determine the correct SVG */}
+                    <img
+                      // src={getIconByExtension(getFileExtension(file.name))}
+                      src={getIconByMimeType(file.mimetype)}
+                      alt="File Preview"
+                      className="rounded-md"
+                    />
                   </span>
                   <span>
                     <h5 className="font-semibold line-clamp-1 text-gray-700 text-sm mb-1">

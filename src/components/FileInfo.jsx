@@ -21,8 +21,8 @@ const FileInfo = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
     closeDrawer();
   };
 
-  console.log(sharedFileInfo);
-  console.log(fileInfo);
+  // console.log(sharedFileInfo);
+  // console.log(fileInfo);
 
   return (
     <div className="">

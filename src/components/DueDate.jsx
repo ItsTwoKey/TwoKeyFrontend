@@ -4,7 +4,6 @@ import Skeleton from "@mui/material/Skeleton";
 import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
-import threeDots from "../assets/threedots.svg";
 
 const currentDateTime = () => {
   //  calculate time and date for imput field
@@ -167,7 +166,6 @@ const DueDate = () => {
       <Paper className="h-72 ">
         <div className="flex justify-between items-center p-4">
           <p className="text-sm font-medium">Due Date</p>
-          <img src={threeDots} height={25} width={25} alt="" />
         </div>
         <div className="px-4 h-56 overflow-y-scroll scrollbar-hide">
           {!loading ? (
@@ -241,7 +239,9 @@ const DueDate = () => {
                         </button>
                       </div>
                       <div
-                        className={`flex flex-col justify-center ${reschedule ?"" : "hidden"}`}
+                        className={`flex flex-col justify-center ${
+                          reschedule ? "" : "hidden"
+                        }`}
                       >
                         <label
                           htmlFor="extendDate"

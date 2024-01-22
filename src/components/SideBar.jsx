@@ -206,7 +206,7 @@ function SideBar() {
               <Link
                 to="/dashboard" // Use "to" instead of "href"
                 alt="LOGO"
-                className={`text-xl md:text-2xl ${
+                className={`text-xl font-allertaStencil md:text-2xl ${
                   darkMode
                     ? "hover:text-gray-400 text-gray-300 "
                     : "text-gray-500 hover:text-gray-600 "
@@ -374,7 +374,11 @@ function SideBarContents({ departments, darkMode }) {
                         } p-2 rounded-md text-sm duration-200`
                   }`}
                 >
-                  <img src={UserMgmt} style={darkMode?{filter:'invert()'}:{}} alt="." />
+                  <img
+                    src={UserMgmt}
+                    style={darkMode ? { filter: "invert()" } : {}}
+                    alt="."
+                  />
                   <p className="px-2">User Management</p>
                 </Link>
               </li>
@@ -406,7 +410,11 @@ function SideBarContents({ departments, darkMode }) {
                         } p-2 rounded-md text-sm duration-200`
                   }`}
                 >
-                  <img src={Analytics} style={darkMode?{filter:'invert()'}:{}} alt="." />
+                  <img
+                    src={Analytics}
+                    style={darkMode ? { filter: "invert()" } : {}}
+                    alt="."
+                  />
                   <p className="px-2">Analytics & Report</p>
                 </Link>
               </li>
