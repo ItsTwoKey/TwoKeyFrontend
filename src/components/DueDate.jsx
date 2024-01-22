@@ -6,14 +6,27 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import threeDots from "../assets/threedots.svg";
 
+const currentDateTime = () => {
+  //  calculate time and date for imput field
+  const time =
+    new Date().toISOString().slice(0, 11) +
+    new Date().toTimeString().slice(0, 5);
+  return time;
+};
+
+const rescheduleDate = (date) => {
+  // calculate new rescheduled timing
+  return parseInt((new Date(date).getTime() - new Date().getTime()) / 1000);
+};
+
 const DueDate = () => {
   const [dues, setDues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDue, setSelectedDue] = useState(null);
-  const now = new Date().toJSON();
-  const [extendedDate, setExtendedDate] = useState(
-    new Date().toISOString().slice(0, 16)
-  );
+  const [extendedDate, setExtendedDate] = useState(currentDateTime());
+  const [reschedule, setReshedule] = useState(false);
+  const [newExpiry, setnewExpiry] = useState(rescheduleDate(currentDateTime()));
+  const [timeInterval, setTimeInterval] = useState(null);
 
   useEffect(() => {
     const fetchDueDates = async () => {
@@ -61,16 +74,15 @@ const DueDate = () => {
 
   const handleExtendedDate = (e) => {
     setExtendedDate(e.target.value);
-    console.log(e.target.value);
+    setnewExpiry(rescheduleDate(e.target.value));
   };
   const updateDueDate = async (Id) => {
     let token = JSON.parse(sessionStorage.getItem("token"));
     // get time difference in seconds
-    const exp_time = parseInt(
-      new Date(extendedDate).getTime() / 1000 - selectedDue.expiration_time
-    );
+    setnewExpiry(rescheduleDate(extendedDate));
     let body = {
-      expiration_time: exp_time,
+      expiration_time: newExpiry,
+      last_updated: new Date().toJSON(),
     };
     try {
       const res = await axios.put(
@@ -84,6 +96,7 @@ const DueDate = () => {
       );
 
       console.log("updated Due Date:", res);
+      toggleReshedule();
 
       // console.log("id:", Id);
     } catch (error) {
@@ -144,6 +157,11 @@ const DueDate = () => {
     return formattedDateString;
   }
 
+  const toggleReshedule = () => {
+    reschedule ? setReshedule(false) : setReshedule(true);
+    console.log(reschedule);
+  };
+
   return (
     <div className="w-full md:w-3/5">
       <Paper className="h-72 ">
@@ -162,7 +180,7 @@ const DueDate = () => {
                     // Set the selectedDue state when a due is clicked
                     setSelectedDue(due);
                     // Log the details to the console
-                    console.log("Selected Due:", due);
+                    // console.log("Selected Due:", due);
                   }}
                 >
                   <div className="flex flex-row">
@@ -209,20 +227,59 @@ const DueDate = () => {
                         </span>
                       </div>
                       <div className="flex justify-between px-5 py-3 my-2">
-                        <input
-                          type="datetime-local"
-                          value={extendedDate}
-                          onChange={handleExtendedDate}
-                          name="extendDate"
-                          id="extendDate"
-                        />
                         <button
-                          onClick={() => updateDueDate(selectedDue.file)}
-                          className="text-[white] text-sm bg-[#5E5ADB]"
+                          onClick={() => {
+                            toggleReshedule(true);
+                            setnewExpiry(selectedDue.last_updated);
+                          }}
+                          className={`text-[white] rounded-lg cursor-pointer py-2 px-4 text-sm bg-[#5E5ADB] ${
+                            reschedule ? "hidden" : ""
+                          }`}
                         >
                           {/* previous color #E79800 */}
                           Re-schedule
                         </button>
+                      </div>
+                      <div
+                        className={`flex flex-col justify-center ${reschedule ?"" : "hidden"}`}
+                      >
+                        <label
+                          htmlFor="extendDate"
+                          className="font-bold py-1 px-4"
+                        >
+                          Select New Schedule :{" "}
+                        </label>
+                        <div className="flex justify-left gap-3 px-5 py-3 my-2">
+                          <input
+                            className="bg-[#F1F1FF] py-1 px-4 rounded-lg"
+                            type="datetime-local"
+                            value={extendedDate}
+                            onChange={handleExtendedDate}
+                            name="extendDate"
+                            id="extendDate"
+                            min={currentDateTime()}
+                          />
+                          <span className="bg-[#F1F1FF] flex gap-1 items-center w-auto px-4 py-1 rounded-lg">
+                            <strong>Ends in : </strong>
+                            <p className="text-sm">
+                              {convertSecondsToDaysHours(newExpiry)}
+                            </p>
+                          </span>
+                        </div>
+                        <div className="flex justify-end gap-3 items-center px-6 py-2">
+                          <button
+                            onClick={() => toggleReshedule(false)}
+                            className="text-[white] rounded-lg  cursor-pointer py-2 px-4  text-sm bg-[#5E5ADB]"
+                          >
+                            Close
+                          </button>
+                          <button
+                            onClick={() => updateDueDate(selectedDue.file)}
+                            className="text-[white] rounded-lg py-2 cursor-pointer px-4 text-sm bg-[#5E5ADB]"
+                          >
+                            Confirm
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
