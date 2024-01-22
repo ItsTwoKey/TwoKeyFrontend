@@ -4,17 +4,34 @@ import Skeleton from "@mui/material/Skeleton";
 import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
+import threeDots from "../assets/threedots.svg";
+
+const currentDateTime = () => {
+  //  calculate time and date for imput field
+  const time =
+    new Date().toISOString().slice(0, 11) +
+    new Date().toTimeString().slice(0, 5);
+  return time;
+};
+
+const rescheduleDate = (date) => {
+  // calculate new rescheduled timing
+  return parseInt((new Date(date).getTime() - new Date().getTime()) / 1000);
+};
 
 const DueDate = () => {
   const [dues, setDues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDue, setSelectedDue] = useState(null);
+  const [extendedDate, setExtendedDate] = useState(currentDateTime());
+  const [reschedule, setReshedule] = useState(false);
+  const [newExpiry, setnewExpiry] = useState(rescheduleDate(currentDateTime()));
+  const [timeInterval, setTimeInterval] = useState(null);
 
   useEffect(() => {
     const fetchDueDates = async () => {
       try {
         const cacheKey = "dueDatesCache";
-
         // Check if due dates data is available in localStorage
         const cachedDueDates = localStorage.getItem(cacheKey);
 
@@ -55,10 +72,17 @@ const DueDate = () => {
     fetchDueDates();
   }, []);
 
+  const handleExtendedDate = (e) => {
+    setExtendedDate(e.target.value);
+    setnewExpiry(rescheduleDate(e.target.value));
+  };
   const updateDueDate = async (Id) => {
     let token = JSON.parse(sessionStorage.getItem("token"));
+    // get time difference in seconds
+    setnewExpiry(rescheduleDate(extendedDate));
     let body = {
-      expiration_time: 172800,
+      expiration_time: newExpiry,
+      last_updated: new Date().toJSON(),
     };
     try {
       const res = await axios.put(
@@ -72,6 +96,7 @@ const DueDate = () => {
       );
 
       console.log("updated Due Date:", res);
+      toggleReshedule();
 
       // console.log("id:", Id);
     } catch (error) {
@@ -132,11 +157,17 @@ const DueDate = () => {
     return formattedDateString;
   }
 
+  const toggleReshedule = () => {
+    reschedule ? setReshedule(false) : setReshedule(true);
+    console.log(reschedule);
+  };
+
   return (
     <div className="w-full md:w-3/5">
       <Paper className="h-72 ">
         <div className="flex justify-between items-center p-4">
-          <p className="text-sm font-semibold">Due Date</p>
+          <p className="text-sm font-medium">Due Date</p>
+          <img src={threeDots} height={25} width={25} alt="" />
         </div>
         <div className="px-4 h-56 overflow-y-scroll scrollbar-hide">
           {!loading ? (
@@ -149,7 +180,7 @@ const DueDate = () => {
                     // Set the selectedDue state when a due is clicked
                     setSelectedDue(due);
                     // Log the details to the console
-                    console.log("Selected Due:", due);
+                    // console.log("Selected Due:", due);
                   }}
                 >
                   <div className="flex flex-row">
@@ -174,7 +205,8 @@ const DueDate = () => {
                       <strong className="font-semibold">
                         {due.file_name.split("_TS=")[0]}
                       </strong>{" "}
-                      ends in {convertSecondsToDaysHours(due.expiration_time)}.
+                      is end in {convertSecondsToDaysHours(due.expiration_time)}
+                      .
                     </p>
                   </div>
 
@@ -191,14 +223,63 @@ const DueDate = () => {
                             <p className="text-sm">
                               {convertDateFormat(selectedDue.last_updated)}
                             </p>
-                            <button
-                              onClick={() => updateDueDate(selectedDue.file)}
-                              className="text-[#E79800] underline text-sm"
-                            >
-                              Re-schedule
-                            </button>
                           </span>
                         </span>
+                      </div>
+                      <div className="flex justify-between px-5 py-3 my-2">
+                        <button
+                          onClick={() => {
+                            toggleReshedule(true);
+                            setnewExpiry(selectedDue.last_updated);
+                          }}
+                          className={`text-[white] rounded-lg cursor-pointer py-2 px-4 text-sm bg-[#5E5ADB] ${
+                            reschedule ? "hidden" : ""
+                          }`}
+                        >
+                          {/* previous color #E79800 */}
+                          Re-schedule
+                        </button>
+                      </div>
+                      <div
+                        className={`flex flex-col justify-center ${reschedule ?"" : "hidden"}`}
+                      >
+                        <label
+                          htmlFor="extendDate"
+                          className="font-bold py-1 px-4"
+                        >
+                          Select New Schedule :{" "}
+                        </label>
+                        <div className="flex justify-left gap-3 px-5 py-3 my-2">
+                          <input
+                            className="bg-[#F1F1FF] py-1 px-4 rounded-lg"
+                            type="datetime-local"
+                            value={extendedDate}
+                            onChange={handleExtendedDate}
+                            name="extendDate"
+                            id="extendDate"
+                            min={currentDateTime()}
+                          />
+                          <span className="bg-[#F1F1FF] flex gap-1 items-center w-auto px-4 py-1 rounded-lg">
+                            <strong>Ends in : </strong>
+                            <p className="text-sm">
+                              {convertSecondsToDaysHours(newExpiry)}
+                            </p>
+                          </span>
+                        </div>
+                        <div className="flex justify-end gap-3 items-center px-6 py-2">
+                          <button
+                            onClick={() => toggleReshedule(false)}
+                            className="text-[white] rounded-lg  cursor-pointer py-2 px-4  text-sm bg-[#5E5ADB]"
+                          >
+                            Close
+                          </button>
+                          <button
+                            onClick={() => updateDueDate(selectedDue.file)}
+                            className="text-[white] rounded-lg py-2 cursor-pointer px-4 text-sm bg-[#5E5ADB]"
+                          >
+                            Confirm
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
