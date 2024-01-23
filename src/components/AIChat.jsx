@@ -71,6 +71,7 @@ const AIChat = ({ signedUrl }) => {
 
   const handleAskAiClick = () => {
     alert(message);
+    console.log(message);
   };
 
   const handleCopyToClipboard = () => {
