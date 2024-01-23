@@ -12,6 +12,7 @@ import { useAuth } from "../context/authContext";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FileInfo from "./FileInfo";
+import FileShare from "./FileShare";
 import UploadFile from "./UploadFile";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
@@ -361,10 +362,11 @@ const RecentFiles = () => {
                       }}
                     >
                       <MenuItem
-                        onClick={handleClose}
+                        // onClick={handleClose}
+
                         style={{ padding: "0px 10px" }}
                       >
-                        Share
+                        <FileShare menuFile={menuFile} />
                       </MenuItem>
                       <MenuItem style={{ padding: "0px 10px" }}>
                         <button

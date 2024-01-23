@@ -27,6 +27,9 @@ const DueDate = () => {
   const [newExpiry, setnewExpiry] = useState(rescheduleDate(currentDateTime()));
   const [timeInterval, setTimeInterval] = useState(null);
 
+  let role = JSON.parse(localStorage.getItem("profileData"));
+  const isOrgAdmin = role && role.role_priv === "org_admin";
+
   useEffect(() => {
     const fetchDueDates = async () => {
       try {
@@ -175,10 +178,13 @@ const DueDate = () => {
                   key={index}
                   className="border shadow p-3 my-2 rounded-lg flex flex-col "
                   onClick={() => {
-                    // Set the selectedDue state when a due is clicked
-                    setSelectedDue(due);
-                    // Log the details to the console
-                    // console.log("Selected Due:", due);
+                    if (isOrgAdmin) {
+                      setSelectedDue(due);
+                    } else {
+                      console.log(
+                        "You are not authorised to reschedule due dates"
+                      );
+                    }
                   }}
                 >
                   <div className="flex flex-row">
