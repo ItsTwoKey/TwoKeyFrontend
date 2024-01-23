@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import FileView from "./FileView";
-import PDF from "../assets/pdf.svg";
 import { supabase } from "../helper/supabaseClient";
 // import ShareFile from "./ShareFile";
 import SecureShare from "./SecureShare";
@@ -12,9 +11,34 @@ import { useAuth } from "../context/authContext";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FileInfo from "./FileInfo";
+import FileShare from "./FileShare";
 import UploadFile from "./UploadFile";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import threeDots from "../assets/threedots.svg";
+
+import PDF from "../assets/pdf.svg";
+import Doc from "../assets/doc.svg";
+import Image from "../assets/image.svg";
+import Ppt from "../assets/ppt.svg";
+import Txt from "../assets/txt.svg";
+import Video from "../assets/video.svg";
+
+// Define SVG icons for different file types
+const fileIcons = {
+  "image/png": Image,
+  "image/jpeg": Image,
+  "application/pdf": PDF,
+  "application/msword": Doc,
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+    Doc,
+  "application/vnd.ms-powerpoint": Ppt,
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+    Ppt,
+  "text/plain": Txt,
+  "video/mp4": Video,
+  // Add more as needed
+};
 
 const RecentFiles = () => {
   const { darkMode } = useDarkMode();
@@ -27,6 +51,7 @@ const RecentFiles = () => {
     owner: "",
     profileUrl: "",
     lastUpdate: "",
+    mimetype: "",
   });
   const [loading, setLoading] = useState(true);
   const [sharedFileInfo, setSharedFileInfo] = useState({});
@@ -141,7 +166,8 @@ const RecentFiles = () => {
     fileId,
     owner,
     profilePic,
-    lastUpdate
+    lastUpdate,
+    mimetype
   ) => {
     getSharedFileInfo(fileId);
     setSelectedFileInfo({
@@ -151,6 +177,7 @@ const RecentFiles = () => {
       owner: owner,
       ownerProfileUrl: profilePic,
       lastUpdate: lastUpdate,
+      mimetype: mimetype,
     });
     setIsFileViewOpen(true);
   };
@@ -165,7 +192,8 @@ const RecentFiles = () => {
     fileId,
     owner,
     profilePic,
-    lastUpdate
+    lastUpdate,
+    mimetype
   ) => {
     getSharedFileInfo(fileId);
     setSelectedFileInfo({
@@ -175,6 +203,7 @@ const RecentFiles = () => {
       owner: owner,
       ownerProfileUrl: profilePic,
       lastUpdate: lastUpdate,
+      mimetype: mimetype,
     });
     setIsFileInfoOpen(true);
   };
@@ -227,6 +256,11 @@ const RecentFiles = () => {
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
     // console.log("fileName", fileName);
+  };
+
+  const getIconByMimeType = (mimeType) => {
+    // Use the fileIcons object to get the appropriate SVG icon
+    return fileIcons[mimeType] || PDF; // Default to PDF icon if not found
   };
 
   return (
@@ -289,7 +323,8 @@ const RecentFiles = () => {
                         file.id,
                         file.owner,
                         file.profilePic,
-                        file.lastUpdate
+                        file.lastUpdate,
+                        file.mimetype
                       )
                     }
                   >
@@ -300,13 +335,13 @@ const RecentFiles = () => {
 
                   <span>
                     <button
-                      className="rotate-90 text-lg"
+                      className=""
                       onClick={(event) => {
                         handleMenuClick(event);
                         setMenuFile(file);
                       }}
                     >
-                      ...
+                      <img src={threeDots} height={25} width={25} alt="" />
                     </button>
                     <Menu
                       id="basic-menu"
@@ -333,10 +368,11 @@ const RecentFiles = () => {
                       }}
                     >
                       <MenuItem
-                        onClick={handleClose}
+                        // onClick={handleClose}
+
                         style={{ padding: "0px 10px" }}
                       >
-                        Share
+                        <FileShare menuFile={menuFile} />
                       </MenuItem>
                       <MenuItem style={{ padding: "0px 10px" }}>
                         <button
@@ -368,12 +404,21 @@ const RecentFiles = () => {
                       file.id,
                       file.owner,
                       file.profilePic,
-                      file.lastUpdate
+                      file.lastUpdate,
+                      file.mimetype
                     )
                   }
                 >
                   <span className="flex justify-center items-center">
-                    <img src={PDF} alt="File Preview" className="rounded-md" />
+                    {/* <img src={PDF} alt="File Preview" className="rounded-md" /> */}
+
+                    {/* Use the getIconByExtension function to determine the correct SVG */}
+                    <img
+                      // src={getIconByExtension(getFileExtension(file.name))}
+                      src={getIconByMimeType(file.mimetype)}
+                      alt="File Preview"
+                      className="rounded-md"
+                    />
                   </span>
                   <span>
                     <h5 className="font-semibold line-clamp-1 text-gray-700 text-sm mb-1">

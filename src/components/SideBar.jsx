@@ -65,9 +65,13 @@ function SideBar() {
   if (!sessionStorage.getItem("token") || hideSideBar) {
     return null;
   }
-
+  const lightModeSidebarColor = "[#f7f7ff]";
   return (
-    <nav className={`min-h-[100%] ${darkMode ? "bg-gray-800" : "bg-white"} `}>
+    <nav
+      className={`min-h-[100%] ${
+        darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
+      } `}
+    >
       <div
         className={`w-[72px] h-[72px] p-4 flex justify-center items-center sticky top-0 ${
           darkMode && "text-white"
@@ -108,13 +112,13 @@ function SideBar() {
       >
         <nav
           className={`sm-width md-width px-2 h-screen  ${
-            darkMode ? "bg-gray-800" : "bg-white"
+            darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
           } `}
         >
           <div className="w-full">
             <div
               className={`flex justify-between items-center sticky top-0 py-4 px-2  ${
-                darkMode ? "bg-gray-800" : "bg-white"
+                darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
               }`}
             >
               <a
@@ -134,7 +138,7 @@ function SideBar() {
           </div>
           <div
             className={`sticky bottom-0 ${
-              darkMode ? "bg-gray-800" : "bg-white"
+              darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
             }`}
           >
             <footer className="w-full py-2 sticky bottom-0">
@@ -194,19 +198,19 @@ function SideBar() {
           className={` ${
             !isMenuOpen && "hide-sidebar h-screen w-full"
           }  px-4   border-r border-r-gray-200 ${
-            darkMode ? "bg-gray-800" : "bg-white"
+            darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
           }`}
         >
           <div className="w-full">
             <div
               className={`flex justify-between items-center sticky top-0 py-4 px-2  ${
-                darkMode ? "bg-gray-800" : "bg-white"
+                darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
               }`}
             >
               <Link
                 to="/dashboard" // Use "to" instead of "href"
                 alt="LOGO"
-                className={`text-xl md:text-2xl ${
+                className={`text-xl font-allertaStencil md:text-2xl ${
                   darkMode
                     ? "hover:text-gray-400 text-gray-300 "
                     : "text-gray-500 hover:text-gray-600 "
@@ -219,7 +223,7 @@ function SideBar() {
           </div>
           <div
             className={`sticky bottom-0 ${
-              darkMode ? "bg-gray-800" : "bg-white"
+              darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
             }`}
           >
             <footer className="w-full py-2 sticky bottom-0">
@@ -227,12 +231,20 @@ function SideBar() {
                 <Link
                   to="/profile" // Use "to" instead of "href"
                   alt="Profile"
-                  className={`p-2 rounded-md  
-                              ${
-                                darkMode
-                                  ? "text-gray-300 hover:bg-gray-700"
-                                  : "hover:bg-gray-100"
-                              } flex justify-start items-center font-medium duration-200`}
+                  className={`p-2 rounded-md font-medium items-center flex justify-start duration-200
+                  ${
+                    location.pathname === "/profile"
+                      ? ` p-2 rounded-md text-sm ${
+                          darkMode
+                            ? "hover:bg-gray-700 bg-gray-600"
+                            : "bg-indigo-200  hover:bg-indigo-200"
+                        } duration-200`
+                      : `${
+                          darkMode
+                            ? "hover:bg-gray-700 text-gray-100"
+                            : "hover:bg-indigo-100"
+                        } p-2 rounded-md text-sm duration-200`
+                  }`}
                 >
                   <img
                     src={
@@ -331,12 +343,12 @@ function SideBarContents({ departments, darkMode }) {
                   ? ` p-2 rounded-md text-sm ${
                       darkMode
                         ? "hover:bg-gray-700 bg-gray-600"
-                        : "bg-gray-200  hover:bg-gray-100"
+                        : "bg-indigo-200  hover:bg-indigo-200"
                     } duration-200`
                   : `${
                       darkMode
                         ? "hover:bg-gray-700 text-gray-100"
-                        : "hover:bg-gray-100"
+                        : "hover:bg-indigo-100"
                     } p-2 rounded-md text-sm duration-200`
               }`}
             >
@@ -365,16 +377,20 @@ function SideBarContents({ departments, darkMode }) {
                       ? ` p-2 rounded-md text-sm ${
                           darkMode
                             ? "hover:bg-gray-700 bg-gray-600"
-                            : "bg-gray-200  hover:bg-gray-100"
+                            : "bg-indigo-200  hover:bg-indigo-200"
                         } duration-200`
                       : `${
                           darkMode
                             ? "hover:bg-gray-700 text-gray-100"
-                            : "hover:bg-gray-100"
+                            : "hover:bg-indigo-100"
                         } p-2 rounded-md text-sm duration-200`
                   }`}
                 >
-                  <img src={UserMgmt} style={darkMode?{filter:'invert()'}:{}} alt="." />
+                  <img
+                    src={UserMgmt}
+                    style={darkMode ? { filter: "invert()" } : {}}
+                    alt="."
+                  />
                   <p className="px-2">User Management</p>
                 </Link>
               </li>
@@ -397,16 +413,20 @@ function SideBarContents({ departments, darkMode }) {
                       ? ` p-2 rounded-md text-sm ${
                           darkMode
                             ? "hover:bg-gray-700 bg-gray-600"
-                            : "bg-gray-200  hover:bg-gray-100"
+                            : "bg-indigo-200  hover:bg-indigo-200"
                         } duration-200`
                       : `${
                           darkMode
                             ? "hover:bg-gray-700 text-gray-100"
-                            : "hover:bg-gray-100"
+                            : "hover:bg-indigo-100"
                         } p-2 rounded-md text-sm duration-200`
                   }`}
                 >
-                  <img src={Analytics} style={darkMode?{filter:'invert()'}:{}} alt="." />
+                  <img
+                    src={Analytics}
+                    style={darkMode ? { filter: "invert()" } : {}}
+                    alt="."
+                  />
                   <p className="px-2">Analytics & Report</p>
                 </Link>
               </li>
@@ -434,12 +454,12 @@ function SideBarContents({ departments, darkMode }) {
                   ? `p-2 rounded-md text-sm ${
                       darkMode
                         ? "hover:bg-gray-700 bg-gray-600"
-                        : "bg-gray-200  hover:bg-gray-100"
+                        : "bg-indigo-200  hover:bg-indigo-200"
                     } duration-200`
                   : `${
                       darkMode
                         ? "hover:bg-gray-700 text-gray-100"
-                        : "hover:bg-gray-100"
+                        : "hover:bg-indigo-100"
                     } p-2 rounded-md text-sm duration-200`
               }`}
             >
@@ -466,10 +486,10 @@ function SideBarContents({ departments, darkMode }) {
                   ? ` duration-200 p-2 rounded-md text-sm ${
                       darkMode
                         ? "hover:bg-gray-700 bg-gray-600"
-                        : "bg-gray-200  hover:bg-gray-100"
+                        : "bg-indigo-200  hover:bg-indigo-200"
                     }`
-                  : `hover:bg-gray-100 p-2 rounded-md text-sm ${
-                      darkMode && "hover:bg-gray-600 text-gray-100"
+                  : `hover:bg-indigo-100 p-2 rounded-md text-sm ${
+                      darkMode && "hover:bg-indigo-600 text-gray-100"
                     } duration-200`
               }`}
             >
@@ -488,12 +508,12 @@ function SideBarContents({ departments, darkMode }) {
                   duration-200 p-2 rounded-md ${
                     darkMode
                       ? "hover:bg-gray-600 bg-gray-700"
-                      : "bg-gray-200  hover:bg-gray-100"
+                      : "bg-indigo-200  hover:bg-indigo-200"
                   } text-sm`
                   : `hover:${
-                      darkMode ? "bg-gray-600" : "bg-gray-100"
+                      darkMode ? "bg-gray-600" : "bg-indigo-100"
                     } p-2 rounded-md text-sm ${
-                      darkMode ? "text-gray-100" : ""
+                      darkMode ? "text-indigo-100" : ""
                     } duration-200`
               }`}
             >

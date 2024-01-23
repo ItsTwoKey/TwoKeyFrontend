@@ -41,6 +41,7 @@ const DashboardFiles = () => {
     owner: "",
     profileUrl: "",
     lastUpdate: "",
+    mimetype: "",
   });
   const [sharedFileInfo, setSharedFileInfo] = useState({});
 
@@ -144,7 +145,8 @@ const DashboardFiles = () => {
     fileId,
     owner,
     profilePic,
-    lastUpdate
+    lastUpdate,
+    mimetype
   ) => {
     getSharedFileInfo(fileId);
     setSelectedFileInfo({
@@ -154,6 +156,7 @@ const DashboardFiles = () => {
       owner: owner,
       ownerProfileUrl: profilePic,
       lastUpdate: lastUpdate,
+      mimetype: mimetype,
     });
     setIsFileViewOpen(true);
   };
@@ -378,7 +381,8 @@ function Row(props) {
                   row.id,
                   row.owner,
                   row.profilePic,
-                  row.lastUpdate
+                  row.lastUpdate,
+                  row.mimetype
                 )
               }
             >
