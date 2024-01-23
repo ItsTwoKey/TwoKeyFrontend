@@ -4,7 +4,6 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import { useDropzone } from "react-dropzone";
-import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import { supabase } from "../helper/supabaseClient";
 import SecurityAllocation from "./SecurityAllocation";
 import Snackbar from "@mui/material/Snackbar";
