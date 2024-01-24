@@ -79,8 +79,14 @@ export default function TeamManagementTable() {
       id: data.id,
       name: data.name + " " + data.last_name,
       status: (
-        <p className="bg-[#ECFDF3] text-center text-green-700 rounded-full py-0.5">
-          Active
+        <p
+          className={`text-center rounded-full py-1 px-4 ${
+            data.is_active
+              ? "text-green-700 bg-[#ECFDF3]"
+              : "text-red-500 bg-red-50"
+          }`}
+        >
+          {data.is_active ? "Online" : "Offline"}
         </p>
       ),
       dateAdded: formatDate(data.created_at),
