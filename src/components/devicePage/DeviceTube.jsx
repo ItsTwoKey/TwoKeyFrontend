@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import Desktopicon from "../../assets/Desktopicon.svg";
 import LocationIcon from "../../assets/DefaultMarkerComponent.svg";
+import UserIcon from "../../assets/usericon.png";
 
 export default function DeviceTube(props) {
   const [device, setDevice] = useState(false);
   const hanleClick = (e) => {
     e.stopPropagation();
-    if (device) {
+    if (device && props.deviceName === props.deviceObj.device) {
       setDevice(false);
       props.select(null);
     } else {
@@ -15,9 +16,7 @@ export default function DeviceTube(props) {
     }
   };
   return (
-    <div
-      className="my-4 rounded-lg py-4 px-8 bg-[#F1F1FF] shadow-sm w-full"
-    >
+    <div className="my-4 rounded-lg py-4 px-8 bg-[#F1F1FF] shadow-sm w-full">
       <div className="flex justify-between items-center" onClick={hanleClick}>
         <h1 className="text-lg font-medium tracking-wider uppercase cursor-pointer">
           {props.deviceObj.device}
@@ -32,12 +31,12 @@ export default function DeviceTube(props) {
       </div>
       {props.deviceName === props.deviceObj.device && (
         <div
-          className={`flex justify-between items-center pt-2 ${
+          className={`flex justify-between items-center pt-3 ${
             device ? "" : "hidden"
           }`}
         >
           <div className="flex gap-2 justify-center items-center">
-            <img src="" alt="" className="rounded-full w-6 h-6" />
+            <img src={UserIcon} alt="" className="rounded-full w-6 h-6" />
             <span className="font-medium color-[#1C1C1C] text-sm tracking-wider capitalize">
               {props.deviceObj.name}
             </span>
