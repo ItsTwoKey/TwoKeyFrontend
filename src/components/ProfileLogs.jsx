@@ -38,6 +38,7 @@ const ProfileLogs = ({ logs }) => {
     owner: "",
     profileUrl: "",
     lastUpdate: "",
+    mimetype: "",
   });
   const [sharedFileInfo, setSharedFileInfo] = useState({});
 
@@ -78,7 +79,8 @@ const ProfileLogs = ({ logs }) => {
     fileId,
     owner,
     profilePic,
-    lastUpdate
+    lastUpdate,
+    mimetype
   ) => {
     getSharedFileInfo(fileId);
     setSelectedFileInfo({
@@ -88,6 +90,7 @@ const ProfileLogs = ({ logs }) => {
       owner: owner,
       ownerProfileUrl: profilePic,
       lastUpdate: lastUpdate,
+      mimetype: mimetype,
     });
     setIsFileViewOpen(true);
   };
@@ -270,7 +273,8 @@ function Row(props) {
                 row.id,
                 row.owner,
                 row.profilePic,
-                row.lastUpdate
+                row.lastUpdate,
+                row.mimetype
               )
             }
           >

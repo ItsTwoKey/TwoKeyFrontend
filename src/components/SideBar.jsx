@@ -58,9 +58,13 @@ function SideBar() {
   if (!localStorage.getItem("token") || hideSideBar) {
     return null;
   }
-  const lightModeSidebarColor="[#F1F1FF]";
+  const lightModeSidebarColor = "[#f7f7ff]";
   return (
-    <nav className={`min-h-[100%] ${darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`} `}>
+    <nav
+      className={`min-h-[100%] ${
+        darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
+      } `}
+    >
       <div
         className={`w-[72px] h-[72px] p-4 flex justify-center items-center sticky top-0 ${
           darkMode && "text-white"
@@ -233,8 +237,8 @@ function SideBar() {
                             ? "hover:bg-gray-700 text-gray-100"
                             : "hover:bg-indigo-100"
                         } p-2 rounded-md text-sm duration-200`
-                  }`}>
-                  
+                  }`}
+                >
                   <img
                     src={
                       profileData ? profileData.profile_pic : ProfilePicDummy

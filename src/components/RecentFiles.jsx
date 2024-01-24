@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import FileView from "./FileView";
-import PDF from "../assets/pdf.svg";
 import { supabase } from "../helper/supabaseClient";
 // import ShareFile from "./ShareFile";
 import SecureShare from "./SecureShare";
@@ -18,6 +17,7 @@ import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import threeDots from "../assets/threedots.svg";
 
+import PDF from "../assets/pdf.svg";
 import Doc from "../assets/doc.svg";
 import Image from "../assets/image.svg";
 import Ppt from "../assets/ppt.svg";
@@ -51,6 +51,7 @@ const RecentFiles = () => {
     owner: "",
     profileUrl: "",
     lastUpdate: "",
+    mimetype: "",
   });
   const [loading, setLoading] = useState(true);
   const [sharedFileInfo, setSharedFileInfo] = useState({});
@@ -165,7 +166,8 @@ const RecentFiles = () => {
     fileId,
     owner,
     profilePic,
-    lastUpdate
+    lastUpdate,
+    mimetype
   ) => {
     getSharedFileInfo(fileId);
     setSelectedFileInfo({
@@ -175,6 +177,7 @@ const RecentFiles = () => {
       owner: owner,
       ownerProfileUrl: profilePic,
       lastUpdate: lastUpdate,
+      mimetype: mimetype,
     });
     setIsFileViewOpen(true);
   };
@@ -189,7 +192,8 @@ const RecentFiles = () => {
     fileId,
     owner,
     profilePic,
-    lastUpdate
+    lastUpdate,
+    mimetype
   ) => {
     getSharedFileInfo(fileId);
     setSelectedFileInfo({
@@ -199,6 +203,7 @@ const RecentFiles = () => {
       owner: owner,
       ownerProfileUrl: profilePic,
       lastUpdate: lastUpdate,
+      mimetype: mimetype,
     });
     setIsFileInfoOpen(true);
   };
@@ -318,7 +323,8 @@ const RecentFiles = () => {
                         file.id,
                         file.owner,
                         file.profilePic,
-                        file.lastUpdate
+                        file.lastUpdate,
+                        file.mimetype
                       )
                     }
                   >
@@ -398,7 +404,8 @@ const RecentFiles = () => {
                       file.id,
                       file.owner,
                       file.profilePic,
-                      file.lastUpdate
+                      file.lastUpdate,
+                      file.mimetype
                     )
                   }
                 >

@@ -10,6 +10,29 @@ import axios from "axios";
 import AIChat from "./AIChat";
 import { useNavigate } from "react-router-dom";
 
+import PDF from "../assets/pdf.svg";
+import Doc from "../assets/doc.svg";
+import Image from "../assets/image.svg";
+import Ppt from "../assets/ppt.svg";
+import Txt from "../assets/txt.svg";
+import Video from "../assets/video.svg";
+
+// Define SVG icons for different file types
+const fileIcons = {
+  "image/png": Image,
+  "image/jpeg": Image,
+  "application/pdf": PDF,
+  "application/msword": Doc,
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+    Doc,
+  "application/vnd.ms-powerpoint": Ppt,
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+    Ppt,
+  "text/plain": Txt,
+  "video/mp4": Video,
+  // Add more as needed
+};
+
 const FileDetails = ({
   fileInfo,
   sharedFileInfo,
@@ -55,6 +78,11 @@ const FileDetails = ({
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const getIconByMimeType = (mimeType) => {
+    // Use the fileIcons object to get the appropriate SVG icon
+    return fileIcons[mimeType] || PDF; // Default to PDF icon if not found
   };
 
   const handleDownload = async () => {
@@ -129,7 +157,14 @@ const FileDetails = ({
           </span>
         </span>
 
-        <img src={PDFicon} alt="PDF Icon" className="my-4" />
+        {/* <img src={PDFicon} alt="PDF Icon" className="my-4" /> */}
+        <div className="flex justify-center items-center my-8">
+          <img
+            src={getIconByMimeType(fileInfo.mimetype)}
+            alt="File Preview"
+            className="rounded-md h-24 w-24"
+          />
+        </div>
 
         <span className="my-2">
           <h2 className="text-sm text-gray-400 font-semibold">File Name</h2>
