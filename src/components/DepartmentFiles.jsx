@@ -87,7 +87,7 @@ const DepartmentFiles = ({ filesFromBackend }) => {
 
   const getSharedFileInfo = async (fileId) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
       const info = await axios.get(
         `https://twokeybackend.onrender.com/file/sharedFileInfo/${fileId}`,
         {
@@ -232,7 +232,7 @@ function Row(props) {
 
   const getLogs = async (fileId) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
 
       const accessLogs = await axios.get(
         `https://twokeybackend.onrender.com/file/getLogs/${fileId}?recs=5`,

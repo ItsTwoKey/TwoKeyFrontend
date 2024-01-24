@@ -45,7 +45,7 @@ const Profile = () => {
 
   const handleProfilePicUpdate = async () => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
 
       const timestamp = Date.now();
       const emailWithTimestamp = `${token.user.email}_${timestamp}`;
@@ -92,7 +92,7 @@ const Profile = () => {
     }
   };
 
-  if (!sessionStorage.getItem("token")) {
+  if (!localStorage.getItem("token")) {
     return <ErrorPage error="You are not authorised" />;
   }
 

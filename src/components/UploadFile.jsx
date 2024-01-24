@@ -45,7 +45,7 @@ const UploadFile = () => {
 
   const uploadFile = async (bucketName, fileName, file, index) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
 
       const upload = new tus.Upload(file, {
         endpoint: `https://${projectId}.supabase.co/storage/v1/upload/resumable`,

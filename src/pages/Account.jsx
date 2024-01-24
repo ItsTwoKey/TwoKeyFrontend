@@ -10,7 +10,7 @@ const Account = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
 
         const response = await axios.get(
           "https://twokeybackend.onrender.com/file/files/Account/?recs=25",
@@ -30,7 +30,7 @@ const Account = () => {
     fetchData();
   }, []);
 
-  if (!sessionStorage.getItem("token")) {
+  if (!localStorage.getItem("token")) {
     return <ErrorPage error="You are not authorised" />;
   }
   return (

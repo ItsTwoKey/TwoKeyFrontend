@@ -23,7 +23,7 @@ const ProfileAddressInformation = ({ profileData, isEditing }) => {
   useEffect(() => {
     if (prevIsEditing && !isEditing) {
       const updateProfile = async () => {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
         if (token) {
           const res = await axios.put(
             "https://twokeybackend.onrender.com/users/updateProfile/",

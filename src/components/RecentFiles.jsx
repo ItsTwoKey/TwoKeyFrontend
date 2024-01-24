@@ -87,7 +87,7 @@ const RecentFiles = () => {
           setLoading(false);
         }
 
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
 
         const recentFilesFromBackend = await axios.get(
           "https://twokeybackend.onrender.com/file/files/?recs=5",
@@ -144,7 +144,7 @@ const RecentFiles = () => {
 
   const getSharedFileInfo = async (fileId) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
       const info = await axios.get(
         `https://twokeybackend.onrender.com/file/sharedFileInfo/${fileId}`,
         {

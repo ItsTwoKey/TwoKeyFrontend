@@ -19,7 +19,7 @@ export default function TeamManagementTable() {
   useEffect(() => {
     const listUsers = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
         const users = await axios.get(
           "https://twokeybackend.onrender.com/users/list_users/",
           {
@@ -41,7 +41,7 @@ export default function TeamManagementTable() {
   useEffect(() => {
     const getRoles = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
         const role = await axios.get(
           "https://twokeybackend.onrender.com/role/listRoles/",
           {
@@ -115,7 +115,7 @@ export default function TeamManagementTable() {
   };
 
   const elevateUserRole = async (selectedUserId, selectedRole) => {
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(localStorage.getItem("token"));
     if (token) {
       try {
         const res = await axios.put(
@@ -139,7 +139,7 @@ export default function TeamManagementTable() {
   const deleteUser = async (index) => {
     const deletedUserId = users[index].id;
     console.log(`User deleted: ${deletedUserId}`);
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(localStorage.getItem("token"));
     try {
       const res = await axios.delete(
         `https://twokeybackend.onrender.com/users/deleteUser/${deletedUserId}/`,

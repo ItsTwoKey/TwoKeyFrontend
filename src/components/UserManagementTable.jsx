@@ -13,7 +13,7 @@ export default function UserManagementTable() {
   useEffect(() => {
     const listUsers = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
         const response = await axios.get(
           "https://twokeybackend.onrender.com/users/list_users/",
           {

@@ -51,7 +51,7 @@ const SecurityAllocation = ({
   }, [selectedUsers]);
 
   const listUsers = async () => {
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(localStorage.getItem("token"));
     try {
       const userList = await axios.get(
         "https://twokeybackend.onrender.com/users/list_users/",

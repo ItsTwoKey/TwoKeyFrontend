@@ -39,7 +39,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   useEffect(() => {
     const getPresignedUrl = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
 
         const body = {
           latitude: 18.44623721673684,

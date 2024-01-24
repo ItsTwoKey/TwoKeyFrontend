@@ -28,7 +28,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
   useEffect(() => {
     if (prevIsEditing && !isEditing) {
       const updateProfile = async () => {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
 
         // Check if the department has changed
         const isDepartmentChanged = formData.department !== profileData.dept;
@@ -66,7 +66,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
         const dep = await axios.get(
           "https://twokeybackend.onrender.com/dept/listDepts/",
           {

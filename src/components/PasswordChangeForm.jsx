@@ -57,7 +57,7 @@ const PasswordChangeForm = () => {
 
   const handleChangePassword = async () => {
     // Check if the old password is correct
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(localStorage.getItem("token"));
     try {
       await supabase.auth.signInWithPassword({
         email: token.user.email,

@@ -47,7 +47,7 @@ const MapComponent = () => {
   // adding new geolacation into database
   const addLocation = async () => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
       console.log("proceeding")
       const body = {
         type: "Feature",

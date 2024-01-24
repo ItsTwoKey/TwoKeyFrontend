@@ -38,7 +38,7 @@ const FileDetails = ({
 
   const downloadAlert = async (fileId) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
 
       if (fileId) {
         const res = await axios.get(

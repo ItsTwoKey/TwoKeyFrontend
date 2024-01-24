@@ -45,7 +45,7 @@ const SecureShare = () => {
 
   const uploadFile = async (bucketName, fileName, file, index) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
 
       const upload = new tus.Upload(file, {
         endpoint: `https://${projectId}.supabase.co/storage/v1/upload/resumable`,
@@ -136,7 +136,7 @@ const SecureShare = () => {
 
   const shareFiles = async (fileId) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
 
       //   console.log("shareFiles Id:", fileId);
       const res = await axios.post(

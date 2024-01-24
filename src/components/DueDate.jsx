@@ -43,7 +43,7 @@ const DueDate = () => {
           setLoading(false);
         }
 
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
 
         const dueDates = await axios.get(
           "https://twokeybackend.onrender.com/file/getLogs/dues/",
@@ -79,7 +79,7 @@ const DueDate = () => {
     setnewExpiry(rescheduleDate(e.target.value));
   };
   const updateDueDate = async (Id) => {
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(localStorage.getItem("token"));
     // get time difference in seconds
     setnewExpiry(rescheduleDate(extendedDate));
     let body = {

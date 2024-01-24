@@ -42,7 +42,7 @@ const FileShare = ({ menuFile }) => {
 
   const shareFile = async () => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
 
       const res = await axios.post(
         "https://twokeybackend.onrender.com/file/shareFile/",

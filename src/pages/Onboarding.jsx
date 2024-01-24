@@ -68,7 +68,7 @@ const Onboarding = () => {
   useEffect(() => {
     const depData = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
         const dep = await axios.get(
           "https://twokeybackend.onrender.com/dept/listDepts/",
           {
@@ -91,7 +91,7 @@ const Onboarding = () => {
    * if user is already logged in then redirect to dashboard,
    * instead of returning the login page
    */
-  if (sessionStorage.getItem("token")) {
+  if (localStorage.getItem("token")) {
     navigate("/dashboard");
   }
 
@@ -257,7 +257,7 @@ const Onboarding = () => {
         email: formData.email,
         password: formData.password,
       });
-      sessionStorage.setItem("token", JSON.stringify(data));
+      localStorage.setItem("token", JSON.stringify(data));
 
       if (error) throw error;
 

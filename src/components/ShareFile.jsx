@@ -45,7 +45,7 @@ const ShareFile = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(localStorage.getItem("token"));
     const listUsers = async () => {
       try {
         const userList = await axios.get(
@@ -78,7 +78,7 @@ const ShareFile = () => {
 
   const uploadFile = async (bucketName, fileName, file, index) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
 
       const upload = new tus.Upload(file, {
         endpoint: `https://${projectId}.supabase.co/storage/v1/upload/resumable`,
@@ -169,7 +169,7 @@ const ShareFile = () => {
 
   const shareFiles = async (fileId) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
 
       const sharedWithIds = selectedUsers.map((user) => user.id);
 

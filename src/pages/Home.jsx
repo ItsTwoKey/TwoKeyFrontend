@@ -15,7 +15,7 @@ const Home = () => {
    * if user is already logged in then redirect to dashboard,
    * instead of returning the login page
    */
-  if (sessionStorage.getItem("token")) {
+  if (localStorage.getItem("token")) {
     navigate("/dashboard");
   }
   return (

@@ -27,7 +27,7 @@ const LatestActivities = () => {
           setLogs(JSON.parse(cachedLogs));
         }
 
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
 
         const logsEndpoint = isUserProfile
           ? "https://twokeybackend.onrender.com/file/getLogs?global=0&recs=5"

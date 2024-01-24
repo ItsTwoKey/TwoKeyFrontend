@@ -22,7 +22,7 @@ const TopBar = () => {
     return null;
   }
 
-  if (!sessionStorage.getItem("token")) {
+  if (!localStorage.getItem("token")) {
     return null;
   }
 

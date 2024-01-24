@@ -21,7 +21,7 @@ const ProfileWorkInformation = ({ profileData }) => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
         const dep = await axios.get(
           "https://twokeybackend.onrender.com/dept/listDepts/",
           {
@@ -40,7 +40,7 @@ const ProfileWorkInformation = ({ profileData }) => {
   }, []);
 
   const updateProfile = async () => {
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(localStorage.getItem("token"));
     if (token) {
       const res = await axios.put(
         "https://twokeybackend.onrender.com/users/updateProfile/",

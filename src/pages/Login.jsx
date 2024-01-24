@@ -14,7 +14,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 const Login = () => {
   let navigate = useNavigate();
-  const { getProfileData } = useAuth();
+  const { fetchProfileData } = useAuth();
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   const [formData, setFormData] = useState({
@@ -59,8 +59,8 @@ const Login = () => {
 
       // setToken(data);
       if (data) {
-        sessionStorage.setItem("token", JSON.stringify(data));
-        getProfileData();
+        localStorage.setItem("token", JSON.stringify(data));
+        fetchProfileData();
       }
 
       // change the active status
@@ -95,7 +95,7 @@ const Login = () => {
    * if the user is already logged in then redirect to the dashboard,
    * instead of returning the login page
    */
-  if (sessionStorage.getItem("token")) {
+  if (localStorage.getItem("token")) {
     navigate("/dashboard");
   }
 

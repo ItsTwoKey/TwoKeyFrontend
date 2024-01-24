@@ -13,7 +13,7 @@ import ErrorPage from "../components/ErrorPage";
 const Dashboard = () => {
   const { darkMode } = useDarkMode();
   const { isFileViewerOpen, closeFileViewer } = useAuth();
-  if (!sessionStorage.getItem("token")) {
+  if (!localStorage.getItem("token")) {
     return <ErrorPage error="You are not authorised" />;
   }
   return (

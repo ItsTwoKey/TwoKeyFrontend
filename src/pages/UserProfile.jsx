@@ -17,7 +17,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     const getUserProfile = async () => {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
       try {
         const user = await axios.get(
           `https://twokeybackend.onrender.com/users/getUserInfo/${userId}/`,
@@ -37,7 +37,7 @@ const UserProfile = () => {
 
     const fetchDepartments = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
         const dep = await axios.get(
           "https://twokeybackend.onrender.com/dept/listDepts/",
           {
@@ -54,7 +54,7 @@ const UserProfile = () => {
 
     const getRoles = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(localStorage.getItem("token"));
         const rolesData = await axios.get(
           "https://twokeybackend.onrender.com/role/listRoles/",
           {
@@ -75,7 +75,7 @@ const UserProfile = () => {
   }, [userId]);
 
   const elevateUserRole = async (selectedRole) => {
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(localStorage.getItem("token"));
     if (token) {
       try {
         const res = await axios.put(
@@ -97,7 +97,7 @@ const UserProfile = () => {
   };
 
   const changeDept = async (selectedDepartment) => {
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(localStorage.getItem("token"));
     if (token) {
       try {
         const res = await axios.put(

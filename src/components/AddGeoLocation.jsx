@@ -27,7 +27,7 @@ const AddGeoLocation = () => {
 
   const addLocation = async () => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(localStorage.getItem("token"));
 
       const body = {
         type: "Feature",
