@@ -36,3 +36,9 @@
     transform: rotate(360deg);
   }
 }
+
+
+.search-device:focus{
+  outline: none;
+  border-color: #F1F1FF;
+}
