@@ -66,75 +66,74 @@ const RecentFiles = () => {
     setAnchorEl(null);
   };
 
-  const fetchRecentFiles = async () => {
-    try {
-      const cacheKey = "recentFilesCache";
-
-      // Check if recent files data is available in localStorage
-      const cachedRecentFiles = localStorage.getItem(cacheKey);
-
-      if (cachedRecentFiles) {
-        console.log(
-          "Using cached recent files:",
-          JSON.parse(cachedRecentFiles)
-        );
-        setFilteredData(JSON.parse(cachedRecentFiles));
-        setLoading(false);
-      }
-
-      let token = JSON.parse(sessionStorage.getItem("token"));
-
-      const recentFilesFromBackend = await axios.get(
-        "https://twokeybackend.onrender.com/file/files/?recs=5",
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
-
-      console.log("Recent files from backend", recentFilesFromBackend.data);
-
-      if (recentFilesFromBackend.data) {
-        const mappedFiles = recentFilesFromBackend.data.map((file) => {
-          return {
-            id: file.id,
-            name: file.name.substring(0, 80),
-            profilePic: file.profile_pic,
-            size: formatFileSize(file.metadata.size),
-            dept: file.dept_name,
-            owner: file.owner_email,
-            mimetype: file.metadata.mimetype,
-            status: "Team",
-            security: "Enhanced",
-            lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
-              "en-IN",
-              {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-                hour12: true,
-              }
-            ),
-          };
-        });
-
-        // Replace the cached recent files data with the new data
-        localStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
-
-        // Update the state with the new data
-        setFilteredData(mappedFiles);
-      }
-
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching files:", error);
-    }
-  };
-
   useEffect(() => {
+    const fetchRecentFiles = async () => {
+      try {
+        const cacheKey = "recentFilesCache";
+
+        // Check if recent files data is available in localStorage
+        const cachedRecentFiles = localStorage.getItem(cacheKey);
+
+        if (cachedRecentFiles) {
+          console.log(
+            "Using cached recent files:",
+            JSON.parse(cachedRecentFiles)
+          );
+          setFilteredData(JSON.parse(cachedRecentFiles));
+          setLoading(false);
+        }
+
+        let token = JSON.parse(sessionStorage.getItem("token"));
+
+        const recentFilesFromBackend = await axios.get(
+          "https://twokeybackend.onrender.com/file/files/?recs=5",
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+
+        console.log("Recent files from backend", recentFilesFromBackend.data);
+
+        if (recentFilesFromBackend.data) {
+          const mappedFiles = recentFilesFromBackend.data.map((file) => {
+            return {
+              id: file.id,
+              name: file.name.substring(0, 80),
+              profilePic: file.profile_pic,
+              size: formatFileSize(file.metadata.size),
+              dept: file.dept_name,
+              owner: file.owner_email,
+              mimetype: file.metadata.mimetype,
+              status: "Team",
+              security: "Enhanced",
+              lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+                "en-IN",
+                {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                }
+              ),
+            };
+          });
+
+          // Replace the cached recent files data with the new data
+          localStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
+
+          // Update the state with the new data
+          setFilteredData(mappedFiles);
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching files:", error);
+      }
+    };
     fetchRecentFiles();
   }, []);
 
@@ -226,8 +225,8 @@ const RecentFiles = () => {
       >
         <p className="text-lg font-semibold my-4 ">Recent Files</p>
         <span className="flex gap-2">
-          <SecureShare recentFiles={fetchRecentFiles} />
-          <UploadFile recentFiles={fetchRecentFiles} />
+          <SecureShare />
+          <UploadFile />
           {/* <ShareFile /> */}
         </span>
       </div>
@@ -348,7 +347,7 @@ const RecentFiles = () => {
 
                         style={{ padding: "0px 10px" }}
                       >
-                        <FileShare menuFile={menuFile} hideMenu={handleClose} />
+                        <FileShare menuFile={menuFile} />
                       </MenuItem>
                       <MenuItem style={{ padding: "0px 10px" }}>
                         <button
@@ -367,8 +366,6 @@ const RecentFiles = () => {
                         <DeleteFileConfirmation
                           fileName={menuFile.name}
                           owner={menuFile.owner}
-                          recentFiles={fetchRecentFiles}
-                          hideMenu={handleClose}
                         />
                       </MenuItem>
                     </Menu>

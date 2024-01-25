@@ -6,7 +6,7 @@ import MuiAlert from "@mui/material/Alert";
 import { supabase } from "../helper/supabaseClient";
 import Danger from "../assets/danger.svg";
 
-const DeleteFileConfirmation = ({ fileName, owner, recentFiles, hideMenu }) => {
+const DeleteFileConfirmation = ({ fileName, owner }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" or "error"
@@ -18,8 +18,6 @@ const DeleteFileConfirmation = ({ fileName, owner, recentFiles, hideMenu }) => {
 
   const closeDialog = () => {
     setIsOpen(false);
-    // closing the menu of file
-    // hideMenu();
   };
 
   const handleDelete = async () => {
@@ -41,10 +39,6 @@ const DeleteFileConfirmation = ({ fileName, owner, recentFiles, hideMenu }) => {
           console.log("Delete success", data);
           setSnackbarSeverity("success");
           setSnackbarMessage("File deleted successfully.");
-          // closing the menu of file
-          hideMenu();
-          // updating data of recent files
-          recentFiles();
           setTimeout(() => {
             closeDialog();
           }, 2000);
