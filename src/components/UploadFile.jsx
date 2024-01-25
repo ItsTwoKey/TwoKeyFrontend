@@ -26,7 +26,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   },
 }));
 
-const UploadFile = () => {
+const UploadFile = (props) => {
   const projectId = process.env.REACT_APP_SUPABASE_PROJECT_REF;
   const [isOpen, setIsOpen] = useState(false);
   const [droppedFiles, setDroppedFiles] = useState([]);
@@ -72,6 +72,7 @@ const UploadFile = () => {
         },
         onSuccess: function () {
           closeDialog();
+          props.recentFiles();
           //   console.log(`Download ${upload.file.name} from ${upload.url}`);
         },
       });

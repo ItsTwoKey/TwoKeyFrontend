@@ -21,7 +21,6 @@ import Image from "../assets/image.svg";
 import Ppt from "../assets/ppt.svg";
 import Txt from "../assets/txt.svg";
 import Video from "../assets/video.svg";
-import ThreeDotsIcon from "../assets/threedots.svg";
 
 // Define SVG icons for different file types
 const fileIcons = {
@@ -67,75 +66,75 @@ const RecentFiles = () => {
     setAnchorEl(null);
   };
 
-  useEffect(() => {
-    const fetchRecentFiles = async () => {
-      try {
-        const cacheKey = "recentFilesCache";
+  const fetchRecentFiles = async () => {
+    try {
+      const cacheKey = "recentFilesCache";
 
-        // Check if recent files data is available in localStorage
-        const cachedRecentFiles = localStorage.getItem(cacheKey);
+      // Check if recent files data is available in localStorage
+      const cachedRecentFiles = localStorage.getItem(cacheKey);
 
-        if (cachedRecentFiles) {
-          console.log(
-            "Using cached recent files:",
-            JSON.parse(cachedRecentFiles)
-          );
-          setFilteredData(JSON.parse(cachedRecentFiles));
-          setLoading(false);
-        }
-
-        let token = JSON.parse(sessionStorage.getItem("token"));
-
-        const recentFilesFromBackend = await axios.get(
-          "https://twokeybackend.onrender.com/file/files/?recs=5",
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
+      if (cachedRecentFiles) {
+        console.log(
+          "Using cached recent files:",
+          JSON.parse(cachedRecentFiles)
         );
-
-        console.log("Recent files from backend", recentFilesFromBackend.data);
-
-        if (recentFilesFromBackend.data) {
-          const mappedFiles = recentFilesFromBackend.data.map((file) => {
-            return {
-              id: file.id,
-              name: file.name.substring(0, 80),
-              profilePic: file.profile_pic,
-              size: formatFileSize(file.metadata.size),
-              dept: file.dept_name,
-              owner: file.owner_email,
-              mimetype: file.metadata.mimetype,
-              status: "Team",
-              security: "Enhanced",
-              lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
-                "en-IN",
-                {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                }
-              ),
-            };
-          });
-
-          // Replace the cached recent files data with the new data
-          localStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
-
-          // Update the state with the new data
-          setFilteredData(mappedFiles);
-        }
-
+        setFilteredData(JSON.parse(cachedRecentFiles));
         setLoading(false);
-      } catch (error) {
-        console.error("Error fetching files:", error);
       }
-    };
 
+      let token = JSON.parse(sessionStorage.getItem("token"));
+
+      const recentFilesFromBackend = await axios.get(
+        "https://twokeybackend.onrender.com/file/files/?recs=5",
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+
+      console.log("Recent files from backend", recentFilesFromBackend.data);
+
+      if (recentFilesFromBackend.data) {
+        const mappedFiles = recentFilesFromBackend.data.map((file) => {
+          return {
+            id: file.id,
+            name: file.name.substring(0, 80),
+            profilePic: file.profile_pic,
+            size: formatFileSize(file.metadata.size),
+            dept: file.dept_name,
+            owner: file.owner_email,
+            mimetype: file.metadata.mimetype,
+            status: "Team",
+            security: "Enhanced",
+            lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+              "en-IN",
+              {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              }
+            ),
+          };
+        });
+
+        // Replace the cached recent files data with the new data
+        localStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
+
+        // Update the state with the new data
+        setFilteredData(mappedFiles);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching files:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchRecentFiles();
   }, []);
 
@@ -227,8 +226,8 @@ const RecentFiles = () => {
       >
         <p className="text-lg font-semibold my-4 ">Recent Files</p>
         <span className="flex gap-2">
-          <SecureShare />
-          <UploadFile />
+          <SecureShare recentFiles={fetchRecentFiles} />
+          <UploadFile recentFiles={fetchRecentFiles} />
           {/* <ShareFile /> */}
         </span>
       </div>
@@ -245,11 +244,28 @@ const RecentFiles = () => {
               >
                 <span className="flex flex-row justify-between items-center px-1 my-1">
                   <Skeleton variant="circular" height={18} width={18} />
-                  <span className="flex flex-col items-center justify-center w-6" style={{gap:"2px"}}>
-                    <Skeleton variant="circular" width={4} height={4} animation={false} />
-                    <Skeleton variant="circular" width={4} height={4} animation={false} />
-                    <Skeleton variant="circular" width={4} height={4} animation={false} />
-                    {/* <img src={ThreeDotsIcon} alt="" /> */}
+                  <span
+                    className="flex flex-col items-center justify-center w-6"
+                    style={{ gap: "2px" }}
+                  >
+                    <Skeleton
+                      variant="circular"
+                      width={4}
+                      height={4}
+                      animation={false}
+                    />
+                    <Skeleton
+                      variant="circular"
+                      width={4}
+                      height={4}
+                      animation={false}
+                    />
+                    <Skeleton
+                      variant="circular"
+                      width={4}
+                      height={4}
+                      animation={false}
+                    />
                   </span>
                 </span>
                 <span className="flex flex-col items-center justify-center">
@@ -332,7 +348,7 @@ const RecentFiles = () => {
 
                         style={{ padding: "0px 10px" }}
                       >
-                        <FileShare menuFile={menuFile} />
+                        <FileShare menuFile={menuFile} hideMenu={handleClose} />
                       </MenuItem>
                       <MenuItem style={{ padding: "0px 10px" }}>
                         <button
@@ -351,6 +367,8 @@ const RecentFiles = () => {
                         <DeleteFileConfirmation
                           fileName={menuFile.name}
                           owner={menuFile.owner}
+                          recentFiles={fetchRecentFiles}
+                          hideMenu={handleClose}
                         />
                       </MenuItem>
                     </Menu>

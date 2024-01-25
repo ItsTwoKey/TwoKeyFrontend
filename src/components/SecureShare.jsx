@@ -27,7 +27,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   },
 }));
 
-const SecureShare = () => {
+const SecureShare = (props) => {
   const projectId = process.env.REACT_APP_SUPABASE_PROJECT_REF;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -74,6 +74,7 @@ const SecureShare = () => {
           console.log(`Download ${upload.file.name} from ${upload.url}`);
           closeDialog();
           handleFileIdRetrieval(fileName);
+          props.recentFiles();
         },
       });
 

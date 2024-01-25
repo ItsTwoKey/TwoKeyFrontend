@@ -8,7 +8,7 @@ import axios from "axios";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 
-const FileShare = ({ menuFile }) => {
+const FileShare = ({ menuFile, hideMenu }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [checkboxValues, setCheckboxValues] = useState({
     geoLocation: false,
@@ -26,6 +26,7 @@ const FileShare = ({ menuFile }) => {
 
   const closeDialog = () => {
     setIsOpen(false);
+    hideMenu();
   };
 
   const handleCheckboxChange = (checkbox) => {
@@ -69,6 +70,7 @@ const FileShare = ({ menuFile }) => {
 
       setTimeout(() => {
         closeDialog();
+        hideMenu();
       }, 2000);
     } catch (error) {
       console.log("error occurred while setting the permissions", error);
