@@ -7,17 +7,17 @@ export default function DeviceTube(props) {
   const [device, setDevice] = useState(false);
   const hanleClick = (e) => {
     e.stopPropagation();
-    if (device && props.deviceName === props.deviceObj.device) {
-      setDevice(false);
-      props.select(null);
-    } else {
+    if (props.deviceName !== props.deviceObj.device) {
       setDevice(true);
       props.select(props.deviceObj.device);
     }
   };
   return (
-    <div className="my-4 rounded-lg py-4 px-8 bg-[#F1F1FF] shadow-sm w-full">
-      <div className="flex justify-between items-center" onClick={hanleClick}>
+    <div
+      className="my-4 rounded-lg py-4 px-8 bg-[#F1F1FF] shadow-sm w-full"
+      onClick={hanleClick}
+    >
+      <div className="flex justify-between items-center">
         <h1 className="text-lg font-medium tracking-wider uppercase cursor-pointer">
           {props.deviceObj.device}
         </h1>
@@ -52,6 +52,16 @@ export default function DeviceTube(props) {
           </button>
         </div>
       )}
+
+      <script>
+        {document.body.addEventListener("click", () => {
+          if (props.deviceName) {
+            // close the device detail if user click outside the device tube
+            setDevice(false);
+            props.select(null);
+          }
+        })}
+      </script>
     </div>
   );
 }

@@ -39,7 +39,6 @@ const DeleteFileConfirmation = ({ fileName, owner }) => {
           console.log("Delete success", data);
           setSnackbarSeverity("success");
           setSnackbarMessage("File deleted successfully.");
-
           setTimeout(() => {
             closeDialog();
           }, 2000);

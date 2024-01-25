@@ -134,7 +134,6 @@ const RecentFiles = () => {
         console.error("Error fetching files:", error);
       }
     };
-
     fetchRecentFiles();
   }, []);
 
@@ -240,24 +239,46 @@ const RecentFiles = () => {
           ? Array.from({ length: 5 }).map((_, index) => (
               <div
                 key={index}
-                className="border border-gray-200 p-2 rounded-lg shadow-md"
+                className="border border-gray-200 p-2 rounded-2xl shadow-sm"
               >
-                <Skeleton variant="rounded" height={110} />
+                <span className="flex flex-row justify-between items-center px-1 my-1">
+                  <Skeleton variant="circular" height={18} width={18} />
+                  <span
+                    className="flex flex-col items-center justify-center w-6"
+                    style={{ gap: "2px" }}
+                  >
+                    <Skeleton
+                      variant="circular"
+                      width={4}
+                      height={4}
+                      animation={false}
+                    />
+                    <Skeleton
+                      variant="circular"
+                      width={4}
+                      height={4}
+                      animation={false}
+                    />
+                    <Skeleton
+                      variant="circular"
+                      width={4}
+                      height={4}
+                      animation={false}
+                    />
+                  </span>
+                </span>
+                <span className="flex flex-col items-center justify-center">
+                  <Skeleton variant="rounded" height={60} width={212} />
+                  <span className="font-semibold">
+                    <Skeleton height={28} width={212} />
+                  </span>
+                </span>
                 <span>
-                  <h5 className="font-semibold">
-                    <Skeleton height={28} width={160} />
-                  </h5>
-                  <span className="flex flex-row justify-between items-center">
-                    <span>
-                      <h6 className="text-sm font-semibold">
-                        <Skeleton height={22} width={70} />
-                      </h6>
-
-                      <p className="text-xs text-gray-500 font-light">
-                        <Skeleton height={18} width={60} />
-                      </p>
+                  <span className="flex flex-row justify-between items-center my-1 px-1">
+                    <span className="text-sm text-gray-500 font-light">
+                      <Skeleton height={18} width={90} />
                     </span>
-                    <Skeleton variant="circular" height={20} width={20} />
+                    <Skeleton variant="circular" height={22.4} width={22.4} />
                   </span>
                 </span>
               </div>
