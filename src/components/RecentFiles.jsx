@@ -242,7 +242,15 @@ const RecentFiles = () => {
                 key={index}
                 className="border border-gray-200 p-2 rounded-2xl shadow-sm"
               >
-                <Skeleton variant="rounded" height={110} />
+                <span className="flex flex-row justify-between items-center my-1">
+                  <Skeleton variant="circular" height={22.4} width={22.4} />
+                  <span className="flex justify-center w-6">
+                    <Skeleton variant="rounded" height={22.4} width={10}/>
+                  </span>
+                </span>
+                <span className="flex justify-center">
+                  <Skeleton variant="rounded-none" height={60} width={60} />
+                </span>
                 <span>
                   <h5 className="font-semibold">
                     <Skeleton height={28} width={219} />
