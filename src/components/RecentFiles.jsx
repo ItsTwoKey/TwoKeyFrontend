@@ -21,6 +21,7 @@ import Image from "../assets/image.svg";
 import Ppt from "../assets/ppt.svg";
 import Txt from "../assets/txt.svg";
 import Video from "../assets/video.svg";
+import ThreeDotsIcon from "../assets/threedots.svg";
 
 // Define SVG icons for different file types
 const fileIcons = {
@@ -242,20 +243,23 @@ const RecentFiles = () => {
                 key={index}
                 className="border border-gray-200 p-2 rounded-2xl shadow-sm"
               >
-                <span className="flex flex-row justify-between items-center my-1">
-                  <Skeleton variant="circular" height={22.4} width={22.4} />
-                  <span className="flex justify-center w-6">
-                    <Skeleton variant="rounded" height={22.4} width={10}/>
+                <span className="flex flex-row justify-between items-center px-1 my-1">
+                  <Skeleton variant="circular" height={18} width={18} />
+                  <span className="flex flex-col items-center justify-center w-6" style={{gap:"2px"}}>
+                    <Skeleton variant="circular" width={4} height={4} animation={false} />
+                    <Skeleton variant="circular" width={4} height={4} animation={false} />
+                    <Skeleton variant="circular" width={4} height={4} animation={false} />
+                    {/* <img src={ThreeDotsIcon} alt="" /> */}
                   </span>
                 </span>
-                <span className="flex justify-center">
-                  <Skeleton variant="rounded-none" height={60} width={60} />
+                <span className="flex flex-col items-center justify-center">
+                  <Skeleton variant="rounded" height={60} width={212} />
+                  <span className="font-semibold">
+                    <Skeleton height={28} width={212} />
+                  </span>
                 </span>
                 <span>
-                  <h5 className="font-semibold">
-                    <Skeleton height={28} width={219} />
-                  </h5>
-                  <span className="flex flex-row justify-between items-center my-1">
+                  <span className="flex flex-row justify-between items-center my-1 px-1">
                     <span className="text-sm text-gray-500 font-light">
                       <Skeleton height={18} width={90} />
                     </span>
