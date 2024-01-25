@@ -21,7 +21,7 @@ import UserProfile from "./pages/UserProfile";
 import AI from "./pages/AI";
 import Analytics from "./pages/Analytics";
 import ContactUs from "./pages/ContactUs";
-import './App.css'
+// import './App.css'
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuth } from "./context/authContext";
