@@ -56,6 +56,7 @@ export default function DeviceTube(props) {
       <script>
         {document.body.addEventListener("click", () => {
           if (props.deviceName) {
+            // close the device detail if user click outside the device tube
             setDevice(false);
             props.select(null);
           }
