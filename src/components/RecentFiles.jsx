@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import FileView from "./FileView";
-import { supabase } from "../helper/supabaseClient";
 // import ShareFile from "./ShareFile";
 import SecureShare from "./SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
@@ -13,9 +12,8 @@ import MenuItem from "@mui/material/MenuItem";
 import FileInfo from "./FileInfo";
 import FileShare from "./FileShare";
 import UploadFile from "./UploadFile";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
 import threeDots from "../assets/threedots.svg";
+import DeleteFileConfirmation from "./DeleteFileConfirmation";
 
 import PDF from "../assets/pdf.svg";
 import Doc from "../assets/doc.svg";
@@ -59,9 +57,6 @@ const RecentFiles = () => {
   const [isFileInfoOpen, setIsFileInfoOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuFile, setMenuFile] = useState({});
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" or "error"
-  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const open = Boolean(anchorEl);
 
@@ -212,47 +207,6 @@ const RecentFiles = () => {
     setIsFileInfoOpen(false);
   };
 
-  const handleDelete = async (fileName, owner) => {
-    let userMail = JSON.parse(localStorage.getItem("profileData"));
-
-    // Check if the user is the owner of the file
-    if (userMail.email === owner) {
-      try {
-        const { data, error } = await supabase.storage
-          .from("TwoKey")
-          .remove(fileName);
-
-        if (error) {
-          console.error("Error deleting file:", error.message);
-          setSnackbarSeverity("error");
-          setSnackbarMessage("Error deleting the file.");
-        } else {
-          console.log("Delete success", data);
-          setSnackbarSeverity("success");
-          setSnackbarMessage("File deleted successfully.");
-          setAnchorEl(null);
-        }
-
-        // Open the Snackbar
-        setSnackbarOpen(true);
-      } catch (error) {
-        console.error("Error occurred while deleting the file:", error.message);
-      }
-    } else {
-      // Display Snackbar message if the user is not the owner of the file
-      setSnackbarSeverity("error");
-      setSnackbarMessage("You are not the owner of the file.");
-      setSnackbarOpen(true);
-    }
-  };
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackbarOpen(false);
-  };
-
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
     // console.log("fileName", fileName);
@@ -384,13 +338,14 @@ const RecentFiles = () => {
                           Edit
                         </button>
                       </MenuItem>
+
                       <MenuItem
-                        onClick={() =>
-                          handleDelete(menuFile.name, menuFile.owner)
-                        }
                         style={{ padding: "0px 10px", color: "#D1293D" }}
                       >
-                        Remove
+                        <DeleteFileConfirmation
+                          fileName={menuFile.name}
+                          owner={menuFile.owner}
+                        />
                       </MenuItem>
                     </Menu>
                   </span>
@@ -410,11 +365,8 @@ const RecentFiles = () => {
                   }
                 >
                   <span className="flex justify-center items-center">
-                    {/* <img src={PDF} alt="File Preview" className="rounded-md" /> */}
-
                     {/* Use the getIconByExtension function to determine the correct SVG */}
                     <img
-                      // src={getIconByExtension(getFileExtension(file.name))}
                       src={getIconByMimeType(file.mimetype)}
                       alt="File Preview"
                       className="rounded-md"
@@ -451,21 +403,6 @@ const RecentFiles = () => {
                 </div>
               </div>
             ))}
-
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={handleSnackbarClose}
-        >
-          <MuiAlert
-            elevation={6}
-            variant="filled"
-            onClose={handleSnackbarClose}
-            severity={snackbarSeverity}
-          >
-            {snackbarMessage}
-          </MuiAlert>
-        </Snackbar>
       </div>
       {isFileInfoOpen && (
         <FileInfo
