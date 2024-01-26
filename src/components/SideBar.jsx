@@ -302,7 +302,7 @@ function SideBarContents({ departments, darkMode }) {
     // console.log("onboarding body:", body);
     try {
       const res = axios.put(
-        "https://twokeybackend.onrender.com/users/updateProfile/",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
         body,
         {
           headers: {

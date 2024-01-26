@@ -57,7 +57,7 @@ const SignUp = () => {
     const orgData = async () => {
       try {
         const org = await axios.get(
-          "https://twokeybackend.onrender.com/org/list_orgs"
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/org/list_orgs`
         );
         console.log(org.data);
         setOrganizationData(org.data);

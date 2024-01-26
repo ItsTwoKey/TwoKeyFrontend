@@ -20,7 +20,7 @@ const UserProfile = () => {
       let token = JSON.parse(sessionStorage.getItem("token"));
       try {
         const user = await axios.get(
-          `https://twokeybackend.onrender.com/users/getUserInfo/${userId}/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getUserInfo/${userId}/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -39,7 +39,7 @@ const UserProfile = () => {
       try {
         let token = JSON.parse(sessionStorage.getItem("token"));
         const dep = await axios.get(
-          "https://twokeybackend.onrender.com/dept/listDepts/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -56,7 +56,7 @@ const UserProfile = () => {
       try {
         let token = JSON.parse(sessionStorage.getItem("token"));
         const rolesData = await axios.get(
-          "https://twokeybackend.onrender.com/role/listRoles/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/role/listRoles/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -79,7 +79,7 @@ const UserProfile = () => {
     if (token) {
       try {
         const res = await axios.put(
-          `https://twokeybackend.onrender.com/users/elevate/${userProfileData.id}`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/elevate/${userProfileData.id}`,
           {
             role_priv: selectedRole,
           },
@@ -101,7 +101,7 @@ const UserProfile = () => {
     if (token) {
       try {
         const res = await axios.put(
-          `https://twokeybackend.onrender.com/users/elevate/${userProfileData.id}`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/elevate/${userProfileData.id}`,
           {
             dept: selectedDepartment,
           },

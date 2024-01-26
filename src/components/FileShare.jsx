@@ -45,7 +45,7 @@ const FileShare = ({ menuFile }) => {
       let token = JSON.parse(sessionStorage.getItem("token"));
 
       const res = await axios.post(
-        "https://twokeybackend.onrender.com/file/shareFile/",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/shareFile/`,
         {
           file: [menuFile.id],
           shared_with: securityAllotmentData.selectedUsers,

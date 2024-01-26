@@ -46,7 +46,7 @@ const DueDate = () => {
         let token = JSON.parse(sessionStorage.getItem("token"));
 
         const dueDates = await axios.get(
-          "https://twokeybackend.onrender.com/file/getLogs/dues/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/dues/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -90,7 +90,7 @@ const DueDate = () => {
     setTimeout(() => setSelectedDue(null), 100);
     try {
       const res = await axios.put(
-        `https://twokeybackend.onrender.com/file/editShare/${Id}/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/editShare/${Id}/`,
         body,
         {
           headers: {

@@ -86,7 +86,7 @@ const RecentFiles = () => {
         let token = JSON.parse(sessionStorage.getItem("token"));
 
         const recentFilesFromBackend = await axios.get(
-          "https://twokeybackend.onrender.com/file/files/?recs=5",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=5`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -141,7 +141,7 @@ const RecentFiles = () => {
     try {
       let token = JSON.parse(sessionStorage.getItem("token"));
       const info = await axios.get(
-        `https://twokeybackend.onrender.com/file/sharedFileInfo/${fileId}`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/sharedFileInfo/${fileId}`,
         {
           headers: {
             Authorization: `Bearer ${token.session.access_token}`,

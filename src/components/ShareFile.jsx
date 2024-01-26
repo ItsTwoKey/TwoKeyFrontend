@@ -49,7 +49,7 @@ const ShareFile = () => {
     const listUsers = async () => {
       try {
         const userList = await axios.get(
-          "https://twokeybackend.onrender.com/users/list_users/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -174,7 +174,7 @@ const ShareFile = () => {
       const sharedWithIds = selectedUsers.map((user) => user.id);
 
       const res = await axios.post(
-        "https://twokeybackend.onrender.com/file/shareFile/",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/shareFile/`,
         {
           file: [fileId],
           shared_with: sharedWithIds,

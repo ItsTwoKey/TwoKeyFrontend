@@ -140,7 +140,7 @@ const SecureShare = () => {
 
       //   console.log("shareFiles Id:", fileId);
       const res = await axios.post(
-        "https://twokeybackend.onrender.com/file/shareFile/",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/shareFile/`,
         {
           file: [fileId],
           shared_with: securityAllotmentData.selectedUsers,

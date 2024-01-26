@@ -41,7 +41,7 @@ const AddGeoLocation = () => {
       };
       if (selectedLocation) {
         const addLocation = await axios.post(
-          `https://twokeybackend.onrender.com/file/createLocation/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/createLocation/`,
           body,
           {
             headers: {

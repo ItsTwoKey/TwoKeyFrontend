@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }) => {
 
       if (fileId) {
         const res = await axios.get(
-          `https://twokeybackend.onrender.com/file/logEvent/${fileId}?event=screenshot`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/logEvent/${fileId}?event=screenshot`,
 
           {
             headers: {
@@ -158,7 +158,7 @@ export const AuthProvider = ({ children }) => {
       let token = JSON.parse(sessionStorage.getItem("token"));
 
       const recentFilesFromBackend = await axios.get(
-        "https://twokeybackend.onrender.com/file/files/",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/`,
         {
           headers: {
             Authorization: `Bearer ${token.session.access_token}`,
@@ -235,7 +235,7 @@ export const AuthProvider = ({ children }) => {
 
       if (token) {
         const res = await axios.get(
-          "https://twokeybackend.onrender.com/users/getProfileInfo/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getProfileInfo/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -296,7 +296,7 @@ export const AuthProvider = ({ children }) => {
     let token = JSON.parse(sessionStorage.getItem("token"));
     try {
       const locations = await axios.get(
-        "https://twokeybackend.onrender.com/file/file/listLocation/",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/file/listLocation/`,
 
         {
           headers: {

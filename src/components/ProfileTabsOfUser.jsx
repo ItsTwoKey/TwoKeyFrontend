@@ -59,7 +59,7 @@ export default function ProfileTabs() {
         const [sharedLogsResponse, receivedLogsResponse, latestLogsResponse] =
           await Promise.all([
             axios.get(
-              `https://twokeybackend.onrender.com/users/getUserInfo/${userId}?type=shared`,
+              `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getUserInfo/${userId}?type=shared`,
               {
                 headers: {
                   Authorization: `Bearer ${token.session.access_token}`,
@@ -67,7 +67,7 @@ export default function ProfileTabs() {
               }
             ),
             axios.get(
-              `https://twokeybackend.onrender.com/users/getUserInfo/${userId}?type=received`,
+              `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getUserInfo/${userId}?type=received`,
               {
                 headers: {
                   Authorization: `Bearer ${token.session.access_token}`,
@@ -75,7 +75,7 @@ export default function ProfileTabs() {
               }
             ),
             axios.get(
-              `https://twokeybackend.onrender.com/users/getUserInfo/${userId}/?logs=1&recs=15`,
+              `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getUserInfo/${userId}/?logs=1&recs=15`,
               {
                 headers: {
                   Authorization: `Bearer ${token.session.access_token}`,
