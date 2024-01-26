@@ -70,24 +70,68 @@ const SecurityAllocation = ({
 
   const today = new Date().toISOString().split("T")[0];
 
+  // const calculateTimeDifference = (selectedDate, selectedTime) => {
+  //   if (!selectedDate || !selectedTime) {
+  //     // Set a default time difference or handle as needed
+  //     return null;
+  //   }
+
+  //   const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+  //   const currentTime = new Date();
+
+  //   if (selectedDateTime < currentTime) {
+  //     // Handle invalid time
+  //     return null;
+  //   }
+
+  //   const timeDiffInSeconds = Math.floor(
+  //     (selectedDateTime - currentTime) / 1000
+  //   );
+  //   return timeDiffInSeconds;
+  // };
+
   const calculateTimeDifference = (selectedDate, selectedTime) => {
-    if (!selectedDate || !selectedTime) {
-      // Set a default time difference or handle as needed
+    if (!selectedDate && !selectedTime) {
+      // Handle the case where both date and time are not available
       return null;
     }
 
-    const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
     const currentTime = new Date();
+
+    if (selectedDate && selectedTime) {
+      // If both date and time are available
+      const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+
+      if (selectedDateTime < currentTime) {
+        // Handle invalid time
+        return null;
+      }
+
+      return Math.floor((selectedDateTime - currentTime) / 1000);
+    }
+
+    if (selectedTime) {
+      // If only selectedTime is available, consider today's date
+      const todayDate = new Date().toISOString().split("T")[0];
+      const selectedDateTime = new Date(`${todayDate}T${selectedTime}`);
+
+      if (selectedDateTime < currentTime) {
+        // Handle invalid time
+        return null;
+      }
+
+      return Math.floor((selectedDateTime - currentTime) / 1000);
+    }
+
+    // If only selectedDate is available, consider the current time
+    const selectedDateTime = new Date(`${selectedDate}T00:00:00`);
 
     if (selectedDateTime < currentTime) {
       // Handle invalid time
       return null;
     }
 
-    const timeDiffInSeconds = Math.floor(
-      (selectedDateTime - currentTime) / 1000
-    );
-    return timeDiffInSeconds;
+    return Math.floor((selectedDateTime - currentTime) / 1000);
   };
 
   const handleFormdataChange = (e) => {

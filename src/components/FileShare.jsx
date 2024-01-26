@@ -72,9 +72,12 @@ const FileShare = ({ menuFile }) => {
       }, 2000);
     } catch (error) {
       console.log("error occurred while setting the permissions", error);
-
       // Show snackbar on error
-      showSnackbar("Error sharing file", "error");
+      if (error.response.status === 406) {
+        showSnackbar("File already shared", "error");
+      } else {
+        showSnackbar("Error sharing file", "error");
+      }
     }
   };
 
