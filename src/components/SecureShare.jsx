@@ -28,7 +28,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 }));
 
 const SecureShare = () => {
-  const projectId = process.env.REACT_APP_SUPABASE_PROJECT_REF;
+  const resumableEndpt = process.env.REACT_APP_RESUMABLE_URL;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [checkboxValues, setCheckboxValues] = useState({
@@ -48,7 +48,7 @@ const SecureShare = () => {
       let token = JSON.parse(sessionStorage.getItem("token"));
 
       const upload = new tus.Upload(file, {
-        endpoint: `https://${projectId}.supabase.co/storage/v1/upload/resumable`,
+        endpoint: resumableEndpt,
         retryDelays: [0, 3000, 5000, 10000, 20000],
         headers: {
           authorization: `Bearer ${token.session.access_token}`,
