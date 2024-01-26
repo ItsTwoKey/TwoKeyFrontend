@@ -47,7 +47,6 @@ const UserManagement = () => {
               associated roles.
             </p>
           </span>
-
           <button
             onClick={downloadData}
             className="border border-gray-300 px-4 py-1.5 text-sm rounded-md mx-2 flex items-center gap-2"
@@ -55,6 +54,9 @@ const UserManagement = () => {
             <img src={DownloadCloud} alt="" />
             Export
           </button>
+        </div>
+        <div className="flex justify-start p-2 gap-2">
+          <span className="text-blue-700 decoration-blue-700">All</span>
         </div>
 
         <UserManagementTable />
