@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { supabase } from "../helper/supabaseClient";
 import Paper from "@mui/material/Paper";
 import Skeleton from "@mui/material/Skeleton";
 import axios from "axios";
@@ -30,47 +31,69 @@ const DueDate = () => {
   let role = JSON.parse(localStorage.getItem("profileData"));
   const isOrgAdmin = role && role.role_priv === "org_admin";
 
+  //   realtime supabase subscribe
   useEffect(() => {
-    const fetchDueDates = async () => {
-      try {
-        const cacheKey = "dueDatesCache";
-        // Check if due dates data is available in localStorage
-        const cachedDueDates = localStorage.getItem(cacheKey);
+    const channel = supabase
+      .channel("custom_all_channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "shared_files" },
+        () => {
+          // console.log("Change received!", payload);
 
-        if (cachedDueDates) {
-          console.log("Using cached due dates:", JSON.parse(cachedDueDates));
-          setDues(JSON.parse(cachedDueDates));
-          setLoading(false);
+          fetchDueDates();
         }
+      )
+      .subscribe();
 
-        let token = JSON.parse(sessionStorage.getItem("token"));
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
-        const dueDates = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/dues/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
+  // ...............
 
-        console.log("Due dates", dueDates.data);
+  const fetchDueDates = async () => {
+    try {
+      const cacheKey = "dueDatesCache";
+      // Check if due dates data is available in localStorage
+      const cachedDueDates = localStorage.getItem(cacheKey);
 
-        if (dueDates.data) {
-          // Replace the cached due dates data with the new data
-          localStorage.setItem(cacheKey, JSON.stringify(dueDates.data));
-
-          // Update the state with the new data
-          setDues(dueDates.data);
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching due dates:", error);
+      if (cachedDueDates) {
+        console.log("Using cached due dates:", JSON.parse(cachedDueDates));
+        setDues(JSON.parse(cachedDueDates));
         setLoading(false);
       }
-    };
 
+      let token = JSON.parse(sessionStorage.getItem("token"));
+
+      const dueDates = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/dues/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+
+      console.log("Due dates", dueDates.data);
+
+      if (dueDates.data) {
+        // Replace the cached due dates data with the new data
+        localStorage.setItem(cacheKey, JSON.stringify(dueDates.data));
+
+        // Update the state with the new data
+        setDues(dueDates.data);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching due dates:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchDueDates();
   }, []);
 
