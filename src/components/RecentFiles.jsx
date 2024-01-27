@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import FileView from "./FileView";
-import { supabase } from "../helper/supabaseClient";
 // import ShareFile from "./ShareFile";
 import SecureShare from "./SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
@@ -13,9 +12,8 @@ import MenuItem from "@mui/material/MenuItem";
 import FileInfo from "./FileInfo";
 import FileShare from "./FileShare";
 import UploadFile from "./UploadFile";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
 import threeDots from "../assets/threedots.svg";
+import DeleteFileConfirmation from "./DeleteFileConfirmation";
 
 import PDF from "../assets/pdf.svg";
 import Doc from "../assets/doc.svg";
@@ -59,9 +57,6 @@ const RecentFiles = () => {
   const [isFileInfoOpen, setIsFileInfoOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuFile, setMenuFile] = useState({});
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" or "error"
-  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const open = Boolean(anchorEl);
 
@@ -91,7 +86,7 @@ const RecentFiles = () => {
         let token = JSON.parse(localStorage.getItem("token"));
 
         const recentFilesFromBackend = await axios.get(
-          "https://twokeybackend.onrender.com/file/files/?recs=5",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=5`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -139,7 +134,6 @@ const RecentFiles = () => {
         console.error("Error fetching files:", error);
       }
     };
-
     fetchRecentFiles();
   }, []);
 
@@ -147,7 +141,7 @@ const RecentFiles = () => {
     try {
       let token = JSON.parse(localStorage.getItem("token"));
       const info = await axios.get(
-        `https://twokeybackend.onrender.com/file/sharedFileInfo/${fileId}`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/sharedFileInfo/${fileId}`,
         {
           headers: {
             Authorization: `Bearer ${token.session.access_token}`,
@@ -212,47 +206,6 @@ const RecentFiles = () => {
     setIsFileInfoOpen(false);
   };
 
-  const handleDelete = async (fileName, owner) => {
-    let userMail = JSON.parse(localStorage.getItem("profileData"));
-
-    // Check if the user is the owner of the file
-    if (userMail.email === owner) {
-      try {
-        const { data, error } = await supabase.storage
-          .from("TwoKey")
-          .remove(fileName);
-
-        if (error) {
-          console.error("Error deleting file:", error.message);
-          setSnackbarSeverity("error");
-          setSnackbarMessage("Error deleting the file.");
-        } else {
-          console.log("Delete success", data);
-          setSnackbarSeverity("success");
-          setSnackbarMessage("File deleted successfully.");
-          setAnchorEl(null);
-        }
-
-        // Open the Snackbar
-        setSnackbarOpen(true);
-      } catch (error) {
-        console.error("Error occurred while deleting the file:", error.message);
-      }
-    } else {
-      // Display Snackbar message if the user is not the owner of the file
-      setSnackbarSeverity("error");
-      setSnackbarMessage("You are not the owner of the file.");
-      setSnackbarOpen(true);
-    }
-  };
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackbarOpen(false);
-  };
-
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
     // console.log("fileName", fileName);
@@ -286,24 +239,46 @@ const RecentFiles = () => {
           ? Array.from({ length: 5 }).map((_, index) => (
               <div
                 key={index}
-                className="border border-gray-200 p-2 rounded-lg shadow-md"
+                className="border border-gray-200 p-2 rounded-2xl shadow-sm"
               >
-                <Skeleton variant="rounded" height={110} />
+                <span className="flex flex-row justify-between items-center px-1 my-1">
+                  <Skeleton variant="circular" height={18} width={18} />
+                  <span
+                    className="flex flex-col items-center justify-center w-6"
+                    style={{ gap: "2px" }}
+                  >
+                    <Skeleton
+                      variant="circular"
+                      width={4}
+                      height={4}
+                      animation={false}
+                    />
+                    <Skeleton
+                      variant="circular"
+                      width={4}
+                      height={4}
+                      animation={false}
+                    />
+                    <Skeleton
+                      variant="circular"
+                      width={4}
+                      height={4}
+                      animation={false}
+                    />
+                  </span>
+                </span>
+                <span className="flex flex-col items-center justify-center">
+                  <Skeleton variant="rounded" height={60} width={212} />
+                  <span className="font-semibold">
+                    <Skeleton height={28} width={212} />
+                  </span>
+                </span>
                 <span>
-                  <h5 className="font-semibold">
-                    <Skeleton height={28} width={160} />
-                  </h5>
-                  <span className="flex flex-row justify-between items-center">
-                    <span>
-                      <h6 className="text-sm font-semibold">
-                        <Skeleton height={22} width={70} />
-                      </h6>
-
-                      <p className="text-xs text-gray-500 font-light">
-                        <Skeleton height={18} width={60} />
-                      </p>
+                  <span className="flex flex-row justify-between items-center my-1 px-1">
+                    <span className="text-sm text-gray-500 font-light">
+                      <Skeleton height={18} width={90} />
                     </span>
-                    <Skeleton variant="circular" height={20} width={20} />
+                    <Skeleton variant="circular" height={22.4} width={22.4} />
                   </span>
                 </span>
               </div>
@@ -384,13 +359,14 @@ const RecentFiles = () => {
                           Edit
                         </button>
                       </MenuItem>
+
                       <MenuItem
-                        onClick={() =>
-                          handleDelete(menuFile.name, menuFile.owner)
-                        }
                         style={{ padding: "0px 10px", color: "#D1293D" }}
                       >
-                        Remove
+                        <DeleteFileConfirmation
+                          fileName={menuFile.name}
+                          owner={menuFile.owner}
+                        />
                       </MenuItem>
                     </Menu>
                   </span>
@@ -410,11 +386,8 @@ const RecentFiles = () => {
                   }
                 >
                   <span className="flex justify-center items-center">
-                    {/* <img src={PDF} alt="File Preview" className="rounded-md" /> */}
-
                     {/* Use the getIconByExtension function to determine the correct SVG */}
                     <img
-                      // src={getIconByExtension(getFileExtension(file.name))}
                       src={getIconByMimeType(file.mimetype)}
                       alt="File Preview"
                       className="rounded-md"
@@ -451,21 +424,6 @@ const RecentFiles = () => {
                 </div>
               </div>
             ))}
-
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={handleSnackbarClose}
-        >
-          <MuiAlert
-            elevation={6}
-            variant="filled"
-            onClose={handleSnackbarClose}
-            severity={snackbarSeverity}
-          >
-            {snackbarMessage}
-          </MuiAlert>
-        </Snackbar>
       </div>
       {isFileInfoOpen && (
         <FileInfo

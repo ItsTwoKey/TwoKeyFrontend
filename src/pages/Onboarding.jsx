@@ -63,14 +63,13 @@ const Onboarding = () => {
   const [isPictureSelected, setIsPictureSelected] = useState(false);
   const [departmentList, setDepartmentList] = useState([]);
   const navigate = useNavigate();
-  
 
   useEffect(() => {
     const depData = async () => {
       try {
         let token = JSON.parse(localStorage.getItem("token"));
         const dep = await axios.get(
-          "https://twokeybackend.onrender.com/dept/listDepts/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -158,7 +157,7 @@ const Onboarding = () => {
   //       console.log("onboarding body:", body);
   //       try {
   //         const res = await axios.put(
-  //           "https://twokeybackend.onrender.com/users/updateProfile/",
+  //           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
   //           body,
   //           {
   //             headers: {
@@ -280,7 +279,7 @@ const Onboarding = () => {
         console.log("onboarding body:", body);
         try {
           const res = await axios.put(
-            "https://twokeybackend.onrender.com/users/updateProfile/",
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
             body,
             {
               headers: {

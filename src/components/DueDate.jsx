@@ -46,7 +46,7 @@ const DueDate = () => {
         let token = JSON.parse(localStorage.getItem("token"));
 
         const dueDates = await axios.get(
-          "https://twokeybackend.onrender.com/file/getLogs/dues/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/dues/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -86,9 +86,11 @@ const DueDate = () => {
       expiration_time: newExpiry,
       last_updated: new Date().toJSON(),
     };
+    toggleReshedule();
+    setTimeout(() => setSelectedDue(null), 100);
     try {
       const res = await axios.put(
-        `https://twokeybackend.onrender.com/file/editShare/${Id}/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/editShare/${Id}/`,
         body,
         {
           headers: {
@@ -96,11 +98,17 @@ const DueDate = () => {
           },
         }
       );
+      const updatedDues = dues.map((i) => {
+        if (i.file === res.data.file) {
+          // removing extra parameters
+          const { owner, security_check, ...x } = res.data;
+          return x;
+        }
+        return i;
+      });
 
-      console.log("updated Due Date:", res);
-      toggleReshedule();
-
-      // console.log("id:", Id);
+      setDues(updatedDues);
+      localStorage.setItem("dueDatesCache", JSON.stringify(updatedDues));
     } catch (error) {
       console.log(error);
     }
@@ -177,7 +185,8 @@ const DueDate = () => {
                 <div
                   key={index}
                   className="border shadow p-3 my-2 rounded-lg flex flex-col "
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     if (isOrgAdmin) {
                       setSelectedDue(due);
                     } else {
@@ -240,51 +249,55 @@ const DueDate = () => {
                             reschedule ? "hidden" : ""
                           }`}
                         >
-                          {/* previous color #E79800 */}
                           Re-schedule
                         </button>
-                      </div>
-                      <div
-                        className={`flex flex-col justify-center ${
-                          reschedule ? "" : "hidden"
-                        }`}
-                      >
-                        <label
-                          htmlFor="extendDate"
-                          className="font-bold py-1 px-4"
+                        <div
+                          className={`flex flex-col justify-center ${
+                            reschedule ? "" : "hidden"
+                          }`}
                         >
-                          Select New Schedule :{" "}
-                        </label>
-                        <div className="flex justify-left gap-3 px-5 py-3 my-2">
-                          <input
-                            className="bg-[#F1F1FF] py-1 px-4 rounded-lg"
-                            type="datetime-local"
-                            value={extendedDate}
-                            onChange={handleExtendedDate}
-                            name="extendDate"
-                            id="extendDate"
-                            min={currentDateTime()}
-                          />
-                          <span className="bg-[#F1F1FF] flex gap-1 items-center w-auto px-4 py-1 rounded-lg">
-                            <strong>Ends in : </strong>
-                            <p className="text-sm">
-                              {convertSecondsToDaysHours(newExpiry)}
-                            </p>
-                          </span>
-                        </div>
-                        <div className="flex justify-end gap-3 items-center px-6 py-2">
-                          <button
-                            onClick={() => toggleReshedule(false)}
-                            className="text-[white] rounded-lg  cursor-pointer py-2 px-4  text-sm bg-[#5E5ADB]"
+                          <label
+                            htmlFor="extendDate"
+                            className="font-bold py-1 px-4"
                           >
-                            Close
-                          </button>
-                          <button
-                            onClick={() => updateDueDate(selectedDue.file)}
-                            className="text-[white] rounded-lg py-2 cursor-pointer px-4 text-sm bg-[#5E5ADB]"
-                          >
-                            Confirm
-                          </button>
+                            Select New Schedule :{" "}
+                          </label>
+                          <div className="flex justify-left gap-3 px-5 py-3 my-2">
+                            <input
+                              className="bg-[#F1F1FF] py-1 px-4 rounded-lg"
+                              type="datetime-local"
+                              value={extendedDate}
+                              onChange={handleExtendedDate}
+                              name="extendDate"
+                              id="extendDate"
+                              min={currentDateTime()}
+                            />
+                            <span className="bg-[#F1F1FF] flex gap-1 items-center w-auto px-4 py-1 rounded-lg">
+                              <strong>Ends in : </strong>
+                              <p className="text-sm">
+                                {convertSecondsToDaysHours(newExpiry)}
+                              </p>
+                            </span>
+                          </div>
+                          <div className="flex justify-end gap-3 items-center px-6 py-2">
+                            <button
+                              onClick={() => {
+                                setSelectedDue(null);
+                                toggleReshedule(false);
+                              }}
+                              className="text-[white] rounded-lg  cursor-pointer py-2 px-4  text-sm bg-[#5E5ADB]"
+                            >
+                              Close
+                            </button>
+                            <button
+                              onClick={() => {
+                                updateDueDate(selectedDue.file);
+                              }}
+                              className="text-[white] rounded-lg py-2 cursor-pointer px-4 text-sm bg-[#5E5ADB]"
+                            >
+                              Confirm
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -301,6 +314,11 @@ const DueDate = () => {
           )}
         </div>
       </Paper>
+      <script>
+        {document.body.addEventListener("click", () => {
+          if (selectedDue) setSelectedDue(null);
+        })}
+      </script>
     </div>
   );
 };

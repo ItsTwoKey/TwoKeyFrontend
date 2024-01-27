@@ -54,13 +54,13 @@ export default function ProfileTabs() {
         // Determine the URL based on the selected tab
         switch (value) {
           case 0:
-            url = "https://twokeybackend.onrender.com/file/files?type=shared";
+            url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared`;
             break;
           case 1:
-            url = "https://twokeybackend.onrender.com/file/files?type=received";
+            url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received`;
             break;
           case 3:
-            url = "https://twokeybackend.onrender.com/file/getLogs/download/";
+            url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/download/`;
             break;
 
           default:

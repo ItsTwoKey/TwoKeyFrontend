@@ -45,7 +45,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
         };
 
         const res = await axios.put(
-          "https://twokeybackend.onrender.com/users/updateProfile/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
           updateData,
           {
             headers: {
@@ -68,7 +68,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
       try {
         let token = JSON.parse(localStorage.getItem("token"));
         const dep = await axios.get(
-          "https://twokeybackend.onrender.com/dept/listDepts/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,

@@ -30,8 +30,8 @@ const LatestActivities = () => {
         let token = JSON.parse(localStorage.getItem("token"));
 
         const logsEndpoint = isUserProfile
-          ? "https://twokeybackend.onrender.com/file/getLogs?global=0&recs=5"
-          : "https://twokeybackend.onrender.com/file/getLogs/?recs=10";
+          ? `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs?global=0&recs=5`
+          : `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/?recs=10`;
 
         const accessLogs = await axios.get(logsEndpoint, {
           headers: {

@@ -15,7 +15,7 @@ export default function UserManagementTable() {
       try {
         let token = JSON.parse(localStorage.getItem("token"));
         const response = await axios.get(
-          "https://twokeybackend.onrender.com/users/list_users/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,

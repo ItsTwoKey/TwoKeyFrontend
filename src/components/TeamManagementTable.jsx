@@ -21,7 +21,7 @@ export default function TeamManagementTable() {
       try {
         let token = JSON.parse(localStorage.getItem("token"));
         const users = await axios.get(
-          "https://twokeybackend.onrender.com/users/list_users/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -43,7 +43,7 @@ export default function TeamManagementTable() {
       try {
         let token = JSON.parse(localStorage.getItem("token"));
         const role = await axios.get(
-          "https://twokeybackend.onrender.com/role/listRoles/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/role/listRoles/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -79,8 +79,14 @@ export default function TeamManagementTable() {
       id: data.id,
       name: data.name + " " + data.last_name,
       status: (
-        <p className="bg-[#ECFDF3] text-center text-green-700 rounded-full py-0.5">
-          Active
+        <p
+          className={`text-center rounded-full py-1 px-4 ${
+            data.is_active
+              ? "text-green-700 bg-[#ECFDF3]"
+              : "text-red-500 bg-red-50"
+          }`}
+        >
+          {data.is_active ? "Online" : "Offline"}
         </p>
       ),
       dateAdded: formatDate(data.created_at),
@@ -119,7 +125,7 @@ export default function TeamManagementTable() {
     if (token) {
       try {
         const res = await axios.put(
-          `https://twokeybackend.onrender.com/users/elevate/${selectedUserId}`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/elevate/${selectedUserId}`,
           {
             role_priv: selectedRole,
           },
@@ -142,7 +148,7 @@ export default function TeamManagementTable() {
     let token = JSON.parse(localStorage.getItem("token"));
     try {
       const res = await axios.delete(
-        `https://twokeybackend.onrender.com/users/deleteUser/${deletedUserId}/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/deleteUser/${deletedUserId}/`,
 
         {
           headers: {

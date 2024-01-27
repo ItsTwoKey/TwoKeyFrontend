@@ -23,7 +23,7 @@ const ProfileWorkInformation = ({ profileData }) => {
       try {
         let token = JSON.parse(localStorage.getItem("token"));
         const dep = await axios.get(
-          "https://twokeybackend.onrender.com/dept/listDepts/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -43,7 +43,7 @@ const ProfileWorkInformation = ({ profileData }) => {
     let token = JSON.parse(localStorage.getItem("token"));
     if (token) {
       const res = await axios.put(
-        "https://twokeybackend.onrender.com/users/updateProfile/",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
         {
           id: token.user.id,
           role_priv: workFormData.designation,

@@ -67,7 +67,7 @@ const Profile = () => {
 
       if (url) {
         const res = await axios.put(
-          "https://twokeybackend.onrender.com/users/updateProfile/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
           {
             id: token.user.id,
             profile_pic: url.publicUrl,

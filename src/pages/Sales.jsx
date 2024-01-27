@@ -13,7 +13,7 @@ const Sales = () => {
         let token = JSON.parse(localStorage.getItem("token"));
 
         const response = await axios.get(
-          "https://twokeybackend.onrender.com/file/files/Sales/?recs=25",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/Sales/?recs=25`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,

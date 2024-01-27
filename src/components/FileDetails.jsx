@@ -65,7 +65,7 @@ const FileDetails = ({
 
       if (fileId) {
         const res = await axios.get(
-          `https://twokeybackend.onrender.com/file/logEvent/${fileId}?event=download`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/logEvent/${fileId}?event=download`,
 
           {
             headers: {

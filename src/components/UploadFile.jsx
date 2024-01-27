@@ -27,7 +27,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 }));
 
 const UploadFile = () => {
-  const projectId = process.env.REACT_APP_SUPABASE_PROJECT_REF;
+  const resumableEndpt = process.env.REACT_APP_RESUMABLE_URL;
   const [isOpen, setIsOpen] = useState(false);
   const [droppedFiles, setDroppedFiles] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -48,7 +48,7 @@ const UploadFile = () => {
       let token = JSON.parse(localStorage.getItem("token"));
 
       const upload = new tus.Upload(file, {
-        endpoint: `https://${projectId}.supabase.co/storage/v1/upload/resumable`,
+        endpoint: resumableEndpt,
         retryDelays: [0, 3000, 5000, 10000, 20000],
         headers: {
           authorization: `Bearer ${token.session.access_token}`,

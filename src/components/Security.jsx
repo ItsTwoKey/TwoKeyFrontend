@@ -6,7 +6,6 @@ import MapComponent from "./MapComponent";
 import OfficeLocation from "./securityPage/OfficeLocation";
 import SecurityPresets from "./securityPage/SecurityPresets";
 
-
 const Security = () => {
   const [allowedLocations, setAllowedLocations] = useState([]);
   const [presets, setPresets] = useState([]);
@@ -39,7 +38,7 @@ const Security = () => {
 
       try {
         const locations = await axios.get(
-          "https://twokeybackend.onrender.com/file/listLocation/",
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/listLocation/`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,

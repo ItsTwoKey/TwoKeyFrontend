@@ -70,7 +70,8 @@ const AIChat = ({ signedUrl }) => {
   }, [fileText]);
 
   const handleAskAiClick = () => {
-    alert(message);
+    // alert(message);
+    if (message.length) console.log(message);
   };
 
   const handleCopyToClipboard = () => {

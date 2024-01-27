@@ -45,7 +45,7 @@ const FileShare = ({ menuFile }) => {
       let token = JSON.parse(localStorage.getItem("token"));
 
       const res = await axios.post(
-        "https://twokeybackend.onrender.com/file/shareFile/",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/shareFile/`,
         {
           file: [menuFile.id],
           shared_with: securityAllotmentData.selectedUsers,
@@ -72,9 +72,12 @@ const FileShare = ({ menuFile }) => {
       }, 2000);
     } catch (error) {
       console.log("error occurred while setting the permissions", error);
-
       // Show snackbar on error
-      showSnackbar("Error sharing file", "error");
+      if (error.response.status === 406) {
+        showSnackbar("File already shared", "error");
+      } else {
+        showSnackbar("Error sharing file", "error");
+      }
     }
   };
 
