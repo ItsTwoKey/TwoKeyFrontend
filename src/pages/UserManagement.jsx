@@ -55,9 +55,6 @@ const UserManagement = () => {
             Export
           </button>
         </div>
-        <div className="flex justify-start p-2 gap-2">
-          <span className="text-blue-700 decoration-blue-700">All</span>
-        </div>
 
         <UserManagementTable />
       </div>

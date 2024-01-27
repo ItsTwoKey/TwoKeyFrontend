@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Edit from "../assets/edit.svg";
@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 export default function UserManagementTable() {
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  let userTypes = [];
 
   useEffect(() => {
     const listUsers = async () => {
@@ -24,7 +26,9 @@ export default function UserManagementTable() {
         );
 
         setUsers(response.data);
-        console.log("users:", response.data);
+        setFilteredUsers(response.data);
+        userTypes = ["All", ...new Set(response.data.map((i) => i.role_priv))];
+        // console.log("users:", response.data);
       } catch (error) {
         console.log(error);
       }
@@ -99,15 +103,36 @@ export default function UserManagementTable() {
     },
   ];
 
+  const applyFilter = (s) => {
+    users.filter((i) => console.log(i));
+  };
+
+  console.log(userTypes);
   return (
-    <div style={{ height: 400, width: "100%" }}>
-      <DataGrid
-        sx={{ borderLeft: "none", borderRight: "none" }}
-        rows={users}
-        columns={columns}
-        pageSizeOptions={[5, 10, 25]}
-        pagination
-      />
-    </div>
+    <>
+      <div className="flex justify-start p-2 gap-2">
+        {userTypes.map((usr) => {
+          console.log(usr);
+          return (
+            <span
+              className="capitalize font-normal text-lg text-green-800"
+              onClick={() => applyFilter(usr)}
+            >
+              {usr}
+            </span>
+          );
+        })}
+      </div>
+      <div style={{ height: 400, width: "100%" }}>
+        <DataGrid
+          sx={{ borderLeft: "none", borderRight: "none" }}
+          rows={filteredUsers}
+          columns={columns}
+          pageSizeOptions={[5, 10, 25]}
+          pagination
+          slots={{ toolbar: GridToolbar }}
+        />
+      </div>
+    </>
   );
 }
