@@ -5,6 +5,7 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import { useDarkMode } from "../context/darkModeContext";
 import { useLocation } from "react-router-dom";
+import { supabase } from "../helper/supabaseClient";
 
 import Skeleton from "@mui/material/Skeleton";
 
@@ -15,42 +16,64 @@ const LatestActivities = () => {
   const location = useLocation();
   const isUserProfile = location.pathname.includes("/profile");
 
+  //   realtime supabase subscribe
   useEffect(() => {
-    const getCommonLogs = async () => {
-      try {
-        const cacheKey = isUserProfile ? "userLogs" : "commonLogs";
+    const channel = supabase
+      .channel("custom_all_channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "access_log" },
+        () => {
+          // console.log("Change received!", payload);
 
-        const cachedLogs = localStorage.getItem(cacheKey);
-
-        if (cachedLogs) {
-          console.log("Using cached logs:", JSON.parse(cachedLogs));
-          setLogs(JSON.parse(cachedLogs));
+          getCommonLogs();
         }
+      )
+      .subscribe();
 
-        let token = JSON.parse(sessionStorage.getItem("token"));
-
-        const logsEndpoint = isUserProfile
-          ? `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs?global=0&recs=5`
-          : `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/?recs=10`;
-
-        const accessLogs = await axios.get(logsEndpoint, {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        });
-
-        console.log("Common logs", accessLogs.data);
-
-        localStorage.setItem(cacheKey, JSON.stringify(accessLogs.data));
-
-        setLogs(accessLogs.data);
-      } catch (error) {
-        console.log(error);
-      }
+    return () => {
+      supabase.removeChannel(channel);
     };
+  }, []);
 
+  // ...............
+
+  useEffect(() => {
     getCommonLogs();
-  }, [isUserProfile]);
+  }, []);
+
+  const getCommonLogs = async () => {
+    try {
+      const cacheKey = isUserProfile ? "userLogs" : "commonLogs";
+
+      const cachedLogs = localStorage.getItem(cacheKey);
+
+      if (cachedLogs) {
+        console.log("Using cached logs:", JSON.parse(cachedLogs));
+        setLogs(JSON.parse(cachedLogs));
+      }
+
+      let token = JSON.parse(sessionStorage.getItem("token"));
+
+      const logsEndpoint = isUserProfile
+        ? `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs?global=0&recs=5`
+        : `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/?recs=10`;
+
+      const accessLogs = await axios.get(logsEndpoint, {
+        headers: {
+          Authorization: `Bearer ${token.session.access_token}`,
+        },
+      });
+
+      console.log("Common logs", accessLogs.data);
+
+      localStorage.setItem(cacheKey, JSON.stringify(accessLogs.data));
+
+      setLogs(accessLogs.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const formatTimestamp = (timestamp) => {
     const options = {
