@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import FileView from "./FileView";
+import { supabase } from "../helper/supabaseClient";
 // import ShareFile from "./ShareFile";
 import SecureShare from "./SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
@@ -62,78 +63,101 @@ const RecentFiles = () => {
 
   const recentBgColor = ["#FFF6F6", "#FFF6FF", "#F6FFF6", "#F6F7FF", "#FFFFF6"];
 
+  //   realtime supabase subscribe
+  useEffect(() => {
+    const channel = supabase
+      .channel("custom_all_channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "shared_files" },
+        () => {
+          // console.log("Change received!", payload);
+
+          fetchRecentFiles();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // ...............
+
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  useEffect(() => {
-    const fetchRecentFiles = async () => {
-      try {
-        const cacheKey = "recentFilesCache";
+  const fetchRecentFiles = async () => {
+    try {
+      const cacheKey = "recentFilesCache";
 
-        // Check if recent files data is available in localStorage
-        const cachedRecentFiles = localStorage.getItem(cacheKey);
+      // Check if recent files data is available in localStorage
+      const cachedRecentFiles = localStorage.getItem(cacheKey);
 
-        if (cachedRecentFiles) {
-          console.log(
-            "Using cached recent files:",
-            JSON.parse(cachedRecentFiles)
-          );
-          setFilteredData(JSON.parse(cachedRecentFiles));
-          setLoading(false);
-        }
-
-        let token = JSON.parse(localStorage.getItem("token"));
-
-        const recentFilesFromBackend = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=5`,
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
+      if (cachedRecentFiles) {
+        console.log(
+          "Using cached recent files:",
+          JSON.parse(cachedRecentFiles)
         );
-
-        console.log("Recent files from backend", recentFilesFromBackend.data);
-
-        if (recentFilesFromBackend.data) {
-          const mappedFiles = recentFilesFromBackend.data.map((file) => {
-            return {
-              id: file.id,
-              name: file.name.substring(0, 80),
-              profilePic: file.profile_pic,
-              size: formatFileSize(file.metadata.size),
-              dept: file.dept_name,
-              owner: file.owner_email,
-              mimetype: file.metadata.mimetype,
-              status: "Team",
-              security: "Enhanced",
-              lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
-                "en-IN",
-                {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                }
-              ),
-            };
-          });
-
-          // Replace the cached recent files data with the new data
-          localStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
-
-          // Update the state with the new data
-          setFilteredData(mappedFiles);
-        }
-
+        setFilteredData(JSON.parse(cachedRecentFiles));
         setLoading(false);
-      } catch (error) {
-        console.error("Error fetching files:", error);
       }
-    };
+
+      let token = JSON.parse(sessionStorage.getItem("token"));
+
+      const recentFilesFromBackend = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=5`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+
+      console.log("Recent files from backend", recentFilesFromBackend.data);
+
+      if (recentFilesFromBackend.data) {
+        const mappedFiles = recentFilesFromBackend.data.map((file) => {
+          return {
+            id: file.id,
+            name: file.name.substring(0, 80),
+            profilePic: file.profile_pic,
+            size: formatFileSize(file.metadata.size),
+            dept: file.dept_name,
+            owner: file.owner_email,
+            mimetype: file.metadata.mimetype,
+            status: "Team",
+            security: "Enhanced",
+            lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+              "en-IN",
+              {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              }
+            ),
+          };
+        });
+
+        // Replace the cached recent files data with the new data
+        localStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
+
+        // Update the state with the new data
+        setFilteredData(mappedFiles);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching files:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchRecentFiles();
   }, []);
 
