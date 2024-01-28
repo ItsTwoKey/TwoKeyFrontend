@@ -11,6 +11,7 @@ import { useAuth } from "../context/authContext";
 import HidePassword from "../assets/hidePassword.svg";
 import ShowPassword from "../assets/showPassword.svg";
 import CircularProgress from "@mui/material/CircularProgress";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const Login = () => {
   let navigate = useNavigate();
@@ -59,7 +60,7 @@ const Login = () => {
 
       // setToken(data);
       if (data) {
-        localStorage.setItem("token", JSON.stringify(data));
+        secureLocalStorage.setItem("token", JSON.stringify(data));
         fetchProfileData();
       }
 
@@ -95,9 +96,10 @@ const Login = () => {
    * if the user is already logged in then redirect to the dashboard,
    * instead of returning the login page
    */
-  if (localStorage.getItem("token")) {
+  if (secureLocalStorage.getItem("token")) {
     navigate("/dashboard");
   }
+
 
   /**
    * comment this out on dev mode

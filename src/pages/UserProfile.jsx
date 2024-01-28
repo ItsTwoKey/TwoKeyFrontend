@@ -5,6 +5,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import ProfileTabsOfUser from "../components/ProfileTabsOfUser";
 import { useParams } from "react-router-dom";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const UserProfile = () => {
   const { userId } = useParams(); // Use useParams to get the user ID from the route parameters
@@ -17,7 +18,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     const getUserProfile = async () => {
-      let token = JSON.parse(localStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
       try {
         const user = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getUserInfo/${userId}/`,
@@ -37,7 +38,7 @@ const UserProfile = () => {
 
     const fetchDepartments = async () => {
       try {
-        let token = JSON.parse(localStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
         const dep = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
           {
@@ -54,7 +55,7 @@ const UserProfile = () => {
 
     const getRoles = async () => {
       try {
-        let token = JSON.parse(localStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
         const rolesData = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/role/listRoles/`,
           {
@@ -75,7 +76,7 @@ const UserProfile = () => {
   }, [userId]);
 
   const elevateUserRole = async (selectedRole) => {
-    let token = JSON.parse(localStorage.getItem("token"));
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     if (token) {
       try {
         const res = await axios.put(
@@ -97,7 +98,7 @@ const UserProfile = () => {
   };
 
   const changeDept = async (selectedDepartment) => {
-    let token = JSON.parse(localStorage.getItem("token"));
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     if (token) {
       try {
         const res = await axios.put(

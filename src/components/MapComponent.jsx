@@ -6,6 +6,7 @@ import DialogActions from "@mui/material/DialogActions";
 import axios from "axios";
 import locatemeIcon from "../assets/locateme.svg";
 import DefaultMarkerComponent from "../assets/DefaultMarkerComponent.svg";
+import  secureLocalStorage  from  "react-secure-storage";
 import {
   GoogleMap,
   Marker,
@@ -50,7 +51,7 @@ const MapComponent = () => {
   // adding new geolacation into database
   const addLocation = async () => {
     try {
-      let token = JSON.parse(localStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
       console.log("proceeding")
       const body = {
         type: "Feature",

@@ -11,6 +11,7 @@ import axios from "axios";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { supabase } from "../helper/supabaseClient";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -67,7 +68,7 @@ const Onboarding = () => {
   useEffect(() => {
     const depData = async () => {
       try {
-        let token = JSON.parse(localStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
         const dep = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
           {
@@ -90,7 +91,7 @@ const Onboarding = () => {
    * if user is already logged in then redirect to dashboard,
    * instead of returning the login page
    */
-  if (localStorage.getItem("token")) {
+  if (secureLocalStorage.getItem("token")) {
     navigate("/dashboard");
   }
 
@@ -256,7 +257,7 @@ const Onboarding = () => {
         email: formData.email,
         password: formData.password,
       });
-      localStorage.setItem("token", JSON.stringify(data));
+      secureLocalStorage.setItem("token", JSON.stringify(data));
 
       if (error) throw error;
 
@@ -289,7 +290,7 @@ const Onboarding = () => {
           );
 
           console.log("onboarding success:", res);
-          localStorage.setItem("profileData", JSON.stringify(res.data));
+          secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
         } catch (error) {
           console.log("Error at  update profile:", error);
         }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import secureLocalStorage from  "react-secure-storage";
 
 const ProfilePersonalInfo = ({ profileData, isEditing }) => {
   const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
   useEffect(() => {
     if (prevIsEditing && !isEditing) {
       const updateProfile = async () => {
-        let token = JSON.parse(localStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
 
         // Check if the department has changed
         const isDepartmentChanged = formData.department !== profileData.dept;
@@ -54,7 +55,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
           }
         );
 
-        localStorage.setItem("profileData", JSON.stringify(res.data));
+        secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
       };
 
       updateProfile();
@@ -66,7 +67,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        let token = JSON.parse(localStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
         const dep = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
           {

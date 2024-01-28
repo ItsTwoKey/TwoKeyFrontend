@@ -16,6 +16,7 @@ import Image from "../assets/image.svg";
 import Ppt from "../assets/ppt.svg";
 import Txt from "../assets/txt.svg";
 import Video from "../assets/video.svg";
+import secureLocalStorage  from  "react-secure-storage";
 
 // Define SVG icons for different file types
 const fileIcons = {
@@ -61,7 +62,7 @@ const FileDetails = ({
 
   const downloadAlert = async (fileId) => {
     try {
-      let token = JSON.parse(localStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       if (fileId) {
         const res = await axios.get(

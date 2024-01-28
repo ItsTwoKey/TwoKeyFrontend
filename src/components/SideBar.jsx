@@ -16,6 +16,7 @@ import Drawer from "@mui/material/Drawer";
 import Analytics from "../assets/Analytics.svg";
 import UserMgmt from "../assets/userMgmt.svg";
 import { useAuth } from '../context/authContext';
+import  secureLocalStorage  from  "react-secure-storage";
 
 /**
  * Sidebar component for navigation and user-related actions.
@@ -27,8 +28,8 @@ function SideBar() {
   const [data, setData] = useState("");
   const { darkMode } = useDarkMode();
   const [picture, setPicture] = useState(null);
-  const { profileData } = useAuth(); 
-  console.log("Profile Data:", profileData);
+  const { profileData, } = useAuth(); 
+  // console.log("Profile Data:", profileData);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -55,7 +56,7 @@ function SideBar() {
    * If the user is unauthorised then no need to show the side panel.
    * Feel free to delete if needed.
    */
-  if (!localStorage.getItem("token") || hideSideBar) {
+  if (!secureLocalStorage.getItem("token") || hideSideBar) {
     return null;
   }
   const lightModeSidebarColor = "[#f7f7ff]";
@@ -271,7 +272,7 @@ function SideBar() {
  * @returns {JSX.Element} The SidebarContents component.
  */
 function SideBarContents({ departments, darkMode }) {
-  const { profileData,setProfileData } = useAuth(); 
+  const { profileData,setProfileData,setToken } = useAuth(); 
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -287,7 +288,7 @@ function SideBarContents({ departments, darkMode }) {
 
   function handleLogout() {
     // change the active status
-    let token = JSON.parse(localStorage.getItem("token"));
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     let body = {
       id: token.user.id,
       is_active: false,
@@ -308,9 +309,10 @@ function SideBarContents({ departments, darkMode }) {
     }
     navigate("/");
     setProfileData(null);
-    localStorage.removeItem("token");
+    setToken(null);
+    secureLocalStorage.removeItem("token");
     // localStorage.removeItem("profileData");
-    localStorage.clear();
+    secureLocalStorage.clear();
   }
 
   return (

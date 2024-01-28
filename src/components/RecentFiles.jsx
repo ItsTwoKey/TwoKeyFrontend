@@ -22,6 +22,7 @@ import Image from "../assets/image.svg";
 import Ppt from "../assets/ppt.svg";
 import Txt from "../assets/txt.svg";
 import Video from "../assets/video.svg";
+import  secureLocalStorage  from  "react-secure-storage";
 
 // Define SVG icons for different file types
 const fileIcons = {
@@ -94,7 +95,7 @@ const RecentFiles = () => {
       const cacheKey = "recentFilesCache";
 
       // Check if recent files data is available in localStorage
-      const cachedRecentFiles = localStorage.getItem(cacheKey);
+      const cachedRecentFiles = secureLocalStorage.getItem(cacheKey);
 
       if (cachedRecentFiles) {
         console.log(
@@ -105,7 +106,7 @@ const RecentFiles = () => {
         setLoading(false);
       }
 
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const recentFilesFromBackend = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=5`,
@@ -145,7 +146,7 @@ const RecentFiles = () => {
         });
 
         // Replace the cached recent files data with the new data
-        localStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
+        secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
 
         // Update the state with the new data
         setFilteredData(mappedFiles);
@@ -163,7 +164,7 @@ const RecentFiles = () => {
 
   const getSharedFileInfo = async (fileId) => {
     try {
-      let token = JSON.parse(localStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
       const info = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/sharedFileInfo/${fileId}`,
         {

@@ -11,6 +11,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
 import Trash from "../assets/trash.svg";
+import  secureLocalStorage  from  "react-secure-storage";
 
 export default function TeamManagementTable() {
   const [users, setUsers] = useState([]);
@@ -19,7 +20,7 @@ export default function TeamManagementTable() {
   useEffect(() => {
     const listUsers = async () => {
       try {
-        let token = JSON.parse(localStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
         const users = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users/`,
           {
@@ -41,7 +42,7 @@ export default function TeamManagementTable() {
   useEffect(() => {
     const getRoles = async () => {
       try {
-        let token = JSON.parse(localStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
         const role = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/role/listRoles/`,
           {
@@ -121,7 +122,7 @@ export default function TeamManagementTable() {
   };
 
   const elevateUserRole = async (selectedUserId, selectedRole) => {
-    let token = JSON.parse(localStorage.getItem("token"));
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     if (token) {
       try {
         const res = await axios.put(
@@ -145,7 +146,7 @@ export default function TeamManagementTable() {
   const deleteUser = async (index) => {
     const deletedUserId = users[index].id;
     console.log(`User deleted: ${deletedUserId}`);
-    let token = JSON.parse(localStorage.getItem("token"));
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     try {
       const res = await axios.delete(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/users/deleteUser/${deletedUserId}/`,

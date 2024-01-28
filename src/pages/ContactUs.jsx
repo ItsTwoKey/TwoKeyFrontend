@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import HomeNav from "../components/HomeNav";
 import HomeFooter from "../components/HomeFooter";
 import ContactForm from "../components/ContactForm";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const ContactUs = () => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const ContactUs = () => {
    * if user is already logged in then redirect to dashboard,
    * instead of returning the login page
    */
-  if (localStorage.getItem("token")) {
+  if (secureLocalStorage.getItem("token")) {
     navigate("/dashboard");
   }
 

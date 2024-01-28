@@ -23,6 +23,7 @@ import { useAuth } from "../context/authContext";
 import Avatar from "@mui/material/Avatar";
 import FileView from "./FileView";
 import Notes from "../assets/notes.svg";
+import secureLocalStorage from  "react-secure-storage";
 
 const ProfileLogs = ({ logs }) => {
   const { darkMode } = useDarkMode();
@@ -58,7 +59,7 @@ const ProfileLogs = ({ logs }) => {
 
   const getSharedFileInfo = async (fileId) => {
     try {
-      let token = JSON.parse(localStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
       const info = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/sharedFileInfo/${fileId}`,
         {
@@ -203,7 +204,7 @@ function Row(props) {
 
   const getLogs = async (fileId) => {
     try {
-      let token = JSON.parse(localStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const accessLogs = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/access/${fileId}`,

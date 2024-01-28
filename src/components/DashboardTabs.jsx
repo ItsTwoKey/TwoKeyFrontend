@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import DashboardFiles from "../components/DashboardFiles";
 import ProfileLogs from "../components/ProfileLogs";
 import axios from "axios";
+import secureLocalStorage  from  "react-secure-storage";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -47,7 +48,7 @@ export default function ProfileTabs() {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        let token = JSON.parse(localStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
         let url;
 
         // Determine the URL based on the selected tab

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import Loading from "./Loading";
+import  secureLocalStorage  from  "react-secure-storage";
 
 /**
  * ProtectedRoute is a component that enforces access control for routes.
@@ -16,7 +17,7 @@ export function ProtectedRoute() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const sessionToken = localStorage.getItem("token");
+    const sessionToken = secureLocalStorage.getItem("token");
     if (sessionToken) {
       setIsAuthenticated(true);
     }

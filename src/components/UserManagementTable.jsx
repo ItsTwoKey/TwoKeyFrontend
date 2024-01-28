@@ -5,6 +5,7 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Edit from "../assets/edit.svg";
 import { useNavigate } from "react-router-dom";
+import secureLocalStorage from  "react-secure-storage";
 
 export default function UserManagementTable() {
   const [users, setUsers] = useState([]);
@@ -13,7 +14,7 @@ export default function UserManagementTable() {
   useEffect(() => {
     const listUsers = async () => {
       try {
-        let token = JSON.parse(localStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users/`,
           {
