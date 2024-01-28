@@ -10,7 +10,8 @@ export default function UserManagementTable() {
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
   const [filteredUsers, setFilteredUsers] = useState([]);
-  let userTypes = [];
+  const [userTypes, setUserTypes] = useState([]);
+  const [activeType, setActiveType] = useState();
 
   useEffect(() => {
     const listUsers = async () => {
@@ -27,7 +28,9 @@ export default function UserManagementTable() {
 
         setUsers(response.data);
         setFilteredUsers(response.data);
-        userTypes = ["All", ...new Set(response.data.map((i) => i.role_priv))];
+        let x = ["all", ...new Set(response.data.map((i) => i.role_priv))];
+        setUserTypes(x);
+        setActiveType("all");
         // console.log("users:", response.data);
       } catch (error) {
         console.log(error);
@@ -104,21 +107,30 @@ export default function UserManagementTable() {
   ];
 
   const applyFilter = (s) => {
-    users.filter((i) => console.log(i));
+    setActiveType(s);
+    if (s === "all") {
+      setFilteredUsers(users);
+      return;
+    }
+    let x = users.filter((i) => i.role_priv === s);
+    setFilteredUsers(x);
   };
 
-  console.log(userTypes);
   return (
     <>
-      <div className="flex justify-start p-2 gap-2">
-        {userTypes.map((usr) => {
-          console.log(usr);
+      <div className="flex justify-start p-2 gap-3">
+        {userTypes.map((usr, index) => {
           return (
             <span
-              className="capitalize font-normal text-lg text-green-800"
+              key={index}
+              className={`capitalize text-base cursor-pointer ${
+                usr === activeType
+                  ? "text-[#0070FF] font-semibold underline underline-offset-8 decoration-[#0070FF]"
+                  : "text-[#7D8398] font-normal"
+              }`}
               onClick={() => applyFilter(usr)}
             >
-              {usr}
+              &nbsp;&nbsp;{usr}&nbsp;&nbsp;
             </span>
           );
         })}
