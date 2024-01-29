@@ -5,7 +5,7 @@ import AvatarGroup from "@mui/material/AvatarGroup";
 import Avatar1 from "../assets/avatars/avatar1.png";
 import Avatar2 from "../assets/avatars/avatar2.png";
 import Avatar3 from "../assets/avatars/avatar3.png";
-import userContext from "./userManagement/context/UserContext";
+import userContext from "../context/UserContext";
 
 const RoleCount = () => {
   const [roles, setRoles] = useState([]);

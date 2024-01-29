@@ -5,9 +5,11 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Edit from "../assets/edit.svg";
 import { useNavigate } from "react-router-dom";
+import userContext from "../context/UserContext";
+import secureLocalStorage from "react-secure-storage";
 
 export default function UserManagementTable() {
-  const context = useContext(UserContext);
+  const context = useContext(userContext);
   const {
     setUsers,
     filteredUsers,

@@ -3,7 +3,7 @@ import RoleCount from "../components/RoleCount";
 import UserManagementTable from "../components/UserManagementTable";
 import { supabase } from "../helper/supabaseClient";
 import DownloadCloud from "../assets/downloadCloud.svg";
-import { UserState } from "../components/userManagement/context/UserContext.js";
+import { UserState } from "../context/UserContext";
 
 const UserManagement = () => {
   const downloadData = async () => {
