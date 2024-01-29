@@ -1,17 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Edit from "../assets/edit.svg";
 import { useNavigate } from "react-router-dom";
+import UserContext from "../components/userManagement/context/UserContext.js";
 
 export default function UserManagementTable() {
-  const [users, setUsers] = useState([]);
+  const context = useContext(UserContext);
+  const {
+    setUsers,
+    filteredUsers,
+    setFilteredUsers,
+    userTypes,
+    setUserTypes,
+    activeType,
+    setActiveType,
+    applyFilter,
+  } = context;
   const navigate = useNavigate();
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [userTypes, setUserTypes] = useState([]);
-  const [activeType, setActiveType] = useState();
 
   useEffect(() => {
     const listUsers = async () => {
@@ -31,7 +39,7 @@ export default function UserManagementTable() {
         let x = ["all", ...new Set(response.data.map((i) => i.role_priv))];
         setUserTypes(x);
         setActiveType("all");
-        // console.log("users:", response.data);
+        console.log("users:", response.data);
       } catch (error) {
         console.log(error);
       }
@@ -105,16 +113,6 @@ export default function UserManagementTable() {
       ),
     },
   ];
-
-  const applyFilter = (s) => {
-    setActiveType(s);
-    if (s === "all") {
-      setFilteredUsers(users);
-      return;
-    }
-    let x = users.filter((i) => i.role_priv === s);
-    setFilteredUsers(x);
-  };
 
   return (
     <>

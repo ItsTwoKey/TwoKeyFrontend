@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { supabase } from "../helper/supabaseClient";
 import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import Avatar1 from "../assets/avatars/avatar1.png";
 import Avatar2 from "../assets/avatars/avatar2.png";
 import Avatar3 from "../assets/avatars/avatar3.png";
+import userContext from "./userManagement/context/UserContext";
 
 const RoleCount = () => {
   const [roles, setRoles] = useState([]);
   const [roleCount, setRoleCount] = useState({});
+  const context = useContext(userContext);
+  const { activeType, applyFilter } = context;
 
   useEffect(() => {
     const getRoles = async () => {
@@ -52,9 +55,13 @@ const RoleCount = () => {
           Object.entries(roleCount).map(([role, count], index) => (
             <span
               key={index}
-              className="border border-gray-100 py-2 px-3 rounded-md shadow-sm"
+              className="relative border border-gray-100 py-2 rounded-md shadow-sm"
+              onClick={() => {
+                applyFilter(role);
+                console.log(role);
+              }}
             >
-              <span className="flex flex-row justify-between items-center text-xs text-gray-500 font-normal">
+              <span className="flex flex-row justify-between items-center text-xs text-gray-500 font-normal px-3">
                 <p>{count} ACCOUNTS</p>
                 <AvatarGroup max={3}>
                   <Avatar
@@ -74,13 +81,21 @@ const RoleCount = () => {
                   />
                 </AvatarGroup>
               </span>
-              <h4 className="text-md font-semibold capitalize my-2">
-                {role === "org_admin" ? "Organization Admin" : role}
-              </h4>
-              <p className="text-[13px]">
-                A role provides access to predefined menus and features so that
-                depending on the assigned roles.
-              </p>
+              <div className="px-3">
+                <h4 className="text-md font-semibold capitalize my-2">
+                  {role === "org_admin" ? "Organization Admin" : role}
+                </h4>
+                <p className="text-[13px]">
+                  A role provides access to predefined menus and features so
+                  that depending on the assigned roles.
+                </p>
+              </div>
+              {activeType === role && (
+                <div
+                  className="absolute w-full bg-[#0070FF] h-2 bottom-0"
+                  style={{ borderRadius: "0px 0px 6px 6px" }}
+                ></div>
+              )}
             </span>
           ))
         ) : (
