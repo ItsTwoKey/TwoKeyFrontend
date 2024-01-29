@@ -8,6 +8,7 @@ import axios from "axios";
 // import LatestActivities from "../components/LatestActivities";
 import CustomLogs from "./CustomLogs";
 import { useParams } from "react-router-dom";
+import  secureLocalStorage  from  "react-secure-storage";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -54,7 +55,7 @@ export default function ProfileTabs() {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
 
         const [sharedLogsResponse, receivedLogsResponse, latestLogsResponse] =
           await Promise.all([

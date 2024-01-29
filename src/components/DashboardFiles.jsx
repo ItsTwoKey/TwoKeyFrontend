@@ -24,6 +24,7 @@ import Avatar from "@mui/material/Avatar";
 import { Skeleton } from "@mui/material";
 import FileView from "./FileView";
 import Notes from "../assets/notes.svg";
+import secureLocalStorage  from  "react-secure-storage";
 
 const DashboardFiles = () => {
   const { darkMode } = useDarkMode();
@@ -49,7 +50,7 @@ const DashboardFiles = () => {
     const cacheKey = "accountFilesCache";
 
     // Check if account files data is available in localStorage
-    const cachedAccountFiles = localStorage.getItem(cacheKey);
+    const cachedAccountFiles = secureLocalStorage.getItem(cacheKey);
 
     if (cachedAccountFiles) {
       console.log(
@@ -62,7 +63,7 @@ const DashboardFiles = () => {
 
     const fetchDashboardFiles = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
 
         const accountFilesFromBackend = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=25`,
@@ -102,7 +103,7 @@ const DashboardFiles = () => {
           });
 
           // Replace the cached account files data with the new data
-          localStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
+          secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
 
           // Update the state with the new data
           setFilteredData(mappedFiles);
@@ -124,7 +125,7 @@ const DashboardFiles = () => {
 
   const getSharedFileInfo = async (fileId) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
       const info = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/sharedFileInfo/${fileId}`,
         {
@@ -262,7 +263,7 @@ function Row(props) {
 
   const getLogs = async (fileId) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const accessLogs = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/${fileId}?recs=5`,

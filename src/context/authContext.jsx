@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { supabase } from "../helper/supabaseClient";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const AuthContext = createContext();
 
@@ -9,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [isFileViewerOpen, setIsFileViewerOpen] = useState(false);
   const [screenshotDetected, setScreenshotDetected] = useState(false);
   const [users, setUsers] = useState([]);
+  const [profileData, setProfileData] = useState(null);
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [coordinates, setCoordinates] = useState([]);
@@ -61,7 +63,6 @@ export const AuthProvider = ({ children }) => {
       document.removeEventListener("contextmenu", handleContextMenu);
     };
   }, []);
-
   const monitorClipboard = async () => {
     // Delay to allow the clipboard to update
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -106,7 +107,7 @@ export const AuthProvider = ({ children }) => {
 
   const screenshotAlert = async (fileId) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       if (fileId) {
         const res = await axios.get(
@@ -127,7 +128,7 @@ export const AuthProvider = ({ children }) => {
 
   const uploadImageToSupabase = async (imageBlob) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const { data, error } = await supabase.storage
         .from("screenshots") // specify the bucket name
@@ -146,16 +147,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const sessionToken = sessionStorage.getItem("token");
+    const sessionToken = secureLocalStorage.getItem("token");
     if (sessionToken) {
       setToken(JSON.parse(sessionToken));
+      // Fetch profile data when the token is set
+      fetchProfileData();
     }
   }, []);
 
   // useEffect(() => {
   async function fetchRecentFiles() {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const recentFilesFromBackend = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/`,
@@ -229,9 +232,9 @@ export const AuthProvider = ({ children }) => {
     return size.toFixed(2) + " " + units[unitIndex];
   }
 
-  const getProfileData = async () => {
+  async function fetchProfileData() {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       if (token) {
         const res = await axios.get(
@@ -243,17 +246,18 @@ export const AuthProvider = ({ children }) => {
           }
         );
 
-        // console.log("Profile data:", res.data);
-        localStorage.setItem("profileData", JSON.stringify(res.data));
+        // Set the profile data in the state
+        setProfileData(res.data);
+        secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
       }
     } catch (error) {
-      console.log("error occured while fetching profile data", error);
+      console.log("error occurred while fetching profile data", error);
     }
-  };
+  }
 
   const setSessionToken = (newToken) => {
     setToken(newToken);
-    sessionStorage.setItem("token", JSON.stringify(newToken));
+    secureLocalStorage.setItem("token", JSON.stringify(newToken));
   };
 
   const openFileViewer = () => {
@@ -293,7 +297,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   const listLocations = async () => {
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     try {
       const locations = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/file/listLocation/`,
@@ -304,7 +308,6 @@ export const AuthProvider = ({ children }) => {
           },
         }
       );
-
       // console.log("locations :", locations.data.features);
       setCoordinates(locations.data.features);
     } catch (error) {
@@ -315,7 +318,7 @@ export const AuthProvider = ({ children }) => {
   const refreshAccessToken = async () => {
     try {
       console.log("Refreshing token...");
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       if (!token) {
         console.log("No token available");
@@ -386,13 +389,16 @@ export const AuthProvider = ({ children }) => {
     openFileViewer,
     closeFileViewer,
     token,
+    setToken,
     setSessionToken,
     screenshotDetected,
     location,
     error,
     getGeolocation,
     users,
-    getProfileData,
+    profileData,
+    setProfileData,
+    fetchProfileData,
     listLocations,
     coordinates,
     fetchRecentFiles,

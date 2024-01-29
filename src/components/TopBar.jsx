@@ -6,6 +6,7 @@ import DarkMode from "../assets/darkMode.svg";
 import { useDarkMode } from "../context/darkModeContext";
 
 import SearchBar from "./SearchBar";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const TopBar = () => {
   const location = useLocation();
@@ -22,7 +23,7 @@ const TopBar = () => {
     return null;
   }
 
-  if (!sessionStorage.getItem("token")) {
+  if (!secureLocalStorage.getItem("token")) {
     return null;
   }
 

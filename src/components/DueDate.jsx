@@ -5,6 +5,7 @@ import Skeleton from "@mui/material/Skeleton";
 import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
+import secureLocalStorage  from  "react-secure-storage";
 
 const currentDateTime = () => {
   //  calculate time and date for imput field
@@ -28,7 +29,7 @@ const DueDate = () => {
   const [newExpiry, setnewExpiry] = useState(rescheduleDate(currentDateTime()));
   const [timeInterval, setTimeInterval] = useState(null);
 
-  let role = JSON.parse(localStorage.getItem("profileData"));
+  let role = JSON.parse(secureLocalStorage.getItem("profileData"));
   const isOrgAdmin = role && role.role_priv === "org_admin";
 
   //   realtime supabase subscribe
@@ -57,7 +58,7 @@ const DueDate = () => {
     try {
       const cacheKey = "dueDatesCache";
       // Check if due dates data is available in localStorage
-      const cachedDueDates = localStorage.getItem(cacheKey);
+      const cachedDueDates = secureLocalStorage.getItem(cacheKey);
 
       if (cachedDueDates) {
         console.log("Using cached due dates:", JSON.parse(cachedDueDates));
@@ -65,7 +66,7 @@ const DueDate = () => {
         setLoading(false);
       }
 
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const dueDates = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/dues/`,
@@ -80,7 +81,7 @@ const DueDate = () => {
 
       if (dueDates.data) {
         // Replace the cached due dates data with the new data
-        localStorage.setItem(cacheKey, JSON.stringify(dueDates.data));
+        secureLocalStorage.setItem(cacheKey, JSON.stringify(dueDates.data));
 
         // Update the state with the new data
         setDues(dueDates.data);
@@ -102,7 +103,7 @@ const DueDate = () => {
     setnewExpiry(rescheduleDate(e.target.value));
   };
   const updateDueDate = async (Id) => {
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     // get time difference in seconds
     setnewExpiry(rescheduleDate(extendedDate));
     let body = {
@@ -131,7 +132,7 @@ const DueDate = () => {
       });
 
       setDues(updatedDues);
-      localStorage.setItem("dueDatesCache", JSON.stringify(updatedDues));
+      secureLocalStorage.setItem("dueDatesCache", JSON.stringify(updatedDues));
     } catch (error) {
       console.log(error);
     }

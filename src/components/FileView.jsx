@@ -5,6 +5,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import { useAuth } from "../context/authContext";
 import axios from "axios";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   const { screenshotDetected, screenshotAlert } = useAuth();
@@ -39,7 +40,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   useEffect(() => {
     const getPresignedUrl = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
 
         const body = {
           latitude: 18.44623721673684,

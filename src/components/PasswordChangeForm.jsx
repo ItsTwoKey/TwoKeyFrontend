@@ -4,6 +4,7 @@ import HidePassword from "../assets/hidePassword.svg";
 import { supabase } from "../helper/supabaseClient";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const PasswordChangeForm = () => {
   const [passwordChangeData, setPasswordChangeData] = useState({
@@ -28,7 +29,7 @@ const PasswordChangeForm = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("error");
 
   useEffect(() => {
-    let data = JSON.parse(localStorage.getItem("profileData"));
+    let data = JSON.parse(secureLocalStorage.getItem("profileData"));
     // console.log(data.email);
     setEmail(data.email);
   }, []);
@@ -57,7 +58,7 @@ const PasswordChangeForm = () => {
 
   const handleChangePassword = async () => {
     // Check if the old password is correct
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     try {
       await supabase.auth.signInWithPassword({
         email: token.user.email,

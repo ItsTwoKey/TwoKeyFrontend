@@ -19,6 +19,7 @@ import { styled } from "@mui/material/styles";
 import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -45,7 +46,7 @@ const ShareFile = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     const listUsers = async () => {
       try {
         const userList = await axios.get(
@@ -78,7 +79,7 @@ const ShareFile = () => {
 
   const uploadFile = async (bucketName, fileName, file, index) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const upload = new tus.Upload(file, {
         endpoint: resumableEndpt,
@@ -169,7 +170,7 @@ const ShareFile = () => {
 
   const shareFiles = async (fileId) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const sharedWithIds = selectedUsers.map((user) => user.id);
 

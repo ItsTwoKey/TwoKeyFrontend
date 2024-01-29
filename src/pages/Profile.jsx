@@ -7,6 +7,7 @@ import ProfileTabs from "../components/ProfileTabs";
 import Pen from "../assets/pen.svg";
 import axios from "axios";
 import ErrorPage from "../components/ErrorPage";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -15,7 +16,7 @@ const Profile = () => {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    let data = localStorage.getItem("profileData");
+    let data = secureLocalStorage.getItem("profileData");
     setProfileData(JSON.parse(data));
   }, []);
 
@@ -45,7 +46,7 @@ const Profile = () => {
 
   const handleProfilePicUpdate = async () => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const timestamp = Date.now();
       const emailWithTimestamp = `${token.user.email}_${timestamp}`;
@@ -82,7 +83,7 @@ const Profile = () => {
         console.log("Profile pic change success:", res);
         setProfileData(res.data);
 
-        localStorage.setItem("profileData", JSON.stringify(res.data));
+        secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
       }
     } catch (error) {
       console.error(
@@ -92,7 +93,7 @@ const Profile = () => {
     }
   };
 
-  if (!sessionStorage.getItem("token")) {
+  if (!secureLocalStorage.getItem("token")) {
     return <ErrorPage error="You are not authorised" />;
   }
 

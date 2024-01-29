@@ -13,7 +13,7 @@ import { styled } from "@mui/material/styles";
 import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
-
+import  secureLocalStorage  from  "react-secure-storage";
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
   borderRadius: 5,
@@ -45,7 +45,7 @@ const SecureShare = () => {
 
   const uploadFile = async (bucketName, fileName, file, index) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const upload = new tus.Upload(file, {
         endpoint: resumableEndpt,
@@ -136,7 +136,7 @@ const SecureShare = () => {
 
   const shareFiles = async (fileId) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       //   console.log("shareFiles Id:", fileId);
       const res = await axios.post(

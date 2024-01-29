@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const ProfileAddressInformation = ({ profileData, isEditing }) => {
   const [addressFormData, setAddressFormData] = useState({
@@ -23,7 +24,7 @@ const ProfileAddressInformation = ({ profileData, isEditing }) => {
   useEffect(() => {
     if (prevIsEditing && !isEditing) {
       const updateProfile = async () => {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
         if (token) {
           const res = await axios.put(
             `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
@@ -41,7 +42,7 @@ const ProfileAddressInformation = ({ profileData, isEditing }) => {
             }
           );
 
-          localStorage.setItem("profileData", JSON.stringify(res.data));
+          secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
         }
       };
 

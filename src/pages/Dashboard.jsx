@@ -7,13 +7,13 @@ import { useAuth } from "../context/authContext";
 import DueDate from "../components/DueDate";
 import DashboardTabs from "../components/DashboardTabs";
 import LatestActivities from "../components/LatestActivities";
-
+import  secureLocalStorage  from  "react-secure-storage";
 import ErrorPage from "../components/ErrorPage";
 
 const Dashboard = () => {
   const { darkMode } = useDarkMode();
   const { isFileViewerOpen, closeFileViewer } = useAuth();
-  if (!sessionStorage.getItem("token")) {
+  if (!secureLocalStorage.getItem("token")) {
     return <ErrorPage error="You are not authorised" />;
   }
   return (

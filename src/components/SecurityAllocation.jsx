@@ -5,7 +5,7 @@ import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 import axios from "axios";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
-
+import  secureLocalStorage  from  "react-secure-storage";
 const SecurityAllocation = ({
   handleSecurityAllocation,
   isOpen,
@@ -51,7 +51,7 @@ const SecurityAllocation = ({
   }, [selectedUsers]);
 
   const listUsers = async () => {
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     try {
       const userList = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users/`,

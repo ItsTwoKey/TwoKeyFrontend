@@ -5,6 +5,7 @@ import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import { supabase } from "../helper/supabaseClient";
 import Danger from "../assets/danger.svg";
+import secureLocalStorage  from  "react-secure-storage";
 
 const DeleteFileConfirmation = ({ fileName, owner }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +22,7 @@ const DeleteFileConfirmation = ({ fileName, owner }) => {
   };
 
   const handleDelete = async () => {
-    let userMail = JSON.parse(localStorage.getItem("profileData"));
+    let userMail = JSON.parse(secureLocalStorage.getItem("profileData"));
 
     // Check if the user is the owner of the file
     console.log(fileName);

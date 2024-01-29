@@ -6,6 +6,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { useDarkMode } from "../context/darkModeContext";
 import { useLocation } from "react-router-dom";
 import { supabase } from "../helper/supabaseClient";
+import  secureLocalStorage  from  "react-secure-storage";
 
 import Skeleton from "@mui/material/Skeleton";
 
@@ -46,14 +47,14 @@ const LatestActivities = () => {
     try {
       const cacheKey = isUserProfile ? "userLogs" : "commonLogs";
 
-      const cachedLogs = localStorage.getItem(cacheKey);
+      const cachedLogs = secureLocalStorage.getItem(cacheKey);
 
       if (cachedLogs) {
         console.log("Using cached logs:", JSON.parse(cachedLogs));
         setLogs(JSON.parse(cachedLogs));
       }
 
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const logsEndpoint = isUserProfile
         ? `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs?global=0&recs=5`
@@ -67,7 +68,7 @@ const LatestActivities = () => {
 
       console.log("Common logs", accessLogs.data);
 
-      localStorage.setItem(cacheKey, JSON.stringify(accessLogs.data));
+      secureLocalStorage.setItem(cacheKey, JSON.stringify(accessLogs.data));
 
       setLogs(accessLogs.data);
     } catch (error) {

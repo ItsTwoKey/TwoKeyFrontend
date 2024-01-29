@@ -5,7 +5,7 @@ import { supabase } from "../helper/supabaseClient";
 import FileView from "./FileView";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import  secureLocalStorage  from  "react-secure-storage";
 export default function SearchBar() {
   const { darkMode } = useDarkMode();
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function SearchBar() {
 
   const getSharedFileInfo = async (fileId) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
       const info = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/sharedFileInfo/${fileId}`,
         {
@@ -67,7 +67,7 @@ export default function SearchBar() {
   };
 
   useEffect(() => {
-    const filesData = JSON.parse(localStorage.getItem("accountFilesCache"));
+    const filesData = JSON.parse(secureLocalStorage.getItem("accountFilesCache"));
 
     if (filesData) {
       // Filter files based on the search term
