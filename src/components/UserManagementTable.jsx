@@ -142,6 +142,35 @@ export default function UserManagementTable() {
           pageSizeOptions={[5, 10, 25]}
           pagination
           slots={{ toolbar: GridToolbar }}
+          componentsProps={{
+            panel: {
+              sx: {
+                "& .MuiTypography-root": {
+                  color: "dodgerblue",
+                  fontSize: 20,
+                },
+                ".MuiNativeSelect-select": {
+                  paddingLeft: "8px",
+                  cursor: "pointer",
+                },
+                ".MuiInput-input": {
+                  paddingLeft: "8px",
+                },
+              },
+            },
+            toolbar: {
+              sx: {
+                py: 1,
+                display: "flex",
+                gap: 2,
+                alignItems: "center",
+                ".MuiButtonBase-root": {
+                  // border: "1px solid black",
+                  color: "black",
+                },
+              },
+            },
+          }}
         />
       </div>
     </>
