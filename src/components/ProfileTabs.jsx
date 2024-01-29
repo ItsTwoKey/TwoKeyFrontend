@@ -7,6 +7,7 @@ import ProfileLogs from "../components/ProfileLogs";
 import axios from "axios";
 import LatestActivities from "../components/LatestActivities";
 import CustomLogs from "./CustomLogs";
+import  secureLocalStorage  from  "react-secure-storage";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -48,7 +49,7 @@ export default function ProfileTabs() {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
         let url;
 
         // Determine the URL based on the selected tab

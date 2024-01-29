@@ -5,7 +5,6 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Edit from "../assets/edit.svg";
 import { useNavigate } from "react-router-dom";
-import UserContext from "../components/userManagement/context/UserContext.js";
 
 export default function UserManagementTable() {
   const context = useContext(UserContext);
@@ -24,7 +23,7 @@ export default function UserManagementTable() {
   useEffect(() => {
     const listUsers = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users/`,
           {

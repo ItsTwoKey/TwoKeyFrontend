@@ -12,6 +12,7 @@ import FileIcon from "../assets/fileIcon.svg";
 import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -45,7 +46,7 @@ const UploadFile = () => {
 
   const uploadFile = async (bucketName, fileName, file, index) => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const upload = new tus.Upload(file, {
         endpoint: resumableEndpt,

@@ -11,10 +11,11 @@ import { useAuth } from "../context/authContext";
 import HidePassword from "../assets/hidePassword.svg";
 import ShowPassword from "../assets/showPassword.svg";
 import CircularProgress from "@mui/material/CircularProgress";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const Login = () => {
   let navigate = useNavigate();
-  const { getProfileData } = useAuth();
+  const { fetchProfileData } = useAuth();
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   const [formData, setFormData] = useState({
@@ -59,8 +60,8 @@ const Login = () => {
 
       // setToken(data);
       if (data) {
-        sessionStorage.setItem("token", JSON.stringify(data));
-        getProfileData();
+        secureLocalStorage.setItem("token", JSON.stringify(data));
+        fetchProfileData();
       }
 
       // change the active status
@@ -95,9 +96,10 @@ const Login = () => {
    * if the user is already logged in then redirect to the dashboard,
    * instead of returning the login page
    */
-  if (sessionStorage.getItem("token")) {
+  if (secureLocalStorage.getItem("token")) {
     navigate("/dashboard");
   }
+
 
   /**
    * comment this out on dev mode

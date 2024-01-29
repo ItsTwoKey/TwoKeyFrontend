@@ -8,6 +8,7 @@ import HomeAbout from "../components/HomeAbout";
 import HomeContactUs from "../components/HomeContactUs";
 import HomeFooter from "../components/HomeFooter";
 import { useNavigate } from "react-router-dom";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const Home = () => {
    * if user is already logged in then redirect to dashboard,
    * instead of returning the login page
    */
-  if (sessionStorage.getItem("token")) {
+  if (secureLocalStorage.getItem("token")) {
     navigate("/dashboard");
   }
   return (

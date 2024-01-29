@@ -7,7 +7,7 @@ import SecurityAllocation from "./SecurityAllocation";
 import axios from "axios";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-
+import secureLocalStorage from  "react-secure-storage";
 const FileShare = ({ menuFile }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [checkboxValues, setCheckboxValues] = useState({
@@ -42,7 +42,7 @@ const FileShare = ({ menuFile }) => {
 
   const shareFile = async () => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const res = await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/shareFile/`,

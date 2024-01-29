@@ -5,6 +5,7 @@ import axios from "axios";
 import MapComponent from "./MapComponent";
 import OfficeLocation from "./securityPage/OfficeLocation";
 import SecurityPresets from "./securityPage/SecurityPresets";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const Security = () => {
   const [allowedLocations, setAllowedLocations] = useState([]);
@@ -34,7 +35,7 @@ const Security = () => {
 
   useEffect(() => {
     const getLocations = async () => {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       try {
         const locations = await axios.get(

@@ -15,6 +15,8 @@ import IconButton from "@mui/material/IconButton";
 import Drawer from "@mui/material/Drawer";
 import Analytics from "../assets/Analytics.svg";
 import UserMgmt from "../assets/userMgmt.svg";
+import { useAuth } from '../context/authContext';
+import  secureLocalStorage  from  "react-secure-storage";
 
 /**
  * Sidebar component for navigation and user-related actions.
@@ -26,18 +28,10 @@ function SideBar() {
   const [data, setData] = useState("");
   const { darkMode } = useDarkMode();
   const [picture, setPicture] = useState(null);
-  const [profileData, setProfileData] = useState({});
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { profileData, } = useAuth(); 
+  // console.log("Profile Data:", profileData);
 
-  useEffect(() => {
-    // Check if profileData is empty
-    if (!profileData || Object.keys(profileData).length === 0) {
-      let data = localStorage.getItem("profileData");
-      if (data) {
-        setProfileData(JSON.parse(data));
-      }
-    }
-  }, [profileData]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const hideSideBar =
     location.pathname === "/" ||
@@ -62,7 +56,7 @@ function SideBar() {
    * If the user is unauthorised then no need to show the side panel.
    * Feel free to delete if needed.
    */
-  if (!sessionStorage.getItem("token") || hideSideBar) {
+  if (!secureLocalStorage.getItem("token") || hideSideBar) {
     return null;
   }
   const lightModeSidebarColor = "[#f7f7ff]";
@@ -278,23 +272,23 @@ function SideBar() {
  * @returns {JSX.Element} The SidebarContents component.
  */
 function SideBarContents({ departments, darkMode }) {
-  const [profileData, setProfileData] = useState({});
+  const { profileData,setProfileData,setToken } = useAuth(); 
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Check if profileData is empty
-    if (!profileData || Object.keys(profileData).length === 0) {
-      let data = localStorage.getItem("profileData");
-      if (data) {
-        setProfileData(JSON.parse(data));
-      }
-    }
-  }, [profileData]);
+  // useEffect(() => {
+  //   // Check if profileData is empty
+  //   if (!profileData || Object.keys(profileData).length === 0) {
+  //     let data = localStorage.getItem("profileData");
+  //     if (data) {
+  //       setProfileData(JSON.parse(data));
+  //     }
+  //   }
+  // }, [profileData]);
 
   function handleLogout() {
     // change the active status
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     let body = {
       id: token.user.id,
       is_active: false,
@@ -314,9 +308,11 @@ function SideBarContents({ departments, darkMode }) {
       console.log(error);
     }
     navigate("/");
-    sessionStorage.removeItem("token");
+    setProfileData(null);
+    setToken(null);
+    secureLocalStorage.removeItem("token");
     // localStorage.removeItem("profileData");
-    localStorage.clear();
+    secureLocalStorage.clear();
   }
 
   return (

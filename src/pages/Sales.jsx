@@ -3,6 +3,7 @@ import axios from "axios";
 import RecentFiles from "../components/RecentFiles";
 import DepartmentFiles from "../components/DepartmentFiles";
 import ErrorPage from "../components/ErrorPage";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const Sales = () => {
   const [filesFromBackend, setFilesFromBackend] = useState([]);
@@ -10,7 +11,7 @@ const Sales = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
 
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/Sales/?recs=25`,
@@ -30,7 +31,7 @@ const Sales = () => {
     fetchData();
   }, []);
 
-  if (!sessionStorage.getItem("token")) {
+  if (!secureLocalStorage.getItem("token")) {
     return <ErrorPage error="You are not authorised" />;
   }
   return (

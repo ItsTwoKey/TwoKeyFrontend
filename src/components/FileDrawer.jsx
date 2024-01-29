@@ -8,6 +8,7 @@ import PDFPreview from "../assets/pdfPreview.jpg";
 import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
+import secureLocalStorage from "react-secure-storage";
 
 const FileDrawer = ({
   isDrawerOpen,
@@ -64,7 +65,7 @@ const FileDrawer = ({
 
   const getPresignedUrl = async () => {
     try {
-      let token = JSON.parse(sessionStorage.getItem("token"));
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const body = {
         latitude: 18.44623721673684,
@@ -80,7 +81,7 @@ const FileDrawer = ({
         }
       );
       // console.log("presignedUrl:", presignedUrl.data.signed_url);
-      // localStorage.setItem("preUrl", presignedUrl.data.signed_url);
+      // secureLocalStorage.setItem("preUrl", presignedUrl.data.signed_url);
 
       toggleFileViewer();
     } catch (error) {

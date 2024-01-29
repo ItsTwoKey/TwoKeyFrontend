@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const ProfileWorkInformation = ({ profileData }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -21,7 +22,7 @@ const ProfileWorkInformation = ({ profileData }) => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        let token = JSON.parse(sessionStorage.getItem("token"));
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
         const dep = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
           {
@@ -40,7 +41,7 @@ const ProfileWorkInformation = ({ profileData }) => {
   }, []);
 
   const updateProfile = async () => {
-    let token = JSON.parse(sessionStorage.getItem("token"));
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     if (token) {
       const res = await axios.put(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
@@ -57,7 +58,7 @@ const ProfileWorkInformation = ({ profileData }) => {
         }
       );
 
-      localStorage.setItem("profileData", JSON.stringify(res.data));
+      secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
     }
   };
 

@@ -7,6 +7,7 @@ import AccountSetIcon from '../assets/AccountSetting.svg'
 import DeviceIcon from '../assets/Devices.svg'
 import TeamIcon from '../assets/TeamManagement.svg'
 import SecurityIcon from '../assets/Security.svg'
+import  secureLocalStorage  from  "react-secure-storage";
 
 const navigationItems = [
   { key: "PasswordChangeForm", label: "Account Settings", icon: AccountSetIcon },
@@ -20,7 +21,7 @@ const Sidebar = () => {
   const [role, setRole] = useState("");
 
   useEffect(() => {
-    let data = JSON.parse(localStorage.getItem("profileData"));
+    let data = JSON.parse(secureLocalStorage.getItem("profileData"));
     setRole(data.role_priv);
   }, []);
 
