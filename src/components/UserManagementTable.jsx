@@ -17,7 +17,6 @@ export default function UserManagementTable() {
     userTypes,
     setUserTypes,
     activeType,
-    setActiveType,
     applyFilter,
   } = context;
   const navigate = useNavigate();
@@ -39,7 +38,7 @@ export default function UserManagementTable() {
         setFilteredUsers(response.data);
         let x = ["all", ...new Set(response.data.map((i) => i.role_priv))];
         setUserTypes(x);
-        setActiveType("all");
+        applyFilter("all");
         console.log("users:", response.data);
       } catch (error) {
         console.log(error);
