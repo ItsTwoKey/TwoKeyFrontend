@@ -1,14 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Edit from "../assets/edit.svg";
 import { useNavigate } from "react-router-dom";
-import secureLocalStorage from  "react-secure-storage";
+import userContext from "../context/UserContext";
+import secureLocalStorage from "react-secure-storage";
 
 export default function UserManagementTable() {
-  const [users, setUsers] = useState([]);
+  const context = useContext(userContext);
+  const {
+    setUsers,
+    filteredUsers,
+    setFilteredUsers,
+    userTypes,
+    setUserTypes,
+    activeType,
+    setActiveType,
+    applyFilter,
+  } = context;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +36,10 @@ export default function UserManagementTable() {
         );
 
         setUsers(response.data);
+        setFilteredUsers(response.data);
+        let x = ["all", ...new Set(response.data.map((i) => i.role_priv))];
+        setUserTypes(x);
+        setActiveType("all");
         console.log("users:", response.data);
       } catch (error) {
         console.log(error);
@@ -101,14 +116,63 @@ export default function UserManagementTable() {
   ];
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
-      <DataGrid
-        sx={{ borderLeft: "none", borderRight: "none" }}
-        rows={users}
-        columns={columns}
-        pageSizeOptions={[5, 10, 25]}
-        pagination
-      />
-    </div>
+    <>
+      <div className="flex justify-start p-2 gap-3">
+        {userTypes.map((usr, index) => {
+          return (
+            <span
+              key={index}
+              className={`capitalize text-base cursor-pointer ${
+                usr === activeType
+                  ? "text-[#0070FF] font-semibold underline underline-offset-8 decoration-[#0070FF]"
+                  : "text-[#7D8398] font-normal"
+              }`}
+              onClick={() => applyFilter(usr)}
+            >
+              &nbsp;&nbsp;{usr}&nbsp;&nbsp;
+            </span>
+          );
+        })}
+      </div>
+      <div style={{ height: 400, width: "100%" }}>
+        <DataGrid
+          sx={{ borderLeft: "none", borderRight: "none" }}
+          rows={filteredUsers}
+          columns={columns}
+          pageSizeOptions={[5, 10, 25]}
+          pagination
+          slots={{ toolbar: GridToolbar }}
+          componentsProps={{
+            panel: {
+              sx: {
+                "& .MuiTypography-root": {
+                  color: "dodgerblue",
+                  fontSize: 20,
+                },
+                ".MuiNativeSelect-select": {
+                  paddingLeft: "8px",
+                  cursor: "pointer",
+                },
+                ".MuiInput-input": {
+                  paddingLeft: "8px",
+                },
+              },
+            },
+            toolbar: {
+              sx: {
+                py: 1,
+                display: "flex",
+                gap: 2,
+                alignItems: "center",
+                ".MuiButtonBase-root": {
+                  // border: "1px solid black",
+                  color: "black",
+                },
+              },
+            },
+          }}
+        />
+      </div>
+    </>
   );
 }

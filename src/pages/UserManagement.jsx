@@ -3,6 +3,7 @@ import RoleCount from "../components/RoleCount";
 import UserManagementTable from "../components/UserManagementTable";
 import { supabase } from "../helper/supabaseClient";
 import DownloadCloud from "../assets/downloadCloud.svg";
+import { UserState } from "../context/UserContext";
 
 const UserManagement = () => {
   const downloadData = async () => {
@@ -35,31 +36,32 @@ const UserManagement = () => {
   };
 
   return (
-    <div className="p-4">
-      <RoleCount />
+    <UserState>
+      <div className="p-4">
+        <RoleCount />
 
-      <div className="p-3 border rounded-md ">
-        <div className="flex flex-row justify-between items-center my-2">
-          <span>
-            <h2 className="text-lg font-semibold">Administrator Accounts</h2>
-            <p className="text-sm">
-              Find all of your company's administrator accounts and their
-              associated roles.
-            </p>
-          </span>
+        <div className="p-3 border rounded-md ">
+          <div className="flex flex-row justify-between items-center my-2">
+            <span>
+              <h2 className="text-lg font-semibold">Administrator Accounts</h2>
+              <p className="text-sm">
+                Find all of your company's administrator accounts and their
+                associated roles.
+              </p>
+            </span>
+            <button
+              onClick={downloadData}
+              className="border border-gray-300 px-4 py-1.5 text-sm rounded-md mx-2 flex items-center gap-2"
+            >
+              <img src={DownloadCloud} alt="" />
+              Export
+            </button>
+          </div>
 
-          <button
-            onClick={downloadData}
-            className="border border-gray-300 px-4 py-1.5 text-sm rounded-md mx-2 flex items-center gap-2"
-          >
-            <img src={DownloadCloud} alt="" />
-            Export
-          </button>
+          <UserManagementTable />
         </div>
-
-        <UserManagementTable />
       </div>
-    </div>
+    </UserState>
   );
 };
 
