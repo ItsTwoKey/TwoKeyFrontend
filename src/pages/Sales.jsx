@@ -3,7 +3,7 @@ import axios from "axios";
 import RecentFiles from "../components/RecentFiles";
 import DepartmentFiles from "../components/DepartmentFiles";
 import ErrorPage from "../components/ErrorPage";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const Sales = () => {
   const [filesFromBackend, setFilesFromBackend] = useState([]);

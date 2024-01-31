@@ -22,7 +22,7 @@ import Image from "../assets/image.svg";
 import Ppt from "../assets/ppt.svg";
 import Txt from "../assets/txt.svg";
 import Video from "../assets/video.svg";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 // Define SVG icons for different file types
 const fileIcons = {
@@ -65,24 +65,24 @@ const RecentFiles = () => {
   const recentBgColor = ["#FFF6F6", "#FFF6FF", "#F6FFF6", "#F6F7FF", "#FFFFF6"];
 
   //   realtime supabase subscribe
-  useEffect(() => {
-    const channel = supabase
-      .channel("custom_all_channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "shared_files" },
-        () => {
-          // console.log("Change received!", payload);
+  // useEffect(() => {
+  //   const channel = supabase
+  //     .channel("custom_all_channel")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "*", schema: "public", table: "shared_files" },
+  //       () => {
+  //         // console.log("Change received!", payload);
 
-          fetchRecentFiles();
-        }
-      )
-      .subscribe();
+  //         fetchRecentFiles();
+  //       }
+  //     )
+  //     .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+  //   return () => {
+  //     supabase.removeChannel(channel);
+  //   };
+  // }, []);
 
   // ...............
 

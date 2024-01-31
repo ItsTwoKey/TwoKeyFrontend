@@ -3,7 +3,7 @@ import axios from "axios";
 import RecentFiles from "../components/RecentFiles";
 import DepartmentFiles from "../components/DepartmentFiles";
 import ErrorPage from "../components/ErrorPage";
-import secureLocalStorage from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const HR = () => {
   const [filesFromBackend, setFilesFromBackend] = useState([]);
@@ -31,7 +31,7 @@ const HR = () => {
     fetchData();
   }, []);
 
-  if (!localStorage.getItem("token")) {
+  if (!secureLocalStorage.getItem("token")) {
     return <ErrorPage error="You are not authorised" />;
   }
   return (
