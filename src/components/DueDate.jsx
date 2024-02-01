@@ -5,7 +5,7 @@ import Skeleton from "@mui/material/Skeleton";
 import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
-import secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const currentDateTime = () => {
   //  calculate time and date for imput field
@@ -39,8 +39,8 @@ const DueDate = () => {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "shared_files" },
-        () => {
-          // console.log("Change received!", payload);
+        (payload) => {
+          console.log("Change received!", payload);
 
           fetchDueDates();
         }
