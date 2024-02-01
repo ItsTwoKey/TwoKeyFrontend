@@ -5,7 +5,7 @@ import { supabase } from "../helper/supabaseClient";
 import FileView from "./FileView";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 export default function SearchBar() {
   const { darkMode } = useDarkMode();
   const navigate = useNavigate();
@@ -67,7 +67,9 @@ export default function SearchBar() {
   };
 
   useEffect(() => {
-    const filesData = JSON.parse(secureLocalStorage.getItem("accountFilesCache"));
+    const filesData = JSON.parse(
+      secureLocalStorage.getItem("accountFilesCache")
+    );
 
     if (filesData) {
       // Filter files based on the search term
@@ -78,23 +80,47 @@ export default function SearchBar() {
     }
   }, [searchTerm]);
 
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     // Fetch data from Supabase with text search
+  //     const { data, error } = await supabase
+  //       .from("user_info")
+  //       .select("name,last_name,id")
+  //       .ilike("name", `%${searchTerm}%`);
+
+  //     if (error) {
+  //       console.error(error);
+  //     } else {
+  //       setSearchResults(data);
+  //       // console.log(data);
+  //     }
+  //   };
+
+  //   fetchUserData();
+  // }, [searchTerm]);
+
   useEffect(() => {
-    const fetchData = async () => {
-      // Fetch data from Supabase with text search
-      const { data, error } = await supabase
-        .from("user_info")
-        .select("name,last_name,id")
-        .ilike("name", `%${searchTerm}%`);
+    // Only fetch user data if search term is not empty
+    if (searchTerm.trim() !== "") {
+      const fetchUserData = async () => {
+        // Fetch data from Supabase with text search
+        const { data, error } = await supabase
+          .from("user_info")
+          .select("name,last_name,id")
+          .ilike("name", `%${searchTerm}%`);
 
-      if (error) {
-        console.error(error);
-      } else {
-        setSearchResults(data);
-        // console.log(data);
-      }
-    };
+        if (error) {
+          console.error(error);
+        } else {
+          setSearchResults(data);
+        }
+      };
 
-    fetchData();
+      fetchUserData();
+    } else {
+      // If search term is empty, reset search results
+      setSearchResults([]);
+    }
   }, [searchTerm]);
 
   const handleSearchChange = (e) => {
