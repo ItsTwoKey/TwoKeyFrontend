@@ -13,7 +13,7 @@ import { styled } from "@mui/material/styles";
 import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
   borderRadius: 5,
@@ -304,7 +304,7 @@ const SecureShare = () => {
                       className="mx-1"
                       onChange={() => handleCheckboxChange("accessControl")}
                     />
-                    Access Control and Authorization
+                    Timeframe
                   </label>
                 </span>
               </div>

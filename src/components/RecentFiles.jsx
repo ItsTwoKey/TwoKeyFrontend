@@ -98,10 +98,10 @@ const RecentFiles = () => {
       const cachedRecentFiles = secureLocalStorage.getItem(cacheKey);
 
       if (cachedRecentFiles) {
-        console.log(
-          "Using cached recent files:",
-          JSON.parse(cachedRecentFiles)
-        );
+        // console.log(
+        //   "Using cached recent files:",
+        //   JSON.parse(cachedRecentFiles)
+        // );
         setFilteredData(JSON.parse(cachedRecentFiles));
         setLoading(false);
       }
@@ -117,7 +117,7 @@ const RecentFiles = () => {
         }
       );
 
-      console.log("Recent files from backend", recentFilesFromBackend.data);
+      // console.log("Recent files from backend", recentFilesFromBackend.data);
 
       if (recentFilesFromBackend.data) {
         const mappedFiles = recentFilesFromBackend.data.map((file) => {

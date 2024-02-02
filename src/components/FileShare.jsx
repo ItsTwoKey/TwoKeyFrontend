@@ -7,7 +7,7 @@ import SecurityAllocation from "./SecurityAllocation";
 import axios from "axios";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import secureLocalStorage from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 const FileShare = ({ menuFile }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [checkboxValues, setCheckboxValues] = useState({
@@ -151,7 +151,7 @@ const FileShare = ({ menuFile }) => {
                     className="mx-1"
                     onChange={() => handleCheckboxChange("accessControl")}
                   />
-                  Access Control and Authorization
+                  Timeframe
                 </label>
               </span>
             </div>

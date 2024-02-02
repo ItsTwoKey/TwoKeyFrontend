@@ -11,7 +11,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
 import Trash from "../assets/trash.svg";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 export default function TeamManagementTable() {
   const [users, setUsers] = useState([]);
@@ -29,7 +29,7 @@ export default function TeamManagementTable() {
             },
           }
         );
-        console.log("users :", users.data);
+        // console.log("users :", users.data);
         setUsers(users.data);
       } catch (error) {
         console.log(error);

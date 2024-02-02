@@ -61,7 +61,7 @@ const DueDate = () => {
       const cachedDueDates = secureLocalStorage.getItem(cacheKey);
 
       if (cachedDueDates) {
-        console.log("Using cached due dates:", JSON.parse(cachedDueDates));
+        // console.log("Using cached due dates:", JSON.parse(cachedDueDates));
         setDues(JSON.parse(cachedDueDates));
         setLoading(false);
       }

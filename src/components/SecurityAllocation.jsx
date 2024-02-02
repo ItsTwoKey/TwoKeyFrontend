@@ -5,7 +5,7 @@ import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 import axios from "axios";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 const SecurityAllocation = ({
   handleSecurityAllocation,
   isOpen,
@@ -61,7 +61,7 @@ const SecurityAllocation = ({
           },
         }
       );
-      console.log("users :", userList.data);
+      // console.log("users :", userList.data);
       setUsers(userList.data);
     } catch (error) {
       console.log(error);

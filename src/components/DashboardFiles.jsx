@@ -24,7 +24,7 @@ import Avatar from "@mui/material/Avatar";
 import { Skeleton } from "@mui/material";
 import FileView from "./FileView";
 import Notes from "../assets/notes.svg";
-import secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const DashboardFiles = () => {
   const { darkMode } = useDarkMode();
@@ -53,10 +53,10 @@ const DashboardFiles = () => {
     const cachedAccountFiles = secureLocalStorage.getItem(cacheKey);
 
     if (cachedAccountFiles) {
-      console.log(
-        "Using cached account files:",
-        JSON.parse(cachedAccountFiles)
-      );
+      // console.log(
+      //   "Using cached account files:",
+      //   JSON.parse(cachedAccountFiles)
+      // );
       setFilteredData(JSON.parse(cachedAccountFiles));
       setLoading(false);
     }
@@ -74,7 +74,7 @@ const DashboardFiles = () => {
           }
         );
 
-        console.log("Account files from backend", accountFilesFromBackend.data);
+        // console.log("Account files from backend", accountFilesFromBackend.data);
 
         if (accountFilesFromBackend.data) {
           const mappedFiles = accountFilesFromBackend.data.map((file) => {
