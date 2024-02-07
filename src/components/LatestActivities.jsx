@@ -27,6 +27,7 @@ const LatestActivities = () => {
         () => {
           // console.log("Change received!", payload);
 
+          // console.log("common logs subscribed");
           getCommonLogs();
         }
       )

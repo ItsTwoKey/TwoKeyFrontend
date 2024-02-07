@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Box from "@mui/material/Box";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
@@ -12,6 +12,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Collapse from "@mui/material/Collapse";
 import Tooltip from "@mui/material/Tooltip";
 import axios from "axios";
+import { supabase } from "../helper/supabaseClient";
 import { useLocation } from "react-router-dom";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -27,6 +28,7 @@ import Notes from "../assets/notes.svg";
 import secureLocalStorage from "react-secure-storage";
 
 const DashboardFiles = () => {
+  const cacheKey = "accountFilesCache";
   const { darkMode } = useDarkMode();
   const { formatFileSize } = useAuth();
   const [filteredData, setFilteredData] = useState([]);
@@ -46,9 +48,77 @@ const DashboardFiles = () => {
   });
   const [sharedFileInfo, setSharedFileInfo] = useState({});
 
-  useEffect(() => {
-    const cacheKey = "accountFilesCache";
+  const fetchDashboardFiles = useCallback(async () => {
+    try {
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
 
+      const accountFilesFromBackend = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=25`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+
+      if (accountFilesFromBackend.data) {
+        const mappedFiles = accountFilesFromBackend.data.map((file) => {
+          return {
+            id: file.id,
+            name: file.name.substring(0, 80),
+            profilePic: file.profile_pic,
+            size: formatFileSize(file.metadata.size),
+            dept: file.dept_name,
+            owner: file.owner_email,
+            mimetype: file.metadata.mimetype,
+            status: "Team",
+            security: "Enhanced",
+            lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+              "en-IN",
+              {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              }
+            ),
+          };
+        });
+
+        // Replace the cached account files data with the new data
+        secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
+
+        // Update the state with the new data
+        setFilteredData(mappedFiles);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching files:", error);
+    }
+  }, [formatFileSize]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("custom_all_channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "file_info" },
+        () => {
+          console.log("rendered due to subscribe");
+          fetchDashboardFiles();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchDashboardFiles]); // Include fetchDashboardFiles in the dependency array
+
+  useEffect(() => {
     // Check if account files data is available in localStorage
     const cachedAccountFiles = secureLocalStorage.getItem(cacheKey);
 
@@ -61,62 +131,9 @@ const DashboardFiles = () => {
       setLoading(false);
     }
 
-    const fetchDashboardFiles = async () => {
-      try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
-
-        const accountFilesFromBackend = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=25`,
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
-
-        // console.log("Account files from backend", accountFilesFromBackend.data);
-
-        if (accountFilesFromBackend.data) {
-          const mappedFiles = accountFilesFromBackend.data.map((file) => {
-            return {
-              id: file.id,
-              name: file.name.substring(0, 80),
-              profilePic: file.profile_pic,
-              size: formatFileSize(file.metadata.size),
-              dept: file.dept_name,
-              owner: file.owner_email,
-              mimetype: file.metadata.mimetype,
-              status: "Team",
-              security: "Enhanced",
-              lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
-                "en-IN",
-                {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                }
-              ),
-            };
-          });
-
-          // Replace the cached account files data with the new data
-          secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
-
-          // Update the state with the new data
-          setFilteredData(mappedFiles);
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching files:", error);
-      }
-    };
-
+    console.log("due to use effect");
     fetchDashboardFiles();
-  }, []);
+  }, [fetchDashboardFiles]);
 
   const handleSort = (column) => {
     setSortOrder((prevSortOrder) => (prevSortOrder === "asc" ? "desc" : "asc"));

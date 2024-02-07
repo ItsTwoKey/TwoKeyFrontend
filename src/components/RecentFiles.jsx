@@ -86,6 +86,24 @@ const RecentFiles = () => {
 
   // ...............
 
+  useEffect(() => {
+    const channel = supabase
+      .channel("custom_all_channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "file_info" },
+        () => {
+          console.log("rendered due to subscribe");
+          fetchRecentFiles();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []); // Include fetchDashboardFiles in the dependency array
+
   const handleClose = () => {
     setAnchorEl(null);
   };
