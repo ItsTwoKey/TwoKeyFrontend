@@ -15,8 +15,8 @@ import IconButton from "@mui/material/IconButton";
 import Drawer from "@mui/material/Drawer";
 import Analytics from "../assets/Analytics.svg";
 import UserMgmt from "../assets/userMgmt.svg";
-import { useAuth } from '../context/authContext';
-import  secureLocalStorage  from  "react-secure-storage";
+import { useAuth } from "../context/authContext";
+import secureLocalStorage from "react-secure-storage";
 
 /**
  * Sidebar component for navigation and user-related actions.
@@ -28,7 +28,7 @@ function SideBar() {
   const [data, setData] = useState("");
   const { darkMode } = useDarkMode();
   const [picture, setPicture] = useState(null);
-  const { profileData, } = useAuth(); 
+  const { profileData } = useAuth();
   // console.log("Profile Data:", profileData);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -197,7 +197,7 @@ function SideBar() {
         >
           <div className="w-full">
             <div
-              className={`flex justify-between items-center sticky top-0 py-4 px-2  ${
+              className={`flex justify-between items-center sticky top-0 py-4 px-2 bg-white ${
                 darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
               }`}
             >
@@ -216,7 +216,7 @@ function SideBar() {
             <SideBarContents departments={departments} darkMode={darkMode} />
           </div>
           <div
-            className={`sticky bottom-0 ${
+            className={`sticky bottom-0 bg-white ${
               darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
             }`}
           >
@@ -272,7 +272,7 @@ function SideBar() {
  * @returns {JSX.Element} The SidebarContents component.
  */
 function SideBarContents({ departments, darkMode }) {
-  const { profileData,setProfileData,setToken } = useAuth(); 
+  const { profileData, setProfileData, setToken } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
