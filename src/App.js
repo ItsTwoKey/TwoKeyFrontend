@@ -54,13 +54,13 @@ const App = () => {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/user-management" element={<UserManagement />} />
               <Route path="/user-profile/:userId" element={<UserProfile />} />
-              <Route path="/account" element={<Account />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/finance" element={<Finance />} />
-              <Route path="/development" element={<Development />} />
-              <Route path="/sales" element={<Sales />} />
-              <Route path="/manufacturing" element={<Manufacturing />} />
-              <Route path="/humanresources" element={<HR />} />
+              <Route path="/Account" element={<Account />} />
+              <Route path="/Finance" element={<Finance />} />
+              <Route path="/Development" element={<Development />} />
+              <Route path="/Sales" element={<Sales />} />
+              <Route path="/Marketing" element={<Manufacturing />} />
+              <Route path="/Human_Resource" element={<HR />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/ai/:fileId" element={<AI />} />
