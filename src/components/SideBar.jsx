@@ -464,7 +464,7 @@ function SideBarContents({ departments, darkMode }) {
         {departments.map((department, index) => (
           <li key={index} className="min-w-full my-2">
             <Link
-              to={department.name} // Use "to" instead of "href"
+              to={`/department/${department.name}`} // Use "to" instead of "href"
               alt={department.name}
               className={`flex justify-start items-center min-w-full ${
                 location.pathname === department.name

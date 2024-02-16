@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "../helper/supabaseClient";
 import Dialog from "@mui/material/Dialog";
@@ -39,8 +39,44 @@ const UploadFile = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [depts, setdepts] = useState([]);
+  const [deptId, setDeptId] = useState("");
 
   // console.log(location.pathname.split("/")[1]);
+
+  useEffect(() => {
+    const listDepartments = async () => {
+      try {
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        const departments = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+
+        const pathName = location.pathname.split("/department/")[1];
+        // console.log("current path", pathName);
+
+        const matchingDepartment = departments.data.find(
+          (department) => department.name === pathName
+        );
+
+        if (matchingDepartment) {
+          setDeptId(matchingDepartment.id);
+          // console.log(matchingDepartment.id);
+        } else {
+          console.log("Department not found for path:", pathName);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    listDepartments();
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
@@ -145,9 +181,9 @@ const UploadFile = () => {
   const addFileDepartment = async (fileId) => {
     try {
       let token = JSON.parse(secureLocalStorage.getItem("token"));
-      console.log(token);
+
       let body = {
-        department_ids: ["f47726bc-c865-4bd0-b443-37560f5b5d95s"],
+        department_ids: [deptId],
       };
 
       const addDept = await axios.post(

@@ -55,12 +55,12 @@ const App = () => {
               <Route path="/user-management" element={<UserManagement />} />
               <Route path="/user-profile/:userId" element={<UserProfile />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/Account" element={<Account />} />
-              <Route path="/Finance" element={<Finance />} />
-              <Route path="/Development" element={<Development />} />
-              <Route path="/Sales" element={<Sales />} />
-              <Route path="/Marketing" element={<Manufacturing />} />
-              <Route path="/Human_Resource" element={<HR />} />
+              <Route path="/department/Account" element={<Account />} />
+              <Route path="/department/Finance" element={<Finance />} />
+              <Route path="/department/Development" element={<Development />} />
+              <Route path="/department/Sales" element={<Sales />} />
+              <Route path="/department/Marketing" element={<Manufacturing />} />
+              <Route path="/department/Human_Resource" element={<HR />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/ai/:fileId" element={<AI />} />
