@@ -128,7 +128,7 @@ const LatestActivities = () => {
           <span className="flex flex-row items-center gap-1">
             <p className="text-sm font-semibold">Latest Activities</p>
             <select
-              className="text-sm text-gray-400"
+              className="text-sm text-gray-400 bg-inherit"
               onChange={handleSelectChange}
               value={selectedValue}
               style={{ outline: "none" }}

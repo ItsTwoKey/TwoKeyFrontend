@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -10,6 +10,7 @@ import axios from "axios";
 
 const AddDept = () => {
   const [isOpen, setIsOpen] = useState(false);
+
   const [deptName, setDeptName] = useState("");
   const [hex, setHex] = useState("#4F46E5");
 
@@ -25,16 +26,25 @@ const AddDept = () => {
     try {
       let token = JSON.parse(secureLocalStorage.getItem("token"));
 
+      let body = {
+        name: deptName,
+        metadata: {
+          bg: hex,
+          border: "#B7B6C2",
+        },
+      };
+
       let addDept = await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/createDepts/`,
-        { name: deptName },
+        body,
         {
           headers: {
             Authorization: `Bearer ${token.session.access_token}`,
           },
         }
       );
-      console.log("add dept:", addDept);
+      // console.log("add dept:", addDept);
+      closeDialog();
     } catch (error) {
       console.log("error occurew while adding dept", error);
     }
