@@ -18,20 +18,50 @@ import UserMgmt from "../assets/userMgmt.svg";
 import { useAuth } from "../context/authContext";
 import secureLocalStorage from "react-secure-storage";
 
+let hardCodedDepartments = [
+  { name: "Account", metadata: { bg: "#FFF6F6", border: "#FEB7B7" } },
+  { name: "Finance", metadata: { bg: "#FFF6FF", border: "#FFA9FF" } },
+  { name: "Development", metadata: { bg: "#F6FFF6", border: "#B3FFB3" } },
+  { name: "Manufacturing", metadata: { bg: "#F6F7FF", border: "#B6BEFF" } },
+  { name: "Sales", metadata: { bg: "#FFFFF6", border: "#FFFFA1" } },
+  { name: "Human Resources", metadata: { bg: "#F6FFFE", border: "#C0FFF8" } },
+];
+
 /**
  * Sidebar component for navigation and user-related actions.
  * @returns {JSX.Element} The Sidebar component.
  */
 function SideBar() {
   const location = useLocation();
-
+  const [departments, setDepartments] = useState(hardCodedDepartments);
   const [data, setData] = useState("");
   const { darkMode } = useDarkMode();
   const [picture, setPicture] = useState(null);
   const { profileData } = useAuth();
-  // console.log("Profile Data:", profileData);
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const listDepartments = async () => {
+      try {
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        const departments = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+
+        console.log(departments.data);
+        setDepartments(departments.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    listDepartments();
+  }, []);
 
   const hideSideBar =
     location.pathname === "/" ||
@@ -42,15 +72,6 @@ function SideBar() {
   if (hideSideBar) {
     return null;
   }
-
-  let departments = [
-    { name: "Account", path: "/account" },
-    { name: "Finance", path: "/finance" },
-    { name: "Development", path: "/development" },
-    { name: "Manufacturing", path: "/manufacturing" },
-    { name: "Sales", path: "/sales" },
-    { name: "Human Resources", path: "/humanresources" },
-  ];
 
   /**
    * If the user is unauthorised then no need to show the side panel.
@@ -443,10 +464,10 @@ function SideBarContents({ departments, darkMode }) {
         {departments.map((department, index) => (
           <li key={index} className="min-w-full my-2">
             <Link
-              to={department.path} // Use "to" instead of "href"
+              to={`/department/${department.name}`} // Use "to" instead of "href"
               alt={department.name}
               className={`flex justify-start items-center min-w-full ${
-                location.pathname === department.path
+                location.pathname === department.name
                   ? `p-2 rounded-md text-sm ${
                       darkMode
                         ? "hover:bg-gray-700 bg-gray-600"

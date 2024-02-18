@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { supabase } from "../helper/supabaseClient";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,13 +8,14 @@ import DialogActions from "@mui/material/DialogActions";
 import { useDropzone } from "react-dropzone";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import axios from "axios";
 import * as tus from "tus-js-client";
 import { styled } from "@mui/material/styles";
 import FileIcon from "../assets/fileIcon.svg";
 import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -29,12 +32,51 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 
 const UploadFile = () => {
   const resumableEndpt = process.env.REACT_APP_RESUMABLE_URL;
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [droppedFiles, setDroppedFiles] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [depts, setdepts] = useState([]);
+  const [deptId, setDeptId] = useState("");
+
+  // console.log(location.pathname.split("/")[1]);
+
+  useEffect(() => {
+    const listDepartments = async () => {
+      try {
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        const departments = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+
+        const pathName = location.pathname.split("/department/")[1];
+        // console.log("current path", pathName);
+
+        const matchingDepartment = departments.data.find(
+          (department) => department.name === pathName
+        );
+
+        if (matchingDepartment) {
+          setDeptId(matchingDepartment.id);
+          // console.log(matchingDepartment.id);
+        } else {
+          console.log("Department not found for path:", pathName);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    listDepartments();
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
@@ -73,6 +115,7 @@ const UploadFile = () => {
         },
         onSuccess: function () {
           closeDialog();
+          handleFileIdRetrieval(fileName);
           //   console.log(`Download ${upload.file.name} from ${upload.url}`);
         },
       });
@@ -109,6 +152,53 @@ const UploadFile = () => {
       showSnackbar("Upload failed. Please try again.", "error");
     } finally {
       setUploadProgress(0); // Reset progress after upload is complete
+      setDroppedFiles([]); // Clear dragged files list
+    }
+  };
+
+  const handleFileIdRetrieval = async (desiredFileName) => {
+    try {
+      const { data, error } = await supabase.storage.from("TwoKey").list();
+
+      if (data && data.length > 0) {
+        const file = data.find((item) => item.name === desiredFileName);
+
+        if (file) {
+          console.log("Object id found:", file.id);
+          addFileDepartment(file.id);
+          // shareFiles(file.id);
+        } else {
+          console.log(`Object with name "${desiredFileName}" not found.`);
+        }
+      } else {
+        console.log("No objects found in the 'TwoKey' bucket.");
+      }
+    } catch (error) {
+      console.log("Error occurred while retrieving the file list:", error);
+    }
+  };
+
+  const addFileDepartment = async (fileId) => {
+    try {
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
+
+      let body = {
+        department_ids: [deptId],
+      };
+
+      const addDept = await axios.post(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/addDepartment/${fileId}/`,
+        body,
+        {
+          headers: {
+            authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+
+      console.log("dept added to file", addDept);
+    } catch (error) {
+      console.log("Error occured while adding the file department", error);
     }
   };
 
