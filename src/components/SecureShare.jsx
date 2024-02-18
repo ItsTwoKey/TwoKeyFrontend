@@ -144,7 +144,7 @@ const SecureShare = () => {
         {
           file: [fileId],
           shared_with: securityAllotmentData.selectedUsers,
-          expiration_time: securityAllotmentData.timeDifference,
+          expiration_time: securityAllotmentData.timeDifference?securityAllotmentData.timeDifference:31536000*5,
           security_check: {
             download_enabled: true,
             geo_enabled: securityAllotmentData.location,
