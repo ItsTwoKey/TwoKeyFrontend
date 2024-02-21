@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
@@ -21,6 +21,8 @@ import UserProfile from "./pages/UserProfile";
 import AI from "./pages/AI";
 import Analytics from "./pages/Analytics";
 import ContactUs from "./pages/ContactUs";
+import secureLocalStorage from "react-secure-storage";
+import axios from "axios";
 // import './App.css'
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -29,11 +31,24 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import ErrorPage from "./components/ErrorPage";
 import { useDarkMode } from "./context/darkModeContext";
 
+let hardCodedDepartments = [
+  { name: "Account", metadata: { bg: "#FFF6F6", border: "#FEB7B7" } },
+  { name: "Finance", metadata: { bg: "#FFF6FF", border: "#FFA9FF" } },
+  { name: "Development", metadata: { bg: "#F6FFF6", border: "#B3FFB3" } },
+  { name: "Manufacturing", metadata: { bg: "#F6F7FF", border: "#B6BEFF" } },
+  { name: "Sales", metadata: { bg: "#FFFFF6", border: "#FFFFA1" } },
+  { name: "Human Resources", metadata: { bg: "#F6FFFE", border: "#C0FFF8" } },
+];
+
 const REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
+
+let fetchedDepartments = JSON.parse(secureLocalStorage.getItem("departments"));
 
 const App = () => {
   const { token, refreshAccessToken } = useAuth();
   const isDarkMode = useDarkMode();
+  const [departments, setDepartments] = useState(hardCodedDepartments);
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       refreshAccessToken();
@@ -41,10 +56,18 @@ const App = () => {
     return () => clearInterval(intervalId);
   }, [refreshAccessToken]);
 
+  useEffect(() => {
+    const fetchedDepartments = JSON.parse(
+      secureLocalStorage.getItem("departments")
+    );
+    if (fetchedDepartments) {
+      setDepartments(fetchedDepartments);
+    }
+  }, []);
   return (
     <Router>
       <div className="md:flex ">
-        <SideBar />
+        <SideBar departments={departments} />
         <div className="w-full">
           <TopBar />
 
