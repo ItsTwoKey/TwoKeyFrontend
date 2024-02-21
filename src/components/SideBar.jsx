@@ -31,37 +31,37 @@ let hardCodedDepartments = [
  * Sidebar component for navigation and user-related actions.
  * @returns {JSX.Element} The Sidebar component.
  */
-function SideBar() {
+function SideBar({ departments }) {
   const location = useLocation();
-  const [departments, setDepartments] = useState(hardCodedDepartments);
+  // const [departments, setDepartments] = useState(hardCodedDepartments);
   const [data, setData] = useState("");
   const { darkMode } = useDarkMode();
   const [picture, setPicture] = useState(null);
   const { profileData } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const listDepartments = async () => {
-      try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
-        const departments = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
+  // useEffect(() => {
+  //   const listDepartments = async () => {
+  //     try {
+  //       let token = JSON.parse(secureLocalStorage.getItem("token"));
+  //       const departments = await axios.get(
+  //         `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token.session.access_token}`,
+  //           },
+  //         }
+  //       );
 
-        console.log(departments.data);
-        setDepartments(departments.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  //       console.log(departments.data);
+  //       setDepartments(departments.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
 
-    listDepartments();
-  }, []);
+  //   listDepartments();
+  // }, []);
 
   const hideSideBar =
     location.pathname === "/" ||

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../helper/supabaseClient";
 import axios from "axios";
@@ -11,7 +11,7 @@ import { useAuth } from "../context/authContext";
 import HidePassword from "../assets/hidePassword.svg";
 import ShowPassword from "../assets/showPassword.svg";
 import CircularProgress from "@mui/material/CircularProgress";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const Login = () => {
   let navigate = useNavigate();
@@ -28,8 +28,6 @@ const Login = () => {
   const toggleShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
-
-  // console.log(formData);
 
   function handleChange(event) {
     setFormData((prevFormData) => {
@@ -58,18 +56,16 @@ const Login = () => {
 
       if (error) throw error;
 
-      // setToken(data);
       if (data) {
         secureLocalStorage.setItem("token", JSON.stringify(data));
         fetchProfileData();
       }
 
-      // change the active status
       let body = {
         id: data.user.id,
         is_active: true,
       };
-      // console.log("onboarding body:", body);
+
       try {
         const res = await axios.put(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
@@ -84,7 +80,7 @@ const Login = () => {
         console.log(error);
       }
 
-      navigate("/dashboard");
+      await listDepartments();
     } catch (error) {
       alert(error.message);
     } finally {
@@ -92,22 +88,36 @@ const Login = () => {
     }
   }
 
-  /**
-   * if the user is already logged in then redirect to the dashboard,
-   * instead of returning the login page
-   */
-  if (secureLocalStorage.getItem("token")) {
-    navigate("/dashboard");
-  }
+  const listDepartments = async () => {
+    try {
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      const departments = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
 
+      if (departments.data) {
+        console.log("at login", departments.data);
+        secureLocalStorage.setItem(
+          "departments",
+          JSON.stringify(departments.data)
+        );
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  /**
-   * comment this out on dev mode
-   * as the api call fails from localhost
-   */
-  // if (pageErr) {
-  //   return <ErrorPage error={pageErr} />;
-  // }
+  useEffect(() => {
+    if (secureLocalStorage.getItem("token")) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   return (
     <div className="flex flex-col md:flex-row">
@@ -141,6 +151,7 @@ const Login = () => {
                   name="email"
                   onChange={handleChange}
                   size="small"
+                  autoFocus
                 />
               </span>
             </div>
