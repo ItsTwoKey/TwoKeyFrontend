@@ -8,9 +8,8 @@ import FormControl from "@mui/joy/FormControl";
 import FormHelperText from "@mui/joy/FormHelperText";
 import RadioGroup from "@mui/joy/RadioGroup";
 import Radio from "@mui/joy/Radio";
-import Inviteicon from "../assets/InviteMember.svg";
 
-const InviteMember = (props) => {
+const InviteMember = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -85,17 +84,12 @@ const InviteMember = (props) => {
 
   return (
     <div className="">
-      <div
+      <button
         onClick={openDialog}
-        className="py-4 px-4 rounded-md border bg-[#f7f7ff] flex flex-col items-center hover:bg-indigo-100"
+        className="bg-[#5E5ADB] text-white text-sm rounded-lg py-[5px] px-3"
       >
-        <img
-          src={Inviteicon}
-          alt="invite memeber"
-          className="h-10 aspect-auto"
-        />
-        Invite Member
-      </div>
+        Invite a member
+      </button>
 
       <Dialog
         open={isOpen}

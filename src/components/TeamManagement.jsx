@@ -1,5 +1,5 @@
 import React from "react";
-import InviteOptions from "../components/teamManagement/InviteOptions";
+import InviteMember from "./InviteMember";
 
 import TeamManagementTable from "./TeamManagementTable";
 import PendingInviteTable from "./PendingInviteTable";
@@ -56,7 +56,7 @@ const TeamManagement = () => {
               Download CSV
             </button>
 
-            <InviteOptions />
+            <InviteMember />
           </span>
         </div>
       </div>
