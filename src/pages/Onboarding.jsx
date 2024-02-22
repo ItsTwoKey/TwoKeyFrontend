@@ -11,7 +11,7 @@ import axios from "axios";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { supabase } from "../helper/supabaseClient";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -337,7 +337,7 @@ const Onboarding = () => {
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-600 text-sm font-medium p-1">
-                    New Password *
+                    Password *
                   </label>
                   <input
                     type="password"

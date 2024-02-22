@@ -88,7 +88,7 @@ const App = () => {
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/ai/:fileId" element={<AI />} />
 
-              <Route path="/test" element={<Test />} />
+              <Route path="/department/test" element={<Test />} />
             </Route>
             {/* Public Routes should go below */}
 
