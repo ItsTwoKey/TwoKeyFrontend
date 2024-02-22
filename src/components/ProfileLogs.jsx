@@ -149,7 +149,7 @@ const ProfileLogs = ({ logs, tabValue }) => {
                   </p>
                 </TableCell>
 
-                <TableCell />
+                {tabValue == 3 && <TableCell />}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -176,7 +176,12 @@ const ProfileLogs = ({ logs, tabValue }) => {
                     return 0;
                   })
                   .map((row) => (
-                    <Row key={row.id} row={row} openDrawer={openDrawer} />
+                    <Row
+                      key={row.id}
+                      row={row}
+                      openDrawer={openDrawer}
+                      tabValue={tabValue}
+                    />
                   ))
               ) : (
                 <TableRow>
@@ -201,7 +206,7 @@ const ProfileLogs = ({ logs, tabValue }) => {
 };
 
 function Row(props) {
-  const { row } = props;
+  const { row, tabValue } = props;
   const [open, setOpen] = React.useState(false);
   const [Logs, setLogs] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -333,72 +338,74 @@ function Row(props) {
             <p className="">{formatTimestamp(row.metadata.lastModified)}</p>
           </span>
         </TableCell>
-        <TableCell align="center" sx={{ padding: "7px" }}>
-          <span className="flex flex-row gap-2 justify-center items-center">
-            <button
-              className=""
-              onClick={(event) => {
-                handleMenuClick(event);
-                // setMenuFile(row);
-                console.log(row);
-              }}
-            >
-              <img src={threeDots} height={25} width={25} alt="" />
-            </button>
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              MenuListProps={{
-                "aria-labelledby": "basic-button",
-              }}
-              PaperProps={{
-                style: {
-                  border: "1px solid [#11182626]",
-                  boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.1)",
-                  borderRadius: "6px",
-                },
-              }}
-            >
-              <MenuItem
-                // onClick={handleClose}
-
-                style={{ padding: "0px 10px" }}
+        {tabValue == 3 && (
+          <TableCell align="center" sx={{ padding: "7px" }}>
+            <span className="flex flex-row gap-2 justify-center items-center">
+              <button
+                className=""
+                onClick={(event) => {
+                  handleMenuClick(event);
+                  // setMenuFile(row);
+                  console.log(row);
+                }}
               >
-                <FileShare menuFile={row} />
-              </MenuItem>
-              <MenuItem style={{ padding: "0px 10px" }}>
-                <button
-                  onClick={() => {
-                    // Log the selected file's name when "Edit" is clicked
-                    console.log("Edit file:", row.name);
-                  }}
+                <img src={threeDots} height={25} width={25} alt="" />
+              </button>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+                PaperProps={{
+                  style: {
+                    border: "1px solid [#11182626]",
+                    boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.1)",
+                    borderRadius: "6px",
+                  },
+                }}
+              >
+                <MenuItem
+                  // onClick={handleClose}
+
+                  style={{ padding: "0px 10px" }}
                 >
-                  Edit
-                </button>
-              </MenuItem>
+                  <FileShare menuFile={row} />
+                </MenuItem>
+                <MenuItem style={{ padding: "0px 10px" }}>
+                  <button
+                    onClick={() => {
+                      // Log the selected file's name when "Edit" is clicked
+                      console.log("Edit file:", row.name);
+                    }}
+                  >
+                    Edit
+                  </button>
+                </MenuItem>
 
-              <MenuItem
-                style={{ padding: "0px 10px", color: "#D1293D" }}
-                onClick={() => console.log(row.name, row.owner_email)}
-              >
-                <DeleteFileConfirmation
-                  fileName={row.name}
-                  owner={row.owner_email}
-                />
-              </MenuItem>
-            </Menu>
-          </span>
-        </TableCell>
+                <MenuItem
+                  style={{ padding: "0px 10px", color: "#D1293D" }}
+                  onClick={() => console.log(row.name, row.owner_email)}
+                >
+                  <DeleteFileConfirmation
+                    fileName={row.name}
+                    owner={row.owner_email}
+                  />
+                </MenuItem>
+              </Menu>
+            </span>
+          </TableCell>
+        )}
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
