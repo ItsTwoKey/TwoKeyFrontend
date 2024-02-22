@@ -10,22 +10,38 @@ import Copy from "../assets/copy.svg";
 import AskAI from "../assets/askAi.svg";
 import Assistant from "../assets/assistant.svg";
 import Info from "../assets/info.svg";
+import * as pdfjs from "pdfjs-dist/build/pdf";
+import "pdfjs-dist/build/pdf.worker";
 
 const AIChat = ({ signedUrl }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [fileText, setFileText] = useState("");
   const [error, setError] = useState(null);
-  const [summarizedText, setSummarizedText] = useState({});
+  const [summarizedText, setSummarizedText] = useState("");
 
   const fetchFileText = async () => {
     try {
       const response = await fetch(signedUrl);
-      const text = await response.text();
-      setFileText(text);
-      setError(null);
+      const contentType = response.headers.get("content-type");
+      if (contentType === "application/pdf") {
+        const pdfData = new Uint8Array(await response.arrayBuffer());
+        const loadingTask = pdfjs.getDocument(pdfData);
+        const pdfDocument = await loadingTask.promise;
+        let extractedText = "";
+        for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
+          const page = await pdfDocument.getPage(pageNum);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items.map((item) => item.str).join(" ");
+          extractedText += pageText + " ";
+        }
+        setFileText(extractedText.trim());
+      } else if (contentType === "text/plain" || contentType === "text/csv") {
+        setFileText(await response.text());
+      } else {
+        setError("Unsupported file format");
+      }
     } catch (error) {
-      setFileText("");
       setError("Error fetching file. Please check the URL and try again.");
     }
   };
@@ -49,7 +65,7 @@ const AIChat = ({ signedUrl }) => {
       },
       data: {
         language: "english",
-        summary_percent: 10,
+        summary_percent: 25,
         text: fileText,
       },
     };
@@ -138,7 +154,11 @@ const AIChat = ({ signedUrl }) => {
                   <p className="text-sm font-semibold"> Summary</p>
                 </span>
 
-                <p className="text-sm">{summarizedText.summary}</p>
+                {summarizedText ? (
+                  <p className="text-sm">{summarizedText.summary}</p>
+                ) : (
+                  <p className="text-sm">Summarized text is not available.</p>
+                )}
 
                 <span className="my-4 flex justify-between">
                   <button className="">
@@ -152,6 +172,7 @@ const AIChat = ({ signedUrl }) => {
             </div>
           </div>
         </DialogContent>
+
         <DialogActions
           sx={{
             padding: "15px",

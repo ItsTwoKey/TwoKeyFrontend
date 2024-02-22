@@ -7,7 +7,7 @@ import ProfileLogs from "../components/ProfileLogs";
 import axios from "axios";
 import LatestActivities from "../components/LatestActivities";
 import CustomLogs from "./CustomLogs";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -132,10 +132,10 @@ export default function ProfileTabs() {
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        <ProfileLogs logs={logs} />
+        <ProfileLogs type={"shared"} logs={logs} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <ProfileLogs logs={logs} />
+        <ProfileLogs type={"received"} logs={logs} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         <LatestActivities />

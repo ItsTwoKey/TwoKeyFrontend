@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import DashboardFiles from "../components/DashboardFiles";
 import ProfileLogs from "../components/ProfileLogs";
 import axios from "axios";
-import secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -129,13 +129,13 @@ export default function ProfileTabs() {
         <DashboardFiles />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <ProfileLogs logs={logs} />
+        <ProfileLogs logs={logs} tabValue={value} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        <ProfileLogs logs={logs} />
+        <ProfileLogs logs={logs} tabValue={value} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
-        <ProfileLogs logs={logs} />
+        <ProfileLogs logs={logs} tabValue={value} />
       </CustomTabPanel>
     </Box>
   );

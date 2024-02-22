@@ -23,9 +23,14 @@ import { useAuth } from "../context/authContext";
 import Avatar from "@mui/material/Avatar";
 import FileView from "./FileView";
 import Notes from "../assets/notes.svg";
-import secureLocalStorage from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import FileShare from "./FileShare";
+import DeleteFileConfirmation from "./DeleteFileConfirmation";
+import threeDots from "../assets/threedots.svg";
 
-const ProfileLogs = ({ logs }) => {
+const ProfileLogs = ({ logs, tabValue }) => {
   const { darkMode } = useDarkMode();
   const [sortOrder, setSortOrder] = useState("desc");
   const [sortColumn, setSortColumn] = useState("lastUpdate");
@@ -100,6 +105,8 @@ const ProfileLogs = ({ logs }) => {
     setIsFileViewOpen(false);
   };
 
+  console.log(tabValue);
+
   return (
     <div className={`${darkMode ? "bg-gray-800 text-white" : "text-gray-800"}`}>
       <Box sx={{ width: "100%" }}>
@@ -132,12 +139,7 @@ const ProfileLogs = ({ logs }) => {
                     i
                   </b>
                 </TableCell>
-                {/* <TableCell align="center">
-                  SECURITY
-                  <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
-                    i
-                  </b>
-                </TableCell> */}
+
                 <TableCell align="center">
                   <p
                     className="flex flex-row justify-center items-center"
@@ -146,6 +148,8 @@ const ProfileLogs = ({ logs }) => {
                     LAST UPDATED <img src={UnfoldIcon} alt="↓" />
                   </p>
                 </TableCell>
+
+                <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
@@ -200,7 +204,18 @@ function Row(props) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
   const [Logs, setLogs] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [menuFile, setMenuFile] = useState({});
   const { formatFileSize } = useAuth();
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+    // console.log("fileName", fileName);
+  };
 
   const getLogs = async (fileId) => {
     try {
@@ -215,7 +230,7 @@ function Row(props) {
           },
         }
       );
-      console.log(`received`, accessLogs.data);
+      // console.log(`received`, accessLogs.data);
 
       setLogs(accessLogs.data);
     } catch (error) {
@@ -316,6 +331,72 @@ function Row(props) {
           <span className="flex flex-row gap-2 justify-center items-center">
             <img src={Notes} alt="." />
             <p className="">{formatTimestamp(row.metadata.lastModified)}</p>
+          </span>
+        </TableCell>
+        <TableCell align="center" sx={{ padding: "7px" }}>
+          <span className="flex flex-row gap-2 justify-center items-center">
+            <button
+              className=""
+              onClick={(event) => {
+                handleMenuClick(event);
+                // setMenuFile(row);
+                console.log(row);
+              }}
+            >
+              <img src={threeDots} height={25} width={25} alt="" />
+            </button>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+              PaperProps={{
+                style: {
+                  border: "1px solid [#11182626]",
+                  boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.1)",
+                  borderRadius: "6px",
+                },
+              }}
+            >
+              <MenuItem
+                // onClick={handleClose}
+
+                style={{ padding: "0px 10px" }}
+              >
+                <FileShare menuFile={row} />
+              </MenuItem>
+              <MenuItem style={{ padding: "0px 10px" }}>
+                <button
+                  onClick={() => {
+                    // Log the selected file's name when "Edit" is clicked
+                    console.log("Edit file:", row.name);
+                  }}
+                >
+                  Edit
+                </button>
+              </MenuItem>
+
+              <MenuItem
+                style={{ padding: "0px 10px", color: "#D1293D" }}
+                onClick={() => console.log(row.name, row.owner_email)}
+              >
+                <DeleteFileConfirmation
+                  fileName={row.name}
+                  owner={row.owner_email}
+                />
+              </MenuItem>
+            </Menu>
           </span>
         </TableCell>
       </TableRow>
