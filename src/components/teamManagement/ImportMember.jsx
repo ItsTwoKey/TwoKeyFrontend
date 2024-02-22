@@ -55,6 +55,30 @@ const ImportMember = (props) => {
     setDroppedFiles([]);
   };
 
+  const inviteMembers = async (emails) => {
+    try {
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
+
+      let body = {
+        emails: emails,
+      };
+
+      let response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/invite/`,
+        body,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+      console.log("invite members:", response);
+      // closeDialog();
+    } catch (error) {
+      console.log("error occurew while adding dept", error);
+    }
+  };
+
   const readExcel = (file) => {
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -74,12 +98,14 @@ const ImportMember = (props) => {
         )
         .join(",");
       const emails = data.replaceAll("'", "").split(",");
-      setEmailList(emails);
+      // setEmailList(emails);
+      inviteMembers(emails);
       console.log(emails);
     };
 
     reader.readAsBinaryString(file);
   };
+
   const readCSV = (file) => {
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -88,7 +114,8 @@ const ImportMember = (props) => {
         .split(",")
         .filter((i) => i.split("@").length > 1 && i.split(".").length > 1);
       const emails = data.map((email) => email.replaceAll("'", ""));
-      setEmailList(emails);
+      // setEmailList(emails);
+      inviteMembers(emails);
       console.log(emails);
     };
     reader.readAsText(file);
@@ -131,9 +158,7 @@ const ImportMember = (props) => {
       >
         <DialogTitle>
           <span>
-            <h4 className="font-semibold text-md">
-              Bulk Invite
-            </h4>
+            <h4 className="font-semibold text-md">Bulk Invite</h4>
           </span>
         </DialogTitle>
         <DialogContent
@@ -150,7 +175,8 @@ const ImportMember = (props) => {
             >
               <input {...getInputProps()} />
               <p className="text-sm">
-                Drag and drop CSV / XLSX files here, or click here to select files for Bulk Member Invite
+                Drag and drop CSV / XLSX files here, or click here to select
+                files for Bulk Member Invite
               </p>
             </div>
             {droppedFiles.length > 0 && (
