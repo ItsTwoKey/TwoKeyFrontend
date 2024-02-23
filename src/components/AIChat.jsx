@@ -9,39 +9,26 @@ import Restart from "../assets/restart.svg";
 import Copy from "../assets/copy.svg";
 import AskAI from "../assets/askAi.svg";
 import Assistant from "../assets/assistant.svg";
+import Skeleton from "@mui/material/Skeleton";
 import Info from "../assets/info.svg";
-import * as pdfjs from "pdfjs-dist/build/pdf";
-import "pdfjs-dist/build/pdf.worker";
 
 const AIChat = ({ signedUrl }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState("");
+  const [question, setQuestion] = useState("");
   const [fileText, setFileText] = useState("");
   const [error, setError] = useState(null);
-  const [summarizedText, setSummarizedText] = useState("");
+  const [summarizedText, setSummarizedText] = useState({});
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchFileText = async () => {
     try {
       const response = await fetch(signedUrl);
-      const contentType = response.headers.get("content-type");
-      if (contentType === "application/pdf") {
-        const pdfData = new Uint8Array(await response.arrayBuffer());
-        const loadingTask = pdfjs.getDocument(pdfData);
-        const pdfDocument = await loadingTask.promise;
-        let extractedText = "";
-        for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
-          const page = await pdfDocument.getPage(pageNum);
-          const textContent = await page.getTextContent();
-          const pageText = textContent.items.map((item) => item.str).join(" ");
-          extractedText += pageText + " ";
-        }
-        setFileText(extractedText.trim());
-      } else if (contentType === "text/plain" || contentType === "text/csv") {
-        setFileText(await response.text());
-      } else {
-        setError("Unsupported file format");
-      }
+      const text = await response.text();
+      setFileText(text);
+      setError(null);
     } catch (error) {
+      setFileText("");
       setError("Error fetching file. Please check the URL and try again.");
     }
   };
@@ -57,23 +44,58 @@ const AIChat = ({ signedUrl }) => {
 
     const options = {
       method: "POST",
-      url: "https://text-analysis12.p.rapidapi.com/summarize-text/api/v1.1",
+      url: "https://open-ai21.p.rapidapi.com/summary",
       headers: {
         "content-type": "application/json",
         "X-RapidAPI-Key": "4170d6fec5msh4817aca35c9333ap1cae79jsnc7d7a464dda6",
-        "X-RapidAPI-Host": "text-analysis12.p.rapidapi.com",
+        "X-RapidAPI-Host": "open-ai21.p.rapidapi.com",
       },
       data: {
-        language: "english",
-        summary_percent: 25,
-        text: fileText,
+        text: "ohannes Gutenberg (1398 – 1468) was a German goldsmith and publisher who introduced printing to Europe. His introduction of mechanical movable type printing to Europe started the Printing Revolution and is widely regarded as the most important event of the modern period. It played a key role in the scientific revolution and laid the basis for the modern knowledge-based economy and the spread of learning to the masses.",
+      },
+    };
+
+    try {
+      const response = await axios.request(options);
+      console.log(response.data.result);
+      setMessages([...messages, { user: "Ai", text: response.data.result }]);
+      setSummarizedText(response.data.result);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const askAi = async () => {
+    // Add the user's question to the messages array
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { user: "Me", text: question },
+    ]);
+    setQuestion(""); // Clear the input field after asking the question
+
+    const options = {
+      method: "POST",
+      url: "https://open-ai21.p.rapidapi.com/qa",
+      headers: {
+        "content-type": "application/json",
+        "X-RapidAPI-Key": "4170d6fec5msh4817aca35c9333ap1cae79jsnc7d7a464dda6",
+        "X-RapidAPI-Host": "open-ai21.p.rapidapi.com",
+      },
+      data: {
+        question: question,
+        context: fileText,
       },
     };
 
     try {
       const response = await axios.request(options);
       console.log(response.data);
-      setSummarizedText(response.data);
+
+      // Add the AI's response to the messages array
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { user: "Ai", text: response.data.result },
+      ]);
     } catch (error) {
       console.error(error);
     }
@@ -87,7 +109,10 @@ const AIChat = ({ signedUrl }) => {
 
   const handleAskAiClick = () => {
     // alert(message);
-    if (message.length) console.log(message);
+    if (question.length) console.log(question);
+    setMessages([...messages, { user: "Me", text: question }]);
+    setQuestion("");
+    console.log([...messages, { user: "Me", text: question }]);
   };
 
   const handleCopyToClipboard = () => {
@@ -146,33 +171,35 @@ const AIChat = ({ signedUrl }) => {
             backgroundColor: "#F7F8FA",
           }}
         >
-          <div className="my-2 w-[486px] ">
-            <div className="flex flex-col justify-between py-4 ">
-              <div className="w-full mx-2 p-4 rounded-[27px] bg-white shadow-lg">
-                <span className="flex gap-2 my-2">
-                  <img src={Assistant} alt="AI" />
-                  <p className="text-sm font-semibold"> Summary</p>
-                </span>
-
-                {summarizedText ? (
-                  <p className="text-sm">{summarizedText.summary}</p>
-                ) : (
-                  <p className="text-sm">Summarized text is not available.</p>
-                )}
-
-                <span className="my-4 flex justify-between">
-                  <button className="">
-                    <img src={Info} alt="i" />
-                  </button>
-                  <button onClick={handleCopyToClipboard}>
-                    <img src={Copy} alt="Copy" />
-                  </button>
-                </span>
-              </div>
+          <div className="my-2 w-[486px]">
+            <div className="flex flex-col justify-between py-4">
+              {messages &&
+                messages.map((message, index) => (
+                  <div
+                    key={index}
+                    className={`mx-2 my-2 flex flex-row gap-2 ${
+                      message.user === "Me" ? " justify-end" : " justify-start"
+                    }`}
+                  >
+                    <img
+                      src={message.user === "Me" ? Assistant : AI}
+                      alt={message.user}
+                      className="w-[20px] h-[20px] mt-2"
+                    />
+                    <div
+                      className={`px-4 py-3 rounded-xl max-w-[400px] text-gray-100 ${
+                        message.user === "Me"
+                          ? "bg-green-500 "
+                          : "bg-violet-400 "
+                      }`}
+                    >
+                      <p className="text-sm">{message.text}</p>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </DialogContent>
-
         <DialogActions
           sx={{
             padding: "15px",
@@ -185,14 +212,14 @@ const AIChat = ({ signedUrl }) => {
           <input
             type="text"
             placeholder="Send a message......."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
             className="w-full py-2 px-6 rounded-[8px] border border-black"
           />
           <button
-            onClick={handleAskAiClick}
+            onClick={askAi}
             type="submit"
-            className="bg-[#A4A4A4] p-2 rounded-[8px] "
+            className="bg-green-500 py-2 px-3 rounded-[8px] "
           >
             <img src={AskAI} alt="ask" />
           </button>
