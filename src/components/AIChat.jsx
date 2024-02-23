@@ -47,11 +47,11 @@ const AIChat = ({ signedUrl }) => {
       url: "https://open-ai21.p.rapidapi.com/summary",
       headers: {
         "content-type": "application/json",
-        "X-RapidAPI-Key": "4170d6fec5msh4817aca35c9333ap1cae79jsnc7d7a464dda6",
+        "X-RapidAPI-Key": "cd0c11c4b1msh85028df5f749931p19bd27jsnb65b743125e9",
         "X-RapidAPI-Host": "open-ai21.p.rapidapi.com",
       },
       data: {
-        text: "ohannes Gutenberg (1398 – 1468) was a German goldsmith and publisher who introduced printing to Europe. His introduction of mechanical movable type printing to Europe started the Printing Revolution and is widely regarded as the most important event of the modern period. It played a key role in the scientific revolution and laid the basis for the modern knowledge-based economy and the spread of learning to the masses.",
+        text: fileText,
       },
     };
 
@@ -78,7 +78,7 @@ const AIChat = ({ signedUrl }) => {
       url: "https://open-ai21.p.rapidapi.com/qa",
       headers: {
         "content-type": "application/json",
-        "X-RapidAPI-Key": "4170d6fec5msh4817aca35c9333ap1cae79jsnc7d7a464dda6",
+        "X-RapidAPI-Key": "cd0c11c4b1msh85028df5f749931p19bd27jsnb65b743125e9",
         "X-RapidAPI-Host": "open-ai21.p.rapidapi.com",
       },
       data: {
@@ -125,6 +125,8 @@ const AIChat = ({ signedUrl }) => {
 
   const closeDialog = () => {
     setIsOpen(false);
+    setFileText("");
+    setMessages([]);
   };
 
   return (
