@@ -40,6 +40,7 @@ function SideBar({ departments }) {
   const { profileData } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+
   // useEffect(() => {
   //   const listDepartments = async () => {
   //     try {
@@ -52,6 +53,7 @@ function SideBar({ departments }) {
   //           },
   //         }
   //       );
+
 
   //       console.log(departments.data);
   //       setDepartments(departments.data);
@@ -317,7 +319,7 @@ function SideBarContents({ departments, darkMode }) {
     // console.log("onboarding body:", body);
     try {
       const res = axios.put(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
         body,
         {
           headers: {

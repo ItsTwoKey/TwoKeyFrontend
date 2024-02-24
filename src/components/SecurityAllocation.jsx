@@ -54,7 +54,7 @@ const SecurityAllocation = ({
     let token = JSON.parse(secureLocalStorage.getItem("token"));
     try {
       const userList = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users`,
         {
           headers: {
             Authorization: `Bearer ${token.session.access_token}`,

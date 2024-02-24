@@ -39,7 +39,7 @@ const Security = () => {
 
       try {
         const locations = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/listLocation/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/listLocation`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,

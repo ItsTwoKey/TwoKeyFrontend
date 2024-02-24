@@ -161,7 +161,7 @@ export const AuthProvider = ({ children }) => {
       let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const recentFilesFromBackend = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files`,
         {
           headers: {
             Authorization: `Bearer ${token.session.access_token}`,
@@ -238,7 +238,7 @@ export const AuthProvider = ({ children }) => {
 
       if (token) {
         const res = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getProfileInfo/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getProfileInfo`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -300,7 +300,7 @@ export const AuthProvider = ({ children }) => {
     let token = JSON.parse(secureLocalStorage.getItem("token"));
     try {
       const locations = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/file/listLocation/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/file/listLocation`,
 
         {
           headers: {

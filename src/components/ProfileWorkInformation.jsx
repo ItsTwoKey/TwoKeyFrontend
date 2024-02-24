@@ -24,7 +24,7 @@ const ProfileWorkInformation = ({ profileData }) => {
       try {
         let token = JSON.parse(secureLocalStorage.getItem("token"));
         const dep = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -44,7 +44,7 @@ const ProfileWorkInformation = ({ profileData }) => {
     let token = JSON.parse(secureLocalStorage.getItem("token"));
     if (token) {
       const res = await axios.put(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
         {
           id: token.user.id,
           role_priv: workFormData.designation,

@@ -35,7 +35,7 @@ const AddDept = () => {
       };
 
       let addDept = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/createDepts/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/createDepts`,
         body,
         {
           headers: {

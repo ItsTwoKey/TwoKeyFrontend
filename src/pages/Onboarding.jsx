@@ -70,7 +70,7 @@ const Onboarding = () => {
       try {
         let token = JSON.parse(secureLocalStorage.getItem("token"));
         const dep = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -158,7 +158,7 @@ const Onboarding = () => {
   //       console.log("onboarding body:", body);
   //       try {
   //         const res = await axios.put(
-  //           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
+  //           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
   //           body,
   //           {
   //             headers: {
@@ -280,7 +280,7 @@ const Onboarding = () => {
         console.log("onboarding body:", body);
         try {
           const res = await axios.put(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
             body,
             {
               headers: {

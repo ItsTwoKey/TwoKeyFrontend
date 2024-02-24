@@ -114,7 +114,7 @@ const DueDate = () => {
     setTimeout(() => setSelectedDue(null), 100);
     try {
       const res = await axios.put(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/editShare/${Id}/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/editShare/${Id}`,
         body,
         {
           headers: {

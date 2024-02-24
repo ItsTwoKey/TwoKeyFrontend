@@ -49,7 +49,7 @@ const UploadFile = () => {
       try {
         let token = JSON.parse(secureLocalStorage.getItem("token"));
         const departments = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -187,7 +187,7 @@ const UploadFile = () => {
       };
 
       const addDept = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/addDepartment/${fileId}/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/addDepartment/${fileId}`,
         body,
         {
           headers: {
