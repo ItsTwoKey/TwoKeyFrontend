@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -9,8 +9,35 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import RevokeInvite from "./RevokeInvite";
 import ResendInvite from "./ResendInvite";
+import secureLocalStorage from "react-secure-storage";
+import axios from "axios";
 
 export default function PendingInviteTable() {
+  const [pendingInvites, setPendingInvites] = useState([]);
+
+  useEffect(() => {
+    const listPendingInvites = async () => {
+      try {
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        const invites = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/invites/pending`,
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+
+        console.log(invites.data);
+        setPendingInvites(invites.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    listPendingInvites();
+  }, []);
+
   const columns = [
     { id: "name", label: "Team Member", minWidth: 170 },
     { id: "status", label: "Status", minWidth: 60 },
@@ -18,23 +45,6 @@ export default function PendingInviteTable() {
     { id: "resendInvite", label: " ", minWidth: 100 },
     { id: "revokeInvite", label: " ", minWidth: 100 },
   ];
-
-  // Sample data for demonstration
-  const rows = [createData()];
-
-  function createData() {
-    return {
-      name: "John Doe",
-      status: (
-        <p className="bg-[#ECFDF3] text-center text-green-700 rounded-full py-1 px-3">
-          Active
-        </p>
-      ),
-      inviteSend: "11/11/2023",
-      resendInvite: <ResendInvite />,
-      revokeInvite: <RevokeInvite />,
-    };
-  }
 
   return (
     <div>
@@ -55,7 +65,7 @@ export default function PendingInviteTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, index) => (
+            {pendingInvites.map((row, index) => (
               <TableRow key={index}>
                 {columns.map((column) => (
                   <TableCell
@@ -78,8 +88,16 @@ export default function PendingInviteTable() {
                             variant="rounded"
                           />
                         </Tooltip>
-                        {row.name}
+                        {row.email} {/* Display user's email */}
                       </div>
+                    ) : column.id === "resendInvite" ? (
+                      <ResendInvite
+                        key={row.id}
+                        id={row.id}
+                        email={row.email}
+                      />
+                    ) : column.id === "revokeInvite" ? (
+                      <RevokeInvite key={row.id} id={row.id} />
                     ) : (
                       row[column.id]
                     )}

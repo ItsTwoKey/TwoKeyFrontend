@@ -53,7 +53,7 @@ const InviteMember = (props) => {
       };
 
       let response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/invite/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/invite`,
         body,
         {
           headers: {
@@ -64,7 +64,7 @@ const InviteMember = (props) => {
       console.log("invite member:", response);
       closeDialog();
     } catch (error) {
-      console.log("error occurew while adding dept", error);
+      console.log("error occurew while inviting user", error);
     }
   };
 

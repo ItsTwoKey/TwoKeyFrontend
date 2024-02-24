@@ -92,7 +92,7 @@ const Login = () => {
     try {
       let token = JSON.parse(secureLocalStorage.getItem("token"));
       const departments = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
         {
           headers: {
             Authorization: `Bearer ${token.session.access_token}`,
