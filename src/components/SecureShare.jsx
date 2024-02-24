@@ -109,6 +109,7 @@ const SecureShare = () => {
       console.error("Error occurred in file upload:", error);
       showSnackbar("Upload failed. Please try again.", "error");
     } finally {
+      setSelectedFiles([])  // Reset selection
       setUploadProgress(0); // Reset progress after upload is complete
     }
   };
@@ -340,7 +341,7 @@ const SecureShare = () => {
                 : "bg-gray-400"
             } `}
             onClick={handleFinalUpload}
-            disabled={!selectedFiles.length}
+            disabled={!selectedFiles.length || uploadProgress }
           >
             Share
           </button>
