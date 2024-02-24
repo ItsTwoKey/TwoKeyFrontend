@@ -47,7 +47,7 @@ let fetchedDepartments = JSON.parse(secureLocalStorage.getItem("departments"));
 const App = () => {
   const { token, refreshAccessToken } = useAuth();
   const isDarkMode = useDarkMode();
-  const [departments, setDepartments] = useState(hardCodedDepartments);
+  // const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -56,18 +56,18 @@ const App = () => {
     return () => clearInterval(intervalId);
   }, [refreshAccessToken]);
 
-  useEffect(() => {
-    const fetchedDepartments = JSON.parse(
-      secureLocalStorage.getItem("departments")
-    );
-    if (fetchedDepartments) {
-      setDepartments(fetchedDepartments);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const fetchedDepartments = JSON.parse(
+  //     secureLocalStorage.getItem("departments")
+  //   );
+  //   if (fetchedDepartments) {
+  //     setDepartments(fetchedDepartments);
+  //   }
+  // }, []);
   return (
     <Router>
       <div className="md:flex ">
-        <SideBar departments={departments} />
+        <SideBar />
         <div className="w-full">
           <TopBar />
 

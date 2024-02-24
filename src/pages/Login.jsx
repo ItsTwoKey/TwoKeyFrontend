@@ -80,7 +80,8 @@ const Login = () => {
         console.log(error);
       }
 
-      await listDepartments();
+    listDepartments();
+    navigate("/dashboard");
     } catch (error) {
       alert(error.message);
     } finally {

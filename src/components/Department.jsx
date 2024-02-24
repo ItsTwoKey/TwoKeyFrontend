@@ -33,6 +33,7 @@ const Department = () => {
         );
 
         console.log(departments.data);
+        secureLocalStorage.setItem("departments", JSON.stringify(departments.data));
         setNewDepartments(departments.data);
       } catch (error) {
         console.log(error);
