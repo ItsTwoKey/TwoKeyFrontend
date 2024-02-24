@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { supabase } from "../helper/supabaseClient";
+import axios from "axios";
+import secureLocalStorage from "react-secure-storage";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -8,14 +10,15 @@ import FormControl from "@mui/joy/FormControl";
 import FormHelperText from "@mui/joy/FormHelperText";
 import RadioGroup from "@mui/joy/RadioGroup";
 import Radio from "@mui/joy/Radio";
+import Inviteicon from "../assets/InviteMember.svg";
 
-const InviteMember = () => {
+const InviteMember = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     emailAddress: "",
-    role: "employee", // default role
+    role: "employee",
   });
 
   const openDialog = () => {
@@ -42,54 +45,42 @@ const InviteMember = () => {
   };
 
   const handleInvite = async () => {
-    console.log("Invite button clicked. Data:", formData);
-
     try {
-      const { data, error } = await supabase.auth.admin.inviteUserByEmail(
-        "trimbakeakash5@gmail.com"
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
+
+      let body = {
+        emails: [formData.emailAddress],
+      };
+
+      let response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/invite/`,
+        body,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
       );
-      console.log("Invite", data);
+      console.log("invite member:", response);
+      closeDialog();
     } catch (error) {
-      console.log(error);
+      console.log("error occurew while adding dept", error);
     }
-    // closeDialog();
   };
-
-  // const handleInvite = async () => {
-  //   try {
-  //     // Perform any client-side validation before sending the invite
-
-  //     // Call the Supabase function to send the email invite
-
-  //     const { data, error } = await supabase.rpc("sendEmailInvite", {
-  //       email: formData.emailAddress,
-  //       firstName: formData.firstName,
-  //       lastName: formData.lastName,
-  //       role: formData.role,
-  //     });
-
-  //     if (error) {
-  //       console.error("Error sending email invite:", error.message);
-  //       // Handle error, show a message to the user, etc.
-  //     } else {
-  //       console.log("Email invite sent successfully:", data);
-  //       // You might want to show a success message to the user
-  //       closeDialog();
-  //     }
-  //   } catch (error) {
-  //     console.error("Unexpected error:", error.message);
-  //     // Handle unexpected errors
-  //   }
-  // };
 
   return (
     <div className="">
-      <button
+      <div
         onClick={openDialog}
-        className="bg-[#5E5ADB] text-white text-sm rounded-lg py-[5px] px-3"
+        className="py-4 px-4 rounded-md border bg-[#f7f7ff] flex flex-col items-center hover:bg-indigo-100"
       >
-        Invite a member
-      </button>
+        <img
+          src={Inviteicon}
+          alt="invite memeber"
+          className="h-10 aspect-auto"
+        />
+        Invite Member
+      </div>
 
       <Dialog
         open={isOpen}
@@ -201,14 +192,14 @@ const InviteMember = () => {
         </DialogContent>
         <DialogActions sx={{ padding: "10px" }}>
           <button
-            className="px-2 py-1 mx-2 rounded-lg shadow-sm border border-gray-300"
+            className="px-2 py-1 mx-2 rounded-lg shadow-sm border border-gray-300 hover:text-red-400"
             onClick={closeDialog}
             color="primary"
           >
             Cancel
           </button>
           <button
-            className="px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white"
+            className="px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] hover:bg-indigo-400 text-white"
             onClick={handleInvite}
           >
             Invite
