@@ -27,7 +27,7 @@ const ProfileAddressInformation = ({ profileData, isEditing }) => {
         let token = JSON.parse(secureLocalStorage.getItem("token"));
         if (token) {
           const res = await axios.put(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
             {
               id: token.user.id,
               country: addressFormData.country,

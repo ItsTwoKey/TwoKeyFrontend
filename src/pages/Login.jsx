@@ -72,7 +72,7 @@ const Login = () => {
       // console.log("onboarding body:", body);
       try {
         const res = await axios.put(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
           body,
           {
             headers: {

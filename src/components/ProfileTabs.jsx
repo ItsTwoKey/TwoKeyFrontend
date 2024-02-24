@@ -61,7 +61,7 @@ export default function ProfileTabs() {
             url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received`;
             break;
           case 3:
-            url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/download/`;
+            url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/download`;
             break;
 
           default:

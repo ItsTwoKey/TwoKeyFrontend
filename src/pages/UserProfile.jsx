@@ -40,7 +40,7 @@ const UserProfile = () => {
       try {
         let token = JSON.parse(secureLocalStorage.getItem("token"));
         const dep = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -57,7 +57,7 @@ const UserProfile = () => {
       try {
         let token = JSON.parse(secureLocalStorage.getItem("token"));
         const rolesData = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/role/listRoles/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/role/listRoles`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,

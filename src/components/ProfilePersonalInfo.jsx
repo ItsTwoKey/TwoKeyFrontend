@@ -46,7 +46,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
         };
 
         const res = await axios.put(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
           updateData,
           {
             headers: {
@@ -69,7 +69,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
       try {
         let token = JSON.parse(secureLocalStorage.getItem("token"));
         const dep = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,

@@ -45,7 +45,7 @@ function SideBar() {
       try {
         let token = JSON.parse(secureLocalStorage.getItem("token"));
         const departments = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
@@ -317,7 +317,7 @@ function SideBarContents({ departments, darkMode }) {
     // console.log("onboarding body:", body);
     try {
       const res = axios.put(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
         body,
         {
           headers: {

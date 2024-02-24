@@ -45,7 +45,7 @@ const FileShare = ({ menuFile }) => {
       let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       const res = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/shareFile/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/shareFile`,
         {
           file: [menuFile.id],
           shared_with: securityAllotmentData.selectedUsers,

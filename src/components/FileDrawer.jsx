@@ -72,7 +72,7 @@ const FileDrawer = ({
         longitude: 73.82762833796289,
       };
       const presignedUrl = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getPresigned/${selectedFileInfo.id}/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getPresigned/${selectedFileInfo.id}`,
         body,
         {
           headers: {
