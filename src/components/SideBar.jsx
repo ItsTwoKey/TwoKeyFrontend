@@ -31,39 +31,15 @@ let hardCodedDepartments = [
  * Sidebar component for navigation and user-related actions.
  * @returns {JSX.Element} The Sidebar component.
  */
-function SideBar({ departments }) {
+function SideBar() {
   const location = useLocation();
-  // const [departments, setDepartments] = useState(hardCodedDepartments);
+  
   const [data, setData] = useState("");
   const { darkMode } = useDarkMode();
   const [picture, setPicture] = useState(null);
   const { profileData } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-
-  // useEffect(() => {
-  //   const listDepartments = async () => {
-  //     try {
-  //       let token = JSON.parse(secureLocalStorage.getItem("token"));
-  //       const departments = await axios.get(
-  //         `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts/`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token.session.access_token}`,
-  //           },
-  //         }
-  //       );
-
-
-  //       console.log(departments.data);
-  //       setDepartments(departments.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   listDepartments();
-  // }, []);
 
   const hideSideBar =
     location.pathname === "/" ||
@@ -150,7 +126,7 @@ function SideBar({ departments }) {
                 Twokey
               </a>
             </div>
-            <SideBarContents departments={departments} darkMode={darkMode} />
+            <SideBarContents darkMode={darkMode} />
             <div className="my-12"></div>
           </div>
           <div
@@ -236,7 +212,7 @@ function SideBar({ departments }) {
                 Twokey
               </Link>
             </div>
-            <SideBarContents departments={departments} darkMode={darkMode} />
+            <SideBarContents darkMode={darkMode} />
           </div>
           <div
             className={`sticky bottom-0 bg-white ${
@@ -294,8 +270,9 @@ function SideBar({ departments }) {
  * @param {boolean} props.darkMode - The dark mode state.
  * @returns {JSX.Element} The SidebarContents component.
  */
-function SideBarContents({ departments, darkMode }) {
+function SideBarContents({ darkMode }) {
   const { profileData, setProfileData, setToken } = useAuth();
+  const [departments, setDepartments] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -308,6 +285,35 @@ function SideBarContents({ departments, darkMode }) {
   //     }
   //   }
   // }, [profileData]);
+  useEffect(() => {
+    const listDepartments = async () => {
+      try {
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let cachedDepartments = JSON.parse(secureLocalStorage.getItem("departments"));
+  
+        if (cachedDepartments) {
+          setDepartments(cachedDepartments);
+        } else {
+          const response = await axios.get(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
+            {
+              headers: {
+                Authorization: `Bearer ${token.session.access_token}`,
+              },
+            }
+          );
+  
+          const departmentsData = response.data;
+          secureLocalStorage.setItem("departments", JSON.stringify(departmentsData));
+          setDepartments(departmentsData);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    listDepartments();
+  }, []);
 
   function handleLogout() {
     // change the active status
