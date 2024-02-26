@@ -33,13 +33,12 @@ let hardCodedDepartments = [
  */
 function SideBar() {
   const location = useLocation();
-  
+
   const [data, setData] = useState("");
   const { darkMode } = useDarkMode();
   const [picture, setPicture] = useState(null);
   const { profileData } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
 
   const hideSideBar =
     location.pathname === "/" ||
@@ -189,7 +188,7 @@ function SideBar() {
       >
         <nav
           className={` ${
-            !isMenuOpen && "hide-sidebar h-screen w-full"
+            !isMenuOpen && "hide-sidebar h-full w-full"
           }  px-4   border-r border-r-gray-200 ${
             darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
           }`}
@@ -289,8 +288,12 @@ function SideBarContents({ darkMode }) {
     const listDepartments = async () => {
       try {
         let token = JSON.parse(secureLocalStorage.getItem("token"));
-        let cachedDepartments = JSON.parse(secureLocalStorage.getItem("departments"));
-  
+        let cachedDepartments = JSON.parse(
+          secureLocalStorage.getItem("departments")
+        );
+
+        console.log(cachedDepartments);
+
         if (cachedDepartments) {
           setDepartments(cachedDepartments);
         } else {
@@ -302,16 +305,19 @@ function SideBarContents({ darkMode }) {
               },
             }
           );
-  
+
           const departmentsData = response.data;
-          secureLocalStorage.setItem("departments", JSON.stringify(departmentsData));
+          secureLocalStorage.setItem(
+            "departments",
+            JSON.stringify(departmentsData)
+          );
           setDepartments(departmentsData);
         }
       } catch (error) {
         console.log(error);
       }
     };
-  
+
     listDepartments();
   }, []);
 
@@ -474,6 +480,12 @@ function SideBarContents({ darkMode }) {
             <Link
               to={`/department/${department.name}`} // Use "to" instead of "href"
               alt={department.name}
+              style={{
+                backgroundColor: department.metadata.bg,
+                borderColor: department.metadata.border, // Set border color dynamically
+                borderWidth: "1px", // You can adjust the border width as needed
+                borderStyle: "solid", // Set the border style
+              }}
               className={`flex justify-start items-center min-w-full ${
                 location.pathname === department.name
                   ? `p-2 rounded-md text-sm ${
@@ -489,7 +501,7 @@ function SideBarContents({ darkMode }) {
               }`}
             >
               {departmentIcons[department.name]}
-              <p className="px-2">{department.name}</p>
+              <p className={`px-2 `}>{department.name}</p>
             </Link>
           </li>
         ))}

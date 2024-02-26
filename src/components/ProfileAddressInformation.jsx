@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const ProfileAddressInformation = ({ profileData, isEditing }) => {
   const [addressFormData, setAddressFormData] = useState({
     country: profileData?.country || "",
     state: profileData?.state || "",
     city: profileData?.city || "",
-    postal_code: profileData?.postal_code || "",
+    postal_code: profileData?.postal_code || 0,
   });
 
   const [prevIsEditing, setPrevIsEditing] = useState(isEditing);
@@ -17,7 +17,7 @@ const ProfileAddressInformation = ({ profileData, isEditing }) => {
       country: profileData?.country || "",
       state: profileData?.state || "",
       city: profileData?.city || "",
-      postal_code: profileData?.postal_code || "",
+      postal_code: profileData?.postal_code || 0,
     });
   }, [profileData]);
 

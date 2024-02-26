@@ -7,7 +7,7 @@ import ProfileTabs from "../components/ProfileTabs";
 import Pen from "../assets/pen.svg";
 import axios from "axios";
 import ErrorPage from "../components/ErrorPage";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -144,10 +144,17 @@ const Profile = () => {
               {profileData.role_priv ? profileData.role_priv : "Position"}
             </h5>
             <p className="text-sm text-gray-500">
-              {profileData
-                ? `${profileData.city}, ${profileData.state}, ${profileData.country}`
-                : "Address"}
+              {profileData ? (
+                <>
+                  {profileData.city && <>{profileData.city}, </>}
+                  {profileData.state && <>{profileData.state}, </>}
+                  {profileData.country && <>{profileData.country}</>}
+                </>
+              ) : (
+                "Address"
+              )}
             </p>
+
             {/* <button onClick={getProfileData}>getProfileData</button> */}
           </div>
         </div>

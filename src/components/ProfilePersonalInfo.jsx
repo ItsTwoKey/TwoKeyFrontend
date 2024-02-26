@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import secureLocalStorage from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const ProfilePersonalInfo = ({ profileData, isEditing }) => {
   const [formData, setFormData] = useState({
     firstName: profileData?.name || "",
     lastName: profileData?.last_name || "",
     email: profileData?.email || "",
-    phone: profileData?.phone || "",
+    phone: profileData?.phone || 0,
     designation: profileData?.role_priv || "",
     department: profileData?.dept || "",
   });
@@ -20,7 +20,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
       firstName: profileData?.name || "",
       lastName: profileData?.last_name || "",
       email: profileData?.email || "",
-      phone: profileData?.phone || "",
+      phone: profileData?.phone || 0,
       designation: profileData?.role_priv || "",
       department: profileData?.dept || "",
     });
