@@ -139,12 +139,24 @@ const RecentFiles = () => {
 
       if (recentFilesFromBackend.data) {
         const mappedFiles = recentFilesFromBackend.data.map((file) => {
+          // destucture and extract dept name of every file
+          try {
+            const [{ depts }, ...extra] = file.file_info;
+            const [{ name }, ...more] = depts;
+            file.department = name;
+          } catch (err) {
+            // if department {depts:[]} is empty
+            // console.log(err);
+            file.department = "";
+          }
+          // console.log("department : ", file.department);
+          
           return {
             id: file.id,
             name: file.name.substring(0, 80),
             profilePic: file.profile_pic,
             size: formatFileSize(file.metadata.size),
-            dept: file.dept_name,
+            dept: file.department,
             owner: file.owner_email,
             mimetype: file.metadata.mimetype,
             status: "Team",

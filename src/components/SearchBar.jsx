@@ -6,6 +6,7 @@ import FileView from "./FileView";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
+
 export default function SearchBar() {
   const { darkMode } = useDarkMode();
   const navigate = useNavigate();
@@ -22,6 +23,14 @@ export default function SearchBar() {
     lastUpdate: "",
   });
   const [sharedFileInfo, setSharedFileInfo] = useState({});
+  const [dept, setDept] = useState({
+    Account: { bg: "#FFF6F6", border: "#FEB7B7" },
+    Finance: { bg: "#FFF6FF", border: "#FFA9FF" },
+    Development: { bg: "#F6FFF6", border: "#B3FFB3" },
+    Manufacturing: { bg: "#F6F7FF", border: "#B6BEFF" },
+    Sales: { bg: "#FFFFF6", border: "#FFFFA1" },
+    Human_Resources: { bg: "#F6FFFE", border: "#C0FFF8" },
+  });
 
   const getSharedFileInfo = async (fileId) => {
     try {
@@ -70,6 +79,7 @@ export default function SearchBar() {
     const filesData = JSON.parse(
       secureLocalStorage.getItem("accountFilesCache")
     );
+    // console.log(filesData);
 
     if (filesData) {
       // Filter files based on the search term
@@ -167,24 +177,46 @@ export default function SearchBar() {
                 Files:
               </h3>
               <ul>
-                {filteredFiles.map((file, index) => (
-                  <li
-                    key={index}
-                    onClick={() =>
-                      openDrawer(
-                        file.name,
-                        file.size,
-                        file.id,
-                        file.owner,
-                        file.profilePic,
-                        file.lastUpdate
-                      )
-                    }
-                    className="p-4 border-b-[1px] border-gray-100 hover:bg-gray-50 cursor-pointer"
-                  >
-                    {file.name.split("_TS=")[0]}
-                  </li>
-                ))}
+                {filteredFiles.map((file, index) => {
+                  // finde the bg-color and border-color of the file
+                  try {
+                    file.bgColor = dept[file.dept].bg;
+                    file.borderColor = dept[file.dept].border;
+                  } catch (error) {
+                    file.bgColor = "";
+                    file.borderColor = "";
+                  }
+                  return (
+                    <li
+                      key={index}
+                      onClick={() =>
+                        openDrawer(
+                          file.name,
+                          file.size,
+                          file.id,
+                          file.owner,
+                          file.profilePic,
+                          file.lastUpdate
+                        )
+                      }
+                      className={`p-4 border-b-[1px] hover:bg-gray-50 cursor-pointer border-gray-100`}
+                      style={{
+                        backgroundColor: file.bgColor,
+                        borderColor: file.borderColor,
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = "rgb(249 250 251)";
+                        e.target.style.borderColor = "rgb(243 244 246 )";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = file.bgColor;
+                        e.target.style.borderColor = file.borderColor;
+                      }}
+                    >
+                      {file.name.split("_TS=")[0]}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}
