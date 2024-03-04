@@ -477,46 +477,29 @@ function SideBarContents({ darkMode }) {
 
         {departments.map((department, index) => (
           <li key={index} className="min-w-full my-2">
+            <style>
+              {`
+                .dept-${index}, .dept-hover-${index}:hover {
+                  background-color: ${department.metadata.bg};
+                  border-color: ${department.metadata.border}; 
+                }
+              `}
+            </style>
             <Link
               to={`/department/${department.name}`} // Use "to" instead of "href"
               alt={department.name}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = department.metadata.bg;
-                e.target.style.borderColor = department.metadata.border; // Set border color dynamically
-                // e.target.style.borderWidth = "1px"; // You can adjust the border width as needed
-                // e.target.style.borderStyle = "solid"; // Set the border style
-              }}
-              onMouseLeave={(e) => {
-                // console.log(e.target.style);
-                if (!location.pathname.endsWith(department.name)) {
-                  e.target.style.backgroundColor = "";
-                  e.target.style.borderColor = "";
-                }
-              }}
-              style={(function () {
-                if (location.pathname.endsWith(department.name))
-                  return {
-                    backgroundColor: department.metadata.bg,
-                    borderColor: department.metadata.border,
-                  };
-                else
-                  return {
-                    backgroundColor: "",
-                    borderColor: "",
-                  };
-              })()}
-              className={`flex justify-start items-center min-w-full border border-[#ffffff00] ${
-                location.pathname === department.name
-                  ? `p-2 rounded-md text-sm ${
+              className={`flex justify-start items-center min-w-full border border-[#ffffff00] p-2 rounded-md text-sm  duration-100 ${
+                location.pathname.endsWith(department.name)
+                  ? ` ${
                       darkMode
                         ? "hover:bg-gray-700 bg-gray-600"
-                        : "bg-indigo-200  hover:bg-indigo-200"
-                    } duration-100`
+                        : `dept-${index}`
+                    }`
                   : `${
                       darkMode
                         ? "hover:bg-gray-700 text-gray-100"
-                        : "hover:bg-indigo-100"
-                    } p-2 rounded-md text-sm duration-100`
+                        : `dept-hover-${index}`
+                    }`
               }`}
             >
               {departmentIcons[department.name]}
