@@ -479,21 +479,24 @@ function SideBarContents({ darkMode }) {
           <li key={index} className="min-w-full my-2">
             <style>
               {`
-                .dept-${index}, .dept-hover-${index}:hover {
+                .dept-hover-${index}:hover {
                   background-color: ${department.metadata.bg};
                   border-color: ${department.metadata.border}; 
+                }
+                .dot-${index} {
+                  border: 5px solid ${department.metadata.border}; 
                 }
               `}
             </style>
             <Link
               to={`/department/${department.name}`} // Use "to" instead of "href"
               alt={department.name}
-              className={`flex justify-start items-center min-w-full border border-[#ffffff00] p-2 rounded-md text-sm  duration-100 ${
+              className={`relative flex justify-start items-center min-w-full border border-[#ffffff00] p-2 rounded-md text-sm  duration-100 ${
                 location.pathname.endsWith(department.name)
                   ? ` ${
                       darkMode
                         ? "hover:bg-gray-700 bg-gray-600"
-                        : `dept-${index}`
+                        : `bg-indigo-200  hover:bg-indigo-200`
                     }`
                   : `${
                       darkMode
@@ -506,6 +509,7 @@ function SideBarContents({ darkMode }) {
               <p className={`px-2 bg-[rgb(255 255 255 / 0%)] `}>
                 {department.name.replace("_", " ")}
               </p>
+                <span className={`dot-${index} w-2 h-2 absolute right-4`}></span>
             </Link>
           </li>
         ))}
