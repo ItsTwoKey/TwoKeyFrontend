@@ -195,7 +195,7 @@ function SideBar() {
         >
           <div className="w-full">
             <div
-              className={`flex justify-between items-center sticky top-0 py-4 px-2 bg-white ${
+              className={`flex justify-between items-center sticky top-0 py-4 px-2 ${
                 darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
               }`}
             >
@@ -214,7 +214,7 @@ function SideBar() {
             <SideBarContents darkMode={darkMode} />
           </div>
           <div
-            className={`sticky bottom-0 bg-white ${
+            className={`sticky bottom-0 ${
               darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
             }`}
           >
