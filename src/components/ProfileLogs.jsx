@@ -29,6 +29,11 @@ import MenuItem from "@mui/material/MenuItem";
 import FileShare from "./FileShare";
 import DeleteFileConfirmation from "./DeleteFileConfirmation";
 import threeDots from "../assets/threedots.svg";
+import OwnedFolders from "./OwnedFolders";
+import ToggleFile from "../assets/toggleFile.svg";
+import ToggleFolder from "../assets/toggleFolder.svg";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
 const ProfileLogs = ({ logs, tabValue }) => {
   const { darkMode } = useDarkMode();
@@ -47,6 +52,9 @@ const ProfileLogs = ({ logs, tabValue }) => {
     mimetype: "",
   });
   const [sharedFileInfo, setSharedFileInfo] = useState({});
+  const [folders, setFolders] = useState([]);
+  const [showOwnedFolders, setShowOwnedFolders] = useState(false);
+  const [view, setView] = useState("files");
 
   useEffect(() => {
     // Check if the current path is "profile" and set the height accordingly
@@ -107,93 +115,168 @@ const ProfileLogs = ({ logs, tabValue }) => {
 
   console.log(tabValue);
 
+  const listfolders = async () => {
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
+
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/folder`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+      console.log("folders", response.data);
+      setFolders(response.data);
+    } catch (error) {
+      console.log("error occured while fetching folders", error);
+    }
+  };
+
+  // const toggleOwnedFolders = () => {
+  //   listfolders();
+  //   setShowOwnedFolders(!showOwnedFolders);
+  //   console.log("toggled");
+  // };
+
+  const handleChange = (event, nextView) => {
+    listfolders();
+    setView(nextView);
+    console.log("toggled");
+  };
+
   return (
     <div className={`${darkMode ? "bg-gray-800 text-white" : "text-gray-800"}`}>
-      <Box sx={{ width: "100%" }}>
-        <TableContainer sx={{ height: tableHeight }}>
-          <Table aria-label="collapsible table">
-            <TableHead className="cursor-pointer">
-              <TableRow sx={{ backgroundColor: "#F7F9FCCC" }}>
-                <TableCell />
-                <TableCell>
-                  <p
-                    className="flex flex-row items-center"
-                    onClick={() => handleSort("name")}
-                  >
-                    FILE NAME <img src={UnfoldIcon} alt="↓" />
-                  </p>
-                </TableCell>
-                <TableCell>OWNER</TableCell>
-                <TableCell align="center">
-                  STATUS
-                  <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
-                    i
-                  </b>
-                </TableCell>
-                <TableCell
-                  align="center"
-                  onClick={() => handleSort("metadata.size")}
-                >
-                  SIZE
-                  <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
-                    i
-                  </b>
-                </TableCell>
+      {tabValue === 3 && (
+        <div className="flex flex-row justify-end my-2">
+          {/* <button
+            onClick={toggleOwnedFolders}
+            className="border p-1 rounded-lg bg-purple-100"
+          >
+            {showOwnedFolders ? (
+              <img src={ToggleFile} alt="show files" />
+            ) : (
+              <img src={ToggleFolder} alt="show folders" />
+            )}
+          </button> */}
 
-                <TableCell align="center">
-                  <p
-                    className="flex flex-row justify-center items-center"
-                    onClick={() => handleSort("lastUpdate")}
-                  >
-                    LAST UPDATED <img src={UnfoldIcon} alt="↓" />
-                  </p>
-                </TableCell>
-
-                {tabValue == 3 && <TableCell />}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {logs && logs.length > 0 ? (
-                logs
-                  .slice()
-                  .sort((a, b) => {
-                    if (sortColumn === "lastUpdate") {
-                      const dateA = new Date(a.metadata.lastModified);
-                      const dateB = new Date(b.metadata.lastModified);
-                      return sortOrder === "asc"
-                        ? dateA - dateB
-                        : dateB - dateA;
-                    } else if (sortColumn === "name") {
-                      return sortOrder === "asc"
-                        ? a.name.localeCompare(b.name)
-                        : b.name.localeCompare(a.name);
-                    } else if (sortColumn === "metadata.size") {
-                      return sortOrder === "asc"
-                        ? a.metadata.size - b.metadata.size
-                        : b.metadata.size - a.metadata.size;
-                    }
-                    // Add similar sorting logic for other columns as needed
-                    return 0;
-                  })
-                  .map((row) => (
-                    <Row
-                      key={row.id}
-                      row={row}
-                      openDrawer={openDrawer}
-                      tabValue={tabValue}
-                    />
-                  ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={7} align="center">
-                    {logs ? "No files found!" : "Loading..."}
+          <ToggleButtonGroup
+            size="small"
+            value={view}
+            exclusive
+            onChange={handleChange}
+          >
+            <ToggleButton
+              value="files"
+              aria-label="files"
+              style={{
+                backgroundColor: view === "files" ? "#F1F1FF" : "inherit",
+              }}
+            >
+              <img src={ToggleFile} alt="show files" />
+            </ToggleButton>
+            <ToggleButton
+              value="folders"
+              aria-label="folders"
+              style={{
+                backgroundColor: view === "folders" ? "#F1F1FF" : "inherit",
+              }}
+            >
+              <img src={ToggleFolder} alt="show folders" />
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </div>
+      )}
+      {view !== "files" ? (
+        <OwnedFolders folders={folders} />
+      ) : (
+        <Box sx={{ width: "100%" }}>
+          <TableContainer sx={{ height: tableHeight }}>
+            <Table aria-label="collapsible table">
+              <TableHead className="cursor-pointer">
+                <TableRow sx={{ backgroundColor: "#F7F9FCCC" }}>
+                  <TableCell />
+                  <TableCell>
+                    <p
+                      className="flex flex-row items-center"
+                      onClick={() => handleSort("name")}
+                    >
+                      FILE NAME <img src={UnfoldIcon} alt="↓" />
+                    </p>
                   </TableCell>
+                  <TableCell>OWNER</TableCell>
+                  <TableCell align="center">
+                    STATUS
+                    <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
+                      i
+                    </b>
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    onClick={() => handleSort("metadata.size")}
+                  >
+                    SIZE
+                    <b className="text-gray-50 text-xs bg-gray-500 rounded-full px-[5px] mx-1">
+                      i
+                    </b>
+                  </TableCell>
+
+                  <TableCell align="center">
+                    <p
+                      className="flex flex-row justify-center items-center"
+                      onClick={() => handleSort("lastUpdate")}
+                    >
+                      LAST UPDATED <img src={UnfoldIcon} alt="↓" />
+                    </p>
+                  </TableCell>
+
+                  {tabValue == 3 && <TableCell />}
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
+              </TableHead>
+              <TableBody>
+                {logs && logs.length > 0 ? (
+                  logs
+                    .slice()
+                    .sort((a, b) => {
+                      if (sortColumn === "lastUpdate") {
+                        const dateA = new Date(a.metadata.lastModified);
+                        const dateB = new Date(b.metadata.lastModified);
+                        return sortOrder === "asc"
+                          ? dateA - dateB
+                          : dateB - dateA;
+                      } else if (sortColumn === "name") {
+                        return sortOrder === "asc"
+                          ? a.name.localeCompare(b.name)
+                          : b.name.localeCompare(a.name);
+                      } else if (sortColumn === "metadata.size") {
+                        return sortOrder === "asc"
+                          ? a.metadata.size - b.metadata.size
+                          : b.metadata.size - a.metadata.size;
+                      }
+                      // Add similar sorting logic for other columns as needed
+                      return 0;
+                    })
+                    .map((row) => (
+                      <Row
+                        key={row.id}
+                        row={row}
+                        openDrawer={openDrawer}
+                        tabValue={tabValue}
+                      />
+                    ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={7} align="center">
+                      {logs ? "No files found!" : "Loading..."}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      )}
       {isFileViewOpen && (
         <FileView
           fileInfo={selectedFileInfo}
