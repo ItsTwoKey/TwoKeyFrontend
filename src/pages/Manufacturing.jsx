@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import RecentFiles from "../components/RecentFiles";
+import DashboardTabs from "../components/DashboardTabs";
 import DepartmentFiles from "../components/DepartmentFiles";
 import ErrorPage from "../components/ErrorPage";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const Marketing = () => {
   const [filesFromBackend, setFilesFromBackend] = useState([]);
@@ -36,7 +36,7 @@ const Marketing = () => {
   }
   return (
     <div className="p-4">
-      <RecentFiles />
+      <DashboardTabs />
       <DepartmentFiles filesFromBackend={filesFromBackend} />
     </div>
   );

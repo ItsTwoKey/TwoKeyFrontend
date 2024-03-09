@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import FileView from "./FileView";
-import { supabase } from "../helper/supabaseClient";
-// import ShareFile from "./ShareFile";
-import SecureShare from "./SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
 import { Skeleton } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
-import { useAuth } from "../context/authContext";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FileInfo from "./FileInfo";
 import FileShare from "./FileShare";
-import UploadFile from "./UploadFile";
 import threeDots from "../assets/threedots.svg";
 import DeleteFileConfirmation from "./DeleteFileConfirmation";
 
@@ -41,6 +37,7 @@ const fileIcons = {
 };
 
 const RecentFiles = ({ filteredData, loading }) => {
+  const location = useLocation();
   const { darkMode } = useDarkMode();
   const [selectedFileInfo, setSelectedFileInfo] = useState({
     name: "",

@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
+import { useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
-import DashboardFiles from "../components/DashboardFiles";
-import ProfileLogs from "../components/ProfileLogs";
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 import MenuItem from "@mui/material/MenuItem";
@@ -15,42 +11,10 @@ import UploadFile from "./UploadFile";
 import SecureShare from "./SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
 
-function CustomTabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ pt: 3 }}>
-          <div>{children}</div>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-CustomTabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
-
-export default function ProfileTabs() {
+export default function DashboardTabs() {
   const { formatFileSize } = useAuth();
   const { darkMode } = useDarkMode();
+  const location = useLocation();
   const [value, setValue] = useState("all");
   const [files, setFiles] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -153,7 +117,14 @@ export default function ProfileTabs() {
             secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
 
             // Update the state with the new data
-            setFilteredData(mappedFiles);
+            // setFilteredData(mappedFiles);
+            if (location.pathname !== "/dashboard") {
+              // If location is other than "dashboard", send only the first 5 items
+              setFilteredData(mappedFiles.slice(0, 5));
+            } else {
+              // If location is "dashboard", send all filtered data
+              setFilteredData(mappedFiles);
+            }
             setLoading(false);
           }
         } else {
