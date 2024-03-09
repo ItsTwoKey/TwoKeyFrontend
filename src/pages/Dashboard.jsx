@@ -7,7 +7,7 @@ import { useAuth } from "../context/authContext";
 import DueDate from "../components/DueDate";
 import DashboardTabs from "../components/DashboardTabs";
 import LatestActivities from "../components/LatestActivities";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 import ErrorPage from "../components/ErrorPage";
 
 const Dashboard = () => {
@@ -27,7 +27,7 @@ const Dashboard = () => {
         <LatestActivities />
       </div>
       <div>
-        <RecentFiles />
+        {/* <RecentFiles /> */}
         {/* <DashboardFiles /> */}
         <DashboardTabs />
       </div>

@@ -40,10 +40,8 @@ const fileIcons = {
   // Add more as needed
 };
 
-const RecentFiles = () => {
+const RecentFiles = ({ filteredData, loading }) => {
   const { darkMode } = useDarkMode();
-  const { formatFileSize } = useAuth();
-  const [filteredData, setFilteredData] = useState([]);
   const [selectedFileInfo, setSelectedFileInfo] = useState({
     name: "",
     size: "",
@@ -53,7 +51,7 @@ const RecentFiles = () => {
     lastUpdate: "",
     mimetype: "",
   });
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [sharedFileInfo, setSharedFileInfo] = useState({});
   const [isFileViewOpen, setIsFileViewOpen] = useState(false);
   const [isFileInfoOpen, setIsFileInfoOpen] = useState(false);
@@ -64,16 +62,14 @@ const RecentFiles = () => {
 
   const recentBgColor = ["#FFF6F6", "#FFF6FF", "#F6FFF6", "#F6F7FF", "#FFFFF6"];
 
-  //   realtime supabase subscribe
   // useEffect(() => {
   //   const channel = supabase
   //     .channel("custom_all_channel")
   //     .on(
   //       "postgres_changes",
-  //       { event: "*", schema: "public", table: "shared_files" },
+  //       { event: "*", schema: "public", table: "file_info" },
   //       () => {
-  //         // console.log("Change received!", payload);
-
+  //         console.log("rendered due to subscribe");
   //         fetchRecentFiles();
   //       }
   //     )
@@ -82,115 +78,11 @@ const RecentFiles = () => {
   //   return () => {
   //     supabase.removeChannel(channel);
   //   };
-  // }, []);
-
-  // ...............
-
-  useEffect(() => {
-    const channel = supabase
-      .channel("custom_all_channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "file_info" },
-        () => {
-          console.log("rendered due to subscribe");
-          fetchRecentFiles();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []); // Include fetchDashboardFiles in the dependency array
+  // }, []); // Include fetchDashboardFiles in the dependency array
 
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const fetchRecentFiles = async () => {
-    try {
-      const cacheKey = "recentFilesCache";
-
-      // Check if recent files data is available in localStorage
-      const cachedRecentFiles = secureLocalStorage.getItem(cacheKey);
-
-      if (cachedRecentFiles) {
-        // console.log(
-        //   "Using cached recent files:",
-        //   JSON.parse(cachedRecentFiles)
-        // );
-        setFilteredData(JSON.parse(cachedRecentFiles));
-        setLoading(false);
-      }
-
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
-
-      const recentFilesFromBackend = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=5`,
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
-
-      // console.log("Recent files from backend", recentFilesFromBackend.data);
-
-      if (recentFilesFromBackend.data) {
-        const mappedFiles = recentFilesFromBackend.data.map((file) => {
-          // destucture and extract dept name of every file
-          try {
-            const [{ depts }, ...extra] = file.file_info;
-            const [{ name }, ...more] = depts;
-            file.department = name;
-          } catch (err) {
-            // if department {depts:[]} is empty
-            // console.log(err);
-            file.department = "";
-          }
-          // console.log("department : ", file.department);
-          
-          return {
-            id: file.id,
-            name: file.name.substring(0, 80),
-            profilePic: file.profile_pic,
-            size: formatFileSize(file.metadata.size),
-            dept: file.department,
-            owner: file.owner_email,
-            mimetype: file.metadata.mimetype,
-            status: "Team",
-            security: "Enhanced",
-            lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
-              "en-IN",
-              {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-                hour12: true,
-              }
-            ),
-          };
-        });
-
-        // Replace the cached recent files data with the new data
-        secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
-
-        // Update the state with the new data
-        setFilteredData(mappedFiles);
-      }
-
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching files:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchRecentFiles();
-  }, []);
 
   const getSharedFileInfo = async (fileId) => {
     try {
@@ -274,18 +166,6 @@ const RecentFiles = () => {
   return (
     <div>
       <div
-        className={`flex flex-row justify-between items-center ${
-          darkMode && "text-gray-200"
-        }`}
-      >
-        <p className="text-lg font-semibold my-4 ">Recent Files</p>
-        <span className="flex gap-2">
-          <SecureShare />
-          <UploadFile />
-          {/* <ShareFile /> */}
-        </span>
-      </div>
-      <div
         className={`grid grid-cols-5 gap-4 ${
           darkMode ? "text-gray-200" : "text-gray-600"
         }`}
@@ -318,11 +198,13 @@ const RecentFiles = () => {
                 </span>
               </div>
             ))
-          : filteredData.slice(0, 5).map((file, index) => (
+          : filteredData.map((file, index) => (
               <div
                 key={index}
                 className={`border border-gray-200 p-3 rounded-[16px] cursor-pointer`}
-                style={{ backgroundColor: recentBgColor[index] }}
+                style={{
+                  backgroundColor: recentBgColor[index % recentBgColor.length],
+                }}
               >
                 <span className="flex justify-between items-center">
                   <button

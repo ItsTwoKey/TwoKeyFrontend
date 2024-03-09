@@ -109,7 +109,7 @@ function SideBar() {
         >
           <div className="w-full">
             <div
-              className={`flex justify-between items-center sticky top-0 py-4 px-2  ${
+              className={`flex justify-between items-center sticky top-0 py-4 px-2 ${
                 darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
               }`}
             >
@@ -189,13 +189,13 @@ function SideBar() {
         <nav
           className={` ${
             !isMenuOpen && "hide-sidebar h-full w-full"
-          }  px-4   border-r border-r-gray-200 ${
+          } border-r border-r-gray-200 ${
             darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
           }`}
         >
-          <div className="w-full">
+          <div className="w-full ">
             <div
-              className={`flex justify-between items-center sticky top-0 py-4 px-2 ${
+              className={`flex justify-between items-center sticky top-0 py-4 px-6 ${
                 darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
               }`}
             >
@@ -218,7 +218,7 @@ function SideBar() {
               darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
             }`}
           >
-            <footer className="w-full py-2 sticky bottom-0">
+            <footer className="w-full py-2 px-4 sticky bottom-0">
               <span>
                 <Link
                   to="/profile" // Use "to" instead of "href"
@@ -358,13 +358,13 @@ function SideBarContents({ darkMode }) {
         }`}
       >
         <p
-          className={`text-xs p-2 ${
+          className={`text-xs py-2 px-6 ${
             darkMode ? "text-gray-200" : "text-gray-600"
           }`}
         >
           Overview
         </p>
-        <div className="flex items-center">
+        <div className="flex items-center px-4">
           <li className="min-w-full">
             <Link
               to="/dashboard" // Use "to" instead of "href"
@@ -390,7 +390,7 @@ function SideBarContents({ darkMode }) {
         </div>
 
         {profileData && profileData.role_priv === "org_admin" ? (
-          <div>
+          <div className="px-4">
             <p
               className={`text-xs p-2 ${
                 darkMode ? "text-gray-200" : "text-gray-600"
@@ -468,7 +468,7 @@ function SideBarContents({ darkMode }) {
         )}
 
         <p
-          className={`text-xs  mt-4  p-2 ${
+          className={`text-xs mt-4 py-2 px-6 ${
             darkMode ? "text-gray-200" : "text-gray-600"
           }`}
         >
@@ -476,24 +476,23 @@ function SideBarContents({ darkMode }) {
         </p>
 
         {departments.map((department, index) => (
-          <li key={index} className="min-w-full my-2">
-          <style>
-            {`
+          <li key={index} className="min-w-full my-2 ">
+            <style>
+              {`
               .dept-${index}, .dept-hover-${index}:hover {
                 background-color: ${department.metadata.bg};
-                border-color: ${department.metadata.border}; 
               }
             `}
-          </style>
-          <Link
-            to={`/department/${department.name}`} // Use "to" instead of "href"
-            alt={department.name}
-            className={`flex justify-start items-center min-w-full border border-[#ffffff00] p-2 rounded-md text-sm  duration-100 ${
-              location.pathname.endsWith(department.name)
-                ? ` ${
-                    darkMode
-                      ? "hover:bg-gray-700 bg-gray-600"
-                      : `dept-${index}`
+            </style>
+            <Link
+              to={`/department/${department.name}`} // Use "to" instead of "href"
+              alt={department.name}
+              className={`flex justify-start items-center min-w-full border border-[#ffffff00] py-2 px-6 rounded-md text-sm  duration-100 ${
+                location.pathname.endsWith(department.name)
+                  ? ` ${
+                      darkMode
+                        ? "hover:bg-gray-700 bg-gray-600"
+                        : `dept-${index}`
                     }`
                   : `${
                       darkMode
@@ -511,13 +510,13 @@ function SideBarContents({ darkMode }) {
         ))}
 
         <p
-          className={`text-xs mt-4 mb-2 p-2 ${
+          className={`text-xs mt-4 mb-2 py-2 px-6 ${
             darkMode ? "text-gray-200" : "text-gray-600 "
           }`}
         >
           Settings
         </p>
-        <li className="min-w-full my-2">
+        <li className="min-w-full my-2 px-4">
           <div className="flex items-center">
             <Link
               to="/settings" // Use "to" instead of "href"
@@ -539,7 +538,7 @@ function SideBarContents({ darkMode }) {
             </Link>
           </div>
         </li>
-        <li className="min-w-full my-2">
+        <li className="min-w-full my-2 px-4">
           <div className="flex items-center">
             <button
               onClick={handleLogout}
