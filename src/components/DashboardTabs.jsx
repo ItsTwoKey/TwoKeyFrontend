@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 import MenuItem from "@mui/material/MenuItem";
@@ -10,12 +12,46 @@ import { useAuth } from "../context/authContext";
 import UploadFile from "./UploadFile";
 import SecureShare from "./SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
+import PropTypes from "prop-types";
+
+function CustomTabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ pt: 3 }}>
+          <div>{children}</div>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+CustomTabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
 
 export default function DashboardTabs() {
   const { formatFileSize } = useAuth();
   const { darkMode } = useDarkMode();
   const location = useLocation();
-  const [value, setValue] = useState("all");
+  const [value, setValue] = useState(0);
   const [files, setFiles] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,16 +68,16 @@ export default function DashboardTabs() {
 
         // Determine the URL based on the selected tab
         switch (value) {
-          case "all":
+          case 0:
             url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=25`;
             break;
-          case "shared":
+          case 1:
             url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared`;
             break;
-          case "received":
+          case 2:
             url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received`;
             break;
-          case "owned":
+          case 3:
             url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned`;
             break;
 
@@ -138,6 +174,12 @@ export default function DashboardTabs() {
     fetchLogs();
   }, [value]);
 
+  const handleChange = (event, newValue) => {
+    // Reset logs state to null when changing tabs
+    // setLogs(null);
+    setValue(newValue);
+  };
+
   return (
     <div className="py-4">
       <div
@@ -154,26 +196,46 @@ export default function DashboardTabs() {
       </div>
 
       <Box sx={{ width: "100%" }}>
-        <div className="w-32 py-4">
-          <Select
-            labelId="demo-select-small-label"
-            id="demo-select-small"
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
             value={value}
-            label=""
-            onChange={handleTabChange}
-            fullWidth
-            size="small"
+            onChange={handleChange}
+            aria-label="basic tabs example"
           >
-            <MenuItem value={"all"}>All</MenuItem>
-            <MenuItem value={"shared"}>Shared</MenuItem>
-            <MenuItem value={"received"}>Received</MenuItem>
-            <MenuItem value={"owned"}>Owned</MenuItem>
-          </Select>
-        </div>
-
-        <div>
+            <Tab
+              label="All"
+              {...a11yProps(0)}
+              sx={{ textTransform: "capitalize", fontSize: "small" }}
+            />
+            <Tab
+              label="Shared"
+              {...a11yProps(1)}
+              sx={{ textTransform: "capitalize", fontSize: "small" }}
+            />
+            <Tab
+              label="Received"
+              {...a11yProps(2)}
+              sx={{ textTransform: "capitalize", fontSize: "small" }}
+            />
+            <Tab
+              label="owned"
+              {...a11yProps(3)}
+              sx={{ textTransform: "capitalize", fontSize: "small" }}
+            />
+          </Tabs>
+        </Box>
+        <CustomTabPanel value={value} index={0}>
           <RecentFiles filteredData={filteredData} loading={loading} />
-        </div>
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={1}>
+          <RecentFiles filteredData={filteredData} loading={loading} />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={2}>
+          <RecentFiles filteredData={filteredData} loading={loading} />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={3}>
+          <RecentFiles filteredData={filteredData} loading={loading} />
+        </CustomTabPanel>
       </Box>
     </div>
   );
