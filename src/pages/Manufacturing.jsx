@@ -37,7 +37,7 @@ const Marketing = () => {
   return (
     <div className="p-4">
       <DashboardTabs />
-      <DepartmentFiles filesFromBackend={filesFromBackend} />
+      {/* <DepartmentFiles filesFromBackend={filesFromBackend} /> */}
     </div>
   );
 };

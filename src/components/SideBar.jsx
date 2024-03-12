@@ -33,12 +33,41 @@ let hardCodedDepartments = [
  */
 function SideBar() {
   const location = useLocation();
-
+  const navigate = useNavigate();
   const [data, setData] = useState("");
   const { darkMode } = useDarkMode();
   const [picture, setPicture] = useState(null);
-  const { profileData } = useAuth();
+  const { profileData, setProfileData, setToken } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  function handleLogout() {
+    // change the active status
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let body = {
+      id: token.user.id,
+      is_active: false,
+    };
+    // console.log("onboarding body:", body);
+    try {
+      const res = axios.put(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
+        body,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+    navigate("/");
+    setProfileData(null);
+    setToken(null);
+    secureLocalStorage.removeItem("token");
+    // localStorage.removeItem("profileData");
+    secureLocalStorage.clear();
+  }
 
   const hideSideBar =
     location.pathname === "/" ||
@@ -134,7 +163,7 @@ function SideBar() {
             }`}
           >
             <footer className="w-full py-2 sticky bottom-0">
-              <span>
+              <span className="flex justify-between items-center">
                 <a
                   href="/profile"
                   alt="Profile"
@@ -157,6 +186,12 @@ function SideBar() {
                   />
                   <p className="px-2">#{data ? data : "Profile"}</p>
                 </a>
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 rounded-lg p-1"
+                >
+                  <ExitToAppRoundedIcon sx={{ color: "white" }} size="small" />
+                </button>
               </span>
             </footer>
           </div>
@@ -219,7 +254,7 @@ function SideBar() {
             }`}
           >
             <footer className="w-full py-2 px-4 sticky bottom-0">
-              <span>
+              <span className="flex justify-between items-center">
                 <Link
                   to="/profile" // Use "to" instead of "href"
                   alt="Profile"
@@ -253,6 +288,13 @@ function SideBar() {
                     #{profileData ? profileData.username : "Profile"}
                   </p>
                 </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 rounded-lg p-1"
+                >
+                  <ExitToAppRoundedIcon sx={{ color: "white" }} size="small" />
+                </button>
               </span>
             </footer>
           </div>
@@ -321,35 +363,6 @@ function SideBarContents({ darkMode }) {
     listDepartments();
   }, []);
 
-  function handleLogout() {
-    // change the active status
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
-    let body = {
-      id: token.user.id,
-      is_active: false,
-    };
-    // console.log("onboarding body:", body);
-    try {
-      const res = axios.put(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
-    } catch (error) {
-      console.log(error);
-    }
-    navigate("/");
-    setProfileData(null);
-    setToken(null);
-    secureLocalStorage.removeItem("token");
-    // localStorage.removeItem("profileData");
-    secureLocalStorage.clear();
-  }
-
   return (
     <>
       <ul
@@ -388,84 +401,6 @@ function SideBarContents({ darkMode }) {
             </Link>
           </li>
         </div>
-
-        {profileData && profileData.role_priv === "org_admin" ? (
-          <div className="px-4">
-            <p
-              className={`text-xs p-2 ${
-                darkMode ? "text-gray-200" : "text-gray-600"
-              }`}
-            >
-              Organization
-            </p>
-            <div className="flex items-center">
-              <li className="min-w-full">
-                <Link
-                  to="/user-management" // Use "to" instead of "href"
-                  alt="User Management"
-                  className={`flex justify-start items-center min-w-full ${
-                    location.pathname === "/user-management"
-                      ? ` p-2 rounded-md text-sm ${
-                          darkMode
-                            ? "hover:bg-gray-700 bg-gray-600"
-                            : "bg-indigo-200  hover:bg-indigo-200"
-                        } duration-200`
-                      : `${
-                          darkMode
-                            ? "hover:bg-gray-700 text-gray-100"
-                            : "hover:bg-indigo-100"
-                        } p-2 rounded-md text-sm duration-200`
-                  }`}
-                >
-                  <img
-                    src={UserMgmt}
-                    style={darkMode ? { filter: "invert()" } : {}}
-                    alt="."
-                  />
-                  <p className="px-2">User Management</p>
-                </Link>
-              </li>
-            </div>
-
-            <p
-              className={`text-xs p-2 ${
-                darkMode ? "text-gray-200" : "text-gray-600"
-              }`}
-            >
-              Analytics
-            </p>
-            <div className="flex items-center">
-              <li className="min-w-full">
-                <Link
-                  to="/analytics" // Use "to" instead of "href"
-                  alt="Analytics"
-                  className={`flex justify-start items-center min-w-full ${
-                    location.pathname === "/analytics"
-                      ? ` p-2 rounded-md text-sm ${
-                          darkMode
-                            ? "hover:bg-gray-700 bg-gray-600"
-                            : "bg-indigo-200  hover:bg-indigo-200"
-                        } duration-200`
-                      : `${
-                          darkMode
-                            ? "hover:bg-gray-700 text-gray-100"
-                            : "hover:bg-indigo-100"
-                        } p-2 rounded-md text-sm duration-200`
-                  }`}
-                >
-                  <img
-                    src={Analytics}
-                    style={darkMode ? { filter: "invert()" } : {}}
-                    alt="."
-                  />
-                  <p className="px-2">Analytics & Report</p>
-                </Link>
-              </li>
-            </div>
-          </div>
-        ) : (
-          ""
-        )}
 
         <p
           className={`text-xs mt-4 py-2 px-6 ${
@@ -509,8 +444,79 @@ function SideBarContents({ darkMode }) {
           </li>
         ))}
 
+        {profileData && profileData.role_priv === "org_admin" ? (
+          <div className="px-4">
+            <p
+              className={`text-xs p-2 ${
+                darkMode ? "text-gray-200" : "text-gray-600"
+              }`}
+            >
+              Organization Admin
+            </p>
+            <div className="flex items-center">
+              <li className="min-w-full">
+                <Link
+                  to="/user-management" // Use "to" instead of "href"
+                  alt="User Management"
+                  className={`flex justify-start items-center min-w-full ${
+                    location.pathname === "/user-management"
+                      ? ` p-2 rounded-md text-sm ${
+                          darkMode
+                            ? "hover:bg-gray-700 bg-gray-600"
+                            : "bg-indigo-200  hover:bg-indigo-200"
+                        } duration-200`
+                      : `${
+                          darkMode
+                            ? "hover:bg-gray-700 text-gray-100"
+                            : "hover:bg-indigo-100"
+                        } p-2 rounded-md text-sm duration-200`
+                  }`}
+                >
+                  <img
+                    src={UserMgmt}
+                    style={darkMode ? { filter: "invert()" } : {}}
+                    alt="."
+                  />
+                  <p className="px-2">User Management</p>
+                </Link>
+              </li>
+            </div>
+
+            <div className="flex items-center mt-2">
+              <li className="min-w-full">
+                <Link
+                  to="/analytics" // Use "to" instead of "href"
+                  alt="Analytics"
+                  className={`flex justify-start items-center min-w-full ${
+                    location.pathname === "/analytics"
+                      ? ` p-2 rounded-md text-sm ${
+                          darkMode
+                            ? "hover:bg-gray-700 bg-gray-600"
+                            : "bg-indigo-200  hover:bg-indigo-200"
+                        } duration-200`
+                      : `${
+                          darkMode
+                            ? "hover:bg-gray-700 text-gray-100"
+                            : "hover:bg-indigo-100"
+                        } p-2 rounded-md text-sm duration-200`
+                  }`}
+                >
+                  <img
+                    src={Analytics}
+                    style={darkMode ? { filter: "invert()" } : {}}
+                    alt="."
+                  />
+                  <p className="px-2">Analytics & Report</p>
+                </Link>
+              </li>
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
+
         <p
-          className={`text-xs mt-4 mb-2 py-2 px-6 ${
+          className={`text-xs mt-2 mb-2 py-2 px-6 ${
             darkMode ? "text-gray-200" : "text-gray-600 "
           }`}
         >
@@ -538,7 +544,7 @@ function SideBarContents({ darkMode }) {
             </Link>
           </div>
         </li>
-        <li className="min-w-full my-2 px-4">
+        {/* <li className="min-w-full my-2 px-4">
           <div className="flex items-center">
             <button
               onClick={handleLogout}
@@ -561,7 +567,7 @@ function SideBarContents({ darkMode }) {
               <p className="px-2">LogOut</p>
             </button>
           </div>
-        </li>
+        </li> */}
       </ul>
     </>
   );
