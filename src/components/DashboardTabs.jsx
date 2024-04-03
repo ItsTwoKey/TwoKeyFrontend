@@ -147,6 +147,11 @@ export default function DashboardTabs() {
               };
             });
 
+            // Sort the mappedFiles array based on the lastUpdate property
+            mappedFiles.sort((a, b) => {
+              return new Date(b.lastUpdate) - new Date(a.lastUpdate);
+            });
+
             // Replace the cached recent files data with the new data
             secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
 

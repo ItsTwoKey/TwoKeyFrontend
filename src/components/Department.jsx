@@ -20,28 +20,31 @@ const Department = () => {
   const [selectedDept, setSelectedDept] = useState(null);
 
   useEffect(() => {
-    const listDepartments = async () => {
-      try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
-        const departments = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
-
-        console.log(departments.data);
-        secureLocalStorage.setItem("departments", JSON.stringify(departments.data));
-        setNewDepartments(departments.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     listDepartments();
   }, []);
+
+  const listDepartments = async () => {
+    try {
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      const departments = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+
+      console.log(departments.data);
+      secureLocalStorage.setItem(
+        "departments",
+        JSON.stringify(departments.data)
+      );
+      setNewDepartments(departments.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleClick = (event, dept) => {
     setAnchorEl(event.currentTarget);
@@ -64,9 +67,14 @@ const Department = () => {
         }
       );
 
-      setAnchorEl(null);
+      if (deleteDept) {
+        listDepartments();
 
-      console.log(deleteDept);
+        setAnchorEl(null);
+
+        console.log(deleteDept);
+      }
+
       // setNewDepartments(departments.data);
     } catch (error) {
       console.log(error);

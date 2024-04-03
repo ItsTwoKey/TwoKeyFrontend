@@ -4,8 +4,12 @@ import axios from "axios";
 import RecentFiles from "../components/RecentFiles";
 import ErrorPage from "../components/ErrorPage";
 import secureLocalStorage from "react-secure-storage";
+import UploadFile from "../components/UploadFile";
+import SecureShare from "../components/SecureShare";
+import { useDarkMode } from "../context/darkModeContext";
 
 const Department = () => {
+  const { darkMode } = useDarkMode();
   const { deptName } = useParams();
   const [filesFromBackend, setFilesFromBackend] = useState([]);
   const [loading, setLoading] = useState(true); // Initialize loading state as true
@@ -40,6 +44,18 @@ const Department = () => {
   }
   return (
     <div className="p-4">
+      <div
+        className={`my-4 flex flex-row justify-between items-center ${
+          darkMode && "text-gray-200"
+        }`}
+      >
+        <p className="text-2xl font-semibold ">{deptName} Files</p>
+        <span className="flex gap-2">
+          <SecureShare />
+          <UploadFile />
+          {/* <ShareFile /> */}
+        </span>
+      </div>
       {/* <h1>{deptName}</h1> */}
       {loading ? (
         <p>Loading...</p> // Display loading indicator while fetching data
