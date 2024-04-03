@@ -77,7 +77,7 @@ export default function SearchBar() {
 
   useEffect(() => {
     const filesData = JSON.parse(
-      secureLocalStorage.getItem("accountFilesCache")
+      secureLocalStorage.getItem("recentFilesCache")
     );
     // console.log(filesData);
 
@@ -118,6 +118,8 @@ export default function SearchBar() {
           .from("user_info")
           .select("name,last_name,id")
           .ilike("name", `%${searchTerm}%`);
+
+        // console.log(data);
 
         if (error) {
           console.error(error);

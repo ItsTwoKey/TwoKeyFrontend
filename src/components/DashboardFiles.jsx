@@ -102,6 +102,7 @@ const DashboardFiles = () => {
         secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
 
         // Update the state with the new data
+
         setFilteredData(mappedFiles);
       }
 
