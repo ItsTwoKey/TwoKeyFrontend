@@ -22,6 +22,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuth } from "./context/authContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import ErrorPage from "./components/ErrorPage";
+import TextEditor from "./components/editFiles/TextEditor";
 // import { useDarkMode } from "./context/darkModeContext";
 
 // let hardCodedDepartments = [
@@ -76,6 +77,9 @@ const App = () => {
               <Route path="/ai/:fileId" element={<AI />} />
 
               <Route path="/test" element={<Test />} />
+
+              {/* for editor testing */}
+              <Route path="/edit" element={<TextEditor />} />
             </Route>
             {/* Public Routes should go below */}
 
