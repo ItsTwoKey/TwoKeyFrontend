@@ -78,7 +78,7 @@ const AIChat = ({ signedUrl }) => {
       url: "https://open-ai21.p.rapidapi.com/qa",
       headers: {
         "content-type": "application/json",
-        "X-RapidAPI-Key": "cd0c11c4b1msh85028df5f749931p19bd27jsnb65b743125e9",
+        "X-RapidAPI-Key": "d4f324ec4emsh106039ad9f156e8p18ad67jsn5f95e01eea5d",
         "X-RapidAPI-Host": "open-ai21.p.rapidapi.com",
       },
       data: {
