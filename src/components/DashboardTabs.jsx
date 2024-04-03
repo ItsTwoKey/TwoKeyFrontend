@@ -5,8 +5,6 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import RecentFiles from "./RecentFiles";
 import { useAuth } from "../context/authContext";
 import UploadFile from "./UploadFile";
