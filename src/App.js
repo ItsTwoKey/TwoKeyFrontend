@@ -16,6 +16,8 @@ import UserProfile from "./pages/UserProfile";
 import AI from "./pages/AI";
 import Analytics from "./pages/Analytics";
 import ContactUs from "./pages/ContactUs";
+import ForgotPassword from "./pages/ForgotPassword";
+import ChangePassword from "./pages/ChangePassword";
 // import secureLocalStorage from "react-secure-storage";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -49,14 +51,6 @@ const App = () => {
     return () => clearInterval(intervalId);
   }, [refreshAccessToken]);
 
-  // useEffect(() => {
-  //   const fetchedDepartments = JSON.parse(
-  //     secureLocalStorage.getItem("departments")
-  //   );
-  //   if (fetchedDepartments) {
-  //     setDepartments(fetchedDepartments);
-  //   }
-  // }, []);
   return (
     <Router>
       <div className="md:flex ">
@@ -88,6 +82,8 @@ const App = () => {
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} exact />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/change-password" element={<ChangePassword />} />
             <Route
               path="/*"
               element={
