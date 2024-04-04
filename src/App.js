@@ -69,7 +69,6 @@ const App = () => {
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/ai/:fileId" element={<AI />} />
 
-              <Route path="/change-password" element={<ChangePassword />} />
               <Route path="/test" element={<Test />} />
             </Route>
             {/* Public Routes should go below */}
@@ -80,6 +79,7 @@ const App = () => {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} exact />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/change-password" element={<ChangePassword />} />
             <Route
               path="/*"
               element={
