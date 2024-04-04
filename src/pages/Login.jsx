@@ -80,8 +80,8 @@ const Login = () => {
         console.log(error);
       }
 
-    listDepartments();
-    navigate("/dashboard");
+      listDepartments();
+      navigate("/dashboard");
     } catch (error) {
       alert(error.message);
     } finally {
@@ -191,9 +191,19 @@ const Login = () => {
             </div>
           </span>
 
+          <div className="flex justify-end">
+            <a
+              href="/forgot-password"
+              alt="forgot password"
+              className="text-blue-900 text-sm "
+            >
+              Forgot password?
+            </a>
+          </div>
+
           {loading ? (
             <CircularProgress
-              className="mt-16"
+              className="mt-12"
               style={{ color: "#000", height: 25, width: 25 }}
             />
           ) : (
