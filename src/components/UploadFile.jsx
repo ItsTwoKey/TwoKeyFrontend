@@ -41,42 +41,61 @@ const UploadFile = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [depts, setdepts] = useState([]);
   const [deptId, setDeptId] = useState("");
+  const [selectedDeptIndex, setSelectedDeptIndex] = useState(null);
 
   // console.log(location.pathname.split("/")[1]);
 
   useEffect(() => {
-    const listDepartments = async () => {
-      try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
-        const departments = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
+    const departments = JSON.parse(secureLocalStorage.getItem("departments"));
 
-        const pathName = location.pathname.split("/department/")[1];
-        // console.log("current path", pathName);
-
-        const matchingDepartment = departments.data.find(
-          (department) => department.name === pathName
-        );
-
-        if (matchingDepartment) {
-          setDeptId(matchingDepartment.id);
-          // console.log(matchingDepartment.id);
-        } else {
-          console.log("Department not found for path:", pathName);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    listDepartments();
+    if (departments) {
+      setdepts(departments);
+      console.log("upload files", departments);
+    }
   }, []);
+
+  // useEffect(() => {
+  //   const listDepartments = async () => {
+  //     try {
+  //       let token = JSON.parse(secureLocalStorage.getItem("token"));
+  //       const departments = await axios.get(
+  //         `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token.session.access_token}`,
+  //           },
+  //         }
+  //       );
+
+  //       console.log(departments.data);
+  //       setdepts(departments.data);
+
+  //       const pathName = location.pathname.split("/department/")[1];
+  //       // console.log("current path", pathName);
+
+  //       const matchingDepartment = departments.data.find(
+  //         (department) => department.name === pathName
+  //       );
+
+  //       if (matchingDepartment) {
+  //         setDeptId(matchingDepartment.id);
+  //         // console.log(matchingDepartment.id);
+  //       } else {
+  //         console.log("Department not found for path:", pathName);
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+
+  //   listDepartments();
+  // }, []);
+
+  const handleDepartmentClick = (index, id) => {
+    console.log("Selected department id:", id);
+    setDeptId(id);
+    setSelectedDeptIndex(index);
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
@@ -276,6 +295,7 @@ const UploadFile = () => {
                 Drag and drop files here, or click to select files
               </p>
             </div>
+
             {droppedFiles.length > 0 && (
               <div>
                 {droppedFiles.map((file, index) => (
@@ -292,6 +312,25 @@ const UploadFile = () => {
                 ))}
               </div>
             )}
+
+            <div className="grid grid-cols-3 gap-2 my-4">
+              {depts.map((dept, index) => (
+                <div
+                  key={index}
+                  style={{
+                    backgroundColor: dept.metadata.bg,
+                    border:
+                      selectedDeptIndex === index
+                        ? "2px solid gray"
+                        : "1px solid silver", // Applying border to selected department
+                  }}
+                  className={`flex justify-center items-center p-2 rounded-lg cursor-pointer`}
+                  onClick={() => handleDepartmentClick(index, dept.id)}
+                >
+                  {dept.name}
+                </div>
+              ))}
+            </div>
 
             {uploadProgress > 0 && (
               <BorderLinearProgress
