@@ -6,7 +6,7 @@ import DarkMode from "../assets/darkMode.svg";
 import { useDarkMode } from "../context/darkModeContext";
 
 import SearchBar from "./SearchBar";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const TopBar = () => {
   const location = useLocation();
@@ -16,6 +16,7 @@ const TopBar = () => {
     location.pathname === "/" ||
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
+    location.pathname === "/change-password" ||
     location.pathname === "/onboarding" ||
     location.pathname.startsWith("/ai");
 

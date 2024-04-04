@@ -73,6 +73,7 @@ function SideBar() {
     location.pathname === "/" ||
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
+    location.pathname === "/change-password" ||
     location.pathname === "/onboarding";
 
   if (hideSideBar) {
@@ -482,7 +483,7 @@ function SideBarContents({ darkMode }) {
               </li>
             </div>
 
-            <div className="flex items-center mt-2">
+            {/* <div className="flex items-center mt-2">
               <li className="min-w-full">
                 <Link
                   to="/analytics" // Use "to" instead of "href"
@@ -509,7 +510,7 @@ function SideBarContents({ darkMode }) {
                   <p className="px-2">Analytics & Report</p>
                 </Link>
               </li>
-            </div>
+            </div> */}
           </div>
         ) : (
           ""
