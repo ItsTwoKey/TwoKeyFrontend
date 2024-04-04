@@ -24,7 +24,6 @@
     "axios": "^1.5.1",
     "chart.js": "^4.4.1",
     "d3-scale": "^4.0.2",
-    "docxtemplater": "^3.46.2",
     "file-saver": "^2.0.5",
     "file-type": "^18.5.0",
     "jsonp": "^0.2.1",
