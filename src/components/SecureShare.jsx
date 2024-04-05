@@ -109,7 +109,7 @@ const SecureShare = () => {
       console.error("Error occurred in file upload:", error);
       showSnackbar("Upload failed. Please try again.", "error");
     } finally {
-      setSelectedFiles([])  // Reset selection
+      setSelectedFiles([]); // Reset selection
       setUploadProgress(0); // Reset progress after upload is complete
     }
   };
@@ -145,7 +145,9 @@ const SecureShare = () => {
         {
           file: [fileId],
           shared_with: securityAllotmentData.selectedUsers,
-          expiration_time: securityAllotmentData.timeDifference?securityAllotmentData.timeDifference:31536000*5,
+          expiration_time: securityAllotmentData.timeDifference
+            ? securityAllotmentData.timeDifference
+            : 31536000 * 5,
           security_check: {
             download_enabled: true,
             geo_enabled: securityAllotmentData.location,
@@ -279,7 +281,7 @@ const SecureShare = () => {
                   Security Features
                 </p>
                 <span className="grid grid-cols-2 text-gray-800 font-semibold">
-                  <label>
+                  {/* <label>
                     <input
                       type="checkbox"
                       checked={checkboxValues.uniqueIdentifiers}
@@ -287,7 +289,7 @@ const SecureShare = () => {
                       onChange={() => handleCheckboxChange("uniqueIdentifiers")}
                     />
                     Unique Identifiers
-                  </label>
+                  </label> */}
                   <label>
                     <input
                       type="checkbox"
@@ -341,7 +343,7 @@ const SecureShare = () => {
                 : "bg-gray-400"
             } `}
             onClick={handleFinalUpload}
-            disabled={!selectedFiles.length || uploadProgress }
+            disabled={!selectedFiles.length || uploadProgress}
           >
             Share
           </button>
