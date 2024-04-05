@@ -5,10 +5,13 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import secureLocalStorage from "react-secure-storage";
 import axios from "axios";
+import { CircularProgress } from "@mui/material";
+import { TextField } from "@mui/material";
 
 const RenameDept = ({ id, name }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [deptName, setDeptName] = useState("");
+  const [loading, setLoading] = useState(false); // State for loading
 
   const openDialog = () => {
     setIsOpen(true);
@@ -19,6 +22,7 @@ const RenameDept = ({ id, name }) => {
   };
 
   const handleDepartmentNameChange = async () => {
+    setLoading(true); // Set loading to true when API call starts
     let body = {
       name: deptName,
     };
@@ -36,8 +40,11 @@ const RenameDept = ({ id, name }) => {
       );
 
       console.log(renameDept);
+      setLoading(false); // Set loading back to false after successful response
+      closeDialog(); // Close dialog after successful response
     } catch (error) {
-      console.log("error occured at rename department.", error);
+      console.log("error occurred at rename department.", error);
+      setLoading(false); // Set loading back to false if there's an error
     }
   };
 
@@ -70,12 +77,23 @@ const RenameDept = ({ id, name }) => {
               </span>
             </p>
             {/* <p>id: {id ? id : "No ID provided"}</p> */}
-            <p>New name :</p>
-            <input
+            <p className="my-2">New name :</p>
+            {/* <input
               className="w-full border border-gray-300 rounded-md my-2 px-2 py-1"
               type="text"
               value={deptName}
               onChange={(e) => setDeptName(e.target.value)}
+              disabled={loading} // Disable input field when loading
+            /> */}
+
+            <TextField
+              id="fullname"
+              variant="outlined"
+              className="w-full bg-white"
+              placeholder="Enter department name"
+              name="fullName"
+              onChange={(e) => setDeptName(e.target.value)}
+              size="small"
             />
           </div>
         </DialogContent>
@@ -90,9 +108,13 @@ const RenameDept = ({ id, name }) => {
           <button
             className="px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white"
             onClick={handleDepartmentNameChange}
-            // disabled={!deptName.length}
+            disabled={loading} // Disable button when loading
           >
-            Rename Department
+            {loading ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : (
+              "Rename Department"
+            )}{" "}
           </button>
         </DialogActions>
       </Dialog>
