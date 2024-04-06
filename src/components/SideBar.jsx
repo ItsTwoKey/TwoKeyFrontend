@@ -224,8 +224,8 @@ function SideBar() {
       >
         <nav
           className={` ${
-            !isMenuOpen && "hide-sidebar h-full w-full"
-          } border-r border-r-gray-200 ${
+            !isMenuOpen && "hide-sidebar h-auto w-full"
+          } border-r border-b-inherit border-r-gray-200 ${
             darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
           }`}
         >
