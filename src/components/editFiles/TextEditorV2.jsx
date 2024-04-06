@@ -42,7 +42,7 @@ const toolbarOptions = [
   [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
   [{ direction: "rtl" }], // text direction
   ["link", "image", "video", "formula"],
-  [{ table: "table" }], // Custom table button
+//   [{ table: "table" }], // Custom table button
 ];
 
 export default function TextEditor() {
@@ -197,37 +197,37 @@ export default function TextEditor() {
   function extractTableContent(tableNode) {
     const ops = [];
     const rows = tableNode.getElementsByTagName("w:tr");
-    
+
     // Iterate through table rows
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       const cells = row.getElementsByTagName("w:tc");
       const tableRow = [];
-      
+
       // Iterate through table cells
       for (let j = 0; j < cells.length; j++) {
         const cell = cells[j];
         const paragraphs = cell.getElementsByTagName("w:p");
         const cellContent = [];
-        
+
         // Iterate through paragraphs within the cell
         for (let k = 0; k < paragraphs.length; k++) {
           const paragraph = paragraphs[k];
           const ops = extractParagraphContent(paragraph);
           cellContent.push(...ops);
         }
-        
+
         // Add cell content to table row
         tableRow.push({ insert: { tableCell: cellContent } });
       }
-      
+
       // Add table row to delta
       ops.push({ insert: { tableRow } });
     }
-    
+
     // Add newline character after the table
     ops.push({ insert: "\n" });
-    
+
     return ops;
   }
 
@@ -250,6 +250,23 @@ export default function TextEditor() {
   //       tableModule.insertTable(3, 3); // Example: Insert a 3x3 table
   //     });
   //   }, [quill]);
+
+  //   read file from internet source
+  async function fetchAndExtractContent(wordFileUrl) {
+    try {
+      // Fetch the Word file
+      const response = await fetch(wordFileUrl);
+      if (!response.ok) {
+        throw new Error("Failed to fetch the Word file");
+      }
+
+      // Convert response to blob
+      const blob = await response.blob();
+      convertDocxToQuill(blob);
+    } catch (error) {
+      console.error("Error fetching and extracting content:", error);
+    }
+  }
 
   return (
     <>
@@ -309,7 +326,8 @@ export default function TextEditor() {
   }
 }`}
         </style>
-        <input type="file" onChange={handleFileChange} accept=".docx"/>
+        <input type="file" onChange={handleFileChange} accept=".docx" />
+        <input type="text" onChange={(e)=>fetchAndExtractContent(e.target.value)} accept=".docx" />
         <button
           className="bg-slate-600 text-white px-4 py-2 rounded-lg m-2"
           onClick={() => saveToDocx(quill)}
@@ -321,5 +339,3 @@ export default function TextEditor() {
     </>
   );
 }
-
-

@@ -23,6 +23,7 @@ const FileViewer = ({ preUrl }) => {
     zIndex: 1,
   };
 
+  console.log(preUrl)
   return (
     <div style={containerStyles}>
       {/* Render iframe with Blob URL or original preUrl */}
