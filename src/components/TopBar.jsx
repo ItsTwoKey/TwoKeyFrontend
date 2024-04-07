@@ -20,20 +20,18 @@ const TopBar = () => {
     location.pathname === "/onboarding" ||
     location.pathname.startsWith("/ai");
 
-  if (hideTopBar) {
+  if (hideTopBar || !secureLocalStorage.getItem("token")) {
     return null;
   }
 
-  if (!secureLocalStorage.getItem("token")) {
-    return null;
+  // Extracting the first two segments of the pathname
+  const pathnameSegments = location.pathname
+    .split("/")
+    .filter((segment) => segment !== "");
+  let displayedPath = "";
+  if (pathnameSegments.length >= 2) {
+    displayedPath = pathnameSegments[0] + " / " + pathnameSegments[1];
   }
-
-  const topBarPath = location.pathname === "/dashboard";
-  let currentLocation = location.pathname;
-
-  const isUserProfile = /^\/User-Profile\/[0-9a-fA-F-]+$/i.test(
-    location.pathname
-  );
 
   return (
     <nav
@@ -47,15 +45,10 @@ const TopBar = () => {
             darkMode ? "text-gray-300" : "text-gray-800"
           } capitalize`}
         >
-          {isUserProfile
-            ? "User-Profile"
-            : location.pathname === "/dashboard"
-            ? "Overview / Dashboard"
-            : `${location.pathname}`.slice(1)}
+          {displayedPath}
         </p>
         <div className="flex justify-between gap-2 md:gap-24">
           <SearchBar />
-
           <img
             src={darkMode ? DarkMode : LightMode}
             alt="LightMode"

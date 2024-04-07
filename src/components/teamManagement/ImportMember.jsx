@@ -16,6 +16,7 @@ import LinearProgress, {
 import secureLocalStorage from "react-secure-storage";
 import * as XLSX from "xlsx";
 import BulkInvite from "../../assets/BulkInvite.svg";
+import toast, { Toaster } from "react-hot-toast";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -73,9 +74,11 @@ const ImportMember = (props) => {
         }
       );
       console.log("invite members:", response);
+      toast.success("Users invited successfully.");
       // closeDialog();
     } catch (error) {
       console.log("error occurew while inviting user", error);
+      toast.error("Something went wrong.");
     }
   };
 
@@ -139,6 +142,7 @@ const ImportMember = (props) => {
   }
   return (
     <div className="">
+      <Toaster position="bottom-left" reverseOrder={false} />
       <div
         onClick={openDialog}
         className="py-4 px-4 rounded-md border bg-[#f7f7ff] flex flex-col items-center hover:bg-indigo-100"

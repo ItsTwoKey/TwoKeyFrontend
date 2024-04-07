@@ -502,7 +502,7 @@ const Onboarding = () => {
           }`}
           disabled={!isFormComplete}
         >
-          Next
+          Login
         </button>
       </footer>
     </div>
