@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
-import FolderImg from "../assets/folder.svg";
+// import FolderImg from "../assets/folder.svg";
 import ThreeDots from "../assets/threedots.svg";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import toast, { Toaster } from "react-hot-toast";
+import FolderImg from "../assets/folder.png";
 
 const OwnedFolders = ({ folders }) => {
   const [filesInsideFolder, setFilesInsideFolder] = useState([]);
@@ -58,7 +59,7 @@ const OwnedFolders = ({ folders }) => {
             >
               <div>
                 <a
-                  className="flex justify-center items-center"
+                  className="flex justify-center items-center p-4"
                   href={`filesInsideFolder/${folder.name}/${folder.id}`}
                   alt="folder img"
                 >

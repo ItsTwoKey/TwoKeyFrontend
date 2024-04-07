@@ -276,6 +276,7 @@ const Onboarding = () => {
 
   const handleNextButtonClick = async () => {
     console.log(formData);
+    secureLocalStorage.clear();
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
