@@ -26,6 +26,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import ErrorPage from "./components/ErrorPage";
 import TextEditor from "./components/editFiles/TextEditor";
 import TextEditorV2 from "./components/editFiles/TextEditorV2";
+import CustomEditor from "./components/editFiles/CustomEditorV1";
 // import { useDarkMode } from "./context/darkModeContext";
 
 // let hardCodedDepartments = [
@@ -74,8 +75,9 @@ const App = () => {
               <Route path="/test" element={<Test />} />
 
               {/* for editor testing */}
-              <Route path="/edit" element={<TextEditor />} />
+              {/* <Route path="/edit" element={<TextEditor />} /> */}
               {/* <Route path="/edit" element={<TextEditorV2 />} /> */}
+              <Route path="/edit" element={<CustomEditor />} />
             </Route>
             {/* Public Routes should go below */}
 

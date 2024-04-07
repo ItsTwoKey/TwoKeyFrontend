@@ -259,14 +259,44 @@ export default function TextEditor() {
       if (!response.ok) {
         throw new Error("Failed to fetch the Word file");
       }
-
+  
       // Convert response to blob
       const blob = await response.blob();
-      convertDocxToQuill(blob);
+      saveAs(blob, "word-export.docx");
+      await convertOnlineDocxToQuill(blob);
+  
+      // After converting the content, save it as .docx
+      saveAsDocx();
     } catch (error) {
       console.error("Error fetching and extracting content:", error);
     }
   }
+  
+  async function convertOnlineDocxToQuill(docxBlob) {
+    try {
+      const zip = await JSZip.loadAsync(docxBlob);
+      const documentXml = await zip.file("word/document.xml").async("string");
+      const content = parseDocumentXml(documentXml); // parse the docx to xml
+      quill.setContents(content);
+    } catch (error) {
+      console.error("Error converting .docx to Quill format:", error);
+    }
+  }
+  
+  function saveAsDocx() {
+    try {
+      const delta = quill.getContents();
+      const quillToWordConfig = {
+        exportAs: "blob",
+      };
+      const docAsBlob = quillToWord.generateWord(delta, quillToWordConfig);
+      saveAs(docAsBlob, "word-export.docx");
+    } catch (error) {
+      console.error("Error generating Word document:", error);
+    }
+  }
+  
+  
 
   return (
     <>
