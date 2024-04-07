@@ -58,10 +58,11 @@ const OwnedFolders = ({ folders }) => {
             >
               <div>
                 <a
+                  className="flex justify-center items-center"
                   href={`filesInsideFolder/${folder.name}/${folder.id}`}
                   alt="folder img"
                 >
-                  <img src={FolderImg} alt="" />
+                  <img className="w-3/4" src={FolderImg} alt="" />
                 </a>
 
                 {/* <FilesInsideFolder
