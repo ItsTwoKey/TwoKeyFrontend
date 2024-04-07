@@ -6,12 +6,15 @@ import axios from "axios";
 
 const DashboardFolders = () => {
   const [folders, setFolders] = useState([]);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
-    listfolders();
+    listFolders();
   }, []);
 
-  const listfolders = async () => {
+  const listFolders = async () => {
+    setLoading(true); // Set loading to true when fetching starts
+
     let token = JSON.parse(secureLocalStorage.getItem("token"));
 
     try {
@@ -26,8 +29,10 @@ const DashboardFolders = () => {
       console.log("folders", response.data);
       setFolders(response.data);
     } catch (error) {
-      console.log("error occured while fetching folders", error);
+      console.log("error occurred while fetching folders", error);
     }
+
+    setLoading(false); // Set loading to false after fetching completes
   };
 
   return (
@@ -36,7 +41,19 @@ const DashboardFolders = () => {
         <h2 className="text-2xl font-semibold">Folders</h2>
         <CreateFolder />
       </div>
-      <OwnedFolders folders={folders} />
+      <div className="my-2">
+        {loading ? (
+          <p className="text-center">Loading folders...</p>
+        ) : (
+          <>
+            {folders.length === 0 ? (
+              <p className="text-center">No folders found.</p>
+            ) : (
+              <OwnedFolders folders={folders} />
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };

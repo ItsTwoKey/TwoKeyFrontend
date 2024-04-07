@@ -5,6 +5,7 @@ import FolderImg from "../assets/folder.svg";
 import ThreeDots from "../assets/threedots.svg";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import toast, { Toaster } from "react-hot-toast";
 
 const OwnedFolders = ({ folders }) => {
   const [filesInsideFolder, setFilesInsideFolder] = useState([]);
@@ -32,18 +33,22 @@ const OwnedFolders = ({ folders }) => {
           },
         }
       );
-      console.log("deleted folder", response);
+      // console.log("deleted folder", response);
 
       if (response) {
         handleClose();
+        toast.success("Folder deleted successfully.");
+        window.location.reload();
       }
     } catch (error) {
       console.log("error occured while deleting folder.", error);
+      toast.error("Error occurred while deleting the folder");
     }
   };
 
   return (
     <div className="mt-2">
+      <Toaster position="bottom-left" reverseOrder={false} />
       <div className="grid grid-cols-4 gap-4">
         {folders &&
           folders.map((folder) => (
@@ -99,7 +104,10 @@ const OwnedFolders = ({ folders }) => {
                     }}
                   >
                     <MenuItem style={{ padding: "0px 10px" }}>
-                      <button onClick={() => deleteFolder(Folder.id)}>
+                      <button
+                        className="text-red-500"
+                        onClick={() => deleteFolder(Folder.id)}
+                      >
                         delete
                       </button>
                     </MenuItem>

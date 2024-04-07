@@ -1,55 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import TextField from "@mui/material/TextField";
 import secureLocalStorage from "react-secure-storage";
 import axios from "axios";
-import FolderImg from "../assets/folder.svg";
-import Avatar from "@mui/material/Avatar";
 import { useDarkMode } from "../context/darkModeContext";
 import RecentFiles from "./RecentFiles";
 import { useAuth } from "../context/authContext";
-
-import PDF from "../assets/pdf.svg";
-import Doc from "../assets/doc.svg";
-import Image from "../assets/image.svg";
-import Ppt from "../assets/ppt.svg";
-import Txt from "../assets/txt.svg";
-import Video from "../assets/video.svg";
-
-// Define SVG icons for different file types
-const fileIcons = {
-  "image/png": Image,
-  "image/jpeg": Image,
-  "application/pdf": PDF,
-  "application/msword": Doc,
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-    Doc,
-  "application/vnd.ms-powerpoint": Ppt,
-  "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-    Ppt,
-  "text/plain": Txt,
-  "video/mp4": Video,
-  // Add more as needed
-};
-
-const recentBgColor = ["#FFF6F6", "#FFF6FF", "#F6FFF6", "#F6F7FF", "#FFFFF6"];
+import AddFilesInsideFolder from "./AddFilesInsideFolder";
 
 const FilesInsideFolder = () => {
   const { formatFileSize } = useAuth();
   const [files, setFiles] = useState([]);
   const { darkMode } = useDarkMode();
   const { folderName, folderId } = useParams();
-
-  const getIconByMimeType = (mimeType) => {
-    // Use the fileIcons object to get the appropriate SVG icon
-    return fileIcons[mimeType] || PDF; // Default to PDF icon if not found
-  };
 
   useEffect(() => {
     const listFilesInFolder = async (folder_id) => {
@@ -123,7 +85,11 @@ const FilesInsideFolder = () => {
         <img src={FolderImg} alt="" className="w-full" />
       </button> */}
 
-      <h2 className="text-2xl font-semibold my-2">{folderName} :</h2>
+      <div className="flex flex-row justify-between items-center my-2">
+        {" "}
+        <h2 className="text-2xl font-semibold my-2">{folderName} :</h2>
+        <AddFilesInsideFolder folderId={folderId} />
+      </div>
 
       <RecentFiles filteredData={files} />
     </div>

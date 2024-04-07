@@ -36,7 +36,10 @@ const CreateFolder = () => {
           },
         }
       );
-      console.log("created folder", response.data);
+      // console.log("created folder", response.data);
+      // if(response){
+      //   window.location.reload();
+      // }
 
       if (response) {
         closeDialog();
