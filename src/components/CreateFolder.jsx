@@ -36,7 +36,10 @@ const CreateFolder = () => {
           },
         }
       );
-      console.log("created folder", response.data);
+      // console.log("created folder", response.data);
+      // if(response){
+      //   window.location.reload();
+      // }
 
       if (response) {
         closeDialog();
@@ -50,9 +53,10 @@ const CreateFolder = () => {
     <div className="">
       <button
         onClick={openDialog}
-        className="text-md rounded-lg py-1 px-4 bg-purple-600 text-white"
+        title="create folder"
+        className="text-lg rounded-lg px-2 mx-4 text-center text-purple-600 border border-purple-600"
       >
-        Create Folder
+        +
       </button>
 
       <Dialog

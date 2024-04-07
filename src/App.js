@@ -18,6 +18,7 @@ import Analytics from "./pages/Analytics";
 import ContactUs from "./pages/ContactUs";
 import ForgotPassword from "./pages/ForgotPassword";
 import ChangePassword from "./pages/ChangePassword";
+import FilesInsideFolder from "./components/FilesInsideFolder";
 // import secureLocalStorage from "react-secure-storage";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -67,6 +68,10 @@ const App = () => {
               <Route path="/user-management" element={<UserManagement />} />
               <Route path="/department/:deptName" element={<Department />} />
               <Route path="/user-profile/:userId" element={<UserProfile />} />
+              <Route
+                path="/filesInsideFolder/:folderName/:folderId"
+                element={<FilesInsideFolder />}
+              />
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/analytics" element={<Analytics />} />

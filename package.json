@@ -40,6 +40,7 @@
     "react-doc-viewer": "^0.1.5",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
+    "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.17.0",
     "react-scripts": "5.0.1",
     "react-secure-storage": "^1.3.2",
