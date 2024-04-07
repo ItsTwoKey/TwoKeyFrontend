@@ -63,6 +63,8 @@ const Onboarding = () => {
 
   const [isPictureSelected, setIsPictureSelected] = useState(false);
   const [departmentList, setDepartmentList] = useState([]);
+  const [isFormComplete, setIsFormComplete] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -126,6 +128,29 @@ const Onboarding = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("formData", formData);
+  };
+
+  useEffect(() => {
+    checkFormCompletion();
+  }, [formData]);
+
+  const checkFormCompletion = () => {
+    const { email, password, username, firstName, lastName, profilePicture } =
+      formData;
+
+    // Check if all required fields are filled
+    if (
+      email.trim() !== "" &&
+      password.trim() !== "" &&
+      username.trim() !== "" &&
+      firstName.trim() !== "" &&
+      lastName.trim() !== "" &&
+      profilePicture !== null
+    ) {
+      setIsFormComplete(true);
+    } else {
+      setIsFormComplete(false);
+    }
   };
 
   // const handleNextButtonClick = async () => {
@@ -402,7 +427,7 @@ const Onboarding = () => {
                       }
                     />
                   </div>
-                  <div className="mb-4">
+                  {/* <div className="mb-4">
                     <label className="block text-gray-600 text-sm font-medium p-1">
                       Department
                     </label>
@@ -430,7 +455,7 @@ const Onboarding = () => {
                           </MenuItem>
                         ))}
                     </Select>
-                  </div>
+                  </div> */}
                   <div className="mb-4">
                     <label className="block text-gray-600 text-sm font-medium p-1">
                       First Name
@@ -471,11 +496,11 @@ const Onboarding = () => {
         </Typography>
         <button
           type="submit"
-          onClick={() => {
-            handleNextButtonClick();
-            // handleProfilePictureUpload();
-          }}
-          className="rounded-md py-2 px-8 text-white bg-blue-700"
+          onClick={() => handleNextButtonClick()}
+          className={`rounded-md py-2 px-8 text-white bg-blue-700 ${
+            !isFormComplete && "opacity-50 cursor-not-allowed"
+          }`}
+          disabled={!isFormComplete}
         >
           Next
         </button>
