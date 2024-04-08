@@ -5,7 +5,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import { useAuth } from "../context/authContext";
 import axios from "axios";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   const { screenshotDetected, screenshotAlert } = useAuth();
@@ -100,7 +100,11 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
               {loadingUrl ? (
                 <div className="text-center pt-20">Fetching URL...</div>
               ) : preUrl.length ? (
-                <FileViewer preUrl={preUrl} />
+                <FileViewer
+                  preUrl={preUrl}
+                  mimetype={fileInfo.mimetype}
+                  signedUrl={signedUrl}
+                />
               ) : (
                 <div className="text-center pt-20">
                   You do not have access to the file.
