@@ -89,142 +89,196 @@ export default function CustomEditor() {
     }
   };
 
-  // Function to insert a table
+  // Function to generate a table with 2px cell margin
   const generateTable = (m = 3, n = 4) => {
     let tableHtml = '<table style="border-collapse: collapse; width: 100%;">';
     for (let i = 0; i < m; i++) {
       tableHtml += "<tr>";
       for (let j = 0; j < n; j++) {
-        tableHtml += `<td style="border: 1px solid black;">${i + 1}-${
-          j + 1
-        }</td>`;
+        tableHtml += `<td style="border: 1px solid black; padding: 2px 4px;">${
+          i + 1
+        }-${j + 1}</td>`;
       }
       tableHtml += "</tr>";
     }
-
     tableHtml += "</table>";
     document.execCommand("insertHTML", false, tableHtml);
-    // initializeCellListeners();
   };
 
-  const initializeCellListeners = () => {
-    const table = document.querySelector("table");
-    if (!table) return;
+  // Function to get the index of the selected cell
+  const getSelectedCellIndex = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return null;
 
-    // Add event listeners to table cells
-    for (let i = 0; i < table.rows[0].cells.length; i++) {
-      for (let j = 0; j < table.rows.length; j++) {
-        const cell = table.rows[j].cells[i];
-        cell.addEventListener("click", () => handleCellClick(i));
+    const range = selection.getRangeAt(0);
+    let node = range.startContainer;
+    while (node) {
+      if (node.nodeName === "TD") {
+        const rowIndex = node.parentNode.rowIndex;
+        const cellIndex = node.cellIndex;
+        return { rowIndex, cellIndex };
       }
+      node = node.parentNode;
+    }
+    return null;
+  };
+
+  // Function to handle cell operations
+  const handleCellOperation = () => {
+    const selectedCell = getSelectedCellIndex();
+    if (selectedCell) {
+      const { rowIndex, cellIndex } = selectedCell;
+      console.log("Selected Row Index:", rowIndex);
+      console.log("Selected Cell Index:", cellIndex);
+      console.log(selectedCell);
+      return selectedCell;
+    } else {
+      console.log("No cell selected.");
+      return null;
     }
   };
 
-  // Function to handle click on a table cell
-  const handleCellClick = (columnIndex) => {
-    // Store the selected column index for future reference
-    updateEditorConfig("colindex", columnIndex);
-    // Perform any additional actions based on the selected column index
-    console.log("Selected column index:", editorConfig.colindex);
-  };
-
-  // Function to insert a new row at the specified index in an existing table
-  const insertRow = (index) => {
+  // Function to insert a row at a specific index
+  const insertRow = (pos = 1) => {
+    const selectedCell = handleCellOperation();
     const table = document.querySelector("table");
-    if (!table) return;
+    if (!table || selectedCell === null) return;
 
-    const newRow = table.insertRow(index);
+    const newRow = table.insertRow(selectedCell.rowIndex + pos);
     const columns = table.rows[0].cells.length;
 
     for (let i = 0; i < columns; i++) {
       const cell = newRow.insertCell(i);
       cell.style.border = "1px solid black";
-      cell.textContent = `${index + 1}-${i + 1}`;
+      cell.style.padding = "2px 4px";
+      cell.textContent = `${selectedCell.rowIndex + 1 + pos}-${i + 1}`;
     }
   };
 
-  // Function to insert a new column at the specified index in an existing table
-  const insertColumn = (index) => {
+  // Function to insert a column at a specific index
+  const insertColumn = (pos = 1) => {
+    const selectedCell = handleCellOperation();
     const table = document.querySelector("table");
-    if (!table) return;
+    if (!table || selectedCell === null) return;
 
     const rows = table.rows.length;
     for (let i = 0; i < rows; i++) {
-      const newRowCell = table.rows[i].insertCell(index);
+      const newRowCell = table.rows[i].insertCell(selectedCell.rowIndex + pos);
       newRowCell.style.border = "1px solid black";
-      newRowCell.textContent = `${i + 1}-${index + 1}`;
+      newRowCell.style.padding = "2px 4px";
+      newRowCell.textContent = `${i + 1}-${selectedCell.cellIndex + 1 + pos}`;
     }
   };
 
-// Function to merge selected cells
-const mergeCell = () => {
-  const selection = window.getSelection();
-  const range = selection.getRangeAt(0);
-  const selectedNode = range.commonAncestorContainer;
+  // merge the cells
+  const mergeCell = () => {
+    try {
+      const selection = document.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
 
-  // Assuming selectedNode is the <td> element
-  const selectedCell = selectedNode.tagName === "TD" ? selectedNode : selectedNode.parentNode;
+      const range = selection.getRangeAt(0);
+      const table = range.commonAncestorContainer.closest("table");
+      if (!table) return;
 
-  const table = selectedCell.closest("table");
-  if (!table) return;
+      const startCell = range.startContainer.parentElement.closest("td");
+      const endCell = range.endContainer.parentElement.closest("td");
+      if (!startCell || !endCell) return;
 
-  // Check if there are more than one cell selected
-  const selectedCells = table.querySelectorAll(".selected-cell");
-  if (selectedCells.length < 2) return;
+      const startRowIndex = startCell.parentNode.rowIndex;
+      const startCellIndex = startCell.cellIndex;
+      const endRowIndex = endCell.parentNode.rowIndex;
+      const endCellIndex = endCell.cellIndex;
 
-  // Get the boundaries of the selected cells
-  const startRow = Math.min(...Array.from(selectedCells).map(cell => cell.parentNode.rowIndex));
-  const endRow = Math.max(...Array.from(selectedCells).map(cell => cell.parentNode.rowIndex));
-  const startCol = Math.min(...Array.from(selectedCells).map(cell => cell.cellIndex));
-  const endCol = Math.max(...Array.from(selectedCells).map(cell => cell.cellIndex));
+      // Concatenate content of all cells into the first cell with space
+      let mergedContent = "";
+      for (let rowIndex = startRowIndex; rowIndex <= endRowIndex; rowIndex++) {
+        for (
+          let cellIndex = startCellIndex;
+          cellIndex <= endCellIndex;
+          cellIndex++
+        ) {
+          const cell = table.rows[rowIndex].cells[cellIndex];
+          if (rowIndex === startRowIndex && cellIndex === startCellIndex)
+            continue;
+          mergedContent += " " + cell.textContent; // Add cell content with space
+          cell.remove(); // Remove merged cell
+        }
+      }
 
-  // Merge cells by spanning rows and columns
-  selectedCells.forEach((cell, index) => {
-    if (index !== 0) {
-      const rowSpan = cell.parentNode.rowIndex - startRow + 1;
-      const colSpan = cell.cellIndex - startCol + 1;
-      selectedCells[0].rowSpan = rowSpan;
-      selectedCells[0].colSpan = colSpan;
-      cell.remove();
+      startCell.textContent += mergedContent.trim(); // Append merged content to the first cell
+
+      // Set rowSpan and colSpan for the first cell
+      startCell.rowSpan = endRowIndex - startRowIndex + 1;
+      startCell.colSpan = endCellIndex - startCellIndex + 1;
+    } catch (error) {
+      console.error("Error while merging cells:", error);
     }
-  });
+  };
 
-  // Remove the 'selected-cell' class from all cells
-  table.querySelectorAll(".selected-cell").forEach(cell => cell.classList.remove("selected-cell"));
-};
+  // split cell
+  const splitCell = () => {
+    try {
+      const selection = document.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
 
-// Function to split merged cells
-const splitCell = () => {
-  const selection = window.getSelection();
-  const range = selection.getRangeAt(0);
-  const selectedNode = range.commonAncestorContainer;
+      const range = selection.getRangeAt(0);
+      const table = range.commonAncestorContainer.closest("table");
+      if (!table) return;
 
-  // Assuming selectedNode is the <td> element
-  const selectedCell = selectedNode.tagName === "TD" ? selectedNode : selectedNode.parentNode;
+      const cell = range.startContainer.parentElement.closest("td");
+      if (!cell || (cell.rowSpan === 1 && cell.colSpan === 1)) return;
 
-  const table = selectedCell.closest("table");
-  if (!table) return;
+      const startRowIndex = cell.parentNode.rowIndex;
+      const startCellIndex = cell.cellIndex;
+      const endRowIndex = startRowIndex + cell.rowSpan - 1;
+      const endCellIndex = startCellIndex + cell.colSpan - 1;
 
-  const rowSpan = selectedCell.rowSpan || 1;
-  const colSpan = selectedCell.colSpan || 1;
-  selectedCell.rowSpan = 1;
-  selectedCell.colSpan = 1;
+      // Remove rowSpan and colSpan from the original cell
+      cell.rowSpan = 1;
+      cell.colSpan = 1;
 
-  // Insert new cells to split the merged cell
-  for (let i = 1; i < rowSpan; i++) {
-    const newRow = table.rows[selectedCell.parentNode.rowIndex + i];
-    const newCell = newRow.insertCell(selectedCell.cellIndex);
-    newCell.textContent = `${newRow.rowIndex}-${selectedCell.cellIndex + 1}`;
-    newCell.style.border = "1px solid black";
+      // Adjust the colspan of cells in the same row after the split
+      for (let rowIndex = startRowIndex; rowIndex <= endRowIndex; rowIndex++) {
+        const newRow = table.rows[rowIndex];
+        for (
+          let cellIndex = startCellIndex + 1;
+          cellIndex <= endCellIndex;
+          cellIndex++
+        ) {
+          const newCell = document.createElement("td");
+          newCell.textContent = "";
+          newRow.insertBefore(newCell, newRow.cells[cellIndex]);
+        }
+      }
+    } catch (error) {
+      console.error("Error while splitting cell:", error);
+    }
+  };
+
+  // Function to delete selected row
+  function deleteRow() {
+    const selectedCell = handleCellOperation();
+    if (!selectedCell) return;
+
+    const table = document.querySelector("table");
+    if (!table) return;
+
+    table.deleteRow(selectedCell.rowIndex);
   }
 
-  for (let j = 1; j < colSpan; j++) {
-    const newCell = selectedCell.parentNode.insertCell(selectedCell.cellIndex + j);
-    newCell.textContent = `${selectedCell.parentNode.rowIndex}-${selectedCell.cellIndex + j + 1}`;
-    newCell.style.border = "1px solid black";
-  }
-};
+  // Function to delete selected column
+  const deleteColumn = () => {
+    const selectedCell = handleCellOperation();
+    if (!selectedCell) return;
 
+    const table = document.querySelector("table");
+    if (!table) return;
+
+    const rows = table.rows;
+    for (let i = 0; i < rows.length; i++) {
+      rows[i].deleteCell(selectedCell.cellIndex);
+    }
+  };
 
   // Function to insert a URL link
   const insertLink = () => {
@@ -751,6 +805,24 @@ const splitCell = () => {
               }}
             >
               {icon.Urlicon}&nbsp;Insert Column
+            </MenuItem>
+            <MenuItem
+              className="p-1"
+              onClick={() => {
+                deleteRow();
+                handleClose();
+              }}
+            >
+              {icon.Urlicon}&nbsp;Delete Row
+            </MenuItem>
+            <MenuItem
+              className="p-1"
+              onClick={() => {
+                deleteColumn();
+                handleClose();
+              }}
+            >
+              {icon.Urlicon}&nbsp;Delete Column
             </MenuItem>
             <MenuItem
               className="p-1"
