@@ -29,16 +29,16 @@ export default function TextEditor({ preUrl }) {
   const [content, setContent] = useState("");
   const quillRef = useRef(null);
 
-  const handleUrlChange = (event) => {
-    const wordFileUrl = event.target.value;
-    if (wordFileUrl.trim() !== "") {
-      fetchAndExtractContent(wordFileUrl);
-    }
-  };
+  // const handleUrlChange = (event) => {
+  //   const wordFileUrl = event.target.value;
+  //   if (wordFileUrl.trim() !== "") {
+  //     fetchAndExtractContent(wordFileUrl);
+  //   }
+  // };
 
-  // if (preUrl.trim() !== "") {
-  //   fetchAndExtractContent(preUrl);
-  // }
+  if (preUrl.trim() !== "") {
+    fetchAndExtractContent(preUrl);
+  }
 
   const wrapperRef = useCallback((wrapper) => {
     if (wrapper == null) return;
@@ -294,7 +294,7 @@ export default function TextEditor({ preUrl }) {
             Save
           </button>
         </div>
-        {/* <div>{content}</div> */}
+        <div>{content}</div>
         <div className="container" ref={wrapperRef}></div>
       </div>
     </>
