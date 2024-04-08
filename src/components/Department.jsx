@@ -4,7 +4,7 @@ import ThreeDots from "../assets/threedots.svg";
 import secureLocalStorage from "react-secure-storage";
 import axios from "axios";
 import { Menu, MenuItem } from "@mui/material";
-import RenameDept from "./RenameDept";
+import EditDept from "./EditDept";
 
 let departments = [
   { name: "Account", metadata: { bg: "#FFF6F6", border: "#FEB7B7" } },
@@ -118,13 +118,13 @@ const Department = () => {
           },
         }}
       >
-        <MenuItem style={{ padding: "3px 10px" }} onClick={handleRemoveDept}>
-          <p className="text-red-500 text-sm">Discard</p>
-        </MenuItem>
         <MenuItem style={{ padding: "3px 10px" }}>
           {selectedDept && (
-            <RenameDept id={selectedDept.id} name={selectedDept.name} />
+            <EditDept id={selectedDept.id} name={selectedDept.name} />
           )}
+        </MenuItem>
+        <MenuItem style={{ padding: "3px 10px" }} onClick={handleRemoveDept}>
+          <p className="text-red-500 text-sm">Discard</p>
         </MenuItem>
       </Menu>
     </div>
