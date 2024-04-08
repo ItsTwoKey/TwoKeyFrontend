@@ -133,6 +133,7 @@ export default function DashboardTabs() {
                 mimetype: file.metadata.mimetype,
                 status: "Team",
                 security: "Enhanced",
+                color: file.file_info[0]?.depts[0]?.metadata?.bg,
                 lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
                   "en-IN",
                   {

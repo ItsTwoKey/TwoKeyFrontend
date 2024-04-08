@@ -36,7 +36,7 @@ const DashboardFolders = () => {
   };
 
   return (
-    <div className="my-4">
+    <div className="my-4 overflow-x-scroll scrollbar-hide">
       <div className="flex flex-row justify-between items-center">
         <h2 className="text-2xl font-semibold">Folders</h2>
         <CreateFolder />

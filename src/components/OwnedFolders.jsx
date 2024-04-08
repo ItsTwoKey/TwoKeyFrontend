@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
-// import FolderImg from "../assets/folder.svg";
 import ThreeDots from "../assets/threedots.svg";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -20,7 +19,6 @@ const OwnedFolders = ({ folders }) => {
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
-    // console.log("fileName", fileName);
   };
 
   const deleteFolder = async (folder_id) => {
@@ -34,8 +32,6 @@ const OwnedFolders = ({ folders }) => {
           },
         }
       );
-      // console.log("deleted folder", response);
-
       if (response) {
         handleClose();
         toast.success("Folder deleted successfully.");
@@ -50,12 +46,12 @@ const OwnedFolders = ({ folders }) => {
   return (
     <div className="mt-2">
       <Toaster position="bottom-left" reverseOrder={false} />
-      <div className="grid grid-cols-4 gap-4">
+      <div className="flex overflow-x-auto">
         {folders &&
           folders.map((folder) => (
             <div
               key={folder.id}
-              className="w-full border rounded-2xl cursor-pointer"
+              className="w-1/5 mx-2 border rounded-2xl cursor-pointer flex-shrink-0"
             >
               <div>
                 <a
@@ -65,11 +61,6 @@ const OwnedFolders = ({ folders }) => {
                 >
                   <img className="w-3/4" src={FolderImg} alt="" />
                 </a>
-
-                {/* <FilesInsideFolder
-                  folderName={folder.name}
-                  files={filesInsideFolder}
-                /> */}
               </div>
               <span className="flex flex-row justify-between items-center ">
                 <p className="px-4 py-2 line-clamp-1 font-semibold text-md">

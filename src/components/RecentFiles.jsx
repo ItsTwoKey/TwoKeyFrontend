@@ -160,6 +160,8 @@ const RecentFiles = ({ filteredData, loading }) => {
     return fileIcons[mimeType] || PDF; // Default to PDF icon if not found
   };
 
+  console.log("recent", filteredData);
+
   return (
     <div>
       <div
@@ -200,7 +202,7 @@ const RecentFiles = ({ filteredData, loading }) => {
                 key={index}
                 className={`border border-gray-200 p-3 rounded-[16px] cursor-pointer`}
                 style={{
-                  backgroundColor: recentBgColor[index % recentBgColor.length],
+                  backgroundColor: file.color,
                 }}
               >
                 <span className="flex justify-between items-center">
