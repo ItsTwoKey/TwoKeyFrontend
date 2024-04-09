@@ -242,6 +242,9 @@ export default function TextEditor({ preUrl }) {
   border: none;
   display: flex;
   justify-content: center;
+  overflow-y: scroll;
+    max-height: 75vh;
+    min-height: 50vh;
 }
 
 .container .ql-toolbar.ql-snow {
