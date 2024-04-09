@@ -369,6 +369,39 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const listDepartments = async () => {
+      try {
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let cachedDepartments = JSON.parse(
+          secureLocalStorage.getItem("departments")
+        );
+
+        console.log(cachedDepartments);
+
+        if (cachedDepartments) {
+          setDepartments(cachedDepartments);
+        } else {
+          const response = await axios.get(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
+            {
+              headers: {
+                Authorization: `Bearer ${token.session.access_token}`,
+              },
+            }
+          );
+
+          const departmentsData = response.data;
+          secureLocalStorage.setItem(
+            "departments",
+            JSON.stringify(departmentsData)
+          );
+          setDepartments(departmentsData);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     listDepartments();
   }, []);
 
