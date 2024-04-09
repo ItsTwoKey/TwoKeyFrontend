@@ -51,7 +51,7 @@ const OwnedFolders = ({ folders }) => {
           folders.map((folder) => (
             <div
               key={folder.id}
-              className="w-1/5 mx-2 border rounded-2xl cursor-pointer flex-shrink-0"
+              className="w-1/6 mx-2 border rounded-2xl cursor-pointer flex-shrink-0"
             >
               <div>
                 <a

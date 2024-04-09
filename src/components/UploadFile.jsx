@@ -358,7 +358,7 @@ const UploadFile = () => {
               onClick={handleFinalUpload}
               disabled={uploadProgress > 0 ? true : false}
             >
-              Done
+              Upload
             </button>
           </div>
         </DialogActions>
