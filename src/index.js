@@ -4,12 +4,15 @@ import "./index.css";
 import App from "./App";
 import { DarkModeProvider } from "./context/darkModeContext";
 import { AuthProvider } from "./context/authContext";
+import { DepartmentProvider } from "./context/departmentContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <AuthProvider>
     <DarkModeProvider>
-      <App />
+      <DepartmentProvider>
+        <App />
+      </DepartmentProvider>
     </DarkModeProvider>
   </AuthProvider>
 );

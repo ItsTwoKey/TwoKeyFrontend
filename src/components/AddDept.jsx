@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useDepartment } from "../context/departmentContext";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -13,6 +14,7 @@ const AddDept = () => {
 
   const [deptName, setDeptName] = useState("");
   const [hex, setHex] = useState("#4F46E5");
+  const { setDepartments, listDepartments } = useDepartment();
 
   const openDialog = () => {
     setIsOpen(true);
@@ -43,6 +45,10 @@ const AddDept = () => {
           },
         }
       );
+
+      if (addDept) {
+        listDepartments();
+      }
       // console.log("add dept:", addDept);
       closeDialog();
     } catch (error) {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useDepartment } from "../context/departmentContext";
 import AddDept from "./AddDept";
 import ThreeDots from "../assets/threedots.svg";
 import secureLocalStorage from "react-secure-storage";
@@ -6,46 +7,47 @@ import axios from "axios";
 import { Menu, MenuItem } from "@mui/material";
 import EditDept from "./EditDept";
 
-let departments = [
-  { name: "Account", metadata: { bg: "#FFF6F6", border: "#FEB7B7" } },
-  { name: "Finance", metadata: { bg: "#FFF6FF", border: "#FFA9FF" } },
-  { name: "Development", metadata: { bg: "#F6FFF6", border: "#B3FFB3" } },
-  { name: "Manufacturing", metadata: { bg: "#F6F7FF", border: "#B6BEFF" } },
-  { name: "Sales", metadata: { bg: "#FFFFF6", border: "#FFFFA1" } },
-  { name: "Human Resources", metadata: { bg: "#F6FFFE", border: "#C0FFF8" } },
-];
+// let departments = [
+//   { name: "Account", metadata: { bg: "#FFF6F6", border: "#FEB7B7" } },
+//   { name: "Finance", metadata: { bg: "#FFF6FF", border: "#FFA9FF" } },
+//   { name: "Development", metadata: { bg: "#F6FFF6", border: "#B3FFB3" } },
+//   { name: "Manufacturing", metadata: { bg: "#F6F7FF", border: "#B6BEFF" } },
+//   { name: "Sales", metadata: { bg: "#FFFFF6", border: "#FFFFA1" } },
+//   { name: "Human Resources", metadata: { bg: "#F6FFFE", border: "#C0FFF8" } },
+// ];
 
 const Department = () => {
-  const [newDepartments, setNewDepartments] = useState(departments);
+  // const [newDepartments, setNewDepartments] = useState(departments);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedDept, setSelectedDept] = useState(null);
+  const { departments, setDepartments, listDepartments } = useDepartment();
 
   useEffect(() => {
     listDepartments();
   }, []);
 
-  const listDepartments = async () => {
-    try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
-      const departments = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
+  // const listDepartments = async () => {
+  //   try {
+  //     let token = JSON.parse(secureLocalStorage.getItem("token"));
+  //     const departments = await axios.get(
+  //       `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token.session.access_token}`,
+  //         },
+  //       }
+  //     );
 
-      console.log(departments.data);
-      secureLocalStorage.setItem(
-        "departments",
-        JSON.stringify(departments.data)
-      );
-      setNewDepartments(departments.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //     console.log(departments.data);
+  //     secureLocalStorage.setItem(
+  //       "departments",
+  //       JSON.stringify(departments.data)
+  //     );
+  //     setNewDepartments(departments.data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleClick = (event, dept) => {
     setAnchorEl(event.currentTarget);
@@ -90,7 +92,7 @@ const Department = () => {
       </div>
       <hr className="border border-white border-b-[#D8DEE4] my-3" />
       <div className="grid grid-cols-3 gap-4">
-        {newDepartments.map((dept, index) => (
+        {departments.map((dept, index) => (
           <div
             key={index}
             className={`py-4 px-4 rounded-lg flex justify-between `}

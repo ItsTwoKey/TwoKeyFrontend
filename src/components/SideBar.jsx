@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ProfilePic from "../assets/profilePic.png";
 import { useDarkMode } from "../context/darkModeContext";
+import { useDepartment } from "../context/departmentContext";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -330,53 +331,12 @@ function SideBar() {
  */
 function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
   const { profileData, setProfileData, setToken } = useAuth();
-  const [departments, setDepartments] = useState([]);
+  // const [departments, setDepartments] = useState([]);
+  const { departments, setDepartments, listDepartments } = useDepartment();
   const location = useLocation();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   // Check if profileData is empty
-  //   if (!profileData || Object.keys(profileData).length === 0) {
-  //     let data = localStorage.getItem("profileData");
-  //     if (data) {
-  //       setProfileData(JSON.parse(data));
-  //     }
-  //   }
-  // }, [profileData]);
   useEffect(() => {
-    const listDepartments = async () => {
-      try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
-        let cachedDepartments = JSON.parse(
-          secureLocalStorage.getItem("departments")
-        );
-
-        console.log(cachedDepartments);
-
-        if (cachedDepartments) {
-          setDepartments(cachedDepartments);
-        } else {
-          const response = await axios.get(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-            {
-              headers: {
-                Authorization: `Bearer ${token.session.access_token}`,
-              },
-            }
-          );
-
-          const departmentsData = response.data;
-          secureLocalStorage.setItem(
-            "departments",
-            JSON.stringify(departmentsData)
-          );
-          setDepartments(departmentsData);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     listDepartments();
   }, []);
 
