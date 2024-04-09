@@ -51,6 +51,11 @@ const OwnedFolders = ({ folders }) => {
           folders.map((folder) => (
             <div
               key={folder.id}
+              style={{
+                backgroundColor: folder.metadata?.bg
+                  ? folder.metadata?.bg
+                  : "#fff",
+              }}
               className="w-1/6 mx-2 border rounded-2xl cursor-pointer flex-shrink-0"
             >
               <div>
