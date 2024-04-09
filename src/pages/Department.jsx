@@ -92,26 +92,34 @@ const Department = () => {
   }
 
   return (
-    <div>
-      <div
-        className={`my-4 flex flex-row justify-between items-center h-20 w-full px-8 bg-[#F1F1FF] ${
-          darkMode && "text-gray-200"
-        }`}
-      >
-        <p
-          className={`text-2xl font-semibold ${
-            darkMode ? "text-black" : "text-black"
+    <FileState>
+      <div>
+        <div
+          className={`my-4 flex flex-row justify-between items-center h-20 w-full px-8 bg-[#F1F1FF] ${
+            darkMode && "text-gray-200"
           }`}
         >
-          {deptName} Files
-        </p>
-        <span className="flex gap-2">
-          <SecureShare />
-          <UploadFile />
-          {/* <ShareFile /> */}
-        </span>
+          <p
+            className={`text-2xl font-semibold ${
+              darkMode ? "text-black" : "text-black"
+            }`}
+          >
+            {deptName} Files
+          </p>
+          <span className="flex gap-2">
+            <SecureShare value={0} />
+            <UploadFile value={0} />
+            {/* <ShareFile /> */}
+          </span>
+        </div>
+        {/* <h1>{deptName}</h1> */}
+        {loading ? (
+          <p>Loading...</p> // Display loading indicator while fetching data
+        ) : (
+          <RecentFiles filteredData={filesFromBackend} loading={loading} />
+        )}
       </div>
-      </div>
+    </FileState>
   );
 };
 

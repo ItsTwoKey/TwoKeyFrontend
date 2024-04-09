@@ -43,14 +43,9 @@ const UploadFile = ({ value }) => {
   const [depts, setdepts] = useState([]);
   const [deptId, setDeptId] = useState("");
   const [selectedDeptIndex, setSelectedDeptIndex] = useState(null);
+  const [isFieldsFilled, setIsFieldsFilled] = useState(false);
   const context = useContext(fileContext);
   const { updateFilesState } = context;
-
-  // console.log(location.pathname.split("/")[1]);
-
-  // useEffect(() => {
-  //   const departments = JSON.parse(secureLocalStorage.getItem("departments"));
-  const [isFieldsFilled, setIsFieldsFilled] = useState(false);
 
   // Function to check if both fields are filled
   const checkFields = () => {
@@ -111,6 +106,7 @@ const UploadFile = ({ value }) => {
           closeDialog();
           handleFileIdRetrieval(fileName);
           //   console.log(`Download ${upload.file.name} from ${upload.url}`);
+          updateFilesState(0 || value);
         },
       });
 
@@ -136,9 +132,7 @@ const UploadFile = ({ value }) => {
         console.log("upload started");
         await uploadFile("TwoKey", fileNameWithTimestamp, file);
         console.log("uploaded file:", fileNameWithTimestamp);
-        updateFilesState(0 || value);
       }
-
 
       // Show success snackbar after successful file upload
 
