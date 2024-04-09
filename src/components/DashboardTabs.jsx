@@ -56,25 +56,25 @@ export default function DashboardTabs() {
   const [loading, setLoading] = useState(true);
 
   //   realtime supabase subscribe
-  useEffect(() => {
-    const channel = supabase
-      .channel("custom_all_channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "file_info" },
-        () => {
-          console.log("File Change received!");
+  // useEffect(() => {
+  //   const channel = supabase
+  //     .channel("custom_all_channel")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "*", schema: "public", table: "file_info" },
+  //       () => {
+  //         console.log("File Change received!");
 
-          // console.log("common logs subscribed");
-          fetchFiles();
-        }
-      )
-      .subscribe();
+  //         // console.log("common logs subscribed");
+  //         fetchFiles();
+  //       }
+  //     )
+  //     .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+  //   return () => {
+  //     supabase.removeChannel(channel);
+  //   };
+  // }, []);
 
   const handleTabChange = (event) => {
     setValue(event.target.value);
