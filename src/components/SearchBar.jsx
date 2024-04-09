@@ -147,8 +147,8 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="relative">
-      <div className="w-10 md:w-96">
+    <div className="relative w-full md:w-96">
+      <div>
         <SearchIcon
           sx={{
             position: "absolute",
@@ -161,7 +161,7 @@ export default function SearchBar() {
         <input
           type="search"
           placeholder="Search"
-          className={`w-full p-1 pl-12 ${
+          className={`w-full p-1 px-10 ${
             darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-700"
           } rounded-md`}
           style={{ outline: "none" }}
