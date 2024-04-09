@@ -7,7 +7,7 @@ import MenuItem from "@mui/material/MenuItem";
 import toast, { Toaster } from "react-hot-toast";
 import FolderImg from "../assets/folder.png";
 
-const OwnedFolders = ({ folders }) => {
+const OwnedFolders = ({ folders, listFolders }) => {
   const [filesInsideFolder, setFilesInsideFolder] = useState([]);
   const [Folder, setFolder] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
@@ -35,7 +35,7 @@ const OwnedFolders = ({ folders }) => {
       if (response) {
         handleClose();
         toast.success("Folder deleted successfully.");
-        window.location.reload();
+        listFolders();
       }
     } catch (error) {
       console.log("error occured while deleting folder.", error);
