@@ -154,7 +154,6 @@ function SideBar() {
               >
                 Twokey
               </a>
-<<<<<<< HEAD
               <IconButton
                 onClick={() => {
                   setIsMenuOpen(false); // Close the drawer
@@ -165,22 +164,6 @@ function SideBar() {
             </div>
 
             <SideBarContents darkMode={darkMode} />
-=======
-              <img
-                src={Cross}
-                alt="X"
-                onClick={() => {
-                  setIsMenuOpen(!isMenuOpen);
-                }}
-                className="h-6 w-6"
-              ></img>
-            </div>
-            <SideBarContents
-              setIsMenuOpen={setIsMenuOpen}
-              isMenuOpen={isMenuOpen}
-              darkMode={darkMode}
-            />
-
             <div className="my-12"></div>
 
             {/* Profile and logout buttons */}
