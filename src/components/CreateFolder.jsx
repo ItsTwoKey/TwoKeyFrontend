@@ -6,10 +6,13 @@ import DialogActions from "@mui/material/DialogActions";
 import TextField from "@mui/material/TextField";
 import secureLocalStorage from "react-secure-storage";
 import axios from "axios";
+import Chrome from "@uiw/react-color-chrome";
+import { GithubPlacement } from "@uiw/react-color-github";
 
 const CreateFolder = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
+  const [hex, setHex] = useState("#EFEEDC");
 
   const openDialog = () => {
     setIsOpen(true);
@@ -25,7 +28,14 @@ const CreateFolder = () => {
 
   const createFolder = async () => {
     let token = JSON.parse(secureLocalStorage.getItem("token"));
-    let body = { name: folderName }; // Use folderName from state
+    let body = {
+      name: folderName,
+      metadata: {
+        bg: hex,
+        border: "#B7B6C2",
+      },
+    }; // Use folderName from state
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/folder`,
@@ -36,7 +46,10 @@ const CreateFolder = () => {
           },
         }
       );
-      console.log("created folder", response.data);
+      // console.log("created folder", response.data);
+      // if(response){
+      //   window.location.reload();
+      // }
 
       if (response) {
         closeDialog();
@@ -50,9 +63,10 @@ const CreateFolder = () => {
     <div className="">
       <button
         onClick={openDialog}
-        className="text-md rounded-lg py-1 px-4 bg-purple-600 text-white"
+        title="create folder"
+        className="text-lg rounded-lg px-2 mx-4 text-center text-purple-600 border border-purple-600"
       >
-        Create Folder
+        +
       </button>
 
       <Dialog
@@ -80,6 +94,18 @@ const CreateFolder = () => {
               size="small"
               fullWidth
             />
+
+            <span>
+              <p className="text-gray-700 my-2">Department Color</p>
+              <Chrome
+                color={hex}
+                style={{ width: "100%", margin: "auto" }}
+                placement={GithubPlacement.Right}
+                onChange={(color) => {
+                  setHex(color.hexa);
+                }}
+              />
+            </span>
           </div>
         </DialogContent>
         <DialogActions sx={{ padding: "10px" }}>

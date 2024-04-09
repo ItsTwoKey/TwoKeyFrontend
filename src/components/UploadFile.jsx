@@ -45,14 +45,14 @@ const UploadFile = () => {
 
   // console.log(location.pathname.split("/")[1]);
 
-  useEffect(() => {
-    const departments = JSON.parse(secureLocalStorage.getItem("departments"));
+  // useEffect(() => {
+  //   const departments = JSON.parse(secureLocalStorage.getItem("departments"));
 
-    if (departments) {
-      setdepts(departments);
-      console.log("upload files", departments);
-    }
-  }, []);
+  //   if (isOpen) {
+  //     setdepts(departments);
+  //     console.log("upload files", departments);
+  //   }
+  // }, []);
 
   // useEffect(() => {
   //   const listDepartments = async () => {
@@ -233,6 +233,10 @@ const UploadFile = () => {
 
   const openDialog = () => {
     setIsOpen(true);
+    const departments = JSON.parse(secureLocalStorage.getItem("departments"));
+
+    setdepts(departments);
+    console.log("upload files", departments);
   };
 
   const closeDialog = () => {
@@ -358,7 +362,7 @@ const UploadFile = () => {
               onClick={handleFinalUpload}
               disabled={uploadProgress > 0 ? true : false}
             >
-              Done
+              Upload
             </button>
           </div>
         </DialogActions>

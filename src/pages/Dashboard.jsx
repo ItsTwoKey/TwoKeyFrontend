@@ -1,5 +1,4 @@
 import React from "react";
-import RecentFiles from "../components/RecentFiles";
 import { useDarkMode } from "../context/darkModeContext";
 import { Dialog } from "@mui/material";
 import FileViewer from "../components/FileViewer";
@@ -9,6 +8,7 @@ import DashboardTabs from "../components/DashboardTabs";
 import LatestActivities from "../components/LatestActivities";
 import secureLocalStorage from "react-secure-storage";
 import ErrorPage from "../components/ErrorPage";
+import DashboardFolders from "../components/DashboardFolders";
 
 const Dashboard = () => {
   const { darkMode } = useDarkMode();
@@ -27,8 +27,7 @@ const Dashboard = () => {
         <LatestActivities />
       </div>
       <div>
-        {/* <RecentFiles /> */}
-        {/* <DashboardFiles /> */}
+        <DashboardFolders />
         <DashboardTabs />
       </div>
       {/* <div className={`${screenshotDetected ? "blur" : ""}`}> */}

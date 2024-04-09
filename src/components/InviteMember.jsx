@@ -11,6 +11,7 @@ import FormHelperText from "@mui/joy/FormHelperText";
 import RadioGroup from "@mui/joy/RadioGroup";
 import Radio from "@mui/joy/Radio";
 import Inviteicon from "../assets/InviteMember.svg";
+import toast, { Toaster } from "react-hot-toast";
 
 const InviteMember = (props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,15 +62,20 @@ const InviteMember = (props) => {
           },
         }
       );
-      console.log("invite member:", response);
-      closeDialog();
+      // console.log("invite member:", response);
+      if (response) {
+        toast.success("User invited successfully.");
+        closeDialog();
+      }
     } catch (error) {
       console.log("error occurew while inviting user", error);
+      toast.error("Something went wrong.");
     }
   };
 
   return (
     <div className="">
+      <Toaster position="bottom-left" reverseOrder={false} />
       <div
         onClick={openDialog}
         className="py-4 px-4 rounded-md border bg-[#f7f7ff] flex flex-col items-center hover:bg-indigo-100"

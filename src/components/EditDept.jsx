@@ -7,10 +7,13 @@ import secureLocalStorage from "react-secure-storage";
 import axios from "axios";
 import { CircularProgress } from "@mui/material";
 import { TextField } from "@mui/material";
+import Chrome from "@uiw/react-color-chrome";
+import { GithubPlacement } from "@uiw/react-color-github";
 
-const RenameDept = ({ id, name }) => {
+const EditDept = ({ id, name }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [deptName, setDeptName] = useState("");
+  const [hex, setHex] = useState("#4F46E5");
   const [loading, setLoading] = useState(false); // State for loading
 
   const openDialog = () => {
@@ -25,7 +28,12 @@ const RenameDept = ({ id, name }) => {
     setLoading(true); // Set loading to true when API call starts
     let body = {
       name: deptName,
+      metadata: {
+        bg: hex,
+        border: "#B7B6C2",
+      },
     };
+
     try {
       let token = JSON.parse(secureLocalStorage.getItem("token"));
 
@@ -51,7 +59,7 @@ const RenameDept = ({ id, name }) => {
   return (
     <div className="">
       <button onClick={openDialog} className="text-sm">
-        Rename
+        Edit
       </button>
 
       <Dialog
@@ -77,24 +85,26 @@ const RenameDept = ({ id, name }) => {
               </span>
             </p>
             {/* <p>id: {id ? id : "No ID provided"}</p> */}
-            <p className="my-2">New name :</p>
-            {/* <input
+            <p className="">New name :</p>
+
+            <input
               className="w-full border border-gray-300 rounded-md my-2 px-2 py-1"
               type="text"
               value={deptName}
               onChange={(e) => setDeptName(e.target.value)}
-              disabled={loading} // Disable input field when loading
-            /> */}
-
-            <TextField
-              id="fullname"
-              variant="outlined"
-              className="w-full bg-white"
-              placeholder="Enter department name"
-              name="fullName"
-              onChange={(e) => setDeptName(e.target.value)}
-              size="small"
             />
+
+            <span>
+              <p className="text-gray-700 my-2">Department Color</p>
+              <Chrome
+                color={hex}
+                style={{ width: "100%", margin: "auto" }}
+                placement={GithubPlacement.Right}
+                onChange={(color) => {
+                  setHex(color.hexa);
+                }}
+              />
+            </span>
           </div>
         </DialogContent>
         <DialogActions sx={{ padding: "10px" }}>
@@ -122,4 +132,4 @@ const RenameDept = ({ id, name }) => {
   );
 };
 
-export default RenameDept;
+export default EditDept;

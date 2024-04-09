@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ProfilePic from "../assets/profilePic.png";
 import { useDarkMode } from "../context/darkModeContext";
+import { useDepartment } from "../context/departmentContext";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -11,6 +12,7 @@ import { departmentIcons } from "../utils/iconComponents";
 import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
 import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
 import MenuIcon from "@mui/icons-material/MenuRounded";
+import Cross from "../assets/cross.svg";
 import IconButton from "@mui/material/IconButton";
 import Drawer from "@mui/material/Drawer";
 import Analytics from "../assets/Analytics.svg";
@@ -97,7 +99,7 @@ function SideBar() {
     >
       <div
         className={`w-[72px] h-[72px] p-4 flex justify-center items-center sticky top-0 ${
-          darkMode && "text-white"
+          darkMode && "text-black"
         }`}
       >
         <IconButton
@@ -152,6 +154,7 @@ function SideBar() {
               >
                 Twokey
               </a>
+<<<<<<< HEAD
               <IconButton
                 onClick={() => {
                   setIsMenuOpen(false); // Close the drawer
@@ -162,6 +165,22 @@ function SideBar() {
             </div>
 
             <SideBarContents darkMode={darkMode} />
+=======
+              <img
+                src={Cross}
+                alt="X"
+                onClick={() => {
+                  setIsMenuOpen(!isMenuOpen);
+                }}
+                className="h-6 w-6"
+              ></img>
+            </div>
+            <SideBarContents
+              setIsMenuOpen={setIsMenuOpen}
+              isMenuOpen={isMenuOpen}
+              darkMode={darkMode}
+            />
+
             <div className="my-12"></div>
 
             {/* Profile and logout buttons */}
@@ -260,6 +279,7 @@ function SideBar() {
             display: { md: "block", xs: "none" },
             backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
             minHeight: "auto",
+            border: "none",
           },
           "& .MuiDrawer-paper::-webkit-scrollbar": {
             display: "none" /* Hide scrollbar for Chrome, Safari, and Edge */,
@@ -267,9 +287,7 @@ function SideBar() {
         }}
       >
         <nav
-          className={` ${
-            !isMenuOpen && "hide-sidebar h-auto w-full"
-          } border-r border-b-inherit border-r-gray-200 ${
+          className={` ${!isMenuOpen && "hide-sidebar h-auto w-full"}  ${
             darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
           }`}
         >
@@ -291,7 +309,11 @@ function SideBar() {
                 Twokey
               </Link>
             </div>
-            <SideBarContents darkMode={darkMode} />
+            <SideBarContents
+              isMenuOpen={isMenuOpen}
+              setIsMenuOpen={setIsMenuOpen}
+              darkMode={darkMode}
+            />
           </div>
           <div
             className={`sticky bottom-0 ${
@@ -356,55 +378,14 @@ function SideBar() {
  * @param {boolean} props.darkMode - The dark mode state.
  * @returns {JSX.Element} The SidebarContents component.
  */
-function SideBarContents({ darkMode }) {
+function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
   const { profileData, setProfileData, setToken } = useAuth();
-  const [departments, setDepartments] = useState([]);
+  // const [departments, setDepartments] = useState([]);
+  const { departments, setDepartments, listDepartments } = useDepartment();
   const location = useLocation();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   // Check if profileData is empty
-  //   if (!profileData || Object.keys(profileData).length === 0) {
-  //     let data = localStorage.getItem("profileData");
-  //     if (data) {
-  //       setProfileData(JSON.parse(data));
-  //     }
-  //   }
-  // }, [profileData]);
   useEffect(() => {
-    const listDepartments = async () => {
-      try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
-        let cachedDepartments = JSON.parse(
-          secureLocalStorage.getItem("departments")
-        );
-
-        console.log(cachedDepartments);
-
-        if (cachedDepartments) {
-          setDepartments(cachedDepartments);
-        } else {
-          const response = await axios.get(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-            {
-              headers: {
-                Authorization: `Bearer ${token.session.access_token}`,
-              },
-            }
-          );
-
-          const departmentsData = response.data;
-          secureLocalStorage.setItem(
-            "departments",
-            JSON.stringify(departmentsData)
-          );
-          setDepartments(departmentsData);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     listDepartments();
   }, []);
 
@@ -427,6 +408,9 @@ function SideBarContents({ darkMode }) {
             <Link
               to="/dashboard" // Use "to" instead of "href"
               alt="Dashboard"
+              onClick={() => {
+                setIsMenuOpen(!isMenuOpen);
+              }}
               className={`flex justify-start items-center min-w-full ${
                 location.pathname === "/dashboard"
                   ? ` p-2 rounded-md text-sm ${
@@ -456,7 +440,13 @@ function SideBarContents({ darkMode }) {
         </p>
 
         {departments.map((department, index) => (
-          <li key={index} className="min-w-full my-2 ">
+          <li
+            onClick={() => {
+              setIsMenuOpen(!isMenuOpen);
+            }}
+            key={index}
+            className="min-w-full my-2 "
+          >
             <style>
               {`
               .dept-${index}, .dept-hover-${index}:hover {
@@ -495,7 +485,12 @@ function SideBarContents({ darkMode }) {
               Organization Admin
             </p>
             <div className="flex items-center">
-              <li className="min-w-full">
+              <li
+                className="min-w-full"
+                onClick={() => {
+                  setIsMenuOpen(!isMenuOpen);
+                }}
+              >
                 <Link
                   to="/user-management" // Use "to" instead of "href"
                   alt="User Management"
@@ -524,7 +519,9 @@ function SideBarContents({ darkMode }) {
             </div>
 
             {/* <div className="flex items-center mt-2">
-              <li className="min-w-full">
+              <li className="min-w-full" onClick={() => {
+            setIsMenuOpen(!isMenuOpen);
+          }}>
                 <Link
                   to="/analytics" // Use "to" instead of "href"
                   alt="Analytics"
@@ -563,7 +560,12 @@ function SideBarContents({ darkMode }) {
         >
           Settings
         </p>
-        <li className="min-w-full my-2 px-4">
+        <li
+          className="min-w-full my-2 px-4"
+          onClick={() => {
+            setIsMenuOpen(!isMenuOpen);
+          }}
+        >
           <div className="flex items-center">
             <Link
               to="/settings" // Use "to" instead of "href"

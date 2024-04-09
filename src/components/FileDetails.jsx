@@ -16,7 +16,7 @@ import Image from "../assets/image.svg";
 import Ppt from "../assets/ppt.svg";
 import Txt from "../assets/txt.svg";
 import Video from "../assets/video.svg";
-import secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 // Define SVG icons for different file types
 const fileIcons = {
