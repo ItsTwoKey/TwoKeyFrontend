@@ -243,7 +243,7 @@ export default function TextEditor({ preUrl }) {
   display: flex;
   justify-content: center;
   overflow-y: scroll;
-    max-height: 75vh;
+    max-height: 85vh;
     min-height: 50vh;
 }
 

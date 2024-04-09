@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useContext } from "react";
 import axios from "axios";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -14,6 +14,7 @@ import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import secureLocalStorage from "react-secure-storage";
+import fileContext from "../context/fileContext";
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
   borderRadius: 5,
@@ -27,7 +28,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   },
 }));
 
-const SecureShare = () => {
+const SecureShare = ({ value }) => {
   const resumableEndpt = process.env.REACT_APP_RESUMABLE_URL;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -42,6 +43,8 @@ const SecureShare = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const context = useContext(fileContext);
+  const { updateFilesState } = context;
 
   const uploadFile = async (bucketName, fileName, file, index) => {
     try {
@@ -73,6 +76,7 @@ const SecureShare = () => {
         onSuccess: function () {
           console.log(`Download ${upload.file.name} from ${upload.url}`);
           closeDialog();
+          updateFilesState(value);
           handleFileIdRetrieval(fileName);
         },
       });
@@ -110,7 +114,7 @@ const SecureShare = () => {
       showSnackbar("Upload failed. Please try again.", "error");
     } finally {
       setSelectedFiles([]); // Reset selection
-      setUploadProgress(0); // Reset progress after upload is complete
+      setUploadProgress(0 || value); // Reset progress after upload is complete
     }
   };
 

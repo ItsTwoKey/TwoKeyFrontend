@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "../helper/supabaseClient";
 import Dialog from "@mui/material/Dialog";
@@ -16,6 +16,7 @@ import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import secureLocalStorage from "react-secure-storage";
+import fileContext from "../context/fileContext";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -30,7 +31,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   },
 }));
 
-const UploadFile = () => {
+const UploadFile = ({ value }) => {
   const resumableEndpt = process.env.REACT_APP_RESUMABLE_URL;
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -42,6 +43,8 @@ const UploadFile = () => {
   const [depts, setdepts] = useState([]);
   const [deptId, setDeptId] = useState("");
   const [selectedDeptIndex, setSelectedDeptIndex] = useState(null);
+  const context = useContext(fileContext);
+  const { updateFilesState } = context;
 
   // console.log(location.pathname.split("/")[1]);
 
@@ -161,7 +164,9 @@ const UploadFile = () => {
         console.log("upload started");
         await uploadFile("TwoKey", fileNameWithTimestamp, file);
         console.log("uploaded file:", fileNameWithTimestamp);
+        updateFilesState(0 || value);
       }
+
 
       // Show success snackbar after successful file upload
 

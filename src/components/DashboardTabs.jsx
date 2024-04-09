@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
@@ -11,6 +11,7 @@ import UploadFile from "./UploadFile";
 import SecureShare from "./SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
 import PropTypes from "prop-types";
+import fileContext from "../context/fileContext";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -50,8 +51,12 @@ export default function DashboardTabs() {
   const { darkMode } = useDarkMode();
   const location = useLocation();
   const [value, setValue] = useState(0);
-  const [files, setFiles] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  // use both of these state from context
+  // const [files, setFiles] = useState([]);
+  // const [filteredData, setFilteredData] = useState([]);
+
+  const context = useContext(fileContext);
+  const { files, setFiles, filteredData, setFilteredData } = context;
   const [loading, setLoading] = useState(true);
 
   const handleTabChange = (event) => {
@@ -193,8 +198,8 @@ export default function DashboardTabs() {
       >
         <p className="text-2xl font-semibold ">Files</p>
         <span className="flex gap-2">
-          <SecureShare />
-          <UploadFile />
+          <SecureShare value={value} />
+          <UploadFile value={value} />
           {/* <ShareFile /> */}
         </span>
       </div>
