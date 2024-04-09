@@ -11,7 +11,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import toast, { Toaster } from "react-hot-toast";
 
-const AddFilesInsideFolder = ({ folderId }) => {
+const AddFilesInsideFolder = ({ folderId, listFilesInFolder }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [fileId, setFileId] = useState("");
   const [files, setFiles] = useState([]);
@@ -53,7 +53,7 @@ const AddFilesInsideFolder = ({ folderId }) => {
       if (response) {
         closeDialog();
         setFileId("");
-        window.location.reload();
+        listFilesInFolder(folderId);
       }
     } catch (error) {
       console.log("error occurred while creating folder.", error);

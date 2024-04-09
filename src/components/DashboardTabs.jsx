@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { supabase } from "../helper/supabaseClient";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
@@ -54,129 +55,150 @@ export default function DashboardTabs() {
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  //   realtime supabase subscribe
+  // useEffect(() => {
+  //   const channel = supabase
+  //     .channel("custom_all_channel")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "*", schema: "public", table: "file_info" },
+  //       () => {
+  //         console.log("File Change received!");
+
+  //         // console.log("common logs subscribed");
+  //         fetchFiles();
+  //       }
+  //     )
+  //     .subscribe();
+
+  //   return () => {
+  //     supabase.removeChannel(channel);
+  //   };
+  // }, []);
+
   const handleTabChange = (event) => {
     setValue(event.target.value);
   };
 
   useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
-        let url;
+    fetchFiles();
+  }, [value]);
 
-        // Determine the URL based on the selected tab
-        switch (value) {
-          case 0:
-            url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=25`;
-            break;
-          case 1:
-            url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared`;
-            break;
-          case 2:
-            url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received`;
-            break;
-          case 3:
-            url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned`;
-            break;
+  const fetchFiles = async () => {
+    try {
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let url;
 
-          default:
-            url = "";
-            break;
+      // Determine the URL based on the selected tab
+      switch (value) {
+        case 0:
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=25`;
+          break;
+        case 1:
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared`;
+          break;
+        case 2:
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received`;
+          break;
+        case 3:
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned`;
+          break;
+
+        default:
+          url = "";
+          break;
+      }
+
+      // Check if the URL is empty before making the request
+      if (url) {
+        const getFiles = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        });
+
+        console.log(`dashboard Tabs`, getFiles.data);
+        setFiles(getFiles.data);
+
+        const cacheKey = "recentFilesCache";
+
+        // Check if recent files data is available in localStorage
+        const cachedRecentFiles = secureLocalStorage.getItem(cacheKey);
+
+        if (cachedRecentFiles) {
+          // console.log(
+          //   "Using cached recent files:",
+          //   JSON.parse(cachedRecentFiles)
+          // );
+          setFilteredData(JSON.parse(cachedRecentFiles));
+          setLoading(false);
         }
 
-        // Check if the URL is empty before making the request
-        if (url) {
-          const getFiles = await axios.get(url, {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
+        if (getFiles) {
+          const mappedFiles = getFiles.data.map((file) => {
+            // destucture and extract dept name of every file
+            try {
+              const [{ depts }, ...extra] = file.file_info;
+              const [{ name }, ...more] = depts;
+              file.department = name;
+            } catch (err) {
+              // if department {depts:[]} is empty
+              // console.log(err);
+              file.department = "";
+            }
+            // console.log("department : ", file.department);
+
+            return {
+              id: file.id,
+              name: file.name.substring(0, 80),
+              profilePic: file.profile_pic,
+              size: formatFileSize(file.metadata.size),
+              dept: file.department,
+              owner: file.owner_email,
+              mimetype: file.metadata.mimetype,
+              status: "Team",
+              security: "Enhanced",
+              color: file.file_info[0]?.depts[0]?.metadata?.bg,
+              lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+                "en-IN",
+                {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                }
+              ),
+            };
           });
 
-          console.log(`dashboard Tabs`, getFiles.data);
-          setFiles(getFiles.data);
+          // Sort the mappedFiles array based on the lastUpdate property
+          mappedFiles.sort((a, b) => {
+            return new Date(b.lastUpdate) - new Date(a.lastUpdate);
+          });
 
-          const cacheKey = "recentFilesCache";
+          // Replace the cached recent files data with the new data
+          secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
 
-          // Check if recent files data is available in localStorage
-          const cachedRecentFiles = secureLocalStorage.getItem(cacheKey);
-
-          if (cachedRecentFiles) {
-            // console.log(
-            //   "Using cached recent files:",
-            //   JSON.parse(cachedRecentFiles)
-            // );
-            setFilteredData(JSON.parse(cachedRecentFiles));
-            setLoading(false);
+          // Update the state with the new data
+          // setFilteredData(mappedFiles);
+          if (location.pathname !== "/dashboard") {
+            // If location is other than "dashboard", send only the first 5 items
+            setFilteredData(mappedFiles.slice(0, 5));
+          } else {
+            // If location is "dashboard", send all filtered data
+            setFilteredData(mappedFiles);
           }
-
-          if (getFiles) {
-            const mappedFiles = getFiles.data.map((file) => {
-              // destucture and extract dept name of every file
-              try {
-                const [{ depts }, ...extra] = file.file_info;
-                const [{ name }, ...more] = depts;
-                file.department = name;
-              } catch (err) {
-                // if department {depts:[]} is empty
-                // console.log(err);
-                file.department = "";
-              }
-              // console.log("department : ", file.department);
-
-              return {
-                id: file.id,
-                name: file.name.substring(0, 80),
-                profilePic: file.profile_pic,
-                size: formatFileSize(file.metadata.size),
-                dept: file.department,
-                owner: file.owner_email,
-                mimetype: file.metadata.mimetype,
-                status: "Team",
-                security: "Enhanced",
-                color: file.file_info[0]?.depts[0]?.metadata?.bg,
-                lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
-                  "en-IN",
-                  {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                    hour: "numeric",
-                    minute: "numeric",
-                    hour12: true,
-                  }
-                ),
-              };
-            });
-
-            // Sort the mappedFiles array based on the lastUpdate property
-            mappedFiles.sort((a, b) => {
-              return new Date(b.lastUpdate) - new Date(a.lastUpdate);
-            });
-
-            // Replace the cached recent files data with the new data
-            secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
-
-            // Update the state with the new data
-            // setFilteredData(mappedFiles);
-            if (location.pathname !== "/dashboard") {
-              // If location is other than "dashboard", send only the first 5 items
-              setFilteredData(mappedFiles.slice(0, 5));
-            } else {
-              // If location is "dashboard", send all filtered data
-              setFilteredData(mappedFiles);
-            }
-            setLoading(false);
-          }
-        } else {
-          console.log("URL is empty. Skipping request.");
+          setLoading(false);
         }
-      } catch (error) {
-        console.log(error);
+      } else {
+        console.log("URL is empty. Skipping request.");
       }
-    };
-
-    fetchLogs();
-  }, [value]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleChange = (event, newValue) => {
     // Reset logs state to null when changing tabs

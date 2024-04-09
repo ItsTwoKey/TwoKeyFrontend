@@ -9,7 +9,7 @@ import axios from "axios";
 import Chrome from "@uiw/react-color-chrome";
 import { GithubPlacement } from "@uiw/react-color-github";
 
-const CreateFolder = () => {
+const CreateFolder = ({ listFolders }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [hex, setHex] = useState("#EFEEDC");
@@ -53,6 +53,7 @@ const CreateFolder = () => {
 
       if (response) {
         closeDialog();
+        listFolders();
       }
     } catch (error) {
       console.log("error occurred while creating folder.", error);

@@ -25,7 +25,7 @@ const LatestActivities = () => {
         "postgres_changes",
         { event: "*", schema: "public", table: "access_log" },
         () => {
-          // console.log("Change received!", payload);
+          console.log("Change received!");
 
           // console.log("common logs subscribed");
           getCommonLogs();

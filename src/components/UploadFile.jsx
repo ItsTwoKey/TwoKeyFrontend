@@ -42,54 +42,21 @@ const UploadFile = () => {
   const [depts, setdepts] = useState([]);
   const [deptId, setDeptId] = useState("");
   const [selectedDeptIndex, setSelectedDeptIndex] = useState(null);
+  const [isFieldsFilled, setIsFieldsFilled] = useState(false);
 
-  // console.log(location.pathname.split("/")[1]);
+  // Function to check if both fields are filled
+  const checkFields = () => {
+    if (deptId !== "" && droppedFiles.length > 0) {
+      setIsFieldsFilled(true);
+    } else {
+      setIsFieldsFilled(false);
+    }
+  };
 
-  // useEffect(() => {
-  //   const departments = JSON.parse(secureLocalStorage.getItem("departments"));
-
-  //   if (isOpen) {
-  //     setdepts(departments);
-  //     console.log("upload files", departments);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   const listDepartments = async () => {
-  //     try {
-  //       let token = JSON.parse(secureLocalStorage.getItem("token"));
-  //       const departments = await axios.get(
-  //         `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token.session.access_token}`,
-  //           },
-  //         }
-  //       );
-
-  //       console.log(departments.data);
-  //       setdepts(departments.data);
-
-  //       const pathName = location.pathname.split("/department/")[1];
-  //       // console.log("current path", pathName);
-
-  //       const matchingDepartment = departments.data.find(
-  //         (department) => department.name === pathName
-  //       );
-
-  //       if (matchingDepartment) {
-  //         setDeptId(matchingDepartment.id);
-  //         // console.log(matchingDepartment.id);
-  //       } else {
-  //         console.log("Department not found for path:", pathName);
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   listDepartments();
-  // }, []);
+  // Add useEffect to check fields whenever deptId or droppedFiles change
+  useEffect(() => {
+    checkFields();
+  }, [deptId, droppedFiles]);
 
   const handleDepartmentClick = (index, id) => {
     console.log("Selected department id:", id);
@@ -355,12 +322,14 @@ const UploadFile = () => {
             </button>
             <button
               className={`px-3 py-1.5 rounded-lg shadow-sm border ${
-                uploadProgress > 0
+                !isFieldsFilled
+                  ? "border-gray-300 text-gray-300 cursor-not-allowed"
+                  : uploadProgress > 0
                   ? "border-gray-500 text-gray-500 hover:bg-gray-200 cursor-progress"
-                  : "border-[#5E5ADB] text-[#5E5ADB] hover:bg-blue-100 "
+                  : "border-[#5E5ADB] text-[#5E5ADB] hover:bg-blue-100"
               } text-sm font-semibold`}
               onClick={handleFinalUpload}
-              disabled={uploadProgress > 0 ? true : false}
+              disabled={!isFieldsFilled || uploadProgress > 0}
             >
               Upload
             </button>
