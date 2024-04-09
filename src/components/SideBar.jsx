@@ -19,6 +19,7 @@ import Analytics from "../assets/Analytics.svg";
 import UserMgmt from "../assets/userMgmt.svg";
 import { useAuth } from "../context/authContext";
 import secureLocalStorage from "react-secure-storage";
+import CloseIcon from "@mui/icons-material/Close";
 
 let hardCodedDepartments = [
   { name: "Account", metadata: { bg: "#FFF6F6", border: "#FEB7B7" } },
@@ -129,22 +130,19 @@ function SideBar() {
           minHeight: "100%",
 
           "& .MuiDrawer-paper": {
-            backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
+            backgroundColor: `${darkMode ? "black" : "white"}`,
             minHeight: "100%",
           },
         }}
       >
+        {/* the main background css to be changed */}
         <nav
           className={`sm-width md-width px-2 h-screen  ${
-            darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
+            darkMode ? "bg-black" : `bg-${lightModeSidebarColor}`
           } `}
         >
           <div className="w-full">
-            <div
-              className={`flex justify-between items-center sticky top-0 py-4 px-2 ${
-                darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
-              }`}
-            >
+            <div className="flex justify-between items-center p-4">
               <a
                 href="/dashboard"
                 alt="LOGO"
@@ -156,34 +154,29 @@ function SideBar() {
               >
                 Twokey
               </a>
-              <img
-                src={Cross}
-                alt="X"
+              <IconButton
                 onClick={() => {
-                  setIsMenuOpen(!isMenuOpen);
+                  setIsMenuOpen(false); // Close the drawer
                 }}
-                className="h-6 w-6"
-              ></img>
+              >
+                <CloseIcon style={{ color: darkMode ? "white" : "black" }} />
+              </IconButton>
             </div>
-            <SideBarContents
-              setIsMenuOpen={setIsMenuOpen}
-              isMenuOpen={isMenuOpen}
-              darkMode={darkMode}
-            />
+
+            <SideBarContents darkMode={darkMode} />
             <div className="my-12"></div>
-          </div>
-          <div
-            className={`sticky bottom-0 ${
-              darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
-            }`}
-          >
-            <footer className="w-full py-2 sticky bottom-0">
-              <span className="flex justify-between items-center">
+
+            {/* Profile and logout buttons */}
+            <footer
+              className={`relative w-full py-5 bottom-12 ${
+                darkMode ? "bg-black" : `bg-${lightModeSidebarColor}`
+              }`}
+            >
+              <span className="flex justify-between items-center px-4">
                 <a
                   href="/profile"
                   alt="Profile"
-                  className={` p-2 rounded-md  
-                  ${
+                  className={`p-2 rounded-md ${
                     darkMode
                       ? "text-gray-200 hover:bg-gray-700"
                       : "hover:bg-gray-100"
@@ -210,6 +203,45 @@ function SideBar() {
               </span>
             </footer>
           </div>
+
+          {/* <div
+            className={` bottom-10 ${
+              darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
+            }`}
+          >
+            <footer className="w-full py-2 ">
+              <span className="flex justify-between items-center">
+                <a
+                  href="/profile"
+                  alt="Profile"
+                  className={` p-2 rounded-md  
+                  ${
+                    darkMode
+                      ? "text-gray-200 hover:bg-gray-700]"
+                      : "hover:bg-gray-100"
+                  } flex justify-start items-center font-medium duration-200`}
+                >
+                  <img
+                    src={picture ? picture : ProfilePic}
+                    loading="lazy"
+                    alt={data ? `${data}'s Profile Picture` : "Profile Picture"}
+                    className={`w-6 h-6 rounded-full ${
+                      darkMode
+                        ? "filter brightness-100 border border-white"
+                        : ""
+                    }`}
+                  />
+                  <p className="px-2">#{data ? data : "Profile"}</p>
+                </a>
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 rounded-lg p-1"
+                >
+                  <ExitToAppRoundedIcon sx={{ color: "white" }} size="small" />
+                </button>
+              </span>
+            </footer>
+          </div> */}
         </nav>
       </Drawer>
       {/* 
@@ -413,13 +445,9 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
                   ? ` ${
                       darkMode
                         ? "hover:bg-gray-700 bg-gray-600"
-                        : `dept-${index}`
+                        : `hover:bg-indigo-400 bg-indigo-300`
                     }`
-                  : `${
-                      darkMode
-                        ? "hover:bg-gray-700 text-gray-100"
-                        : `dept-hover-${index}`
-                    }`
+                  : `${darkMode ? "hover:bg-indigo-700 " : "hover:bg-gray-300"}`
               }`}
             >
               {departmentIcons[department.name]}

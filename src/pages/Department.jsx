@@ -89,14 +89,21 @@ const Department = () => {
   if (!secureLocalStorage.getItem("token")) {
     return <ErrorPage error="You are not authorised" />;
   }
+
   return (
-    <div className="p-4">
+    <div>
       <div
-        className={`my-4 flex flex-row justify-between items-center ${
+        className={`my-4 flex flex-row justify-between items-center h-20 w-full px-8 bg-[#F1F1FF] ${
           darkMode && "text-gray-200"
         }`}
       >
-        <p className="text-2xl font-semibold ">{deptName} Files</p>
+        <p
+          className={`text-2xl font-semibold ${
+            darkMode ? "text-black" : "text-black"
+          }`}
+        >
+          {deptName} Files
+        </p>
         <span className="flex gap-2">
           <SecureShare />
           <UploadFile />

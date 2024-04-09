@@ -6,7 +6,7 @@ import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import secureLocalStorage from "react-secure-storage";
-
+import { useDarkMode } from "../context/darkModeContext";
 const currentDateTime = () => {
   //  calculate time and date for imput field
   const time =
@@ -28,6 +28,7 @@ const DueDate = () => {
   const [reschedule, setReshedule] = useState(false);
   const [newExpiry, setnewExpiry] = useState(rescheduleDate(currentDateTime()));
   const [timeInterval, setTimeInterval] = useState(null);
+  const { darkMode } = useDarkMode();
 
   let role = JSON.parse(secureLocalStorage.getItem("profileData"));
   const isOrgAdmin = role && role.role_priv === "org_admin";
@@ -199,8 +200,12 @@ const DueDate = () => {
   return (
     <div className="w-full md:w-3/5">
       <Paper className="h-72 ">
-        <div className="flex justify-between items-center p-4">
-          <p className="text-sm font-medium">Due Date</p>
+        <div
+          className={`flex justify-between items-center p-5 ${
+            darkMode ? "bg-gray-600 text-gray-200 " : " "
+          }`}
+        >
+          <p className="text-sm font-medium ">Due Date</p>
         </div>
         <div className="px-4 h-56 overflow-y-scroll scrollbar-hide">
           {!loading ? (

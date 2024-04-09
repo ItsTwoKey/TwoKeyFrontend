@@ -122,13 +122,17 @@ const LatestActivities = () => {
       <Paper elevation={isUserProfile ? 0 : 1} className="h-72 ">
         <div
           className={`flex justify-between items-center p-4 ${
-            darkMode ? "bg-gray-600 text-gray-200" : " "
+            darkMode ? "bg-gray-600 text-gray-200 " : " "
           }`}
         >
           <span className="flex flex-row items-center gap-1">
             <p className="text-sm font-semibold">Latest Activities</p>
             <select
-              className="text-sm text-gray-400 bg-inherit"
+              className={`text-sm text-gray-400 bg-inherit appearance-none mx-5 px-2 py-1 border border-gray-300 rounded-md shadow-sm  focus:outline-none  ${
+                darkMode
+                  ? "bg-gray-500 text-gray-200"
+                  : "bg-white text-gray-400"
+              }`}
               onChange={handleSelectChange}
               value={selectedValue}
               style={{ outline: "none" }}
