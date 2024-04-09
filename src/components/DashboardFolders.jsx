@@ -39,7 +39,7 @@ const DashboardFolders = () => {
     <div className="my-4 overflow-x-scroll scrollbar-hide">
       <div className="flex flex-row justify-between items-center">
         <h2 className="text-2xl font-semibold">Folders</h2>
-        <CreateFolder />
+        <CreateFolder listFolders={listFolders} />
       </div>
       <div className="my-2">
         {loading ? (
@@ -49,7 +49,7 @@ const DashboardFolders = () => {
             {folders.length === 0 ? (
               <p className="text-center">No folders found.</p>
             ) : (
-              <OwnedFolders folders={folders} />
+              <OwnedFolders folders={folders} listFolders={listFolders} />
             )}
           </>
         )}
