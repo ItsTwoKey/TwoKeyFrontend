@@ -46,7 +46,7 @@ const OwnedFolders = ({ folders }) => {
   return (
     <div className="mt-2">
       <Toaster position="bottom-left" reverseOrder={false} />
-      <div className="flex overflow-x-auto">
+      <div className="grid grid-cols-5 gap-4">
         {folders &&
           folders.map((folder) => (
             <div
@@ -56,7 +56,7 @@ const OwnedFolders = ({ folders }) => {
                   ? folder.metadata?.bg
                   : "#fff",
               }}
-              className="w-1/6 mx-2 border rounded-2xl cursor-pointer flex-shrink-0"
+              className=" border rounded-2xl cursor-pointer flex-shrink-0"
             >
               <div>
                 <a
@@ -64,7 +64,7 @@ const OwnedFolders = ({ folders }) => {
                   href={`filesInsideFolder/${folder.name}/${folder.id}`}
                   alt="folder img"
                 >
-                  <img className="w-3/4" src={FolderImg} alt="" />
+                  <img className="h-24 w-24" src={FolderImg} alt="" />
                 </a>
               </div>
               <span className="flex flex-row justify-between items-center ">

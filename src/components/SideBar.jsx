@@ -11,6 +11,7 @@ import { departmentIcons } from "../utils/iconComponents";
 import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
 import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
 import MenuIcon from "@mui/icons-material/MenuRounded";
+import Cross from "../assets/cross.svg";
 import IconButton from "@mui/material/IconButton";
 import Drawer from "@mui/material/Drawer";
 import Analytics from "../assets/Analytics.svg";
@@ -96,7 +97,7 @@ function SideBar() {
     >
       <div
         className={`w-[72px] h-[72px] p-4 flex justify-center items-center sticky top-0 ${
-          darkMode && "text-white"
+          darkMode && "text-black"
         }`}
       >
         <IconButton
@@ -154,8 +155,20 @@ function SideBar() {
               >
                 Twokey
               </a>
+              <img
+                src={Cross}
+                alt="X"
+                onClick={() => {
+                  setIsMenuOpen(!isMenuOpen);
+                }}
+                className="h-6 w-6"
+              ></img>
             </div>
-            <SideBarContents darkMode={darkMode} />
+            <SideBarContents
+              setIsMenuOpen={setIsMenuOpen}
+              isMenuOpen={isMenuOpen}
+              darkMode={darkMode}
+            />
             <div className="my-12"></div>
           </div>
           <div
@@ -247,7 +260,11 @@ function SideBar() {
                 Twokey
               </Link>
             </div>
-            <SideBarContents darkMode={darkMode} />
+            <SideBarContents
+              isMenuOpen={isMenuOpen}
+              setIsMenuOpen={setIsMenuOpen}
+              darkMode={darkMode}
+            />
           </div>
           <div
             className={`sticky bottom-0 ${
@@ -312,7 +329,7 @@ function SideBar() {
  * @param {boolean} props.darkMode - The dark mode state.
  * @returns {JSX.Element} The SidebarContents component.
  */
-function SideBarContents({ darkMode }) {
+function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
   const { profileData, setProfileData, setToken } = useAuth();
   const [departments, setDepartments] = useState([]);
   const location = useLocation();
@@ -383,6 +400,9 @@ function SideBarContents({ darkMode }) {
             <Link
               to="/dashboard" // Use "to" instead of "href"
               alt="Dashboard"
+              onClick={() => {
+                setIsMenuOpen(!isMenuOpen);
+              }}
               className={`flex justify-start items-center min-w-full ${
                 location.pathname === "/dashboard"
                   ? ` p-2 rounded-md text-sm ${
@@ -412,7 +432,13 @@ function SideBarContents({ darkMode }) {
         </p>
 
         {departments.map((department, index) => (
-          <li key={index} className="min-w-full my-2 ">
+          <li
+            onClick={() => {
+              setIsMenuOpen(!isMenuOpen);
+            }}
+            key={index}
+            className="min-w-full my-2 "
+          >
             <style>
               {`
               .dept-${index}, .dept-hover-${index}:hover {
@@ -455,7 +481,12 @@ function SideBarContents({ darkMode }) {
               Organization Admin
             </p>
             <div className="flex items-center">
-              <li className="min-w-full">
+              <li
+                className="min-w-full"
+                onClick={() => {
+                  setIsMenuOpen(!isMenuOpen);
+                }}
+              >
                 <Link
                   to="/user-management" // Use "to" instead of "href"
                   alt="User Management"
@@ -484,7 +515,9 @@ function SideBarContents({ darkMode }) {
             </div>
 
             {/* <div className="flex items-center mt-2">
-              <li className="min-w-full">
+              <li className="min-w-full" onClick={() => {
+            setIsMenuOpen(!isMenuOpen);
+          }}>
                 <Link
                   to="/analytics" // Use "to" instead of "href"
                   alt="Analytics"
@@ -523,7 +556,12 @@ function SideBarContents({ darkMode }) {
         >
           Settings
         </p>
-        <li className="min-w-full my-2 px-4">
+        <li
+          className="min-w-full my-2 px-4"
+          onClick={() => {
+            setIsMenuOpen(!isMenuOpen);
+          }}
+        >
           <div className="flex items-center">
             <Link
               to="/settings" // Use "to" instead of "href"
