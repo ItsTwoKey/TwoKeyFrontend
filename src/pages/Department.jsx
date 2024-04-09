@@ -90,29 +90,28 @@ const Department = () => {
   if (!secureLocalStorage.getItem("token")) {
     return <ErrorPage error="You are not authorised" />;
   }
+
   return (
-    <FileState>
-      <div className="p-4">
-        <div
-          className={`my-4 flex flex-row justify-between items-center ${
-            darkMode && "text-gray-200"
+    <div>
+      <div
+        className={`my-4 flex flex-row justify-between items-center h-20 w-full px-8 bg-[#F1F1FF] ${
+          darkMode && "text-gray-200"
+        }`}
+      >
+        <p
+          className={`text-2xl font-semibold ${
+            darkMode ? "text-black" : "text-black"
           }`}
         >
-          <p className="text-2xl font-semibold ">{deptName} Files</p>
-          <span className="flex gap-2">
-            <SecureShare />
-            <UploadFile />
-            {/* <ShareFile /> */}
-          </span>
-        </div>
-        {/* <h1>{deptName}</h1> */}
-        {loading ? (
-          <p>Loading...</p> // Display loading indicator while fetching data
-        ) : (
-          <RecentFiles filteredData={filesFromBackend} loading={loading} />
-        )}
+          {deptName} Files
+        </p>
+        <span className="flex gap-2">
+          <SecureShare />
+          <UploadFile />
+          {/* <ShareFile /> */}
+        </span>
       </div>
-    </FileState>
+      </div>
   );
 };
 

@@ -214,22 +214,38 @@ export default function DashboardTabs() {
             <Tab
               label="All"
               {...a11yProps(0)}
-              sx={{ textTransform: "capitalize", fontSize: "small" }}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "small",
+                color: darkMode ? "white" : "black",
+              }}
             />
             <Tab
               label="Shared"
               {...a11yProps(1)}
-              sx={{ textTransform: "capitalize", fontSize: "small" }}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "small",
+                color: darkMode ? "white" : "black",
+              }}
             />
             <Tab
               label="Received"
               {...a11yProps(2)}
-              sx={{ textTransform: "capitalize", fontSize: "small" }}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "small",
+                color: darkMode ? "white" : "black",
+              }}
             />
             <Tab
               label="owned"
               {...a11yProps(3)}
-              sx={{ textTransform: "capitalize", fontSize: "small" }}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "small",
+                color: darkMode ? "white" : "black",
+              }}
             />
           </Tabs>
         </Box>
