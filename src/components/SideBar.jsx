@@ -229,6 +229,7 @@ function SideBar() {
             display: { md: "block", xs: "none" },
             backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
             minHeight: "auto",
+            border: "none",
           },
           "& .MuiDrawer-paper::-webkit-scrollbar": {
             display: "none" /* Hide scrollbar for Chrome, Safari, and Edge */,
@@ -236,9 +237,7 @@ function SideBar() {
         }}
       >
         <nav
-          className={` ${
-            !isMenuOpen && "hide-sidebar h-auto w-full"
-          } border-r border-b-inherit border-r-gray-200 ${
+          className={` ${!isMenuOpen && "hide-sidebar h-auto w-full"}  ${
             darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
           }`}
         >
