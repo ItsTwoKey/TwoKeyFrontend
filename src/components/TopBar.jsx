@@ -38,10 +38,10 @@ const TopBar = () => {
   return (
     <nav
       className={`sticky top-0 z-50 h-[72px] ${
-        darkMode ? "bg-gray-800" : "bg-[#F1F1FF]"
+        darkMode ? "bg-black" : "bg-[#F1F1FF]"
       } p-1`}
     >
-      <div className="container mx-auto flex flex-row items-center justify-between h-16 px-8">
+      <div className=" mx-auto flex flex-row items-center justify-between h-16 px-8 ">
         <p
           className={`${
             darkMode ? "text-gray-300" : "text-gray-800"
@@ -59,7 +59,7 @@ const TopBar = () => {
           <img
             src={darkMode ? DarkMode : LightMode}
             alt="LightMode"
-            className="cursor-pointer"
+            className="cursor-pointer ml-5"
             onClick={toggleDarkMode}
           />
         </div>
