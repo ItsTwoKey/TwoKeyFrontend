@@ -1,7 +1,6 @@
 import { createContext, useState } from "react";
 import { useAuth } from "./authContext";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 
 const fileContext = createContext();
@@ -10,7 +9,7 @@ export const FileState = (props) => {
   const [files, setFiles] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
-  const location = useLocation();
+  const location = window.location.pathname;
 
   const { formatFileSize } = useAuth();
 
