@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "../helper/supabaseClient";
 import Dialog from "@mui/material/Dialog";
@@ -16,6 +16,7 @@ import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import secureLocalStorage from "react-secure-storage";
+import fileContext from "../context/fileContext";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -30,7 +31,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   },
 }));
 
-const UploadFile = () => {
+const UploadFile = ({ value }) => {
   const resumableEndpt = process.env.REACT_APP_RESUMABLE_URL;
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -43,6 +44,8 @@ const UploadFile = () => {
   const [deptId, setDeptId] = useState("");
   const [selectedDeptIndex, setSelectedDeptIndex] = useState(null);
   const [isFieldsFilled, setIsFieldsFilled] = useState(false);
+  const context = useContext(fileContext);
+  const { updateFilesState } = context;
 
   // Function to check if both fields are filled
   const checkFields = () => {
@@ -103,6 +106,7 @@ const UploadFile = () => {
           closeDialog();
           handleFileIdRetrieval(fileName);
           //   console.log(`Download ${upload.file.name} from ${upload.url}`);
+          updateFilesState(0 || value);
         },
       });
 

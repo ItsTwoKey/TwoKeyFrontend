@@ -1,17 +1,20 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import { supabase } from "../helper/supabaseClient";
 import Danger from "../assets/danger.svg";
-import secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
+import fileContext from "../context/fileContext";
 
-const DeleteFileConfirmation = ({ fileName, owner }) => {
+const DeleteFileConfirmation = ({ fileName, owner, id }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" or "error"
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const context = useContext(fileContext);
+  const { removeFile, setAnchorEl } = context;
 
   const openDialog = () => {
     setIsOpen(true);
@@ -19,6 +22,7 @@ const DeleteFileConfirmation = ({ fileName, owner }) => {
 
   const closeDialog = () => {
     setIsOpen(false);
+    setAnchorEl(null);
   };
 
   const handleDelete = async () => {
@@ -40,6 +44,7 @@ const DeleteFileConfirmation = ({ fileName, owner }) => {
           console.log("Delete success", data);
           setSnackbarSeverity("success");
           setSnackbarMessage("File deleted successfully.");
+          removeFile(id);
           setTimeout(() => {
             closeDialog();
           }, 2000);
@@ -55,6 +60,9 @@ const DeleteFileConfirmation = ({ fileName, owner }) => {
       setSnackbarSeverity("error");
       setSnackbarMessage("You are not the owner of the file.");
       setSnackbarOpen(true);
+      setTimeout(() => {
+        closeDialog();
+      }, 3000);
     }
   };
 

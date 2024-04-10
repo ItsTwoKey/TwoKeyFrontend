@@ -27,8 +27,8 @@ const Dashboard = () => {
         <LatestActivities />
       </div>
       <div>
-        <DashboardFolders />
-        <DashboardTabs />
+          <DashboardFolders />
+          <DashboardTabs />
       </div>
       {/* <div className={`${screenshotDetected ? "blur" : ""}`}> */}
       <Dialog open={isFileViewerOpen} onClose={closeFileViewer} maxWidth="lg">

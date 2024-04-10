@@ -105,8 +105,8 @@ const Department = () => {
           {deptName} Files
         </p>
         <span className="flex gap-2">
-          <SecureShare />
-          <UploadFile />
+          <SecureShare value={0} />
+          <UploadFile value={0} />
           {/* <ShareFile /> */}
         </span>
       </div>

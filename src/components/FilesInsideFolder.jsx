@@ -80,22 +80,22 @@ const FilesInsideFolder = () => {
   };
 
   return (
-    <div className="p-4">
-      {/* <button onClick={openDialog} className="">
+      <div className="p-4">
+        {/* <button onClick={openDialog} className="">
         <img src={FolderImg} alt="" className="w-full" />
       </button> */}
 
-      <div className="flex flex-row justify-between items-center my-2">
-        {" "}
-        <h2 className="text-2xl font-semibold my-2">{folderName} :</h2>
-        <AddFilesInsideFolder
-          folderId={folderId}
-          listFilesInFolder={listFilesInFolder}
-        />
-      </div>
+        <div className="flex flex-row justify-between items-center my-2">
+          {" "}
+          <h2 className="text-2xl font-semibold my-2">{folderName} :</h2>
+          <AddFilesInsideFolder
+            folderId={folderId}
+            listFilesInFolder={listFilesInFolder}
+          />
+        </div>
 
-      <RecentFiles filteredData={files} />
-    </div>
+        <RecentFiles filteredData={files} />
+      </div>
   );
 };
 

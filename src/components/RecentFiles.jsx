@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import FileView from "./FileView";
@@ -19,6 +19,7 @@ import Ppt from "../assets/ppt.svg";
 import Txt from "../assets/txt.svg";
 import Video from "../assets/video.svg";
 import secureLocalStorage from "react-secure-storage";
+import fileContext from "../context/fileContext";
 
 // Define SVG icons for different file types
 const fileIcons = {
@@ -52,7 +53,9 @@ const RecentFiles = ({ filteredData, loading }) => {
   const [sharedFileInfo, setSharedFileInfo] = useState({});
   const [isFileViewOpen, setIsFileViewOpen] = useState(false);
   const [isFileInfoOpen, setIsFileInfoOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
+  // const [anchorEl, setAnchorEl] = useState(null);
+  const context = useContext(fileContext);
+  const { anchorEl, setAnchorEl } = context;
   const [menuFile, setMenuFile] = useState({});
 
   const open = Boolean(anchorEl);
@@ -282,6 +285,7 @@ const RecentFiles = ({ filteredData, loading }) => {
                         <DeleteFileConfirmation
                           fileName={menuFile.name}
                           owner={menuFile.owner}
+                          id={menuFile.id}
                         />
                       </MenuItem>
                     </Menu>
