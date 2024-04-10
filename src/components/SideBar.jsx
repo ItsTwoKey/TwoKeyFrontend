@@ -93,7 +93,7 @@ function SideBar() {
   const lightModeSidebarColor = "[#f7f7ff]";
   return (
     <nav
-      className={`min-h-[100%] ${
+      className={`min-h-full ${
         darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
       } `}
     >
@@ -127,19 +127,17 @@ function SideBar() {
         sx={{
           display: { md: "none", xs: "block" },
           borderBottom: 2,
-          minHeight: "100%",
-
           "& .MuiDrawer-paper": {
-            backgroundColor: `${darkMode ? "black" : "white"}`,
+            backgroundColor: `${darkMode ? "black" : "red"}`,
             minHeight: "100%",
           },
         }}
       >
         {/* the main background css to be changed */}
         <nav
-          className={`sm-width md-width px-2 h-screen  ${
+          className={`sm-width md-width px-2  ${
             darkMode ? "bg-black" : `bg-${lightModeSidebarColor}`
-          } `}
+          } h-auto`}
         >
           <div className="w-full">
             <div className="flex justify-between items-center p-4">
@@ -203,45 +201,6 @@ function SideBar() {
               </span>
             </footer>
           </div>
-
-          {/* <div
-            className={` bottom-10 ${
-              darkMode ? "bg-gray-800" : `bg-${lightModeSidebarColor}`
-            }`}
-          >
-            <footer className="w-full py-2 ">
-              <span className="flex justify-between items-center">
-                <a
-                  href="/profile"
-                  alt="Profile"
-                  className={` p-2 rounded-md  
-                  ${
-                    darkMode
-                      ? "text-gray-200 hover:bg-gray-700]"
-                      : "hover:bg-gray-100"
-                  } flex justify-start items-center font-medium duration-200`}
-                >
-                  <img
-                    src={picture ? picture : ProfilePic}
-                    loading="lazy"
-                    alt={data ? `${data}'s Profile Picture` : "Profile Picture"}
-                    className={`w-6 h-6 rounded-full ${
-                      darkMode
-                        ? "filter brightness-100 border border-white"
-                        : ""
-                    }`}
-                  />
-                  <p className="px-2">#{data ? data : "Profile"}</p>
-                </a>
-                <button
-                  onClick={handleLogout}
-                  className="bg-red-500 rounded-lg p-1"
-                >
-                  <ExitToAppRoundedIcon sx={{ color: "white" }} size="small" />
-                </button>
-              </span>
-            </footer>
-          </div> */}
         </nav>
       </Drawer>
       {/* 
@@ -255,13 +214,13 @@ function SideBar() {
           width: { md: 224, lg: 240, xs: 72 },
           display: { md: "block", xs: "none" },
           flexShrink: 0,
-          backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
+          backgroundColor: `${darkMode ? "#1f2937" : "#f7f7ff"}`,
 
           "& .MuiDrawer-paper": {
             width: { md: 224, lg: 240, xs: 72 },
             display: { md: "block", xs: "none" },
-            backgroundColor: `${darkMode ? "#1f2937" : "white"}`,
-            minHeight: "auto",
+            backgroundColor: `${darkMode ? "#1f2937" : "#f7f7ff"}`,
+            minHeight: "100vh",
             border: "none",
           },
           "& .MuiDrawer-paper::-webkit-scrollbar": {
@@ -369,6 +328,39 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const listDepartments = async () => {
+      try {
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let cachedDepartments = JSON.parse(
+          secureLocalStorage.getItem("departments")
+        );
+
+        console.log(cachedDepartments);
+
+        if (cachedDepartments) {
+          setDepartments(cachedDepartments);
+        } else {
+          const response = await axios.get(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
+            {
+              headers: {
+                Authorization: `Bearer ${token.session.access_token}`,
+              },
+            }
+          );
+
+          const departmentsData = response.data;
+          secureLocalStorage.setItem(
+            "departments",
+            JSON.stringify(departmentsData)
+          );
+          setDepartments(departmentsData);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     listDepartments();
   }, []);
 
