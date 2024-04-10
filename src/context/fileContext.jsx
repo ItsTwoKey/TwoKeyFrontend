@@ -99,7 +99,7 @@ export const FileState = (props) => {
 
           // Update the state with the new data
           // setFilteredData(mappedFiles);
-          if (location.pathname !== "/dashboard") {
+          if (location !== "/dashboard") {
             // If location is other than "dashboard", send only the first 5 items
             setFilteredData(mappedFiles.slice(0, 5));
           } else {
