@@ -9,7 +9,6 @@ import LatestActivities from "../components/LatestActivities";
 import secureLocalStorage from "react-secure-storage";
 import ErrorPage from "../components/ErrorPage";
 import DashboardFolders from "../components/DashboardFolders";
-import { FileState } from "../context/fileContext";
 
 const Dashboard = () => {
   const { darkMode } = useDarkMode();
@@ -28,10 +27,8 @@ const Dashboard = () => {
         <LatestActivities />
       </div>
       <div>
-        <FileState>
           <DashboardFolders />
           <DashboardTabs />
-        </FileState>
       </div>
       {/* <div className={`${screenshotDetected ? "blur" : ""}`}> */}
       <Dialog open={isFileViewerOpen} onClose={closeFileViewer} maxWidth="lg">

@@ -8,7 +8,6 @@ import UploadFile from "../components/UploadFile";
 import SecureShare from "../components/SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
 import { useAuth } from "../context/authContext";
-import { FileState } from "../context/fileContext";
 
 const Department = () => {
   const { darkMode } = useDarkMode();
@@ -92,34 +91,32 @@ const Department = () => {
   }
 
   return (
-    <FileState>
-      <div>
-        <div
-          className={`my-4 flex flex-row justify-between items-center h-20 w-full px-8 bg-[#F1F1FF] ${
-            darkMode && "text-gray-200"
+    <div>
+      <div
+        className={`my-4 flex flex-row justify-between items-center h-20 w-full px-8 bg-[#F1F1FF] ${
+          darkMode && "text-gray-200"
+        }`}
+      >
+        <p
+          className={`text-2xl font-semibold ${
+            darkMode ? "text-black" : "text-black"
           }`}
         >
-          <p
-            className={`text-2xl font-semibold ${
-              darkMode ? "text-black" : "text-black"
-            }`}
-          >
-            {deptName} Files
-          </p>
-          <span className="flex gap-2">
-            <SecureShare value={0} />
-            <UploadFile value={0} />
-            {/* <ShareFile /> */}
-          </span>
-        </div>
-        {/* <h1>{deptName}</h1> */}
-        {loading ? (
-          <p>Loading...</p> // Display loading indicator while fetching data
-        ) : (
-          <RecentFiles filteredData={filesFromBackend} loading={loading} />
-        )}
+          {deptName} Files
+        </p>
+        <span className="flex gap-2">
+          <SecureShare value={0} />
+          <UploadFile value={0} />
+          {/* <ShareFile /> */}
+        </span>
       </div>
-    </FileState>
+      {/* <h1>{deptName}</h1> */}
+      {loading ? (
+        <p>Loading...</p> // Display loading indicator while fetching data
+      ) : (
+        <RecentFiles filteredData={filesFromBackend} loading={loading} />
+      )}
+    </div>
   );
 };
 

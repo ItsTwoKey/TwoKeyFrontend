@@ -6,7 +6,6 @@ import { useDarkMode } from "../context/darkModeContext";
 import RecentFiles from "./RecentFiles";
 import { useAuth } from "../context/authContext";
 import AddFilesInsideFolder from "./AddFilesInsideFolder";
-import { FileState } from "../context/fileContext";
 
 const FilesInsideFolder = () => {
   const { formatFileSize } = useAuth();
@@ -81,7 +80,6 @@ const FilesInsideFolder = () => {
   };
 
   return (
-    <FileState>
       <div className="p-4">
         {/* <button onClick={openDialog} className="">
         <img src={FolderImg} alt="" className="w-full" />
@@ -98,7 +96,6 @@ const FilesInsideFolder = () => {
 
         <RecentFiles filteredData={files} />
       </div>
-    </FileState>
   );
 };
 

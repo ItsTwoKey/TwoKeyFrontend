@@ -14,7 +14,7 @@ const DeleteFileConfirmation = ({ fileName, owner, id }) => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" or "error"
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const context = useContext(fileContext);
-  const { removeFile } = context;
+  const { removeFile, setAnchorEl } = context;
 
   const openDialog = () => {
     setIsOpen(true);
@@ -22,6 +22,7 @@ const DeleteFileConfirmation = ({ fileName, owner, id }) => {
 
   const closeDialog = () => {
     setIsOpen(false);
+    setAnchorEl(null);
   };
 
   const handleDelete = async () => {
@@ -59,6 +60,9 @@ const DeleteFileConfirmation = ({ fileName, owner, id }) => {
       setSnackbarSeverity("error");
       setSnackbarMessage("You are not the owner of the file.");
       setSnackbarOpen(true);
+      setTimeout(() => {
+        closeDialog();
+      }, 3000);
     }
   };
 
