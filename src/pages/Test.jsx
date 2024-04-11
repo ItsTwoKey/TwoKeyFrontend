@@ -21,6 +21,7 @@ const IPDetector = () => {
     <div>
       <h1>Your IP address: {ipAddress}</h1>
       <pre>{navigator.userAgent}</pre>
+      <pre>{navigator.userAgentData?.platform}</pre>
       {/* <pre>{navigator.userAgentData.mobile}</pre> */}
       {/* <pre>{navigator.userAgentData.platform}</pre> */}
     </div>

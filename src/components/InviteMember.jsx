@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { supabase } from "../helper/supabaseClient";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 import Dialog from "@mui/material/Dialog";
@@ -7,11 +6,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import FormControl from "@mui/joy/FormControl";
-import FormHelperText from "@mui/joy/FormHelperText";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import RadioGroup from "@mui/joy/RadioGroup";
 import Radio from "@mui/joy/Radio";
 import Inviteicon from "../assets/InviteMember.svg";
 import toast, { Toaster } from "react-hot-toast";
+import { useDepartment } from "../context/departmentContext";
 
 const InviteMember = (props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,8 +20,11 @@ const InviteMember = (props) => {
     firstName: "",
     lastName: "",
     emailAddress: "",
-    role: "employee",
+    role: "",
+    department: "", // Add department in formData state
   });
+  const [roles, setRoles] = useState([]);
+  const { departments } = useDepartment();
 
   const openDialog = () => {
     setIsOpen(true);
@@ -29,6 +33,28 @@ const InviteMember = (props) => {
   const closeDialog = () => {
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    const getRoles = async () => {
+      try {
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        const role = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/role/listRoles`,
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+        console.log("roles:", role.data);
+        setRoles(role.data);
+      } catch (error) {
+        console.log("Error fetching departments");
+      }
+    };
+
+    getRoles();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,12 +71,24 @@ const InviteMember = (props) => {
     });
   };
 
+  // Define handleDepartmentChange function to update department in formData state
+  const handleDepartmentChange = (e) => {
+    setFormData({
+      ...formData,
+      department: e.target.value,
+    });
+  };
+
   const handleInvite = async () => {
     try {
       let token = JSON.parse(secureLocalStorage.getItem("token"));
 
       let body = {
         emails: [formData.emailAddress],
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        role_id: formData.role,
+        dept_id: formData.department,
       };
 
       let response = await axios.post(
@@ -152,48 +190,38 @@ const InviteMember = (props) => {
                 value={formData.role || ""} // Ensure value is always defined
                 onChange={handleRadioChange}
               >
-                <FormControl size="sm">
-                  <Radio
-                    overlay
-                    value="manager"
-                    label="Manager"
-                    sx={{ fontWeight: "bold", marginBottom: "3px" }}
-                  />
-                  <FormHelperText className="">
-                    Manager can do everything, including managin users and
-                    deleting current administrators.
-                  </FormHelperText>
-                </FormControl>
-                <FormControl size="sm">
-                  <Radio
-                    overlay
-                    value="departmentHead"
-                    label="Department Head"
-                    sx={{ fontWeight: "bold", marginBottom: "3px" }}
-                  />
-                  <FormHelperText>
-                    Department Head manages the attendance of the employee. It
-                    also records their skill set so that employees can be
-                    assigned to particular task when needed. They also manage
-                    payroll module so that the payroll is generated on time
-                    without fail.
-                  </FormHelperText>
-                </FormControl>
-                <FormControl size="sm">
-                  <Radio
-                    overlay
-                    value="employee"
-                    label="Employee"
-                    sx={{ fontWeight: "bold", marginBottom: "3px" }}
-                  />
-                  <FormHelperText>
-                    Employee can login in portal for attendence, leave, Task
-                    management from this portal they can track their attendence
-                    and leave balance also.
-                  </FormHelperText>
-                </FormControl>
+                {roles.length ? (
+                  roles.map((role) => (
+                    <FormControl size="sm" key={role.id}>
+                      <Radio
+                        overlay
+                        value={role.id}
+                        label={role.role}
+                        sx={{ fontWeight: "bold", marginBottom: "3px" }}
+                      />
+                    </FormControl>
+                  ))
+                ) : (
+                  <p>Loading the roles...</p>
+                )}
               </RadioGroup>
             </div>
+
+            {/* Add Select component for department */}
+            <Select
+              value={formData.department}
+              label="Department"
+              onChange={handleDepartmentChange}
+              className="w-36 h-8"
+              sx={{ borderRadius: "6px" }}
+              size="small"
+            >
+              {departments.map((department) => (
+                <MenuItem key={department.id} value={department.id}>
+                  {department.name}
+                </MenuItem>
+              ))}
+            </Select>
           </div>
         </DialogContent>
         <DialogActions sx={{ padding: "10px" }}>
