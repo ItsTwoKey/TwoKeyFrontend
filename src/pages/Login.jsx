@@ -64,6 +64,7 @@ const Login = () => {
       let body = {
         id: data.user.id,
         is_active: true,
+        metadata: { devices: navigator?.userAgentData?.platform || "unknown" },
       };
 
       try {
@@ -76,6 +77,8 @@ const Login = () => {
             },
           }
         );
+
+        console.log("meta", res);
       } catch (error) {
         console.log(error);
       }
