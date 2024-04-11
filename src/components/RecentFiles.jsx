@@ -268,7 +268,7 @@ const RecentFiles = ({ filteredData, loading }) => {
                       >
                         <FileShare menuFile={menuFile} />
                       </MenuItem>
-                      <MenuItem style={{ padding: "0px 10px" }}>
+                      {/* <MenuItem style={{ padding: "0px 10px" }}>
                         <button
                           onClick={() => {
                             // Log the selected file's name when "Edit" is clicked
@@ -277,7 +277,7 @@ const RecentFiles = ({ filteredData, loading }) => {
                         >
                           Edit
                         </button>
-                      </MenuItem>
+                      </MenuItem> */}
 
                       <MenuItem
                         style={{ padding: "0px 10px", color: "#D1293D" }}

@@ -47,7 +47,7 @@ const Device = () => {
 
                 <span className="flex flex-row gap-4 items-center">
                   <p className="px-2 py-1 text-sm bg-gray-200 rounded-lg ">
-                    Windows
+                    {user.metadata ? user.metadata?.devices : "Unknown"}
                   </p>
 
                   <span className="flex flex-row gap-2 items-center">
