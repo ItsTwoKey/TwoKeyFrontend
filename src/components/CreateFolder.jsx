@@ -13,6 +13,7 @@ const CreateFolder = ({ listFolders }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [hex, setHex] = useState("#EFEEDC");
+  const [loading, setLoading] = useState(false);
 
   const openDialog = () => {
     setIsOpen(true);
@@ -27,6 +28,7 @@ const CreateFolder = ({ listFolders }) => {
   };
 
   const createFolder = async () => {
+    setLoading(true);
     let token = JSON.parse(secureLocalStorage.getItem("token"));
     let body = {
       name: folderName,
@@ -57,6 +59,8 @@ const CreateFolder = ({ listFolders }) => {
       }
     } catch (error) {
       console.log("error occurred while creating folder.", error);
+    } finally {
+      setLoading(false); // Set loading to false after the operation is completed
     }
   };
 
