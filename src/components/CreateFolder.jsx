@@ -8,11 +8,13 @@ import secureLocalStorage from "react-secure-storage";
 import axios from "axios";
 import Chrome from "@uiw/react-color-chrome";
 import { GithubPlacement } from "@uiw/react-color-github";
+import { CircularProgress } from "@mui/material";
 
 const CreateFolder = ({ listFolders }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [hex, setHex] = useState("#EFEEDC");
+  const [loading, setLoading] = useState(false);
 
   const openDialog = () => {
     setIsOpen(true);
@@ -27,6 +29,7 @@ const CreateFolder = ({ listFolders }) => {
   };
 
   const createFolder = async () => {
+    setLoading(true);
     let token = JSON.parse(secureLocalStorage.getItem("token"));
     let body = {
       name: folderName,
@@ -57,6 +60,8 @@ const CreateFolder = ({ listFolders }) => {
       }
     } catch (error) {
       console.log("error occurred while creating folder.", error);
+    } finally {
+      setLoading(false); // Set loading to false after the operation is completed
     }
   };
 
@@ -120,9 +125,13 @@ const CreateFolder = ({ listFolders }) => {
           <button
             className="px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white"
             onClick={createFolder}
-            disabled={!folderName} // Disable button if folderName is empty
+            disabled={!folderName || loading} // Disable button if folderName is empty
           >
-            Create Folder
+            {loading ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : (
+              "Create Folder"
+            )}
           </button>
         </DialogActions>
       </Dialog>

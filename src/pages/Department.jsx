@@ -93,7 +93,7 @@ const Department = () => {
   return (
     <div>
       <div
-        className={`my-4 flex flex-row justify-between items-center h-20 w-full px-8 bg-[#F1F1FF] ${
+        className={`my-4 flex flex-row justify-between items-center w-full px-8 bg-[#F1F1FF] ${
           darkMode && "text-gray-200"
         }`}
       >
@@ -111,11 +111,13 @@ const Department = () => {
         </span>
       </div>
       {/* <h1>{deptName}</h1> */}
-      {loading ? (
-        <p>Loading...</p> // Display loading indicator while fetching data
-      ) : (
-        <RecentFiles filteredData={filesFromBackend} loading={loading} />
-      )}
+      <div className="p-4">
+        {loading ? (
+          <p>Loading...</p> // Display loading indicator while fetching data
+        ) : (
+          <RecentFiles filteredData={filesFromBackend} loading={loading} />
+        )}
+      </div>
     </div>
   );
 };
