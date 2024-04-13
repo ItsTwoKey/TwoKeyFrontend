@@ -161,7 +161,11 @@ function SideBar() {
               </IconButton>
             </div>
 
-            <SideBarContents darkMode={darkMode} />
+            <SideBarContents
+              isMenuOpen={isMenuOpen}
+              setIsMenuOpen={setIsMenuOpen}
+              darkMode={darkMode}
+            />
             <div className="my-12"></div>
 
             {/* Profile and logout buttons */}
@@ -326,7 +330,6 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
   const { departments, setDepartments, listDepartments } = useDepartment();
   const location = useLocation();
   const navigate = useNavigate();
-
   useEffect(() => {
     const listDepartments = async () => {
       try {
@@ -350,6 +353,7 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
           );
 
           const departmentsData = response.data;
+
           secureLocalStorage.setItem(
             "departments",
             JSON.stringify(departmentsData)
@@ -437,9 +441,11 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
                   ? ` ${
                       darkMode
                         ? "hover:bg-gray-700 bg-gray-600"
-                        : `hover:bg-indigo-400 bg-indigo-300`
+                        : `dept-${index}`
                     }`
-                  : `${darkMode ? "hover:bg-indigo-700 " : "hover:bg-gray-300"}`
+                  : `${
+                      darkMode ? "hover:bg-indigo-700 " : `dept-hover-${index}`
+                    }`
               }`}
             >
               {departmentIcons[department.name]}
