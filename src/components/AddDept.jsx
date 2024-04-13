@@ -28,8 +28,11 @@ const AddDept = () => {
     try {
       let token = JSON.parse(secureLocalStorage.getItem("token"));
 
+      // Replace spaces with underscores in department name
+      const formattedDeptName = deptName.replace(/ /g, "_");
+
       let body = {
-        name: deptName,
+        name: formattedDeptName,
         metadata: {
           bg: hex,
           border: "#B7B6C2",

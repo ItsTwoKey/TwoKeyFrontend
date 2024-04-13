@@ -10,15 +10,21 @@ import FolderImg from "../assets/folder.png";
 const OwnedFolders = ({ folders, listFolders }) => {
   const [filesInsideFolder, setFilesInsideFolder] = useState([]);
   const [Folder, setFolder] = useState({});
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const [anchorEls, setAnchorEls] = useState({}); // Separate state for anchorEls
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleMenuClick = (event, folder) => {
+    setAnchorEls((prevAnchorEls) => ({
+      ...prevAnchorEls,
+      [folder.id]: event.currentTarget,
+    }));
+    setFolder(folder);
   };
 
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleClose = (folderId) => {
+    setAnchorEls((prevAnchorEls) => ({
+      ...prevAnchorEls,
+      [folderId]: null,
+    }));
   };
 
   const deleteFolder = async (folder_id) => {
@@ -33,7 +39,7 @@ const OwnedFolders = ({ folders, listFolders }) => {
         }
       );
       if (response) {
-        handleClose();
+        handleClose(folder_id);
         toast.success("Folder deleted successfully.");
         listFolders();
       }
@@ -74,18 +80,15 @@ const OwnedFolders = ({ folders, listFolders }) => {
                 <span>
                   <button
                     className="mx-2"
-                    onClick={(event) => {
-                      handleMenuClick(event);
-                      setFolder(folder);
-                    }}
+                    onClick={(event) => handleMenuClick(event, folder)}
                   >
                     <img src={ThreeDots} height={25} width={25} alt="" />
                   </button>
                   <Menu
                     id="basic-menu"
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
+                    anchorEl={anchorEls[folder.id]}
+                    open={Boolean(anchorEls[folder.id])}
+                    onClose={() => handleClose(folder.id)}
                     transformOrigin={{
                       vertical: "top",
                       horizontal: "right",
