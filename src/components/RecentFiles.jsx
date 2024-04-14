@@ -205,7 +205,7 @@ const RecentFiles = ({ filteredData, loading }) => {
                 key={index}
                 className={`border border-gray-200 p-3 rounded-[16px] cursor-pointer`}
                 style={{
-                  backgroundColor: file.color,
+                  backgroundColor: file.color || `#f9f9f9`,
                 }}
               >
                 <span className="flex justify-between items-center">

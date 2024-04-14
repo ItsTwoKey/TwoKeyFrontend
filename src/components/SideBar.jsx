@@ -128,7 +128,7 @@ function SideBar() {
           display: { md: "none", xs: "block" },
           borderBottom: 2,
           "& .MuiDrawer-paper": {
-            backgroundColor: `${darkMode ? "black" : "red"}`,
+            backgroundColor: `${darkMode ? "black" : "white"}`,
             minHeight: "100%",
           },
         }}
