@@ -56,19 +56,19 @@ const UploadFile = ({ value }) => {
   const checkFields = () => {
     if (deptId !== "" && droppedFiles.length > 0) {
       setIsFieldsFilled(true);
-      droppedFiles.length === 1
-        ? setDescription({ ...description, ["visible"]: true })
-        : setDescription({ ...description, ["visible"]: false });
+      // droppedFiles.length === 1
+      //   ? setDescription({ ...description, ["visible"]: true })
+      //   : setDescription({ ...description, ["visible"]: false });
     } else {
       setIsFieldsFilled(false);
-      droppedFiles.length === 1
-        ? setDescription({ ...description, ["visible"]: true })
-        : setDescription({ ...description, ["visible"]: false });
+      // droppedFiles.length === 1
+      //   ? setDescription({ ...description, ["visible"]: true })
+      //   : setDescription({ ...description, ["visible"]: false });
     }
   };
-  const handleDesc = (e) => {
-    setDescription({ ...description, ["content"]: e.target.value });
-  };
+  // const handleDesc = (e) => {
+  //   setDescription({ ...description, ["content"]: e.target.value });
+  // };
 
   // Add useEffect to check fields whenever deptId or droppedFiles change
   useEffect(() => {
@@ -170,7 +170,7 @@ const UploadFile = ({ value }) => {
         if (file) {
           console.log("Object id found:", file.id);
           addFileDepartment(file.id);
-          shareFiles(file.id);
+          // addFileDescription(file.id);
         } else {
           console.log(`Object with name "${desiredFileName}" not found.`);
         }
@@ -206,31 +206,31 @@ const UploadFile = ({ value }) => {
       console.log("Error occured while adding the file department", error);
     }
   };
-  const shareFiles = async (fileId) => {
-    try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+  // const addFileDescription = async (fileId) => {
+  //   try {
+  //     let token = JSON.parse(secureLocalStorage.getItem("token"));
 
-      let body = {
-        metadata: {
-          description,
-        },
-      };
+  //     let body = {
+  //       metadata: {
+  //         description,
+  //       },
+  //     };
 
-      const addDesc = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/shareFile`,
-        body,
-        {
-          headers: {
-            authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
+  //     const addDesc = await axios.post(
+  //       `${process.env.REACT_APP_BACKEND_BASE_URL}/file/shareFile`,
+  //       body,
+  //       {
+  //         headers: {
+  //           authorization: `Bearer ${token.session.access_token}`,
+  //         },
+  //       }
+  //     );
 
-      console.log("description of file", addDesc);
-    } catch (error) {
-      console.log("Error occured while adding the file department", error);
-    }
-  };
+  //     console.log("description of file", addDesc);
+  //   } catch (error) {
+  //     console.log("Error occured while adding the file department", error);
+  //   }
+  // };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -328,7 +328,7 @@ const UploadFile = ({ value }) => {
               </div>
             )}
 
-            {description.visible && (
+            {/* {description.visible && (
               <div className="py-5 flex flex-col gap-2 justify-start w-full">
                 <TextField
                   id="desc"
@@ -340,7 +340,7 @@ const UploadFile = ({ value }) => {
                   fullWidth
                 />
               </div>
-            )}
+            )} */}
 
             <div className="grid grid-cols-3 gap-2 my-4">
               {depts.map((dept, index) => (
@@ -380,6 +380,21 @@ const UploadFile = ({ value }) => {
             </button>
             <button
               className={`px-3 py-1.5 rounded-lg shadow-sm border ${
+                !isFieldsFilled || !droppedFiles.length
+                  ? "border-gray-300 text-gray-300 cursor-not-allowed"
+                  : uploadProgress > 0
+                  ? "border-gray-500 text-gray-500 hover:bg-gray-200 cursor-progress"
+                  : "border-[#5E5ADB] text-[#5E5ADB] hover:bg-blue-100"
+              } text-sm font-semibold`}
+              onClick={handleFinalUpload}
+              disabled={
+                !droppedFiles.length || !isFieldsFilled || uploadProgress > 0
+              }
+            >
+              Upload
+            </button>
+            {/* <button
+              className={`px-3 py-1.5 rounded-lg shadow-sm border ${
                 !isFieldsFilled || (droppedFiles.length === 1 && !description.content)
                   ? "border-gray-300 text-gray-300 cursor-not-allowed"
                   : uploadProgress > 0
@@ -394,7 +409,7 @@ const UploadFile = ({ value }) => {
               }
             >
               Upload
-            </button>
+            </button> */}
           </div>
         </DialogActions>
         {uploadProgress > 90 && (
