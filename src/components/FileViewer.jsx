@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import TextEditor from "./editFiles/TextEditor";
 import CustomFileViewer from "./CustomFileViewer";
 
-const FileViewer = ({ preUrl, mimetype, signedUrl }) => {
+const FileViewer = ({ preUrl, mimetype, signedUrl, fileName, fileId }) => {
   const containerStyles = {
     width: "100%",
     height: "100%",
@@ -30,7 +30,9 @@ const FileViewer = ({ preUrl, mimetype, signedUrl }) => {
   switch (mimetype) {
     case "application/msword":
     case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-      viewerComponent = <TextEditor preUrl={preUrl} />;
+      viewerComponent = (
+        <TextEditor preUrl={preUrl} fileName={fileName} fileId={fileId} />
+      );
       break;
     case "application/vnd.ms-powerpoint":
     case "application/vnd.openxmlformats-officedocument.presentationml.presentation":

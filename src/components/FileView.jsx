@@ -104,6 +104,8 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
                   preUrl={preUrl}
                   mimetype={fileInfo.mimetype}
                   signedUrl={signedUrl}
+                  fileName={fileInfo.name}
+                  fileId={fileInfo.id}
                 />
               ) : (
                 <div className="text-center pt-20">

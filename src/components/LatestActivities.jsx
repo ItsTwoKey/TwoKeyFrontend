@@ -172,6 +172,8 @@ const LatestActivities = () => {
                           ? "took Screenshot of"
                           : log.event === "download"
                           ? "downloaded"
+                          : log.event === "edit"
+                          ? "edited"
                           : "accessed"}{" "}
                         <span className="font-semibold">
                           {log.file_name.split("_TS=")[0]}

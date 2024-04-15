@@ -4,6 +4,10 @@ import "quill/dist/quill.snow.css";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import * as quillToWord from "quill-to-word";
+import { supabase } from "../../helper/supabaseClient";
+import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
+import secureLocalStorage from "react-secure-storage";
 
 const toolbarOptions = [
   [
@@ -24,17 +28,10 @@ const toolbarOptions = [
   ["link", "image", "video", "formula"],
 ];
 
-export default function TextEditor({ preUrl }) {
+export default function TextEditor({ preUrl, fileName, fileId }) {
   const [quill, setQuill] = useState();
   const [content, setContent] = useState("");
   const quillRef = useRef(null);
-
-  // const handleUrlChange = (event) => {
-  //   const wordFileUrl = event.target.value;
-  //   if (wordFileUrl.trim() !== "") {
-  //     fetchAndExtractContent(wordFileUrl);
-  //   }
-  // };
 
   if (preUrl.trim() !== "") {
     fetchAndExtractContent(preUrl);
@@ -63,9 +60,46 @@ export default function TextEditor({ preUrl }) {
         delta,
         quillToWordConfig
       );
-      saveAs(docAsBlob, "word-export.docx");
+
+      // Upload the file to Supabase
+      await saveToSupabase(docAsBlob);
     } catch (error) {
       console.error("Error generating Word document:", error);
+    }
+  };
+
+  const saveToSupabase = async (file) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from("TwoKey")
+        .update(fileName, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      console.log("File uploaded to Supabase:", data);
+      toast.success("File Edited successfully.");
+
+      if (data) {
+        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/logEvent/${fileId}?event=edit`,
+
+          {
+            headers: {
+              Authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+        console.log("edit log :", res);
+      }
+    } catch (error) {
+      console.error("Error uploading Word document to Supabase:", error);
+      // toast.error("Something went wrong.");
     }
   };
 
@@ -223,6 +257,7 @@ export default function TextEditor({ preUrl }) {
   return (
     <>
       <div className="">
+        <Toaster position="bottom-left" reverseOrder={false} />
         <style>
           {`body {
             background-color: #F3F3F3;
@@ -230,65 +265,60 @@ export default function TextEditor({ preUrl }) {
           }
           
           .container .ql-editor {
-  width: 8.5in;
-  min-height: 11in;
-  padding: 1in;
-  margin: 1rem;
-  box-shadow: 0 0 5px 0 rgba(0, 0, 0, .5);
-  background-color: white;
-}
+            width: 8.5in;
+            min-height: 11in;
+            padding: 1in;
+            margin: 1rem;
+            box-shadow: 0 0 5px 0 rgba(0, 0, 0, .5);
+            background-color: white;
+          }
 
-.container .ql-container.ql-snow {
-  border: none;
-  display: flex;
-  justify-content: center;
-  overflow-y: scroll;
-    max-height: 85vh;
-    min-height: 50vh;
-}
+          .container .ql-container.ql-snow {
+            border: none;
+            display: flex;
+            justify-content: center;
+            overflow-y: scroll;
+            max-height: 85vh;
+            min-height: 50vh;
+          }
 
-.container .ql-toolbar.ql-snow {
-  display: flex;
-  justify-content: center;
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background-color: #F3F3F3;
-  border: none;
-  box-shadow: 0 0 5px 0 rgba(0, 0, 0, .5);
-}
+          .container .ql-toolbar.ql-snow {
+            display: flex;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background-color: #F3F3F3;
+            border: none;
+            box-shadow: 0 0 5px 0 rgba(0, 0, 0, .5);
+          }
 
-@page {
-  margin: 1in;
-}
+          @page {
+            margin: 1in;
+          }
 
-@media print {
-  body {
-    background: none;
-  }
-  
-  .container .ql-editor {
-    width: 6.5in;
-    height: 9in;
-    padding: 0;
-    margin: 0;
-    box-shadow: none;
-    align-self: flex-start;
-  }
-  
-  .container .ql-toolbar.ql-snow {
-    display: none;
-  }
-}`}
+          @media print {
+            body {
+              background: none;
+            }
+            
+            .container .ql-editor {
+              width: 6.5in;
+              height: 9in;
+              padding: 0;
+              margin: 0;
+              box-shadow: none;
+              align-self: flex-start;
+            }
+            
+            .container .ql-toolbar.ql-snow {
+              display: none;
+            }
+          }`}
         </style>
-        {/* <input
-          type="text"
-          onChange={handleUrlChange}
-          placeholder="Enter URL of Word file"
-        /> */}
         <div className="flex justify-end">
           <button
-            className="bg-slate-600 text-white px-4 py-2 rounded-lg m-2 "
+            className="bg-slate-600 hover:bg-slate-800 text-white px-4 py-2 rounded-lg m-2 "
             onClick={() => saveToDocx(quill)}
           >
             Save

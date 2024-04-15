@@ -101,7 +101,7 @@ export const FileState = (props) => {
           // setFilteredData(mappedFiles);
           if (location !== "/dashboard") {
             // If location is other than "dashboard", send only the first 5 items
-            setFilteredData(mappedFiles.slice(0, 5));
+            setFilteredData(mappedFiles);
           } else {
             // If location is "dashboard", send all filtered data
             setFilteredData(mappedFiles);
