@@ -5,7 +5,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import ProfileTabsOfUser from "../components/ProfileTabsOfUser";
 import { useParams } from "react-router-dom";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 const UserProfile = () => {
   const { userId } = useParams(); // Use useParams to get the user ID from the route parameters
@@ -14,6 +14,7 @@ const UserProfile = () => {
   const [departments, setDepartments] = useState([]);
   const [selectedRole, setSelectedRole] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState(null);
+  const [deptKeys, setDeptKeys] = useState({});
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -48,6 +49,11 @@ const UserProfile = () => {
           }
         );
         setDepartments(dep.data);
+        let deptobj = {};
+        for (const i of dep.data) {
+          deptobj[i.name] = i;
+        }
+        setDeptKeys(deptobj);
       } catch (error) {
         console.log("Error fetching departments");
       }
@@ -124,13 +130,9 @@ const UserProfile = () => {
     elevateUserRole(event.target.value);
   };
 
-  const handleDepartmentChange = (event) => {
-    const selectedDepartmentObject = departments.find(
-      (department) => department.name === event.target.value
-    );
-
-    setSelectedDepartment(selectedDepartmentObject);
-    changeDept(selectedDepartmentObject.id);
+  const handleDepartmentChange = (val) => {
+    setSelectedDepartment(val);
+    changeDept(deptKeys[val].id);
   };
 
   const toggleEditing = () => {
@@ -222,7 +224,9 @@ const UserProfile = () => {
             <Select
               value={selectedDepartment || ""}
               label="Department"
-              onChange={(event) => handleDepartmentChange(event)}
+              onChange={(event) => {
+                handleDepartmentChange(event.target.value);
+              }}
               className={`w-full ${isEditing ? "bg-[#464F6029]" : "bg-white"}`}
               sx={{ borderRadius: "6px" }}
               size="small"
