@@ -51,6 +51,7 @@ const FilesInsideFolder = () => {
             mimetype: file.metadata.mimetype,
             status: "Team",
             security: "Enhanced",
+            bg: file?.file_info[0]?.depts[0]?.metadata?.bg,
             lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
               "en-IN",
               {
@@ -69,6 +70,7 @@ const FilesInsideFolder = () => {
           return new Date(b.lastUpdate) - new Date(a.lastUpdate);
         });
         setFiles(mappedFiles);
+        // console.log("test", mappedFiles);
       }
     } catch (error) {
       console.log("error occured while fetching files inside folders", error);
