@@ -88,7 +88,7 @@ const FileInfo = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
           }}
         >
           <div className="my-2 w-[486px] p-3">
-            <div className="mb-2">
+            {/* <div className="mb-2">
               <p className="text-md font-semibold text-gray-700 mb-1">
                 File Description
               </p>
@@ -96,7 +96,7 @@ const FileInfo = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
                 Manager can do everything, including managin users and deleting
                 current administrators.
               </p>
-            </div>
+            </div> */}
 
             <div className="my-2">
               <p className="text-md font-semibold text-gray-700">
