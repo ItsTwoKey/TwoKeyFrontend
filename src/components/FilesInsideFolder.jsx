@@ -10,6 +10,7 @@ import AddFilesInsideFolder from "./AddFilesInsideFolder";
 const FilesInsideFolder = () => {
   const { formatFileSize } = useAuth();
   const [files, setFiles] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const { darkMode } = useDarkMode();
   const { folderName, folderId } = useParams();
 
@@ -32,17 +33,13 @@ const FilesInsideFolder = () => {
 
       if (response) {
         const mappedFiles = response.data.map((file) => {
-          // destucture and extract dept name of every file
           try {
             const [{ depts }, ...extra] = file.file_info;
             const [{ name }, ...more] = depts;
             file.department = name;
           } catch (err) {
-            // if department {depts:[]} is empty
-            // console.log(err);
             file.department = "";
           }
-          // console.log("department : ", file.department);
 
           return {
             id: file.id,
@@ -68,7 +65,6 @@ const FilesInsideFolder = () => {
           };
         });
 
-        // Sort the mappedFiles array based on the lastUpdate property
         mappedFiles.sort((a, b) => {
           return new Date(b.lastUpdate) - new Date(a.lastUpdate);
         });
@@ -79,14 +75,17 @@ const FilesInsideFolder = () => {
     }
   };
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredFiles = files.filter((file) =>
+    file.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="p-4">
-      {/* <button onClick={openDialog} className="">
-        <img src={FolderImg} alt="" className="w-full" />
-      </button> */}
-
       <div className="flex flex-row justify-between items-center my-2">
-        {" "}
         <h2 className="text-2xl font-semibold my-2">{folderName} :</h2>
         <AddFilesInsideFolder
           folderId={folderId}
@@ -94,8 +93,19 @@ const FilesInsideFolder = () => {
         />
       </div>
 
+      {/* Search bar */}
+      <div className="flex justify-end items-center">
+        <input
+          type="text"
+          placeholder="Search by file name"
+          value={searchQuery}
+          onChange={handleSearch}
+          className="border border-gray-300 rounded-md px-3 py-2 mb-4"
+        />
+      </div>
+
       <div>
-        <RecentFiles filteredData={files} />
+        <RecentFiles filteredData={filteredFiles} />
       </div>
     </div>
   );
