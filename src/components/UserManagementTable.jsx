@@ -4,9 +4,11 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Edit from "../assets/edit.svg";
+import Cross from "../assets/cross.svg";
 import { useNavigate } from "react-router-dom";
 import userContext from "../context/UserContext";
 import secureLocalStorage from "react-secure-storage";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function UserManagementTable() {
   const context = useContext(userContext);
@@ -54,6 +56,28 @@ export default function UserManagementTable() {
 
     // Navigate to the "user-profile" route with the user ID or any relevant parameter
     navigate(`/user-profile/${params.row.id}`);
+  };
+
+  const handleRemoveUserClick = async (params) => {
+    try {
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let id = params.row.id;
+      console.log(id);
+      const response = await axios.delete(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/deleteUser/${id}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+
+      // console.log("User deleted successfully ", response);
+      toast.success("User deleted successfully.");
+    } catch (error) {
+      console.log("error occured  while deleting user ", error);
+      toast.error("Something went wrong.");
+    }
   };
 
   const columns = [
@@ -113,11 +137,25 @@ export default function UserManagementTable() {
         />
       ),
     },
+    {
+      field: "removeUser",
+      headerName: " ",
+      width: 80,
+      renderCell: (params) => (
+        <img
+          src={Cross}
+          alt="X"
+          style={{ cursor: "pointer" }}
+          onClick={() => handleRemoveUserClick(params)}
+        />
+      ),
+    },
   ];
 
   return (
     <>
       <div className="flex justify-start p-2 gap-3">
+        <Toaster position="bottom-left" reverseOrder={false} />
         {userTypes.map((usr, index) => {
           return (
             <span
