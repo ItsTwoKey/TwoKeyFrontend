@@ -1,75 +1,66 @@
-import React, { useState } from "react";
-import { supabase } from "../helper/supabaseClient"; // Assuming you have configured Supabase client and exported it as 'supabase'
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import secureLocalStorage from "react-secure-storage";
+import Pagination from "@mui/material/Pagination";
+import PaginationItem from "@mui/material/PaginationItem";
+import Stack from "@mui/material/Stack";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 function FileUploadComponent() {
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState(null);
+  const [files, setFiles] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
-  const handleFileUpload = async (event) => {
+  const handleFilelisting = async (page) => {
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     try {
-      setUploading(true);
-      const screenshotImg = event.target.files[0];
-      const { data, error } = await supabase.storage
-        .from("TwoKey")
-        .upload("screenshot", screenshotImg, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+      const getFiles = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?p=${page}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
 
-      if (error) {
-        throw error;
-      }
-
-      console.log("File uploaded successfully:", data);
-      // Optionally, you can do something with the uploaded file data here
-
-      setUploading(false);
-      setUploadError(null);
+      console.log("Files:", getFiles.data);
+      console.log("Response Headers:", getFiles); // Log response headers
+      setFiles(getFiles.data);
+      setTotalPages(Math.ceil(getFiles.headers.count / 25));
     } catch (error) {
-      console.error("Error uploading file:", error.message);
-      setUploadError(error.message);
-      setUploading(false);
+      console.error("Error at file listing test:", error.message);
     }
   };
 
-  const handleFileUpdate = async (event) => {
-    try {
-      const newscreenshot = event.target.files[0];
+  useEffect(() => {
+    handleFilelisting(currentPage); // Fetch files when component mounts or currentPage changes
+  }, [currentPage]);
 
-      const { data, error } = await supabase.storage
-        .from("TwoKey")
-        .update("screenshot", newscreenshot, {
-          cacheControl: "3600",
-          upsert: true,
-        });
-
-      if (error) {
-        throw error;
-      }
-
-      console.log("File updated successfully:", data);
-      // Optionally, you can do something with the updated file data here
-      if (data) {
-        alert("success");
-      }
-    } catch (error) {
-      console.error("Error updating file:", error.message);
-    }
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value); // Update currentPage when pagination changes
   };
 
   return (
     <>
       <div>
-        <input type="file" onChange={handleFileUpload} />
-        <button type="submit">Upload</button>{" "}
-        {/* Submit button for file upload */}
-        {uploading && <p>Uploading...</p>}
-        {uploadError && <p>Error: {uploadError}</p>}
-      </div>
-      <div>
-        <input type="file" onChange={handleFileUpdate} />
-        <button type="submit">Update</button>{" "}
+        <button onClick={() => handleFilelisting(1)}>get files</button>{" "}
         {/* Submit button for file update */}
+        {files.length && (
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages} // Assuming there are 10 pages
+              page={currentPage}
+              onChange={handlePageChange}
+              renderItem={(item) => (
+                <PaginationItem
+                  slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                  {...item}
+                />
+              )}
+            />
+          </Stack>
+        )}
       </div>
     </>
   );

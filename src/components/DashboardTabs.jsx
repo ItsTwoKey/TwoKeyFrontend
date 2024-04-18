@@ -13,6 +13,11 @@ import SecureShare from "./SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
 import PropTypes from "prop-types";
 import fileContext from "../context/fileContext";
+import Pagination from "@mui/material/Pagination";
+import PaginationItem from "@mui/material/PaginationItem";
+import Stack from "@mui/material/Stack";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -59,6 +64,8 @@ export default function DashboardTabs() {
   const context = useContext(fileContext);
   const { files, setFiles, filteredData, setFilteredData } = context;
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   //   realtime supabase subscribe
   // useEffect(() => {
@@ -80,6 +87,13 @@ export default function DashboardTabs() {
   //     supabase.removeChannel(channel);
   //   };
   // }, []);
+  useEffect(() => {
+    fetchFiles();
+  }, [value, currentPage]);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value); // Update currentPage when pagination changes
+  };
 
   const handleTabChange = (event) => {
     setValue(event.target.value);
@@ -94,21 +108,19 @@ export default function DashboardTabs() {
       let token = JSON.parse(secureLocalStorage.getItem("token"));
       let url;
 
-      // Determine the URL based on the selected tab
       switch (value) {
         case 0:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=25`;
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?p=${currentPage}`;
           break;
         case 1:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared`;
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared&p=${currentPage}`;
           break;
         case 2:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received`;
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received&p=${currentPage}`;
           break;
         case 3:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned`;
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned&p=${currentPage}`;
           break;
-
         default:
           url = "";
           break;
@@ -124,6 +136,7 @@ export default function DashboardTabs() {
 
         console.log(`dashboard Tabs`, getFiles.data);
         setFiles(getFiles.data);
+        setTotalPages(Math.ceil(getFiles.headers.count / 25));
 
         const cacheKey = "recentFilesCache";
 
@@ -206,9 +219,8 @@ export default function DashboardTabs() {
   };
 
   const handleChange = (event, newValue) => {
-    // Reset logs state to null when changing tabs
-    // setLogs(null);
     setValue(newValue);
+    setCurrentPage(1); // Reset currentPage when changing tabs
   };
 
   return (
@@ -284,6 +296,26 @@ export default function DashboardTabs() {
           <RecentFiles filteredData={filteredData} loading={loading} />
         </CustomTabPanel>
       </Box>
+
+      {files.length ? (
+        <div className="flex justify-center items-center my-4">
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages} // Assuming there are 10 pages
+              page={currentPage}
+              onChange={handlePageChange}
+              renderItem={(item) => (
+                <PaginationItem
+                  slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                  {...item}
+                />
+              )}
+            />
+          </Stack>
+        </div>
+      ) : (
+        " "
+      )}
     </div>
   );
 }
