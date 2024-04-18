@@ -429,7 +429,7 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
             <style>
               {`
               .dept-${index}, .dept-hover-${index}:hover {
-                background-color: ${department.metadata.bg};
+                background-color: ${department.metadata?.bg};
               }
             `}
             </style>
