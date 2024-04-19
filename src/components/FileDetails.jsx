@@ -210,7 +210,7 @@ const FileDetails = ({
 
           {sharedFileInfo?.shared_with?.map((user) => (
             <span key={user.user_id} className="flex flex-row items-center">
-              <Tooltip title={user.user_email} arrow>
+              <Tooltip title={user?.user_email} arrow>
                 <Avatar
                   src={user.profile_pic}
                   alt="owner pic"

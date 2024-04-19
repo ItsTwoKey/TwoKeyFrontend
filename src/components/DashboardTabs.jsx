@@ -105,6 +105,8 @@ export default function DashboardTabs() {
 
   const fetchFiles = async () => {
     try {
+      setLoading(true); // Set loading state to true when fetching data
+
       let token = JSON.parse(secureLocalStorage.getItem("token"));
       let url;
 
@@ -126,7 +128,6 @@ export default function DashboardTabs() {
           break;
       }
 
-      // Check if the URL is empty before making the request
       if (url) {
         const getFiles = await axios.get(url, {
           headers: {
@@ -140,81 +141,59 @@ export default function DashboardTabs() {
 
         const cacheKey = "recentFilesCache";
 
-        // Check if recent files data is available in localStorage
-        const cachedRecentFiles = secureLocalStorage.getItem(cacheKey);
-
-        if (cachedRecentFiles) {
-          // console.log(
-          //   "Using cached recent files:",
-          //   JSON.parse(cachedRecentFiles)
-          // );
-          setFilteredData(JSON.parse(cachedRecentFiles));
-          setLoading(false);
-        }
-
-        if (getFiles) {
-          const mappedFiles = getFiles.data.map((file) => {
-            // destucture and extract dept name of every file
-            try {
-              const [{ depts }, ...extra] = file.file_info;
-              const [{ name }, ...more] = depts;
-              file.department = name;
-            } catch (err) {
-              // if department {depts:[]} is empty
-              // console.log(err);
-              file.department = "";
-            }
-            // console.log("department : ", file.department);
-
-            return {
-              id: file.id,
-              name: file.name.substring(0, 80),
-              profilePic: file.profile_pic,
-              size: formatFileSize(file.metadata.size),
-              dept: file.department,
-              owner: file.owner_email,
-              mimetype: file.metadata.mimetype,
-              status: "Team",
-              security: "Enhanced",
-              color: file.file_info[0]?.depts[0]?.metadata?.bg,
-              lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
-                "en-IN",
-                {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                }
-              ),
-            };
-          });
-
-          // Sort the mappedFiles array based on the lastUpdate property
-          mappedFiles.sort((a, b) => {
-            return new Date(b.lastUpdate) - new Date(a.lastUpdate);
-          });
-
-          // Replace the cached recent files data with the new data
-          secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
-
-          // Update the state with the new data
-          // setFilteredData(mappedFiles);
-          if (location.pathname !== "/dashboard") {
-            // If location is other than "dashboard", send only the first 5 items
-            setFilteredData(mappedFiles.slice(0, 5));
-          } else {
-            // If location is "dashboard", send all filtered data
-            setFilteredData(mappedFiles);
+        const mappedFiles = getFiles.data.map((file) => {
+          try {
+            const [{ depts }, ...extra] = file.file_info;
+            const [{ name }, ...more] = depts;
+            file.department = name;
+          } catch (err) {
+            file.department = "";
           }
-          setLoading(false);
+
+          return {
+            id: file.id,
+            name: file.name.substring(0, 80),
+            profilePic: file.profile_pic,
+            size: formatFileSize(file.metadata.size),
+            dept: file.department,
+            owner: file.owner_email,
+            mimetype: file.metadata.mimetype,
+            status: "Team",
+            security: "Enhanced",
+            color: file.file_info[0]?.depts[0]?.metadata?.bg,
+            lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+              "en-IN",
+              {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              }
+            ),
+          };
+        });
+
+        mappedFiles.sort((a, b) => {
+          return new Date(b.lastUpdate) - new Date(a.lastUpdate);
+        });
+
+        secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
+
+        if (location.pathname !== "/dashboard") {
+          setFilteredData(mappedFiles.slice(0, 5));
+        } else {
+          setFilteredData(mappedFiles);
         }
+
+        setLoading(false); // Set loading state to false when data fetching is complete
       } else {
         console.log("URL is empty. Skipping request.");
       }
     } catch (error) {
       console.log(error);
+      setLoading(false); // Set loading state to false if an error occurs
     }
   };
 
