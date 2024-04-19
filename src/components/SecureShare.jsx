@@ -43,6 +43,7 @@ const SecureShare = ({ value }) => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [depts, setDepts] = useState([]);
   const context = useContext(fileContext);
   const { updateFilesState } = context;
 
@@ -101,6 +102,7 @@ const SecureShare = ({ value }) => {
         const fileNameWithTimestamp = `${file.name}_TS=${timestamp}`; // Modify file name
 
         console.log("upload started");
+
         await uploadFile("TwoKey", fileNameWithTimestamp, file);
         console.log("uploaded file:", fileNameWithTimestamp);
         // handleFileIdRetrieval(fileNameWithTimestamp);
@@ -127,6 +129,7 @@ const SecureShare = ({ value }) => {
 
         if (file) {
           console.log("Object id found:", file.id);
+          addFileDepartment(file.id);
           shareFiles(file.id);
         } else {
           console.log(`Object with name "${desiredFileName}" not found.`);
@@ -136,6 +139,40 @@ const SecureShare = ({ value }) => {
       }
     } catch (error) {
       console.log("Error occurred while retrieving the file list:", error);
+    }
+  };
+
+  const addFileDepartment = async (fileId) => {
+    try {
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
+      let departmentName = profileData.dept;
+
+      // Find the department object based on its name
+      const department = depts.find((dept) => dept.name === departmentName);
+      console.log(department);
+
+      if (department) {
+        let body = {
+          department_ids: [department.id],
+        };
+
+        const addDept = await axios.post(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/addDepartment/${fileId}`,
+          body,
+          {
+            headers: {
+              authorization: `Bearer ${token.session.access_token}`,
+            },
+          }
+        );
+
+        console.log("dept added to file", addDept);
+      } else {
+        console.log(`Department "${departmentName}" not found.`);
+      }
+    } catch (error) {
+      console.log("Error occured while adding the file department", error);
     }
   };
 
@@ -200,6 +237,10 @@ const SecureShare = ({ value }) => {
 
   const openDialog = () => {
     setIsOpen(true);
+    const departments = JSON.parse(secureLocalStorage.getItem("departments"));
+
+    setDepts(departments);
+    console.log("upload files", departments);
   };
 
   const closeDialog = () => {
