@@ -27,7 +27,7 @@ export const FileState = (props) => {
       // Determine the URL based on the selected tab
       switch (parseInt(value)) {
         case 0:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=25`;
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?p=1`;
           break;
         case 1:
           url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared`;
