@@ -149,12 +149,12 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
       if (childNode.nodeName === "w:r") {
         const textOps = extractTextOps(childNode);
         ops = ops.concat(textOps);
+        console.log(textOps);
       }
-
       // Check if the node contains formatting
       if (childNode.nodeName === "w:pPr") {
         const formatOps = extractFormatOps(childNode);
-        ops = ops.concat({ insert: "", attributes: formatOps });
+        ops = ops.concat({ insert: "\n", attributes: formatOps });
         console.log(formatOps);
       }
     }
@@ -164,49 +164,6 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
 
     return ops;
   }
-
-  // function extractTextOps(runNode) {
-  //   let ops = [];
-
-  //   // Extract text content
-  //   const textNode = runNode.getElementsByTagName("w:t")[0];
-  //   if (textNode) {
-  //     const textContent = textNode.textContent;
-
-  //     // Check for bold, italic, underline, etc.
-  //     const isBold = !!runNode.getElementsByTagName("w:b").length;
-  //     const isItalic = !!runNode.getElementsByTagName("w:i").length;
-  //     const isUnderline = !!runNode.getElementsByTagName("w:u").length;
-
-  //     // Add text operations with formatting
-  //     let textOp = { insert: textContent };
-  //     if (isBold) textOp = { ...textOp, attributes: { bold: true } };
-  //     if (isItalic) textOp = { ...textOp, attributes: { italic: true } };
-  //     if (isUnderline) textOp = { ...textOp, attributes: { underline: true } };
-
-  //     ops.push(textOp);
-  //   }
-
-  //   return ops;
-  // }
-
-  // function extractFormatOps(paragraphPropsNode) {
-  //   let ops = [];
-
-  //   // Check for heading levels
-  //   const headingLevel = extractHeadingLevel(paragraphPropsNode);
-  //   if (headingLevel) {
-  //     ops.push({ insert: "\n", attributes: { header: headingLevel } });
-  //   }
-
-  //   // Check for list items
-  //   const listType = extractListType(paragraphPropsNode);
-  //   if (listType) {
-  //     ops.push({ insert: "\n", attributes: { list: listType } });
-  //   }
-
-  //   return ops;
-  // }
 
   function extractTextOps(runNode) {
     let ops = [];
