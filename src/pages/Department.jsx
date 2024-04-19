@@ -22,7 +22,7 @@ const Department = () => {
         let token = JSON.parse(secureLocalStorage.getItem("token"));
 
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/${deptName}/?recs=25`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/${deptName}/?p=1`,
           {
             headers: {
               Authorization: `Bearer ${token.session.access_token}`,
