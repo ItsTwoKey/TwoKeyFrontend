@@ -232,7 +232,7 @@ const DueDate = () => {
                       className="mr-2"
                     >
                       <Avatar
-                        src={due.shared_with[0].profile_pic}
+                        src={due?.shared_with[0]?.profile_pic}
                         alt="owner pic"
                         sx={{ width: 25, height: 25 }}
                         variant="rounded"
@@ -240,19 +240,19 @@ const DueDate = () => {
                     </Tooltip>
                     <p>
                       <strong className="font-semibold">
-                        {due.shared_with[0].first_name}{" "}
-                        {due.shared_with[0].last_name}
+                        {due?.shared_with[0]?.first_name}{" "}
+                        {due?.shared_with[0]?.last_name}
                       </strong>
                       's access to{" "}
                       <strong className="font-semibold">
-                        {due.file_name.split("_TS=")[0]}
+                        {due?.file_name?.split("_TS=")[0]}
                       </strong>{" "}
-                      is end in {convertSecondsToDaysHours(due.expiration_time)}
-                      .
+                      is end in{" "}
+                      {convertSecondsToDaysHours(due?.expiration_time)}.
                     </p>
                   </div>
 
-                  {selectedDue && selectedDue.file_name === due.file_name && (
+                  {selectedDue && selectedDue.file_name === due?.file_name && (
                     <div className="px-3 py-1 ">
                       <p className="text-sm font-bold">File Due Date</p>
                       <div className="border border-gray-200 rounded-lg w-full py-1 px-3 my-2 shadow">
