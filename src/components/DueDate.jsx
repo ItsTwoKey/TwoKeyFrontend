@@ -227,7 +227,7 @@ const DueDate = () => {
                 >
                   <div className="flex flex-row">
                     <Tooltip
-                      title={due.shared_with[0].user_email}
+                      title={due?.shared_with[0]?.user_email}
                       arrow
                       className="mr-2"
                     >
