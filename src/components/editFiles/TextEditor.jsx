@@ -56,6 +56,7 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
       const quillToWordConfig = {
         exportAs: "blob",
       };
+      console.log(delta);
       const docAsBlob = await quillToWord.generateWord(
         delta,
         quillToWordConfig
@@ -108,6 +109,7 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
       const zip = await JSZip.loadAsync(docxFile);
       const documentXml = await zip.file("word/document.xml").async("string");
       const content = parseDocumentXml(documentXml); // parse the docx to xml
+      console.log(content);
       quill.setContents(content);
     } catch (error) {
       console.error("Error converting .docx to Quill format:", error);
@@ -152,7 +154,8 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
       // Check if the node contains formatting
       if (childNode.nodeName === "w:pPr") {
         const formatOps = extractFormatOps(childNode);
-        ops = ops.concat(formatOps);
+        ops = ops.concat({ insert: "", attributes: formatOps });
+        console.log(formatOps);
       }
     }
 
@@ -162,6 +165,49 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
     return ops;
   }
 
+  // function extractTextOps(runNode) {
+  //   let ops = [];
+
+  //   // Extract text content
+  //   const textNode = runNode.getElementsByTagName("w:t")[0];
+  //   if (textNode) {
+  //     const textContent = textNode.textContent;
+
+  //     // Check for bold, italic, underline, etc.
+  //     const isBold = !!runNode.getElementsByTagName("w:b").length;
+  //     const isItalic = !!runNode.getElementsByTagName("w:i").length;
+  //     const isUnderline = !!runNode.getElementsByTagName("w:u").length;
+
+  //     // Add text operations with formatting
+  //     let textOp = { insert: textContent };
+  //     if (isBold) textOp = { ...textOp, attributes: { bold: true } };
+  //     if (isItalic) textOp = { ...textOp, attributes: { italic: true } };
+  //     if (isUnderline) textOp = { ...textOp, attributes: { underline: true } };
+
+  //     ops.push(textOp);
+  //   }
+
+  //   return ops;
+  // }
+
+  // function extractFormatOps(paragraphPropsNode) {
+  //   let ops = [];
+
+  //   // Check for heading levels
+  //   const headingLevel = extractHeadingLevel(paragraphPropsNode);
+  //   if (headingLevel) {
+  //     ops.push({ insert: "\n", attributes: { header: headingLevel } });
+  //   }
+
+  //   // Check for list items
+  //   const listType = extractListType(paragraphPropsNode);
+  //   if (listType) {
+  //     ops.push({ insert: "\n", attributes: { list: listType } });
+  //   }
+
+  //   return ops;
+  // }
+
   function extractTextOps(runNode) {
     let ops = [];
 
@@ -170,39 +216,102 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
     if (textNode) {
       const textContent = textNode.textContent;
 
-      // Check for bold, italic, underline, etc.
-      const isBold = !!runNode.getElementsByTagName("w:b").length;
-      const isItalic = !!runNode.getElementsByTagName("w:i").length;
-      const isUnderline = !!runNode.getElementsByTagName("w:u").length;
+      // Extract formatting
+      const formatOps = extractFormatOps(runNode);
 
       // Add text operations with formatting
       let textOp = { insert: textContent };
-      if (isBold) textOp = { ...textOp, attributes: { bold: true } };
-      if (isItalic) textOp = { ...textOp, attributes: { italic: true } };
-      if (isUnderline) textOp = { ...textOp, attributes: { underline: true } };
-
+      if (Object.keys(formatOps).length > 0) {
+        textOp = { ...textOp, attributes: formatOps };
+      }
       ops.push(textOp);
     }
 
     return ops;
   }
 
-  function extractFormatOps(paragraphPropsNode) {
-    let ops = [];
+  function extractFormatOps(runNode) {
+    let formatOps = {};
 
-    // Check for heading levels
-    const headingLevel = extractHeadingLevel(paragraphPropsNode);
+    // Check for text color
+    const colorNode = runNode.getElementsByTagName("w:color")[0];
+    if (colorNode) {
+      const colorValue = colorNode.getAttribute("w:val");
+      if (colorValue) {
+        const quillColor = convertColor(colorValue);
+        if (quillColor) {
+          formatOps.color = quillColor;
+        }
+      }
+    }
+
+    // Check for text background color
+    const highlightNode = runNode.getElementsByTagName("w:highlight")[0];
+    if (highlightNode) {
+      const backgroundColorValue = highlightNode.getAttribute("w:val");
+      if (backgroundColorValue) {
+        formatOps.background = backgroundColorValue;
+      }
+    }
+
+    // Check for bold
+    const boldNode = runNode.getElementsByTagName("w:b")[0];
+    if (boldNode) {
+      formatOps.bold = true;
+    }
+
+    // Check for italic
+    const italicNode = runNode.getElementsByTagName("w:i")[0];
+    if (italicNode) {
+      formatOps.italic = true;
+    }
+
+    // Check for underline
+    const underlineNode = runNode.getElementsByTagName("w:u")[0];
+    if (underlineNode) {
+      formatOps.underline = true;
+    }
+
+    // Check for heading level
+    const headingLevel = extractHeadingLevel(runNode);
     if (headingLevel) {
-      ops.push({ insert: "\n", attributes: { header: headingLevel } });
+      formatOps.header = headingLevel;
     }
 
     // Check for list items
-    const listType = extractListType(paragraphPropsNode);
+    const listType = extractListType(runNode);
     if (listType) {
-      ops.push({ insert: "\n", attributes: { list: listType } });
+      formatOps.list = listType;
     }
 
-    return ops;
+    // Check for font size
+    const fontSize = extractFontSize(runNode);
+    if (fontSize) {
+      formatOps.size = fontSize;
+    }
+
+    return formatOps;
+  }
+  function extractFontSize(paragraphPropsNode) {
+    const fontSizeNode = paragraphPropsNode.getElementsByTagName("w:sz")[0];
+    if (fontSizeNode) {
+      const fontSizeValue = fontSizeNode.getAttribute("w:val");
+      if (fontSizeValue) {
+        // Convert font size value from half points to points (Quill uses points for font size)
+        const fontSizeInPoints = parseInt(fontSizeValue) / 2;
+        return fontSizeInPoints;
+      }
+    }
+    return null;
+  }
+
+  function convertColor(colorValue) {
+    // Perform color conversion here
+    const hex = colorValue.replace("#", "");
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    return `rgb(${r}, ${g}, ${b})`;
   }
 
   function extractHeadingLevel(paragraphPropsNode) {

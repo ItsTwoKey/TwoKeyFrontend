@@ -227,12 +227,12 @@ const DueDate = () => {
                 >
                   <div className="flex flex-row">
                     <Tooltip
-                      title={due.shared_with[0].user_email}
+                      title={due.shared_with[0]?.user_email}
                       arrow
                       className="mr-2"
                     >
                       <Avatar
-                        src={due.shared_with[0].profile_pic}
+                        src={due.shared_with[0]?.profile_pic}
                         alt="owner pic"
                         sx={{ width: 25, height: 25 }}
                         variant="rounded"
@@ -240,8 +240,8 @@ const DueDate = () => {
                     </Tooltip>
                     <p>
                       <strong className="font-semibold">
-                        {due.shared_with[0].first_name}{" "}
-                        {due.shared_with[0].last_name}
+                        {due.shared_with[0]?.first_name}{" "}
+                        {due.shared_with[0]?.last_name}
                       </strong>
                       's access to{" "}
                       <strong className="font-semibold">
