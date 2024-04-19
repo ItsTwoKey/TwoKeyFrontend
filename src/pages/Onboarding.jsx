@@ -300,7 +300,7 @@ const Onboarding = () => {
           username: formData.username,
           name: formData.firstName,
           last_name: formData.lastName,
-          dept: "7075576d-bbbc-47f7-9b50-a272e93dc66f",
+          dept: "84cfe5e6-6ba0-469b-83df-48c99e21c670",
           profile_pic: updatedProfileUrl,
         };
         console.log("onboarding body:", body);
