@@ -126,7 +126,7 @@ const FileDrawer = ({
           <p className="text-xs font-bold">Who has access</p>
 
           {sharedFileInfo?.shared_with?.map((user) => (
-            <Tooltip key={user.user_id} title={user.user_email} arrow>
+            <Tooltip key={user.user_id} title={user?.user_email} arrow>
               <Avatar
                 src={user.profile_pic}
                 alt="owner pic"
