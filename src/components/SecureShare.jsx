@@ -15,6 +15,7 @@ import LinearProgress, {
 } from "@mui/material/LinearProgress";
 import secureLocalStorage from "react-secure-storage";
 import fileContext from "../context/fileContext";
+import { useParams } from "react-router-dom";
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
   borderRadius: 5,
@@ -44,8 +45,9 @@ const SecureShare = ({ value }) => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [uploadProgress, setUploadProgress] = useState(0);
   const [depts, setDepts] = useState([]);
+  const { deptName } = useParams();
   const context = useContext(fileContext);
-  const { updateFilesState } = context;
+  const { updateFilesState, updateDepartmentFiles } = context;
 
   const uploadFile = async (bucketName, fileName, file, index) => {
     try {
@@ -77,7 +79,6 @@ const SecureShare = ({ value }) => {
         onSuccess: function () {
           console.log(`Download ${upload.file.name} from ${upload.url}`);
           closeDialog();
-          updateFilesState(value);
           handleFileIdRetrieval(fileName);
         },
       });
@@ -168,6 +169,8 @@ const SecureShare = ({ value }) => {
         );
 
         console.log("dept added to file", addDept);
+        updateFilesState(value);
+        if (deptName) updateDepartmentFiles(deptName);
       } else {
         console.log(`Department "${departmentName}" not found.`);
       }
