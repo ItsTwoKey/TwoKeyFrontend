@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import RecentFiles from "../components/RecentFiles";
@@ -8,6 +8,7 @@ import UploadFile from "../components/UploadFile";
 import SecureShare from "../components/SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
 import { useAuth } from "../context/authContext";
+import fileContext from "../context/fileContext";
 
 const Department = () => {
   const { darkMode } = useDarkMode();
@@ -15,6 +16,8 @@ const Department = () => {
   const { deptName } = useParams();
   const [filesFromBackend, setFilesFromBackend] = useState([]);
   const [loading, setLoading] = useState(true); // Initialize loading state as true
+  const context = useContext(fileContext);
+  const { departmentFiles, setDepartmentFiles } = context;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,6 +77,7 @@ const Department = () => {
             return new Date(b.lastUpdate) - new Date(a.lastUpdate);
           });
           setFilesFromBackend(mappedFiles);
+          setDepartmentFiles(mappedFiles);
         }
 
         setLoading(false); // Once data is fetched, set loading to false
@@ -85,6 +89,11 @@ const Department = () => {
 
     fetchData();
   }, [deptName]);
+
+  useEffect(() => {
+    setFilesFromBackend(departmentFiles);
+    console.log("dept file: ", departmentFiles);
+  }, [departmentFiles]);
 
   if (!secureLocalStorage.getItem("token")) {
     return <ErrorPage error="You are not authorised" />;
@@ -116,6 +125,7 @@ const Department = () => {
           <p>Loading...</p> // Display loading indicator while fetching data
         ) : (
           <RecentFiles filteredData={filesFromBackend} loading={loading} />
+          // <RecentFiles filteredData={departmentFiles} loading={loading} />
         )}
       </div>
     </div>

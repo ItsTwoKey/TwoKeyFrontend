@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { supabase } from "../helper/supabaseClient";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -49,8 +49,9 @@ const UploadFile = ({ value }) => {
     content: "",
     visible: false,
   });
+  const { deptName } = useParams();
   const context = useContext(fileContext);
-  const { updateFilesState } = context;
+  const { updateFilesState, updateDepartmentFiles } = context;
 
   // Function to check if both fields are filled
   const checkFields = () => {
@@ -202,6 +203,7 @@ const UploadFile = ({ value }) => {
 
       console.log("dept added to file", addDept);
       updateFilesState(0 || value);
+      if (deptName) updateDepartmentFiles(deptName);
     } catch (error) {
       console.log("Error occured while adding the file department", error);
     }
