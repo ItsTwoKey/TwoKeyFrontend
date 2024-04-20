@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "../helper/supabaseClient";
 import { TextField, useMediaQuery } from "@mui/material";
 import axios from "axios";
-
+import CircularProgress from "@mui/material/CircularProgress";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -20,6 +20,7 @@ const SignUp = () => {
 
   const [organizationData, setOrganizationData] = useState("");
   const [pageErr, setPageErr] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   console.log(formData);
 
@@ -36,6 +37,7 @@ const SignUp = () => {
     e.preventDefault();
 
     try {
+      setLoading(true);
       const { data, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -50,6 +52,8 @@ const SignUp = () => {
       alert("Check your email for a verification link");
     } catch (error) {
       alert(error.message);
+    } finally {
+      setLoading(false); // Finish form submission
     }
   }
 
@@ -117,10 +121,6 @@ const SignUp = () => {
               onChange={handleChange}
               size="small"
             >
-              <MenuItem value="None">
-                <em>None</em>
-              </MenuItem>
-
               {organizationData.length &&
                 organizationData.map((item) => (
                   <MenuItem key={item.id} value={item.id}>
@@ -176,12 +176,20 @@ const SignUp = () => {
             />
           </span>
 
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-1 px-10 text-center mt-8 rounded-sm"
-          >
-            Sign Up
-          </button>
+          {loading ? (
+            <CircularProgress
+              className="mt-12"
+              style={{ color: "#000", height: 25, width: 25 }}
+            />
+          ) : (
+            <button
+              type="submit"
+              className="bg-blue-600 text-white py-1 px-10 text-center mt-8 rounded-sm"
+            >
+              Sign Up
+            </button>
+          )}
+
           <p className="text-gray-500 mt-4 text-center">
             Already have an account?{" "}
             <Link to="/login" className="text-indigo-600 font-semibold">
