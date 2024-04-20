@@ -9,6 +9,7 @@ export const FileState = (props) => {
   const [files, setFiles] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [departmentFiles, setDepartmentFiles] = useState([]);
   const location = window.location.pathname;
 
   const { formatFileSize } = useAuth();
@@ -114,6 +115,69 @@ export const FileState = (props) => {
     }
   };
 
+  const updateDepartmentFiles = async (deptName) => {
+    try {
+      let token = JSON.parse(secureLocalStorage.getItem("token"));
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/${deptName}/?recs=25`,
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+
+      if (response) {
+        const mappedFiles = response.data.map((file) => {
+          // destucture and extract dept name of every file
+          try {
+            const [{ depts }, ...extra] = file.file_info;
+            const [{ name }, ...more] = depts;
+            file.department = name;
+          } catch (err) {
+            // if department {depts:[]} is empty
+            // console.log(err);
+            file.department = "";
+          }
+          // console.log("department : ", file.department);
+
+          return {
+            id: file.id,
+            name: file.name.substring(0, 80),
+            profilePic: file.profile_pic,
+            size: formatFileSize(file.metadata.size),
+            dept: file.department,
+            owner: file.owner_email,
+            mimetype: file.metadata.mimetype,
+            status: "Team",
+            security: "Enhanced",
+            color: file.file_info[0]?.depts[0]?.metadata?.bg,
+            lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+              "en-IN",
+              {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              }
+            ),
+          };
+        });
+
+        // Sort the mappedFiles array based on the lastUpdate property
+        mappedFiles.sort((a, b) => {
+          return new Date(b.lastUpdate) - new Date(a.lastUpdate);
+        });
+        setDepartmentFiles(mappedFiles);
+      }
+    } catch (error) {
+      console.error("Error fetching files:", error);
+    }
+  };
+
   return (
     <fileContext.Provider
       value={{
@@ -125,6 +189,9 @@ export const FileState = (props) => {
         removeFile,
         anchorEl,
         setAnchorEl,
+        updateDepartmentFiles,
+        departmentFiles,
+        setDepartmentFiles
       }}
     >
       {props.children}

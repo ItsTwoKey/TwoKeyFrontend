@@ -7,14 +7,16 @@ import { supabase } from "../helper/supabaseClient";
 import Danger from "../assets/danger.svg";
 import secureLocalStorage from "react-secure-storage";
 import fileContext from "../context/fileContext";
+import { useParams } from "react-router-dom";
 
 const DeleteFileConfirmation = ({ fileName, owner, id }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" or "error"
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const { deptName } = useParams();
   const context = useContext(fileContext);
-  const { removeFile, setAnchorEl } = context;
+  const { removeFile, setAnchorEl, updateDepartmentFiles } = context;
 
   const openDialog = () => {
     setIsOpen(true);
@@ -45,6 +47,7 @@ const DeleteFileConfirmation = ({ fileName, owner, id }) => {
           setSnackbarSeverity("success");
           setSnackbarMessage("File deleted successfully.");
           removeFile(id);
+          if (deptName) updateDepartmentFiles(deptName);
           setTimeout(() => {
             closeDialog();
           }, 2000);
