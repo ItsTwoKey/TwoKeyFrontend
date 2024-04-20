@@ -288,7 +288,7 @@ const Onboarding = () => {
       if (error) throw error;
 
       if (data) {
-        const updatedProfileUrl = await handleProfilePictureUpload(data);
+        const updatedProfileUrl = handleProfilePictureUpload(data);
 
         setFormData({
           ...formData,
