@@ -14,6 +14,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import secureLocalStorage from "react-secure-storage";
 
 const Login = () => {
+  // const [userMetaData, setUserMetaData] = useState([]);
   let navigate = useNavigate();
   const { fetchProfileData } = useAuth();
   const isSmallScreen = useMediaQuery("(max-width:600px)");
@@ -54,6 +55,8 @@ const Login = () => {
         password: formData.password,
       });
 
+      // console.log("test login data", data);
+
       if (error) throw error;
 
       if (data) {
@@ -79,12 +82,25 @@ const Login = () => {
         );
 
         console.log("meta", res);
+        const userMetaData = res.data;
+        // setUserMetaData(res.data);
+
+        listDepartments();
+
+        if (
+          userMetaData.username &&
+          userMetaData.name &&
+          userMetaData.last_name &&
+          userMetaData.dept &&
+          userMetaData.profile_pic
+        ) {
+          navigate("/dashboard");
+        } else {
+          navigate("/onboard");
+        }
       } catch (error) {
         console.log(error);
       }
-
-      listDepartments();
-      navigate("/dashboard");
     } catch (error) {
       alert(error.message);
     } finally {
@@ -110,7 +126,7 @@ const Login = () => {
           "departments",
           JSON.stringify(departments.data)
         );
-        navigate("/dashboard");
+        // navigate("/dashboard");
       }
     } catch (error) {
       console.log(error);

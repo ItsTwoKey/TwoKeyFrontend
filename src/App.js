@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import SideBar from "./components/SideBar";
 import TopBar from "./components/TopBar";
 import Onboarding from "./pages/Onboarding";
+import Onboard from "./pages/Onboard";
 import Profile from "./pages/Profile";
 import UserManagement from "./pages/UserManagement";
 import Test from "./pages/Test";
@@ -74,6 +75,7 @@ const App = () => {
               />
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/onboard" element={<Onboard />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/ai/:fileId" element={<AI />} />
 

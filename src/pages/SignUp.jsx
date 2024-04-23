@@ -176,7 +176,7 @@ const SignUp = () => {
             />
           </span>
 
-          {loading ? (
+          {/* {loading ? (
             <CircularProgress
               className="mt-12"
               style={{ color: "#000", height: 25, width: 25 }}
@@ -188,7 +188,14 @@ const SignUp = () => {
             >
               Sign Up
             </button>
-          )}
+          )} */}
+
+          <button
+            type="submit"
+            className="bg-blue-600 text-white py-1 px-10 text-center mt-8 rounded-sm"
+          >
+            Sign Up
+          </button>
 
           <p className="text-gray-500 mt-4 text-center">
             Already have an account?{" "}

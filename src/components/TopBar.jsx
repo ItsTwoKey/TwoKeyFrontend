@@ -15,6 +15,7 @@ const TopBar = () => {
   const hideTopBar =
     location.pathname === "/" ||
     location.pathname === "/login" ||
+    location.pathname === "/onboard" ||
     location.pathname === "/signup" ||
     location.pathname === "/change-password" ||
     location.pathname === "/onboarding" ||

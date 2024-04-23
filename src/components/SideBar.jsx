@@ -75,6 +75,7 @@ function SideBar() {
   const hideSideBar =
     location.pathname === "/" ||
     location.pathname === "/login" ||
+    location.pathname === "/onboard" ||
     location.pathname === "/signup" ||
     location.pathname === "/change-password" ||
     location.pathname === "/onboarding";
@@ -330,6 +331,8 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
   const { departments, setDepartments, listDepartments } = useDepartment();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // console.log(profileData);
   useEffect(() => {
     const listDepartments = async () => {
       try {
