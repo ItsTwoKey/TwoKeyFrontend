@@ -48,12 +48,9 @@ const Profile = () => {
     try {
       let token = JSON.parse(secureLocalStorage.getItem("token"));
 
-      const timestamp = Date.now();
-      const emailWithTimestamp = `${token.user.email}_${timestamp}`;
-
       const { data, error } = await supabase.storage
         .from("avatar")
-        .upload(emailWithTimestamp, selectedPicture, {
+        .update(token.user.email, selectedPicture, {
           cacheControl: "3600",
           upsert: true,
         });
@@ -62,7 +59,7 @@ const Profile = () => {
 
       const { data: url } = await supabase.storage
         .from("avatar")
-        .getPublicUrl(emailWithTimestamp);
+        .getPublicUrl(token.user.email);
 
       console.log("Public URL:", url.publicUrl);
 

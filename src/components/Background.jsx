@@ -7,6 +7,7 @@ function Background() {
     location.pathname === "/contact-us" ||
     location.pathname === "/login" ||
     location.pathname === "/signup" ||
+    location.pathname === "/onboard" ||
     location.pathname === "/onboarding" ||
     location.pathname === "/forgot-password" ||
     location.pathname === "/change-password" ||
