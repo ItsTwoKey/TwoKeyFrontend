@@ -1,7 +1,8 @@
 import React from "react";
-import Hero from "../assets/hero.svg";
 import { useNavigate } from "react-router-dom";
-import HeroImg1 from "../assets/HeroAni/heroimg1.svg";
+import Hero1 from "../assets/HeroAni/hero1.png";
+import Hero2 from "../assets/HeroAni/hero2.png";
+import Hero3 from "../assets/HeroAni/hero3.png";
 
 const HomeHero = () => {
   const navigate = useNavigate();
@@ -35,7 +36,9 @@ const HomeHero = () => {
           </div>
         </div>
 
-        <div>{/* <img src={HeroImg1} alt="." /> */}</div>
+        <div>
+          <img src={Hero1} alt="." />
+        </div>
       </div>
     </div>
   );
