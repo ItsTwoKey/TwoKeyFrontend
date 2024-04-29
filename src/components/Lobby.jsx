@@ -9,6 +9,7 @@ import toast, { Toaster } from "react-hot-toast";
 const Lobby = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const departments = JSON.parse(secureLocalStorage.getItem("departments"));
   console.log(departments);
 
@@ -30,8 +31,7 @@ const Lobby = () => {
         const filteredUsers = response.data.filter((user) => !user.is_approved);
         setFilteredUsers(filteredUsers);
 
-        console.log("lobby all users:", response.data);
-        console.log("lobby filtered users:", filteredUsers);
+        setLoading(false); // Set loading to false after data fetch
       } catch (error) {
         console.log(error);
       }
@@ -97,6 +97,14 @@ const Lobby = () => {
       toast.error("Something went wrong.");
     }
   };
+
+  if (loading) {
+    return <div className="text-center my-4">Loading...</div>; // Render loading indicator while fetching data
+  }
+
+  if (filteredUsers.length < 1) {
+    return <div className="text-center my-4">Nobody's in the lobby.</div>;
+  }
 
   return (
     <div className="p-4">
