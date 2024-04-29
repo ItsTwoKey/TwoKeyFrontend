@@ -3,6 +3,7 @@ import PasswordChangeForm from "../components/PasswordChangeForm";
 import Security from "../components/Security";
 import TeamManagement from "../components/TeamManagement";
 import Device from "../components/Device";
+import Lobby from "../components/Lobby";
 import Department from "../components/Department";
 import AccountSetIcon from "../assets/AccountSetting.svg";
 import DeviceIcon from "../assets/Devices.svg";
@@ -21,6 +22,7 @@ const navigationItems = [
   { key: "TeamManagement", label: "Team Management", icon: TeamIcon },
   { key: "Security", label: "Security", icon: SecurityIcon },
   { key: "Department", label: "Department", icon: DepartmentIcon },
+  { key: "Lobby", label: "Lobby", icon: DepartmentIcon },
 ];
 
 const Sidebar = () => {
@@ -48,6 +50,8 @@ const Sidebar = () => {
         return <Security />;
       case "Department":
         return <Department />;
+      case "Lobby":
+        return <Lobby />;
       default:
         return <PasswordChangeForm />;
     }

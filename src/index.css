@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Allerta+Stencil&family=Familjen+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Allerta+Stencil&family=Familjen+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -33,7 +33,6 @@ code {
 
 .activeSetting {
   background-color: #d0d7de3d;
- 
 }
 
 @media only screen and (max-width: 600px) {
@@ -43,21 +42,40 @@ code {
   }
 }
 
-@media only screen and (max-width:820px) {
+@media only screen and (max-width: 820px) {
   .hide-sidebar {
     display: none;
   }
-
 }
 
-@media only screen and (max-width:920px) {
+@media only screen and (max-width: 920px) {
   .md-width {
     width: 60vw;
   }
 }
 
-@media only screen and (max-width:820px) {
+@media only screen and (max-width: 820px) {
   .sm-width {
     width: 100vw;
   }
+}
+
+.fade-container {
+  position: relative;
+  width: fit-content;
+}
+
+.fade-container img {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.fade-in {
+  opacity: 1;
+}
+
+.fade-out {
+  opacity: 0;
 }
