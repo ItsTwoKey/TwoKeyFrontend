@@ -78,7 +78,7 @@ const FileShare = ({ menuFile }) => {
       if (error.response.status === 406) {
         showSnackbar("File already shared", "error");
       } else {
-        showSnackbar("Error sharing file", "error");
+        showSnackbar("You can only share your ownd files", "error");
       }
     }
   };
