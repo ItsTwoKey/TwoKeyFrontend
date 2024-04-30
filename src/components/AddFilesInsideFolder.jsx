@@ -20,12 +20,27 @@ const AddFilesInsideFolder = ({ folderId, listFilesInFolder }) => {
   const [selectedFileName, setSelectedFileName] = useState("");
 
   useEffect(() => {
-    const fetchFiles = async () => {
-      const files = secureLocalStorage.getItem("recentFilesCache");
-      setFiles(JSON.parse(files));
-    };
-    fetchFiles();
+    getOwnedFile();
   }, []);
+
+  const getOwnedFile = async () => {
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned`,
+
+        {
+          headers: {
+            Authorization: `Bearer ${token.session.access_token}`,
+          },
+        }
+      );
+
+      setFiles(response.data);
+    } catch (error) {
+      console.log("error occurred while fetching folder.", error);
+    }
+  };
 
   const openDialog = () => {
     setIsOpen(true);
