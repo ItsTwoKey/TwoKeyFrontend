@@ -90,14 +90,14 @@ const AddSecPreSet = () => {
                 />
                 Geo - Location
               </label>
-              <label>
+              {/* <label>
                 <input
                   type="checkbox"
                   checked={checkboxValues.uniqueIdentifiers}
                   onChange={() => handleCheckboxChange("uniqueIdentifiers")}
                 />
                 Unique Identifiers
-              </label>
+              </label> */}
               <label>
                 <input
                   type="checkbox"
