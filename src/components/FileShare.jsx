@@ -78,7 +78,7 @@ const FileShare = ({ menuFile }) => {
       if (error.response.status === 406) {
         showSnackbar("File already shared", "error");
       } else {
-        showSnackbar("You can only share your ownd files", "error");
+        showSnackbar("You can only share your owned files", "error");
       }
     }
   };
@@ -127,7 +127,7 @@ const FileShare = ({ menuFile }) => {
                 Security Features
               </p>
               <span className="grid grid-cols-2 text-gray-800 font-semibold">
-                <label>
+                {/* <label>
                   <input
                     type="checkbox"
                     checked={checkboxValues.uniqueIdentifiers}
@@ -135,7 +135,7 @@ const FileShare = ({ menuFile }) => {
                     onChange={() => handleCheckboxChange("uniqueIdentifiers")}
                   />
                   Unique Identifiers
-                </label>
+                </label> */}
                 <label>
                   <input
                     type="checkbox"

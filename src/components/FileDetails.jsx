@@ -91,7 +91,7 @@ const FileDetails = ({
       // Create a temporary anchor element
       const downloadLink = document.createElement("a");
       downloadLink.href = preUrl;
-      downloadLink.download = fileInfo.name;
+      downloadLink.download = fileInfo.name.split("_TS=")[0];
 
       // Append the anchor element to the document and click it to trigger the download
       document.body.appendChild(downloadLink);
