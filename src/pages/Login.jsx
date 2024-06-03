@@ -222,13 +222,13 @@ const Login = () => {
 
           {loading ? (
             <CircularProgress
-              className="mt-12"
               style={{ color: "#000", height: 25, width: 25 }}
             />
           ) : (
             <button
               type="submit"
-              className="bg-blue-600 text-white py-1 px-10 text-center mt-16 rounded-sm hover:bg-blue-500"
+              // className="bg-blue-600 text-white py-1 px-10 text-center mt-16 rounded-sm hover:bg-blue-500"
+              className="bg-[#C8C6FF] hover:bg-violet-200 border rounded-md border-[#131149] py-2.5 px-8 text-sm font-semibold"
             >
               Sign In
             </button>

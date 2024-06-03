@@ -8,6 +8,12 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import twokeySignup from "../assets/twokeySignup.png";
+import secureLocalStorage from "react-secure-storage";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
+import { auth } from "../helper/firebaseClient";
 
 const SignUp = () => {
   const isSmallScreen = useMediaQuery("(max-width:600px)");
@@ -18,11 +24,11 @@ const SignUp = () => {
     organization: "",
   });
 
-  const [organizationData, setOrganizationData] = useState("");
+  const [organizationData, setOrganizationData] = useState([]);
   const [pageErr, setPageErr] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  console.log(formData);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null);
 
   function handleChange(event) {
     setFormData((prevFormData) => {
@@ -35,25 +41,38 @@ const SignUp = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setError(null);
+    setMessage(null);
+    setLoading(true);
 
     try {
-      setLoading(true);
-      const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            full_name: formData.fullName,
-            organization: formData.organization,
-          },
-        },
-      });
-      if (error) throw error;
-      alert("Check your email for a verification link");
-    } catch (error) {
-      alert(error.message);
-    } finally {
-      setLoading(false); // Finish form submission
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+      const user = userCredential.user;
+
+      await sendEmailVerification(user);
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/sign-up/`,
+        {
+          ...formData,
+          uid: user.uid,
+          organization: "test",
+        }
+      );
+
+      const { message } = response.data;
+
+      setMessage(message);
+      setLoading(false);
+    } catch (err) {
+      setError(
+        err.errors ? err.errors.message : err.error || "An error occurred"
+      );
+      setLoading(false);
     }
   }
 
@@ -67,7 +86,6 @@ const SignUp = () => {
         setOrganizationData(org.data);
       } catch (error) {
         const errMsg = error.message + "Please try again later.";
-        alert(errMsg);
         console.log(error.message);
         setPageErr(errMsg);
       }
@@ -176,26 +194,19 @@ const SignUp = () => {
             />
           </span>
 
-          {/* {loading ? (
+          {loading ? (
             <CircularProgress
-              className="mt-12"
               style={{ color: "#000", height: 25, width: 25 }}
             />
           ) : (
             <button
               type="submit"
-              className="bg-blue-600 text-white py-1 px-10 text-center mt-8 rounded-sm"
+              // className="bg-blue-600 text-white py-1 px-10 text-center mt-8 rounded-sm"
+              className="bg-[#C8C6FF] hover:bg-violet-200 border rounded-md border-[#131149] py-2.5 px-8 text-sm font-semibold"
             >
               Sign Up
             </button>
-          )} */}
-
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-1 px-10 text-center mt-8 rounded-sm"
-          >
-            Sign Up
-          </button>
+          )}
 
           <p className="text-gray-500 mt-4 text-center">
             Already have an account?{" "}
@@ -204,6 +215,10 @@ const SignUp = () => {
             </Link>
           </p>
         </form>
+        {error && <p className="text-red-500 text-center">{error}</p>}
+        {message && (
+          <p className="text-indigo-500 text-center">{message}</p>
+        )}
       </div>
     </div>
   );
