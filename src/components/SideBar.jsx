@@ -20,6 +20,7 @@ import UserMgmt from "../assets/userMgmt.svg";
 import { useAuth } from "../context/authContext";
 import secureLocalStorage from "react-secure-storage";
 import CloseIcon from "@mui/icons-material/Close";
+import { auth } from "../helper/firebaseClient";
 
 let hardCodedDepartments = [
   { name: "Account", metadata: { bg: "#FFF6F6", border: "#FEB7B7" } },
@@ -41,26 +42,26 @@ function SideBar() {
   const { darkMode } = useDarkMode();
   const [picture, setPicture] = useState(null);
   const { profileData, setProfileData, setToken } = useAuth();
+  console.log(profileData);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  function handleLogout() {
+  async function handleLogout() {
     // change the active status
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
     let body = {
-      id: token.user.id,
+      idToken: token,
       is_active: false,
     };
-    // console.log("onboarding body:", body);
+
     try {
-      const res = axios.put(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
+      const res = await axios.put(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/logout/`,
+        body
       );
+
+      alert(res.data.message);
+
+      auth.signOut();
     } catch (error) {
       console.log(error);
     }
@@ -186,7 +187,9 @@ function SideBar() {
                   } flex justify-start items-center font-medium duration-200`}
                 >
                   <img
-                    src={picture ? picture : ProfilePic}
+                    src={
+                      profileData ? profileData.profilePictureUrl : ProfilePic
+                    }
                     loading="lazy"
                     alt={data ? `${data}'s Profile Picture` : "Profile Picture"}
                     className={`w-6 h-6 rounded-full ${
@@ -289,7 +292,9 @@ function SideBar() {
                 >
                   <img
                     src={
-                      profileData ? profileData.profile_pic : ProfilePicDummy
+                      profileData
+                        ? profileData.profilePictureUrl
+                        : ProfilePicDummy
                     }
                     alt="ProfilePic"
                     className={`w-6 h-6 rounded-full ${
@@ -336,7 +341,7 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
   useEffect(() => {
     const listDepartments = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let token = secureLocalStorage.getItem("token");
         let cachedDepartments = JSON.parse(
           secureLocalStorage.getItem("departments")
         );

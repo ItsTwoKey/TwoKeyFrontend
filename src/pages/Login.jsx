@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../helper/supabaseClient";
 import axios from "axios";
 import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
@@ -12,6 +11,8 @@ import HidePassword from "../assets/hidePassword.svg";
 import ShowPassword from "../assets/showPassword.svg";
 import CircularProgress from "@mui/material/CircularProgress";
 import secureLocalStorage from "react-secure-storage";
+import { auth } from "../helper/firebaseClient";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = () => {
   // const [userMetaData, setUserMetaData] = useState([]);
@@ -25,12 +26,15 @@ const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null);
 
   const toggleShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
   function handleChange(event) {
+    setError(null);
     setFormData((prevFormData) => {
       return {
         ...prevFormData,
@@ -39,53 +43,45 @@ const Login = () => {
     });
   }
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (formData.email.trim() === "" || formData.password.trim() === "") {
-      alert("Please fill in all fields.");
+      setError("Please fill in all fields.");
       return;
     }
 
     try {
       setLoading(true);
 
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { user } = await signInWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+
+      const token = await user.getIdToken();
+
+      const userInfo = {
         email: formData.email,
-        password: formData.password,
-      });
-
-      // console.log("test login data", data);
-
-      if (error) throw error;
-
-      if (data) {
-        secureLocalStorage.setItem("token", JSON.stringify(data));
-        fetchProfileData();
-      }
-
-      let body = {
-        id: data.user.id,
         is_active: true,
         metadata: { devices: navigator?.userAgentData?.platform || "unknown" },
       };
 
       try {
         const res = await axios.put(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
-          body,
-          {
-            headers: {
-              Authorization: `Bearer ${data.session.access_token}`,
-            },
-          }
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/login/`,
+          userInfo
         );
+        console.log(res);
 
-        console.log("meta", res);
-        const userMetaData = res.data;
-        // setUserMetaData(res.data);
+        const userMetaData = res.data.user;
+        setMessage(res.data.message);
+        secureLocalStorage.setItem("token", token);
 
-        listDepartments();
+        // TODO: add fetchprofiledata and listdepartments logic
+
+        await fetchProfileData();
 
         if (
           userMetaData.username &&
@@ -100,13 +96,38 @@ const Login = () => {
         }
       } catch (error) {
         console.log(error);
+        setError(error.response?.data?.error || "Something went wrong");
       }
     } catch (error) {
-      alert(error.message);
+      handleFirebaseError(error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  const handleFirebaseError = (error) => {
+    let errorMessage = "An error occurred. Please try again.";
+
+    if (error.code == "auth/invalid-email") {
+      errorMessage = "Invalid email format.";
+    }
+    if (error.code == "auth/user-disabled") {
+      errorMessage = "This account has been disabled.";
+    }
+    if (error.code == "auth/user-not-found") {
+      errorMessage = "No user found with this email.";
+    }
+    if (error.code == "auth/invalid-credential") {
+      errorMessage = "Invalid Credentials";
+    }
+    if (error.code == "auth/too-many-requests") {
+      errorMessage =
+        "Access to this account has been temporarily disabled due to many failed login attempts. Please try again later.";
+    }
+
+    setError(errorMessage);
+  };
 
   const listDepartments = async () => {
     try {
@@ -140,7 +161,7 @@ const Login = () => {
   }, [navigate]);
 
   return (
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row font-raleway">
       {!isSmallScreen && (
         <div className="w-full md:w-1/2 ">
           <img
@@ -232,6 +253,11 @@ const Login = () => {
             >
               Sign In
             </button>
+          )}
+
+          {error && <p className="text-red-500 text-center mt-2">{error}</p>}
+          {message && (
+            <p className="text-indigo-500 text-center mt-2">{message}</p>
           )}
 
           <p className="text-gray-500 mt-4 text-center">

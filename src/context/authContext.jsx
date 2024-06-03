@@ -149,7 +149,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const sessionToken = secureLocalStorage.getItem("token");
     if (sessionToken) {
-      setToken(JSON.parse(sessionToken));
+      setToken(sessionToken);
       // Fetch profile data when the token is set
       fetchProfileData();
     }
@@ -234,21 +234,17 @@ export const AuthProvider = ({ children }) => {
 
   async function fetchProfileData() {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       if (token) {
-        const res = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getProfileInfo`,
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
+        const res = await axios.post(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/getProfileInfo/`,
+          { idToken: token }
         );
 
         // Set the profile data in the state
         setProfileData(res.data);
-        secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
+        secureLocalStorage.setItem("profileData", JSON.stringify(res.data.user));
       }
     } catch (error) {
       console.log("error occurred while fetching profile data", error);

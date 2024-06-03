@@ -15,7 +15,7 @@ const DashboardFolders = () => {
   const listFolders = async () => {
     setLoading(true); // Set loading to true when fetching starts
 
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
 
     try {
       const response = await axios.get(

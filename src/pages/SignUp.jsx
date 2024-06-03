@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "../helper/supabaseClient";
 import { TextField, useMediaQuery } from "@mui/material";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -8,7 +7,6 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import twokeySignup from "../assets/twokeySignup.png";
-import secureLocalStorage from "react-secure-storage";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -70,7 +68,7 @@ const SignUp = () => {
       setLoading(false);
     } catch (err) {
       setError(
-        err.errors ? err.errors.message : err.error || "An error occurred"
+        err.errors ? err.errors[0].message : err.error || "An error occurred"
       );
       setLoading(false);
     }
@@ -102,7 +100,7 @@ const SignUp = () => {
   // }
 
   return (
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row font-raleway">
       {!isSmallScreen && (
         <div className="w-full md:w-1/2">
           <img
@@ -207,6 +205,8 @@ const SignUp = () => {
               Sign Up
             </button>
           )}
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          {message && <p className="text-indigo-500 text-center">{message}</p>}
 
           <p className="text-gray-500 mt-4 text-center">
             Already have an account?{" "}
@@ -215,10 +215,6 @@ const SignUp = () => {
             </Link>
           </p>
         </form>
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        {message && (
-          <p className="text-indigo-500 text-center">{message}</p>
-        )}
       </div>
     </div>
   );

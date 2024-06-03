@@ -10,8 +10,8 @@ import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { supabase } from "../helper/supabaseClient";
 import secureLocalStorage from "react-secure-storage";
+import { auth, storage } from "../helper/firebaseClient";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -52,7 +52,7 @@ const Onboard = () => {
   const [expanded, setExpanded] = useState("panel1");
   const [formData, setFormData] = useState({
     username: "",
-    department: "",
+    department: "test",
     firstName: "",
     lastName: "",
     profileUrl: "",
@@ -62,7 +62,8 @@ const Onboard = () => {
   const [isPictureSelected, setIsPictureSelected] = useState(false);
   //   const [departmentList, setDepartmentList] = useState([]);
   const [isFormComplete, setIsFormComplete] = useState(false);
-  let token = JSON.parse(secureLocalStorage.getItem("token"));
+  const [loading, setLoading] = useState(false);
+  let token = secureLocalStorage.getItem("token");
   let profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
   let departmentList = JSON.parse(secureLocalStorage.getItem("departments"));
 
@@ -123,81 +124,62 @@ const Onboard = () => {
     }
   };
 
-  const handleProfilePictureUpload = async () => {
+  const handleNextButtonClick = async () => {
+    setLoading(true);
+    console.log(formData);
+    const user = auth.currentUser;
+
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
+    const idToken = await user.getIdToken();
+
     try {
-      console.log("profileData", profileData);
-      const { data, error } = await supabase.storage
-        .from("avatar")
-        .upload(profileData.email, formData.profilePicture, {
-          cacheControl: "3600",
-          upsert: true,
+      let profilePictureBase64 = null;
+      const profilePictureFile = formData.profilePicture;
+      if (profilePictureFile) {
+        // Convert the image file to base64
+        const reader = new FileReader();
+        reader.readAsDataURL(profilePictureFile);
+        await new Promise((resolve) => {
+          reader.onloadend = () => {
+            profilePictureBase64 = reader.result.split(",")[1];
+            resolve();
+          };
         });
-
-      console.log("File uploaded successfully:", data);
-
-      if (error) {
-        throw error;
       }
 
-      const { data: url } = await supabase.storage
-        .from("avatar")
-        .getPublicUrl(profileData.email);
-
-      console.log("email:", profileData.email);
-      console.log("Public URL:", url.publicUrl);
-
-      // Return the publicUrl
-      return url.publicUrl;
-    } catch (error) {
-      console.error(
-        "An error occurred while uploading the profile picture:",
-        error
-      );
-      // Return null or handle the error as needed
-      return null;
-    }
-  };
-
-  const handleNextButtonClick = async () => {
-    console.log(formData);
-
-    try {
-      const updatedProfileUrl = await handleProfilePictureUpload();
-
-      setFormData({
-        ...formData,
-        profileUrl: updatedProfileUrl,
-      });
-
-      let body = {
-        id: profileData.id,
+      let newProfileData = {
+        id: user.uid,
         username: formData.username,
         name: formData.firstName,
         last_name: formData.lastName,
-        dept: formData.department,
-        profile_pic: updatedProfileUrl,
+        dept: formData.department || "test",
       };
-      console.log("onboarding body:", body);
+
       try {
         const res = await axios.put(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
-          body,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/update-profile/`,
           {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
+            idToken,
+            profileData: newProfileData,
+            profilePicture: profilePictureBase64,
           }
         );
 
         console.log("onboarding success:", res);
         secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
         if (res) {
+          setLoading(false);
           navigate("/dashboard");
         }
       } catch (error) {
+        setLoading(false);
         console.log("Error at  update profile:", error);
       }
     } catch (error) {
+      setLoading(false);
       console.log("error occured at onboard", error);
     }
   };
@@ -335,11 +317,11 @@ const Onboard = () => {
           type="submit"
           onClick={() => handleNextButtonClick()}
           className={`rounded-md py-2 px-8 text-white bg-blue-700 ${
-            !isFormComplete && "opacity-50 cursor-not-allowed"
+            (!isFormComplete || loading) && "opacity-20 cursor-not-allowed"
           }`}
-          disabled={!isFormComplete}
+          disabled={!isFormComplete || loading}
         >
-          Next
+          {loading ? "Please Wait..." : "Next"}
         </button>
       </footer>
     </div>
