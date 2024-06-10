@@ -26,29 +26,6 @@ const Department = () => {
     listDepartments();
   }, []);
 
-  // const listDepartments = async () => {
-  //   try {
-  //     let token = JSON.parse(secureLocalStorage.getItem("token"));
-  //     const departments = await axios.get(
-  //       `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token.session.access_token}`,
-  //         },
-  //       }
-  //     );
-
-  //     console.log(departments.data);
-  //     secureLocalStorage.setItem(
-  //       "departments",
-  //       JSON.stringify(departments.data)
-  //     );
-  //     setNewDepartments(departments.data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const handleClick = (event, dept) => {
     setAnchorEl(event.currentTarget);
     setSelectedDept(dept);
@@ -60,18 +37,18 @@ const Department = () => {
 
   const handleRemoveDept = async () => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
       const deleteDept = await axios.delete(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/deleteDept/${selectedDept.id}/`,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
 
       if (deleteDept) {
-        listDepartments();
+        await listDepartments();
 
         setAnchorEl(null);
 

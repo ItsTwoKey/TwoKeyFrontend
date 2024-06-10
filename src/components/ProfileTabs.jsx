@@ -53,7 +53,7 @@ export default function ProfileTabs() {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let token = secureLocalStorage.getItem("token");
         let url;
 
         // Determine the URL based on the selected tab

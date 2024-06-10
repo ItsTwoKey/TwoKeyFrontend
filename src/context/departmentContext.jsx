@@ -15,21 +15,15 @@ export function DepartmentProvider({ children }) {
   }, []);
 
   const listDepartments = async () => {
+    setLoading(true);
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
-      let cachedDepartments = JSON.parse(
-        secureLocalStorage.getItem("departments")
-      );
+      let token = secureLocalStorage.getItem("token");
 
-      //   if (cachedDepartments) {
-      //     setDepartments(cachedDepartments);
-      //     setLoading(false);
-      //   } else {
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
@@ -40,8 +34,8 @@ export function DepartmentProvider({ children }) {
         JSON.stringify(departmentsData)
       );
       setDepartments(departmentsData);
+
       setLoading(false);
-      //   }
     } catch (error) {
       setError(error);
       setLoading(false);

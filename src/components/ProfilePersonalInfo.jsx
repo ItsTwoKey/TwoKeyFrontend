@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
+import { useDepartment } from "../context/departmentContext";
 
 const ProfilePersonalInfo = ({ profileData, isEditing }) => {
+  const { departments: newDepartments } = useDepartment();
   const [formData, setFormData] = useState({
     firstName: profileData?.name || "",
     lastName: profileData?.last_name || "",
     email: profileData?.email || "",
     phone: profileData?.phone || 0,
     designation: profileData?.role_priv || "",
-    department: profileData?.dept || "",
+    department: newDepartments[0].name || profileData?.dept || "",
   });
 
   const [prevIsEditing, setPrevIsEditing] = useState(isEditing);
@@ -22,9 +24,9 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
       email: profileData?.email || "",
       phone: profileData?.phone || 0,
       designation: profileData?.role_priv || "",
-      department: profileData?.dept || "",
+      department: departments[0]?.name || profileData?.dept || "",
     });
-  }, [profileData]);
+  }, [profileData, departments]);
 
   useEffect(() => {
     if (prevIsEditing && !isEditing) {
@@ -67,12 +69,12 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let token = secureLocalStorage.getItem("token");
         const dep = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
@@ -188,7 +190,9 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
               className={`text-md  placeholder-gray-500 p-2 rounded-md ${
                 isEditing ? "bg-white shadow-lg border" : "bg-inherit"
               }`}
-              placeholder={profileData.dept}
+              placeholder={
+                newDepartments[0].name || profileData.dept || "Department"
+              }
               disabled={!isEditing}
             />
           )}

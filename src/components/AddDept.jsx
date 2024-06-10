@@ -7,14 +7,16 @@ import DialogActions from "@mui/material/DialogActions";
 import Chrome from "@uiw/react-color-chrome";
 import { GithubPlacement } from "@uiw/react-color-github";
 import secureLocalStorage from "react-secure-storage";
+import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 
 const AddDept = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  
   const [deptName, setDeptName] = useState("");
   const [hex, setHex] = useState("#4F46E5");
   const { setDepartments, listDepartments } = useDepartment();
+  const [loading, setLoading] = useState(false);
 
   const openDialog = () => {
     setIsOpen(true);
@@ -26,7 +28,7 @@ const AddDept = () => {
 
   const addDepartment = async () => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       // Replace spaces with underscores in department name
       const formattedDeptName = deptName.replace(/ /g, "_");
@@ -37,20 +39,17 @@ const AddDept = () => {
           bg: hex,
           border: "#B7B6C2",
         },
+        idToken: token,
       };
 
       let addDept = await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/createDepts`,
         body,
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
+        
       );
 
       if (addDept) {
-        listDepartments();
+        await listDepartments();
       }
       // console.log("add dept:", addDept);
       closeDialog();
@@ -116,10 +115,11 @@ const AddDept = () => {
             Cancel
           </button>
           <button
-            className="px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white"
+            className="flex gap-2 items-center px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white"
             onClick={addDepartment}
           >
             Add new department
+            {loading && <CircularProgress size={20} color="inherit" />}
           </button>
         </DialogActions>
       </Dialog>

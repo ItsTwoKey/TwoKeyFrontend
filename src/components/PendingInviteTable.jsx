@@ -18,12 +18,12 @@ export default function PendingInviteTable() {
   useEffect(() => {
     const listPendingInvites = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let token = secureLocalStorage.getItem("token");
         const invites = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/invites/pending`,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );

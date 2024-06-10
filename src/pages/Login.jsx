@@ -73,7 +73,6 @@ const Login = () => {
           `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/login/`,
           userInfo
         );
-        console.log(res);
 
         const userMetaData = res.data.user;
         setMessage(res.data.message);
@@ -82,13 +81,16 @@ const Login = () => {
         // TODO: add fetchprofiledata and listdepartments logic
 
         await fetchProfileData();
+        await listDepartments();
+
+        console.log("userMetaData", userMetaData);
 
         if (
           userMetaData.username &&
           userMetaData.name &&
           userMetaData.last_name &&
           userMetaData.dept &&
-          userMetaData.profile_pic
+          userMetaData.profilePictureUrl
         ) {
           navigate("/dashboard");
         } else {
@@ -131,14 +133,10 @@ const Login = () => {
 
   const listDepartments = async () => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
       const departments = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
+        { headers: { Authorization: token } }
       );
 
       if (departments.data) {

@@ -22,13 +22,13 @@ const Department = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let token = secureLocalStorage.getItem("token");
 
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/${deptName}/?p=1`,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );

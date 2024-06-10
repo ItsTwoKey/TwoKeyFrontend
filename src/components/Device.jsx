@@ -9,13 +9,13 @@ const Device = () => {
 
   useEffect(() => {
     const listUsers = async () => {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
       try {
         const userList = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users`,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );

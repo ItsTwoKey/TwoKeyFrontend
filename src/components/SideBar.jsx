@@ -42,7 +42,6 @@ function SideBar() {
   const { darkMode } = useDarkMode();
   const [picture, setPicture] = useState(null);
   const { profileData, setProfileData, setToken } = useAuth();
-  console.log(profileData);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   async function handleLogout() {
@@ -190,7 +189,6 @@ function SideBar() {
                     src={
                       profileData ? profileData.profilePictureUrl : ProfilePic
                     }
-                    loading="lazy"
                     alt={data ? `${data}'s Profile Picture` : "Profile Picture"}
                     className={`w-6 h-6 rounded-full ${
                       darkMode
@@ -342,32 +340,23 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
     const listDepartments = async () => {
       try {
         let token = secureLocalStorage.getItem("token");
-        let cachedDepartments = JSON.parse(
-          secureLocalStorage.getItem("departments")
+
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
 
-        console.log(cachedDepartments);
+        const departmentsData = response.data;
 
-        if (cachedDepartments) {
-          setDepartments(cachedDepartments);
-        } else {
-          const response = await axios.get(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-            {
-              headers: {
-                Authorization: `Bearer ${token.session.access_token}`,
-              },
-            }
-          );
-
-          const departmentsData = response.data;
-
-          secureLocalStorage.setItem(
-            "departments",
-            JSON.stringify(departmentsData)
-          );
-          setDepartments(departmentsData);
-        }
+        secureLocalStorage.setItem(
+          "departments",
+          JSON.stringify(departmentsData)
+        );
+        setDepartments(departmentsData);
       } catch (error) {
         console.log(error);
       }
@@ -426,7 +415,7 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
           Department
         </p>
 
-        {departments.map((department, index) => (
+        {departments?.map((department, index) => (
           <li
             onClick={() => {
               setIsMenuOpen(!isMenuOpen);

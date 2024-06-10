@@ -20,12 +20,12 @@ export default function TeamManagementTable() {
   useEffect(() => {
     const listUsers = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let token = secureLocalStorage.getItem("token");
         const users = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users`,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
@@ -42,12 +42,13 @@ export default function TeamManagementTable() {
   useEffect(() => {
     const getRoles = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        console.log("Fetching roles");
+        let token = secureLocalStorage.getItem("token");
         const role = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/role/listRoles`,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
@@ -96,6 +97,7 @@ export default function TeamManagementTable() {
       email: data.email,
       access: data.role_priv,
       delete: <img src={Trash} alt="Delete" className="cursor-pointer" />,
+      profilePictureUrl: data.profilePictureUrl,
     };
   }
 
@@ -122,17 +124,17 @@ export default function TeamManagementTable() {
   };
 
   const elevateUserRole = async (selectedUserId, selectedRole) => {
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
     if (token) {
       try {
-        const res = await axios.put(
+        const res = await axios.patch(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/elevate/${selectedUserId}`,
           {
             role_priv: selectedRole,
           },
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
@@ -146,14 +148,14 @@ export default function TeamManagementTable() {
   const deleteUser = async (index) => {
     const deletedUserId = users[index].id;
     console.log(`User deleted: ${deletedUserId}`);
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
     try {
       const res = await axios.delete(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/users/deleteUser/${deletedUserId}`,
 
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
@@ -195,7 +197,7 @@ export default function TeamManagementTable() {
                         <Tooltip title={row.email} arrow>
                           <Avatar
                             alt={row.name}
-                            src={row.profile_pic}
+                            src={row.profilePictureUrl}
                             sx={{
                               marginRight: 1,
                               width: "30px",

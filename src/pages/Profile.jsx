@@ -46,7 +46,7 @@ const Profile = () => {
 
   const handleProfilePicUpdate = async () => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       const { data, error } = await supabase.storage
         .from("avatar")
@@ -72,7 +72,7 @@ const Profile = () => {
           },
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
@@ -122,7 +122,9 @@ const Profile = () => {
             onClick={isEditing ? handleImageInputChange : null}
           >
             <img
-              src={profileData ? profileData.profile_pic : ProfilePicDummy}
+              src={
+                profileData ? profileData.profilePictureUrl : ProfilePicDummy
+              }
               alt="ProfilePic"
               className="rounded-full w-24 h-24"
             />
@@ -135,10 +137,10 @@ const Profile = () => {
 
           <div className="flex flex-col leading-9">
             <h3 className="text-lg font-semibold">
-              {profileData.username ? `#${profileData.username}` : "UserName"}
+              {profileData?.username ? `#${profileData.username}` : "UserName"}
             </h3>
             <h5 className="text-md font-semibold text-gray-700">
-              {profileData.role_priv ? profileData.role_priv : "Position"}
+              {profileData?.role_priv ? profileData.role_priv : "Position"}
             </h5>
             <p className="text-sm text-gray-500">
               {profileData ? (

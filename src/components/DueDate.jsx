@@ -67,7 +67,7 @@ const DueDate = () => {
         setLoading(false);
       }
 
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       const dueDates = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/dues/`,

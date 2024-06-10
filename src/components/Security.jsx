@@ -35,7 +35,7 @@ const Security = () => {
 
   useEffect(() => {
     const getLocations = async () => {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       try {
         const locations = await axios.get(

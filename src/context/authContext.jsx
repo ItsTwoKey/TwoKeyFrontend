@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { supabase } from "../helper/supabaseClient";
 import secureLocalStorage from "react-secure-storage";
+import { auth } from "../helper/firebaseClient";
 
 const AuthContext = createContext();
 
@@ -147,13 +148,19 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const sessionToken = secureLocalStorage.getItem("token");
-    if (sessionToken) {
-      setToken(sessionToken);
-      // Fetch profile data when the token is set
-      fetchProfileData();
-    }
-  }, []);
+    // Listen for auth state changes
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setToken(user.getIdToken());
+        fetchProfileData();
+      } else {
+        setToken(null);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, [auth.currentUser]);
 
   // useEffect(() => {
   async function fetchRecentFiles() {
@@ -243,8 +250,12 @@ export const AuthProvider = ({ children }) => {
         );
 
         // Set the profile data in the state
-        setProfileData(res.data);
-        secureLocalStorage.setItem("profileData", JSON.stringify(res.data.user));
+        setProfileData(res.data.user);
+        secureLocalStorage.removeItem("profileData");
+        secureLocalStorage.setItem(
+          "profileData",
+          JSON.stringify(res.data.user)
+        );
       }
     } catch (error) {
       console.log("error occurred while fetching profile data", error);

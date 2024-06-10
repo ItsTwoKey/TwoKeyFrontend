@@ -11,7 +11,8 @@ import axios from "axios";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import secureLocalStorage from "react-secure-storage";
-import { auth, storage } from "../helper/firebaseClient";
+import { auth } from "../helper/firebaseClient";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -66,7 +67,6 @@ const Onboard = () => {
   let token = secureLocalStorage.getItem("token");
   let profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
   let departmentList = JSON.parse(secureLocalStorage.getItem("departments"));
-
   const navigate = useNavigate();
 
   const handleChange = (panel) => (event, newExpanded) => {
@@ -155,7 +155,7 @@ const Onboard = () => {
         username: formData.username,
         name: formData.firstName,
         last_name: formData.lastName,
-        dept: formData.department || "test",
+        dept: formData.department,
       };
 
       try {
@@ -321,7 +321,13 @@ const Onboard = () => {
           }`}
           disabled={!isFormComplete || loading}
         >
-          {loading ? "Please Wait..." : "Next"}
+          {loading ? (
+            <CircularProgress
+              style={{ color: "white", height: 25, width: 25 }}
+            />
+          ) : (
+            "Next"
+          )}
         </button>
       </footer>
     </div>

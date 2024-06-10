@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,15 +6,20 @@ import DialogActions from "@mui/material/DialogActions";
 import secureLocalStorage from "react-secure-storage";
 import axios from "axios";
 import { CircularProgress } from "@mui/material";
-import { TextField } from "@mui/material";
 import Chrome from "@uiw/react-color-chrome";
 import { GithubPlacement } from "@uiw/react-color-github";
+import { useDepartment } from "../context/departmentContext";
 
 const EditDept = ({ id, name }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [deptName, setDeptName] = useState("");
+  const [deptName, setDeptName] = useState(name || "");
   const [hex, setHex] = useState("#4F46E5");
   const [loading, setLoading] = useState(false); // State for loading
+  const { listDepartments } = useDepartment(); // Get listDepartments function from context
+
+  useEffect(() => {
+    setDeptName(name);
+  }, [name]);
 
   const openDialog = () => {
     setIsOpen(true);
@@ -35,29 +40,35 @@ const EditDept = ({ id, name }) => {
     };
 
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
-      let renameDept = await axios.put(
+      let renameDept = await axios.patch(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/updateDept/${id}`,
         body,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
 
-      console.log(renameDept);
-      setLoading(false); // Set loading back to false after successful response
-      closeDialog(); // Close dialog after successful response
+      if (renameDept) {
+        await listDepartments();
+        setLoading(false); // Set loading back to false after successful response
+        closeDialog(); // Close dialog after successful response
+      }
     } catch (error) {
       console.log("error occurred at rename department.", error);
       setLoading(false); // Set loading back to false if there's an error
     }
   };
 
+  const handleInputChange = useCallback((e) => {
+    setDeptName(e.target.value);
+  }, []);
+
   return (
-    <div className="">
+    <div>
       <button onClick={openDialog} className="text-sm">
         Edit
       </button>
@@ -84,14 +95,13 @@ const EditDept = ({ id, name }) => {
                 {name ? name : "No name provided"}
               </span>
             </p>
-            {/* <p>id: {id ? id : "No ID provided"}</p> */}
             <p className="">New name :</p>
 
             <input
               className="w-full border border-gray-300 rounded-md my-2 px-2 py-1"
               type="text"
               value={deptName}
-              onChange={(e) => setDeptName(e.target.value)}
+              onChange={handleInputChange}
             />
 
             <span>
@@ -116,15 +126,12 @@ const EditDept = ({ id, name }) => {
             Close
           </button>
           <button
-            className="px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white"
+            className="flex gap-2 items-center px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white"
             onClick={handleDepartmentNameChange}
             disabled={loading} // Disable button when loading
           >
-            {loading ? (
-              <CircularProgress size={20} color="inherit" />
-            ) : (
-              "Rename Department"
-            )}{" "}
+            Rename Department
+            {loading && <CircularProgress size={20} color="inherit" />}
           </button>
         </DialogActions>
       </Dialog>

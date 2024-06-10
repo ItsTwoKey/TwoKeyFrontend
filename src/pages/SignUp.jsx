@@ -58,7 +58,7 @@ const SignUp = () => {
         {
           ...formData,
           uid: user.uid,
-          organization: "test",
+          // organization: "test",
         }
       );
 

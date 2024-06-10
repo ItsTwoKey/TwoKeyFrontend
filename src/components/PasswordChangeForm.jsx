@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
-import ShowPassword from "../assets/showPassword.svg";
-import HidePassword from "../assets/hidePassword.svg";
-import { supabase } from "../helper/supabaseClient";
+// import ShowPassword from "../assets/showPassword.svg";
+// import HidePassword from "../assets/hidePassword.svg";
+import {
+  getAuth,
+  EmailAuthProvider,
+  updatePassword,
+  reauthenticateWithCredential,
+} from "firebase/auth";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const PasswordChangeForm = () => {
   const [passwordChangeData, setPasswordChangeData] = useState({
@@ -27,10 +33,10 @@ const PasswordChangeForm = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("error");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let data = JSON.parse(secureLocalStorage.getItem("profileData"));
-    // console.log(data.email);
     setEmail(data.email);
   }, []);
 
@@ -57,63 +63,64 @@ const PasswordChangeForm = () => {
   };
 
   const handleChangePassword = async () => {
-    // Check if the old password is correct
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    setLoading(true);
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      setSnackbarSeverity("error");
+      setSnackbarMessage("User not authenticated");
+      setSnackbarOpen(true);
+      setLoading(false);
+      return;
+    }
+
     try {
-      await supabase.auth.signInWithPassword({
-        email: token.user.email,
-        password: passwordChangeData.oldPassword,
-      });
-    } catch (error) {
-      // Handle incorrect old password
-      console.error("Old password is incorrect");
-      setSnackbarSeverity("error");
-      setSnackbarMessage("Old password is incorrect");
-      setSnackbarOpen(true);
-      return;
-    }
+      // Reauthenticate the user
+      const credential = EmailAuthProvider.credential(
+        email,
+        passwordChangeData.oldPassword
+      );
+      await reauthenticateWithCredential(user, credential);
 
-    if (passwordChangeData.newPassword === passwordChangeData.oldPassword) {
-      setSamePasswordWarning(true);
-      setSnackbarSeverity("warning");
-      setSnackbarMessage("Current Password and New passwords are the same");
-      setSnackbarOpen(true);
-      return;
-    }
-
-    if (passwordChangeData.newPassword !== passwordChangeData.confirmPassword) {
-      setPasswordMatchError(true);
-      setSnackbarSeverity("error");
-      setSnackbarMessage("Passwords does not match");
-      setSnackbarOpen(true);
-      return;
-    } else {
-      setSamePasswordWarning(false);
-      setPasswordMatchError(false);
-      console.log("PasswordData:", passwordChangeData);
-      try {
-        let changePassword = await supabase.auth.updateUser({
-          password: passwordChangeData.confirmPassword,
-        });
-        console.log("changePassword:", changePassword);
-
-        // Check if changePassword operation is successful
-        if (changePassword.error) {
-          setSnackbarSeverity("error");
-          setSnackbarMessage("Old password is incorrect!");
-        } else {
-          // Display success message
-          setSnackbarSeverity("success");
-          setSnackbarMessage("Password changed successfully!");
-        }
-      } catch (error) {
-        console.error("Error changing password:", error);
-        setSnackbarSeverity("error");
-        setSnackbarMessage("An error occurred while changing the password");
+      if (passwordChangeData.newPassword === passwordChangeData.oldPassword) {
+        setSamePasswordWarning(true);
+        setSnackbarSeverity("warning");
+        setSnackbarMessage("Current Password and New passwords are the same");
+        setSnackbarOpen(true);
+        setLoading(false);
+        return;
       }
 
-      setSnackbarOpen(true);
+      if (
+        passwordChangeData.newPassword !== passwordChangeData.confirmPassword
+      ) {
+        setPasswordMatchError(true);
+        setSnackbarSeverity("error");
+        setSnackbarMessage("Passwords do not match");
+        setSnackbarOpen(true);
+        setLoading(false);
+        return;
+      } else {
+        setSamePasswordWarning(false);
+        setPasswordMatchError(false);
+        console.log("PasswordData:", passwordChangeData);
+
+        await updatePassword(user, passwordChangeData.newPassword);
+
+        // Display success message
+        setSnackbarSeverity("success");
+        setSnackbarMessage("Password changed successfully!");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error changing password:", error);
+      setSnackbarSeverity("error");
+      setSnackbarMessage("An error occurred while changing the password");
+      setLoading(false);
     }
+
+    setSnackbarOpen(true);
 
     // Clear input fields
     setPasswordChangeData({
@@ -197,12 +204,18 @@ const PasswordChangeForm = () => {
 
       <button
         onClick={handleChangePassword}
-        className={`mx-2 px-4 py-1.5 text-center text-sm border shadow-lg rounded-md text-white ${
-          areFieldsFilled ? "bg-[#5E5ADB]" : "bg-blue-500 cursor-not-allowed"
+        className={`flex mx-2 px-4 py-1.5 text-center text-sm border shadow-lg rounded-md text-white ${
+          (areFieldsFilled && !loading) ? "bg-[#5E5ADB]" : "bg-[#5e5adb98] cursor-not-allowed"
         }`}
-        disabled={!areFieldsFilled}
+        disabled={!areFieldsFilled || loading}
       >
         Save Password
+        {loading && (
+          <CircularProgress
+            size={20}
+            style={{ color: "white", marginLeft: "10px" }}
+          />
+        )}
       </button>
 
       <Snackbar

@@ -37,12 +37,12 @@ const InviteMember = (props) => {
   useEffect(() => {
     const getRoles = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let token = secureLocalStorage.getItem("token");
         const role = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/role/listRoles`,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
@@ -81,7 +81,7 @@ const InviteMember = (props) => {
 
   const handleInvite = async () => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       let body = {
         emails: [formData.emailAddress],
@@ -96,7 +96,7 @@ const InviteMember = (props) => {
         body,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );

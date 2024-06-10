@@ -11,17 +11,17 @@ const Lobby = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const departments = JSON.parse(secureLocalStorage.getItem("departments"));
-  console.log(departments);
+  const [acceptUserClicked, setAcceptUserClicked] = useState(false);
 
   useEffect(() => {
     const listUsers = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let token = secureLocalStorage.getItem("token");
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users`,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
@@ -38,7 +38,7 @@ const Lobby = () => {
     };
 
     listUsers();
-  }, []);
+  }, [acceptUserClicked]);
 
   // Group users by department
   const groupedUsers = filteredUsers.reduce((acc, user) => {
@@ -52,7 +52,7 @@ const Lobby = () => {
 
   const handleRemoveUserClick = async (params) => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
       let id = params.row.id;
       console.log(id);
       const response = await axios.delete(
@@ -73,11 +73,11 @@ const Lobby = () => {
   };
 
   const acceptUser = async (params) => {
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
     console.log(params.row.id);
     try {
       if (token) {
-        const res = await axios.put(
+        const res = await axios.patch(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/elevate/${params.row.id}`,
           {
             // id: params.row.id,
@@ -85,12 +85,13 @@ const Lobby = () => {
           },
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
         console.log(res);
         toast.success("User added successfully.");
+        setAcceptUserClicked(!acceptUserClicked);
       }
     } catch (error) {
       console.log("error occured  while accepting user ", error);

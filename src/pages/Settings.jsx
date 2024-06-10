@@ -75,7 +75,7 @@ const Sidebar = () => {
                 }`}
               ></span>
               <li
-                className={`px-2 py-1 w-full cursor-pointer rounded-md ${
+                className={`px-2 py-4 w-full cursor-pointer rounded-md ${
                   selectedNavItem === item.key ? "activeSetting" : ""
                 }`}
                 onClick={() => handleNavItemClick(item.key)}

@@ -107,7 +107,7 @@ export default function DashboardTabs() {
     try {
       setLoading(true); // Set loading state to true when fetching data
 
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
       let url;
 
       switch (value) {
