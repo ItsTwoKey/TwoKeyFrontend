@@ -3,6 +3,7 @@ import SignalCellularAltRoundedIcon from "@mui/icons-material/SignalCellularAltR
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import FactoryOutlinedIcon from "@mui/icons-material/FactoryOutlined";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
+import EngineeringIcon from "@mui/icons-material/Engineering";
 
 export function FinanceIcon() {
   return (
@@ -72,4 +73,5 @@ export const departmentIcons = {
   Sales: <ShoppingBagOutlinedIcon />,
   "Human_Resource": <HRIcon />,
   Marketing: <Marketing />,
+  Engineering: <EngineeringIcon />,
 };

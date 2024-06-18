@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import userContext from "../context/UserContext";
 import secureLocalStorage from "react-secure-storage";
 import toast, { Toaster } from "react-hot-toast";
+import DepartmentContext from "../context/departmentContext";
 
 export default function UserManagementTable() {
   const context = useContext(userContext);
@@ -23,22 +24,26 @@ export default function UserManagementTable() {
     applyFilter,
   } = context;
   const navigate = useNavigate();
+  const { departments } = useContext(DepartmentContext);
 
   useEffect(() => {
     const listUsers = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let token = secureLocalStorage.getItem("token");
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users`,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
 
         setUsers(response.data);
-        setFilteredUsers(response.data);
+
+        const updatedUsers = replaceDeptIdWithName(response.data, departments);
+
+        setFilteredUsers(updatedUsers);
         let x = ["all", ...new Set(response.data.map((i) => i.role_priv))];
         setUserTypes(x);
         setActiveType("all");
@@ -51,6 +56,22 @@ export default function UserManagementTable() {
     listUsers();
   }, []);
 
+  const replaceDeptIdWithName = (users, departments) => {
+    // Create a map from department IDs to department names
+    const deptMap = departments.reduce((acc, dept) => {
+      acc[dept.id] = dept.name;
+      return acc;
+    }, {});
+
+    // Replace each user's dept ID with the department name
+    return users.map((user) => {
+      return {
+        ...user,
+        dept: deptMap[user.dept] || user.dept, // If dept ID is not found in map, keep the original ID
+      };
+    });
+  };
+
   const handleEditClick = (params) => {
     // console.log("Edit clicked for user:", params.row);
 
@@ -60,14 +81,14 @@ export default function UserManagementTable() {
 
   const handleRemoveUserClick = async (params) => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
       let id = params.row.id;
       console.log(id);
       const response = await axios.delete(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/users/deleteUser/${id}/`,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
@@ -84,12 +105,12 @@ export default function UserManagementTable() {
     {
       field: "name",
       headerName: "Name",
-      width: 350,
+      width: 250,
       renderCell: (params) => (
         <div className="flex items-center">
           <Tooltip title={params.row.email} arrow>
             <Avatar
-              src={params.row.profile_pic}
+              src={params.row.profilePictureUrl}
               alt={`${params.row.name} ${params.row.last_name}`}
               sx={{
                 marginRight: 1,
@@ -104,8 +125,8 @@ export default function UserManagementTable() {
         </div>
       ),
     },
-    { field: "dept", headerName: "Department", width: 150 },
-    { field: "role_priv", headerName: "Roles", width: 250 },
+    { field: "dept", headerName: "Department", width: 200 },
+    { field: "role_priv", headerName: "Roles", width: 150 },
     {
       field: "status",
       headerName: "Status",
@@ -126,7 +147,7 @@ export default function UserManagementTable() {
 
     {
       field: "edit",
-      headerName: " ",
+      headerName: "Edit",
       width: 80,
       renderCell: (params) => (
         <img
@@ -139,7 +160,7 @@ export default function UserManagementTable() {
     },
     {
       field: "removeUser",
-      headerName: " ",
+      headerName: "Remove",
       width: 80,
       renderCell: (params) => (
         <img

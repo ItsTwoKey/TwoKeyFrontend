@@ -8,6 +8,9 @@ import Danger from "../assets/danger.svg";
 import secureLocalStorage from "react-secure-storage";
 import fileContext from "../context/fileContext";
 import { useParams } from "react-router-dom";
+import { getFirestore } from "firebase/firestore";
+import { deleteObject, getStorage, ref } from "firebase/storage";
+import axios from "axios";
 
 const DeleteFileConfirmation = ({ fileName, owner, id }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +20,8 @@ const DeleteFileConfirmation = ({ fileName, owner, id }) => {
   const { deptName } = useParams();
   const context = useContext(fileContext);
   const { removeFile, setAnchorEl, updateDepartmentFiles } = context;
+
+  console.log(fileName, owner, id);
 
   const openDialog = () => {
     setIsOpen(true);
@@ -28,35 +33,44 @@ const DeleteFileConfirmation = ({ fileName, owner, id }) => {
   };
 
   const handleDelete = async () => {
-    let userMail = JSON.parse(secureLocalStorage.getItem("profileData"));
+    let profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
+    let token = secureLocalStorage.getItem("token");
 
     // Check if the user is the owner of the file
-    console.log(fileName);
-    if (userMail.email === owner) {
+    // console.log(fileName);
+
+    if (profileData.id === owner) {
       try {
-        const { data, error } = await supabase.storage
-          .from("TwoKey")
-          .remove(fileName);
+        const storage = getStorage();
+        const fileRef = ref(storage, `files/${profileData.org}/${fileName}`);
 
-        if (error) {
-          console.error("Error deleting file:", error.message);
-          setSnackbarSeverity("error");
-          setSnackbarMessage("Error deleting the file.");
-        } else {
-          console.log("Delete success", data);
-          setSnackbarSeverity("success");
-          setSnackbarMessage("File deleted successfully.");
-          removeFile(id);
-          if (deptName) updateDepartmentFiles(deptName);
-          setTimeout(() => {
-            closeDialog();
-          }, 2000);
-        }
+        await deleteObject(fileRef);
+        console.log("Delete success");
 
-        // Open the Snackbar
+        const res = await axios.delete(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/delete-file/${id}/`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+
+        setSnackbarSeverity("success");
+        setSnackbarMessage("File deleted successfully.");
         setSnackbarOpen(true);
+
+        removeFile(id);
+        if (deptName) updateDepartmentFiles(deptName);
+
+        setTimeout(() => {
+          closeDialog();
+        }, 3000);
       } catch (error) {
         console.error("Error occurred while deleting the file:", error.message);
+        setSnackbarSeverity("error");
+        setSnackbarMessage("Error deleting the file.");
+        setSnackbarOpen(true);
       }
     } else {
       // Display Snackbar message if the user is not the owner of the file
@@ -81,7 +95,7 @@ const DeleteFileConfirmation = ({ fileName, owner, id }) => {
   return (
     <div className="">
       <button onClick={openDialog} className="text-[#D1293D]">
-        Remove
+        Delete File
       </button>
 
       <Dialog

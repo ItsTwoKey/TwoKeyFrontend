@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import secureLocalStorage from "react-secure-storage";
 import axios from "axios";
+import { auth } from "../helper/firebaseClient";
 
 const DepartmentContext = createContext();
 export default DepartmentContext;
@@ -12,33 +13,34 @@ export function DepartmentProvider({ children }) {
 
   useEffect(() => {
     listDepartments();
-  }, []);
+  }, [auth.currentUser]);
 
   const listDepartments = async () => {
     setLoading(true);
-    try {
-      let token = secureLocalStorage.getItem("token");
+    let token = secureLocalStorage.getItem("token");
+    if (token) {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+        const departmentsData = response.data;
+        secureLocalStorage.setItem(
+          "departments",
+          JSON.stringify(departmentsData)
+        );
+        setDepartments(departmentsData);
 
-      const departmentsData = response.data;
-      secureLocalStorage.setItem(
-        "departments",
-        JSON.stringify(departmentsData)
-      );
-      setDepartments(departmentsData);
-
-      setLoading(false);
-    } catch (error) {
-      setError(error);
-      setLoading(false);
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+        setLoading(false);
+      }
     }
   };
 

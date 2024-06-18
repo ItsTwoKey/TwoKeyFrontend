@@ -23,14 +23,14 @@ const FileInfo = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
 
   const getLogs = async () => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       const accessLogs = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/${fileInfo.id}?recs=5`,
 
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
@@ -103,22 +103,22 @@ const FileInfo = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
                 File Shared With
               </p>
 
-              {sharedFileInfo?.shared_with?.map((user) => (
+              {/* {sharedFileInfo?.shared_with?.map((user) => (
                 <span
-                  key={user.user_id}
+                  key={user.id}
                   className="flex flex-row items-center my-2"
                 >
                   <Avatar
-                    src={user.profile_pic}
+                    src={user.profilePictureUrl}
                     alt="owner pic"
                     variant="rounded"
                     sx={{ width: 24, height: 24, marginRight: 1 }}
                   />
                   <p className="text-sm text-gray-700 font-semibold">
-                    {user.first_name} {user.last_name}
+                    {user.name} {user.last_name}
                   </p>
                 </span>
-              ))}
+              ))} */}
             </div>
 
             <div className="flex flex-col gap-1">

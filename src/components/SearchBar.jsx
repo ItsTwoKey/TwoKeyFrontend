@@ -34,12 +34,12 @@ export default function SearchBar() {
 
   const getSharedFileInfo = async (fileId) => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
       const info = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/sharedFileInfo/${fileId}`,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
@@ -167,7 +167,18 @@ export default function SearchBar() {
           style={{ outline: "none" }}
           value={searchTerm}
           onChange={handleSearchChange}
+          name="searchQuery"
+          id="search-bar"
+          autoComplete="off"
         ></input>
+
+        {/* Hidden fields to trick autofill */}
+        <input type="email" style={{ display: "none" }} autoComplete="email" />
+        <input
+          type="password"
+          style={{ display: "none" }}
+          autoComplete="new-password"
+        />
       </div>
 
       {/* Display search results */}

@@ -40,18 +40,20 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   useEffect(() => {
     const getPresignedUrl = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let token = secureLocalStorage.getItem("token");
 
         const body = {
           latitude: 18.44623721673684,
           longitude: 73.82762833796289,
+          idToken: token,
         };
+
         const presignedUrl = await axios.post(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getPresigned/${fileInfo.id}`,
           body,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
@@ -83,6 +85,9 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
     };
 
     getPresignedUrl();
+    // setPreUrl(fileInfo.download_url);
+    
+    setLoadingUrl(false);
   }, [fileInfo.id]);
 
   return (
@@ -99,7 +104,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
             <div className={`w-4/5 ${screenshotDetected ? "blur" : ""}`}>
               {loadingUrl ? (
                 <div className="text-center pt-20">Fetching URL...</div>
-              ) : preUrl.length ? (
+              ) : preUrl ? (
                 <FileViewer
                   preUrl={preUrl}
                   mimetype={fileInfo.mimetype}

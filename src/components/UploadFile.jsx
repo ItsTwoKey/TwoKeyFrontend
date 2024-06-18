@@ -18,6 +18,9 @@ import LinearProgress, {
 import secureLocalStorage from "react-secure-storage";
 import fileContext from "../context/fileContext";
 import TextField from "@mui/material/TextField";
+import { useAuth } from "../context/authContext";
+import { storage } from "../helper/firebaseClient";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -28,7 +31,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   },
   [`& .${linearProgressClasses.bar}`]: {
     borderRadius: 5,
-    backgroundColor: theme.palette.mode === "light" ? "green" : "green",
+    backgroundColor: theme.palette.mode === "light" ? "#3B82F6" : "#B3A9EB",
   },
 }));
 
@@ -45,6 +48,7 @@ const UploadFile = ({ value }) => {
   const [deptId, setDeptId] = useState("");
   const [selectedDeptIndex, setSelectedDeptIndex] = useState(null);
   const [isFieldsFilled, setIsFieldsFilled] = useState(false);
+  const { profileData } = useAuth();
   const [description, setDescription] = useState({
     content: "",
     visible: false,
@@ -90,124 +94,94 @@ const UploadFile = ({ value }) => {
     },
   });
 
-  const uploadFile = async (bucketName, fileName, file, index) => {
-    try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+  const uploadFile = async (file, index) => {
+    return new Promise((resolve, reject) => {
+      const fileRef = ref(storage, `files/${profileData.org}/${file.name}`);
+      const metadata = {
+        customMetadata: {
+          department_id: deptId,
+          org_id: profileData.org,
+        },
+      };
+      const uploadTask = uploadBytesResumable(fileRef, file, metadata);
 
-      const upload = new tus.Upload(file, {
-        endpoint: resumableEndpt,
-        retryDelays: [0, 3000, 5000, 10000, 20000],
-        headers: {
-          authorization: `Bearer ${token.session.access_token}`,
-          "x-upsert": "true",
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
         },
-        uploadDataDuringCreation: true,
-        removeFingerprintOnSuccess: true,
-        metadata: {
-          bucketName: bucketName,
-          objectName: fileName,
-          contentType: file.type,
-          cacheControl: 3600,
+        (error) => {
+          console.error("File upload error:", error);
+          reject(error);
         },
-        chunkSize: 6 * 1024 * 1024,
-        onError: function (error) {
-          console.error("Failed because:", error);
-        },
-        onProgress: function (bytesUploaded, bytesTotal) {
-          const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
-          setUploadProgress(Number(percentage));
-        },
-        onSuccess: function () {
-          closeDialog();
-          handleFileIdRetrieval(fileName);
-          //   console.log(`Download ${upload.file.name} from ${upload.url}`);
-          // updateFilesState(0 || value);
-        },
-      });
-
-      // Check if there are any previous uploads to continue.
-      const previousUploads = await upload.findPreviousUploads();
-      if (previousUploads.length) {
-        upload.resumeFromPreviousUpload(previousUploads[0]);
-      }
-
-      // Start the upload
-      upload.start();
-    } catch (error) {
-      console.error("Error during file upload:", error);
-    }
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+          });
+        }
+      );
+    });
   };
 
   const handleFinalUpload = async () => {
     try {
       for (const file of droppedFiles) {
-        const timestamp = Date.now(); // Get current timestamp
-        const fileNameWithTimestamp = `${file.name}_TS=${timestamp}`; // Modify file name
-
-        console.log("upload started");
-        await uploadFile("TwoKey", fileNameWithTimestamp, file);
-        console.log("uploaded file:", fileNameWithTimestamp);
+        const downloadURL = await uploadFile(file);
+        console.log("uploaded file:", downloadURL);
+        await handleFileIdRetrieval(file, file.name, downloadURL);
       }
-
-      // Show success snackbar after successful file upload
-
       showSnackbar("Upload successful", "success");
     } catch (error) {
       console.error("Error occurred in file upload:", error);
       showSnackbar("Upload failed. Please try again.", "error");
     } finally {
-      setUploadProgress(0); // Reset progress after upload is complete
-      setDroppedFiles([]); // Clear dragged files list
+      setUploadProgress(0);
+      setDroppedFiles([]);
     }
   };
 
-  const handleFileIdRetrieval = async (desiredFileName) => {
+  const handleFileIdRetrieval = async (file, desiredFileName, downloadURL) => {
+    const token = secureLocalStorage.getItem("token");
     try {
-      const { data, error } = await supabase.storage.from("TwoKey").list();
-
-      if (data && data.length > 0) {
-        const file = data.find((item) => item.name === desiredFileName);
-
-        if (file) {
-          console.log("Object id found:", file.id);
-          addFileDepartment(file.id);
-          // addFileDescription(file.id);
-        } else {
-          console.log(`Object with name "${desiredFileName}" not found.`);
-        }
-      } else {
-        console.log("No objects found in the 'TwoKey' bucket.");
-      }
-    } catch (error) {
-      console.log("Error occurred while retrieving the file list:", error);
-    }
-  };
-
-  const addFileDepartment = async (fileId) => {
-    try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
-
-      let body = {
-        department_ids: [deptId],
-      };
-
-      const addDept = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/addDepartment/${fileId}`,
-        body,
+      const res = await axios.post(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/addDepartment/${desiredFileName}`,
         {
-          headers: {
-            authorization: `Bearer ${token.session.access_token}`,
+          department_ids: [deptId],
+          new: true,
+          name: desiredFileName,
+          downloadURL: downloadURL,
+          idToken: token,
+          metadata: {
+            size: file.size,
+            mimetype: file.type,
+            lastModified: new Date().toLocaleString("en-IN", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true,
+            }),
           },
         }
       );
 
-      console.log("dept added to file", addDept);
-      updateFilesState(0 || value);
-      if (deptName) updateDepartmentFiles(deptName);
+      console.log("File ID retrieval response:", res.data);
+      showSnackbar(res.data.detail, "success");
+
+      updateFilesState(value);
+      console.log("deptName", deptName, value);
+      if (deptName) {
+        updateDepartmentFiles(deptName);
+      }
     } catch (error) {
-      console.log("Error occured while adding the file department", error);
+      console.log(error);
+      showSnackbar("Error retreiving data", "error");
     }
   };
+
   // const addFileDescription = async (fileId) => {
   //   try {
   //     let token = JSON.parse(secureLocalStorage.getItem("token"));
@@ -352,13 +326,13 @@ const UploadFile = ({ value }) => {
                     backgroundColor: dept.metadata.bg,
                     border:
                       selectedDeptIndex === index
-                        ? "2px solid gray"
+                        ? "2px solid black"
                         : "1px solid silver", // Applying border to selected department
                   }}
                   className={`flex justify-center items-center p-2 rounded-lg cursor-pointer`}
                   onClick={() => handleDepartmentClick(index, dept.id)}
                 >
-                  {dept.name}
+                  {dept.name.replace("_", " ")}
                 </div>
               ))}
             </div>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import PDFicon from "../assets/pdf.svg";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
@@ -17,6 +17,9 @@ import Ppt from "../assets/ppt.svg";
 import Txt from "../assets/txt.svg";
 import Video from "../assets/video.svg";
 import secureLocalStorage from "react-secure-storage";
+import { deleteObject, getStorage, ref } from "firebase/storage";
+import toast, { Toaster } from "react-hot-toast";
+import fileContext from "../context/fileContext";
 
 // Define SVG icons for different file types
 const fileIcons = {
@@ -42,8 +45,8 @@ const FileDetails = ({
   signedUrl,
 }) => {
   const navigate = useNavigate();
-  console.log("fileInfo", fileInfo);
-  console.log("sharedFileInfo", sharedFileInfo);
+  const context = useContext(fileContext);
+  const { removeFile, updateDepartmentFiles } = context;
 
   // Function to format the date
   const formatDate = (dateString) => {
@@ -62,7 +65,7 @@ const FileDetails = ({
 
   const downloadAlert = async (fileId) => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       if (fileId) {
         const res = await axios.get(
@@ -70,7 +73,7 @@ const FileDetails = ({
 
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
@@ -110,27 +113,55 @@ const FileDetails = ({
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      const { data, error } = await supabase.storage
-        .from("TwoKey")
-        .remove([fileInfo.name]);
+  console.log("fileInfo", fileInfo);
 
-      if (error) {
-        console.error("Error deleting file:", error.message);
-      } else {
-        console.log("Delete success", data);
-        closeDrawer();
+  const handleDelete = async () => {
+    let profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
+    let token = secureLocalStorage.getItem("token");
+
+    // Check if the user is the owner of the file
+    // console.log(fileName);
+
+    if (profileData.id === fileInfo.owner) {
+      try {
+        const storage = getStorage();
+        const fileRef = ref(
+          storage,
+          `files/${profileData.org}/${fileInfo.name}`
+        );
+
+        await deleteObject(fileRef);
+        console.log("Delete success");
+
+        const res = await axios.delete(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/delete-file/${fileInfo.id}/`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+
+        removeFile(fileInfo.id);
+        // if (deptName) updateDepartmentFiles(deptName);
+
+        toast.success("File deleted successfully.");
+        handleBackButtonClick();
+      } catch (error) {
+        toast.error("Error occurred while deleting the file");
+        console.error("Error occurred while deleting the file:", error.message);
       }
-    } catch (error) {
-      console.error("Error occurred while deleting the file:", error.message);
+    } else {
+      // Display Snackbar message if the user is not the owner of the file
+
+      toast.error("You are not the owner of this file.");
     }
   };
 
   return (
     <div className="bg-[#525659] h-screen text-white p-6 flex flex-col justify-between">
       {/* <button onClick={handleBackButtonClick}>Back</button> */}
-
+      <Toaster position="bottom-left" reverseOrder={false} />
       <div>
         <span className="flex flex-row justify-between">
           <span className="flex flex-row">
@@ -208,11 +239,11 @@ const FileDetails = ({
         <span className="flex flex-col gap-2">
           <p className="text-sm text-gray-400 font-semibold">Who has access</p>
 
-          {sharedFileInfo?.shared_with?.map((user) => (
+          {/* {sharedFileInfo?.shared_with?.map((user) => (
             <span key={user.user_id} className="flex flex-row items-center">
-              <Tooltip title={user?.user_email} arrow>
+              <Tooltip title={user?.email} arrow>
                 <Avatar
-                  src={user.profile_pic}
+                  src={user.profilePictureUrl}
                   alt="owner pic"
                   sx={{ width: 20, height: 20, marginRight: 1 }}
                 />
@@ -221,7 +252,7 @@ const FileDetails = ({
                 {user.first_name} {user.last_name}
               </p>
             </span>
-          ))}
+          ))} */}
         </span>
       </div>
       <div className="text-right">

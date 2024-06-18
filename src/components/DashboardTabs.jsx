@@ -18,6 +18,8 @@ import PaginationItem from "@mui/material/PaginationItem";
 import Stack from "@mui/material/Stack";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { useDepartment } from "../context/departmentContext";
+import { auth } from "../helper/firebaseClient";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -62,10 +64,12 @@ export default function DashboardTabs() {
   // const [filteredData, setFilteredData] = useState([]);
 
   const context = useContext(fileContext);
-  const { files, setFiles, filteredData, setFilteredData } = context;
+  const { files, setFiles, filteredData, setFilteredData, updateFilesState } =
+    context;
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const { departments } = useDepartment();
 
   //   realtime supabase subscribe
   // useEffect(() => {
@@ -88,8 +92,12 @@ export default function DashboardTabs() {
   //   };
   // }, []);
   useEffect(() => {
-    fetchFiles();
-  }, [value, currentPage]);
+    async function dummy() {
+      await updateFilesState(value);
+      setLoading(false);
+    }
+    dummy();
+  }, [value, currentPage, auth.currentUser]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value); // Update currentPage when pagination changes
@@ -98,10 +106,6 @@ export default function DashboardTabs() {
   const handleTabChange = (event) => {
     setValue(event.target.value);
   };
-
-  useEffect(() => {
-    fetchFiles();
-  }, [value]);
 
   const fetchFiles = async () => {
     try {
@@ -112,16 +116,16 @@ export default function DashboardTabs() {
 
       switch (value) {
         case 0:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?p=${currentPage}`;
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files`;
           break;
         case 1:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared&p=${currentPage}`;
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared`;
           break;
         case 2:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received&p=${currentPage}`;
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received`;
           break;
         case 3:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned&p=${currentPage}`;
+          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned`;
           break;
         default:
           url = "";
@@ -131,13 +135,12 @@ export default function DashboardTabs() {
       if (url) {
         const getFiles = await axios.get(url, {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         });
 
-        console.log(`dashboard Tabs`, getFiles.data);
         setFiles(getFiles.data);
-        setTotalPages(Math.ceil(getFiles.headers.count / 25));
+        setTotalPages(Math.ceil(getFiles.data.length / 25));
 
         const cacheKey = "recentFilesCache";
 
@@ -150,18 +153,22 @@ export default function DashboardTabs() {
             file.department = "";
           }
 
+          const filteredDepartment = departments.filter(
+            (dept) => dept.id === file.department_ids[0]
+          );
+
           return {
             id: file.id,
             name: file.name.substring(0, 80),
             profilePic: file.profile_pic,
-            size: formatFileSize(file.metadata.size),
-            dept: file.department,
-            owner: file.owner_email,
-            mimetype: file.metadata.mimetype,
+            size: formatFileSize(file.metadata?.size),
+            dept: file.department_ids,
+            owner: file.owner_id,
+            mimetype: file.metadata?.mimetype,
             status: "Team",
             security: "Enhanced",
-            color: file.file_info[0]?.depts[0]?.metadata?.bg,
-            lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
+            color: filteredDepartment[0].metadata?.bg,
+            lastUpdate: new Date(file.metadata?.lastModified).toLocaleString(
               "en-IN",
               {
                 day: "numeric",
@@ -225,7 +232,7 @@ export default function DashboardTabs() {
             aria-label="basic tabs example"
           >
             <Tab
-              label="All"
+              label="Department"
               {...a11yProps(0)}
               sx={{
                 textTransform: "capitalize",

@@ -37,8 +37,7 @@
   }
 }
 
-
-.search-device:focus{
+.search-device:focus {
   outline: none;
-  border-color: #F1F1FF;
+  border-color: #f1f1ff;
 }

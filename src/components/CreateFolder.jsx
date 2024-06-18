@@ -9,6 +9,7 @@ import axios from "axios";
 import Chrome from "@uiw/react-color-chrome";
 import { GithubPlacement } from "@uiw/react-color-github";
 import { CircularProgress } from "@mui/material";
+import toast, { Toaster } from "react-hot-toast";
 
 const CreateFolder = ({ listFolders }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,13 +31,14 @@ const CreateFolder = ({ listFolders }) => {
 
   const createFolder = async () => {
     setLoading(true);
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
     let body = {
       name: folderName,
       metadata: {
         bg: hex,
         border: "#B7B6C2",
       },
+      idToken: token,
     }; // Use folderName from state
 
     try {
@@ -45,21 +47,23 @@ const CreateFolder = ({ listFolders }) => {
         body,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
-      // console.log("created folder", response.data);
-      // if(response){
-      //   window.location.reload();
-      // }
 
       if (response) {
+        setFolderName(""); // Clear folderName after folder is created
+        setHex("#EFEEDC"); // Reset hex color after folder is created
+
+        toast.success("Folder created successfully.");
+
         closeDialog();
         listFolders();
       }
     } catch (error) {
       console.log("error occurred while creating folder.", error);
+      toast.error("Error occurred while creating folder.");
     } finally {
       setLoading(false); // Set loading to false after the operation is completed
     }
@@ -67,10 +71,11 @@ const CreateFolder = ({ listFolders }) => {
 
   return (
     <div className="">
+      <Toaster position="bottom-left" reverseOrder={false} />
       <button
         onClick={openDialog}
         title="create folder"
-        className="text-lg rounded-lg px-2 mx-4 text-center text-purple-600 border border-purple-600"
+        className="text-2xl rounded-lg px-3 mx-4 text-center text-purple-600 border border-purple-600"
       >
         +
       </button>
@@ -102,7 +107,7 @@ const CreateFolder = ({ listFolders }) => {
             />
 
             <span>
-              <p className="text-gray-700 my-2">Department Color</p>
+              <p className="text-gray-700 my-2">Folder Color</p>
               <Chrome
                 color={hex}
                 style={{ width: "100%", margin: "auto" }}
@@ -123,15 +128,14 @@ const CreateFolder = ({ listFolders }) => {
             Close
           </button>
           <button
-            className="px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white"
+            className={`flex items-center gap-2 justify-center px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white ${
+              loading ? "cursor-not-allowed opacity-40" : "cursor-pointer"
+            }`}
             onClick={createFolder}
             disabled={!folderName || loading} // Disable button if folderName is empty
           >
-            {loading ? (
-              <CircularProgress size={20} color="inherit" />
-            ) : (
-              "Create Folder"
-            )}
+            Create Folder
+            {loading && <CircularProgress size={20} color="inherit" />}
           </button>
         </DialogActions>
       </Dialog>

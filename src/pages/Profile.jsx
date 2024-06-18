@@ -8,11 +8,13 @@ import Pen from "../assets/pen.svg";
 import axios from "axios";
 import ErrorPage from "../components/ErrorPage";
 import secureLocalStorage from "react-secure-storage";
+import toast, { Toaster } from "react-hot-toast";
+import { useAuth } from "../context/authContext";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedPicture, setSelectedPicture] = useState(null);
-  const [profileData, setProfileData] = useState({});
+  const { profileData, setProfileData } = useAuth();
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -47,42 +49,36 @@ const Profile = () => {
   const handleProfilePicUpdate = async () => {
     try {
       let token = secureLocalStorage.getItem("token");
+      const profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
 
-      const { data, error } = await supabase.storage
-        .from("avatar")
-        .update(token.user.email, selectedPicture, {
-          cacheControl: "3600",
-          upsert: true,
+      let profilePictureBase64 = null;
+      const profilePictureFile = selectedPicture;
+      if (profilePictureFile) {
+        // Convert the image file to base64
+        const reader = new FileReader();
+        reader.readAsDataURL(profilePictureFile);
+        await new Promise((resolve) => {
+          reader.onloadend = () => {
+            profilePictureBase64 = reader.result.split(",")[1];
+            resolve();
+          };
         });
-
-      console.log("picture:", data);
-
-      const { data: url } = await supabase.storage
-        .from("avatar")
-        .getPublicUrl(token.user.email);
-
-      console.log("Public URL:", url.publicUrl);
-
-      if (url) {
-        const res = await axios.put(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
-          {
-            id: token.user.id,
-            profile_pic: url.publicUrl,
-          },
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-
-        console.log("Profile pic change success:", res);
-        setProfileData(res.data);
-
-        secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
       }
+
+      const res = await axios.put(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/update-profile/`,
+        {
+          idToken: token,
+          profileData,
+          profilePicture: profilePictureBase64,
+        }
+      );
+
+      setProfileData(res.data);
+      secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
+      toast.success("Profile picture updated successfully");
     } catch (error) {
+      toast.error("An error occurred while uploading the profile picture");
       console.error(
         "An error occurred while uploading the profile picture:",
         error
@@ -96,6 +92,7 @@ const Profile = () => {
 
   return (
     <div className="p-4 w-full">
+      <Toaster position="bottom-left" reverseOrder={false} />
       <div className="flex flex-row justify-between items-center p-2">
         <h3 className="text-xl font-bold">My Profile</h3>
         <span className="flex flex-row gap-4">
@@ -126,10 +123,10 @@ const Profile = () => {
                 profileData ? profileData.profilePictureUrl : ProfilePicDummy
               }
               alt="ProfilePic"
-              className="rounded-full w-24 h-24"
+              className="rounded-full w-24 h-24 object-cover"
             />
             {isEditing && (
-              <button className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white rounded-full w-6 h-6 flex justify-center items-center text-lg">
+              <button className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white rounded-full px-2 flex justify-center items-center text-lg">
                 +
               </button>
             )}

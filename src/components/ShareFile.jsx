@@ -46,14 +46,14 @@ const ShareFile = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
     const listUsers = async () => {
       try {
         const userList = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users`,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
@@ -170,7 +170,7 @@ const ShareFile = () => {
 
   const shareFiles = async (fileId) => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       const sharedWithIds = selectedUsers.map((user) => user.id);
 
@@ -184,7 +184,7 @@ const ShareFile = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );

@@ -43,6 +43,24 @@ const Login = () => {
     });
   }
 
+  const detectDeviceType = () => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+    // Check for mobile devices
+    if (/windows phone/i.test(userAgent)) {
+      return "Windows Phone";
+    }
+    if (/android/i.test(userAgent)) {
+      return "Android";
+    }
+    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+      return "iOS";
+    }
+
+    // If none of the above, assume desktop
+    return "Desktop";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -62,10 +80,12 @@ const Login = () => {
 
       const token = await user.getIdToken();
 
+      const deviceType = detectDeviceType();
+
       const userInfo = {
         email: formData.email,
         is_active: true,
-        metadata: { devices: navigator?.userAgentData?.platform || "unknown" },
+        metadata: { devices: navigator?.userAgentData?.platform || "unknown", deviceType },
       };
 
       try {

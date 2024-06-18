@@ -51,7 +51,7 @@ const SecureShare = ({ value }) => {
 
   const uploadFile = async (bucketName, fileName, file, index) => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       const upload = new tus.Upload(file, {
         endpoint: resumableEndpt,
@@ -145,7 +145,7 @@ const SecureShare = ({ value }) => {
 
   const addFileDepartment = async (fileId) => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
       let profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
       let departmentName = profileData.dept;
 
@@ -181,7 +181,7 @@ const SecureShare = ({ value }) => {
 
   const shareFiles = async (fileId) => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       //   console.log("shareFiles Id:", fileId);
       const res = await axios.post(

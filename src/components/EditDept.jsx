@@ -68,8 +68,8 @@ const EditDept = ({ id, name }) => {
   }, []);
 
   return (
-    <div>
-      <button onClick={openDialog} className="text-sm">
+    <div className="w-full h-full">
+      <button onClick={openDialog} className="text-sm w-full h-full text-left">
         Edit
       </button>
 

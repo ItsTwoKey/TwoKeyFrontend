@@ -6,6 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import ProfileTabsOfUser from "../components/ProfileTabsOfUser";
 import { useParams } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
+import toast, { Toaster } from "react-hot-toast";
 
 const UserProfile = () => {
   const { userId } = useParams(); // Use useParams to get the user ID from the route parameters
@@ -19,13 +20,13 @@ const UserProfile = () => {
 
   useEffect(() => {
     const getUserProfile = async () => {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
       try {
         const user = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getUserInfo/${userId}/`,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
@@ -34,17 +35,18 @@ const UserProfile = () => {
         setSelectedDepartment(user.data.user_info.dept);
       } catch (error) {
         console.log(error);
+        toast.error("Something went wrong.");
       }
     };
 
     const fetchDepartments = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let token = secureLocalStorage.getItem("token");
         const dep = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
@@ -56,23 +58,25 @@ const UserProfile = () => {
         setDeptKeys(deptobj);
       } catch (error) {
         console.log("Error fetching departments");
+        toast.error("Something went wrong.");
       }
     };
 
     const getRoles = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
+        let token = secureLocalStorage.getItem("token");
         const rolesData = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/role/listRoles`,
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
         setRoles(rolesData.data);
       } catch (error) {
         console.log("Error fetching roles");
+        toast.error("Something went wrong while fetching roles.");
       }
     };
 
@@ -82,45 +86,49 @@ const UserProfile = () => {
   }, [userId]);
 
   const elevateUserRole = async (selectedRole) => {
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
     if (token) {
       try {
-        const res = await axios.put(
+        const res = await axios.patch(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/elevate/${userProfileData.id}`,
           {
             role_priv: selectedRole,
           },
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
-        console.log("elevate user successful");
+        // console.log("elevate user successful");
+        toast.success("Elevate user successful");
       } catch (error) {
         console.log(error);
+        toast.error("Something went wrong.");
       }
     }
   };
 
   const changeDept = async (selectedDepartment) => {
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
     if (token) {
       try {
-        const res = await axios.put(
+        const res = await axios.patch(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/users/elevate/${userProfileData.id}`,
           {
             dept: selectedDepartment,
           },
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );
-        console.log("User's dept changed");
+        // console.log("User's dept changed");
+        toast.success("User's dept changed");
       } catch (error) {
         console.log(error);
+        toast.error("Something went wrong.");
       }
     }
   };
@@ -145,16 +153,17 @@ const UserProfile = () => {
 
   return (
     <div className="p-4">
+      <Toaster position="bottom-left" reverseOrder={false} />
       <div className="p-4 border shadow-lg bg-[#F1F1FF] border-gray-300 w-full rounded-xl ">
         <div className="flex flex-row items-center space-x-4">
           <img
             src={
-              userProfileData && userProfileData.profile_pic
-                ? userProfileData.profile_pic
+              userProfileData && userProfileData.profilePictureUrl
+                ? userProfileData.profilePictureUrl
                 : ProfilePicDummy
             }
             alt="ProfilePic"
-            className="rounded-full w-24 h-24"
+            className="rounded-full w-24 h-24 object-cover"
           />
           <div className="flex flex-col leading-9">
             <h3 className="text-lg font-semibold">
@@ -212,7 +221,7 @@ const UserProfile = () => {
               name="phone"
               value={userProfileData.phone || ""}
               className={`text-md lining-nums placeholder-gray-500 bg-[#464F6029] shadow p-2 rounded-md w-full`}
-              placeholder="9876543210"
+              placeholder=""
               disabled
             />
           </span>
@@ -234,6 +243,10 @@ const UserProfile = () => {
             >
               {departments.map((department) => (
                 <MenuItem key={department.id} value={department.name}>
+                  <span
+                    className="w-4 h-4 rounded-full inline-block mr-2"
+                    style={{ backgroundColor: department?.metadata?.bg }}
+                  ></span>
                   {department.name}
                 </MenuItem>
               ))}

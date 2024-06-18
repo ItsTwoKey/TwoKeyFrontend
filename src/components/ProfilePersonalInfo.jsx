@@ -2,20 +2,24 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 import { useDepartment } from "../context/departmentContext";
+import toast, { Toaster } from "react-hot-toast";
+import { useAuth } from "../context/authContext";
 
-const ProfilePersonalInfo = ({ profileData, isEditing }) => {
+const ProfilePersonalInfo = ({ isEditing }) => {
   const { departments: newDepartments } = useDepartment();
+  const { profileData, setProfileData } = useAuth();
   const [formData, setFormData] = useState({
     firstName: profileData?.name || "",
     lastName: profileData?.last_name || "",
     email: profileData?.email || "",
     phone: profileData?.phone || 0,
     designation: profileData?.role_priv || "",
-    department: newDepartments[0].name || profileData?.dept || "",
+    department: newDepartments[0]?.name || profileData?.dept || "",
   });
 
   const [prevIsEditing, setPrevIsEditing] = useState(isEditing);
   const [departments, setDepartments] = useState([]);
+  const [userDept, setUserDept] = useState();
 
   useEffect(() => {
     setFormData({
@@ -24,21 +28,22 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
       email: profileData?.email || "",
       phone: profileData?.phone || 0,
       designation: profileData?.role_priv || "",
-      department: departments[0]?.name || profileData?.dept || "",
+      department: userDept || "",
     });
-  }, [profileData, departments]);
+  }, [departments, userDept]);
 
   useEffect(() => {
     if (prevIsEditing && !isEditing) {
       const updateProfile = async () => {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
-
+        let token = secureLocalStorage.getItem("token");
+        // TODO: Refactor to update dept with its id and not name
         // Check if the department has changed
-        const isDepartmentChanged = formData.department !== profileData.dept;
+        const isDepartmentChanged =
+          formData.department.id !== profileData?.dept;
 
         // Only include the department in the update if it has changed
         const updateData = {
-          id: token.user.id,
+          id: profileData.id,
           name: formData.firstName,
           last_name: formData.lastName,
           // email: formData.email,
@@ -47,17 +52,23 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
           ...(isDepartmentChanged && { dept: formData.department }), // Include department only if it has changed
         };
 
-        const res = await axios.put(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
-          updateData,
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
+        try {
+          const res = await axios.put(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/users/update-profile/`,
+            { profileData: updateData, idToken: token },
+            {
+              headers: {
+                Authorization: token,
+              },
+            }
+          );
 
-        secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
+          toast.success("Profile updated successfully");
+          setProfileData(res.data);
+          secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
+        } catch (error) {
+          toast.error("Error updating profile");
+        }
       };
 
       updateProfile();
@@ -95,9 +106,19 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
     });
   };
 
+  useEffect(() => {
+    function filterDeptById(depts, targetDeptId) {
+      // Filter the departments based on the target department ID
+      return depts.filter((dept) => dept.id === targetDeptId);
+    }
+    const filteredUserDept = filterDeptById(departments, profileData?.dept);
+    setUserDept(filteredUserDept);
+  }, [departments, profileData?.dept]);
+
   return (
     <div className="p-4 my-4 bg-[#F7F8FA] border shadow-lg border-gray-200 w-full rounded-xl">
-      <div className="grid grid-cols-4 gap-4">
+      <Toaster position="bottom-left" reverseOrder={false} />
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:gird-cols-4 gap-4">
         <span>
           <h5 className="px-2 font-semibold">First Name</h5>
           <input
@@ -130,11 +151,11 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className={`text-md  placeholder-gray-500 p-2 rounded-md ${
-              isEditing ? "bg-white shadow-lg border" : "bg-inherit"
+            className={`text-md  placeholder-gray-500 p-2 rounded-md bg-inherit ${
+              isEditing && "cursor-not-allowed"
             }`}
             placeholder="Email Address"
-            disabled={!isEditing}
+            disabled={true}
           />
         </span>
         <span>
@@ -146,7 +167,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
             className={`text-md lining-nums placeholder-gray-500 p-2 rounded-md ${
               isEditing ? "bg-white shadow-lg border" : "bg-inherit"
             }`}
-            placeholder="9876543210"
+            placeholder="Phone Number"
             disabled={!isEditing}
           />
         </span>
@@ -160,7 +181,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
               isEditing ? "bg-white shadow-lg border" : "bg-inherit"
             }`}
             placeholder="Designation"
-            disabled={!isEditing}
+            disabled={!isEditing || profileData?.role_priv === "employee"}
           />
         </span>
         <span>
@@ -168,7 +189,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
           {isEditing ? (
             <select
               name="department"
-              value={formData.department}
+              value={formData.department.id}
               onChange={handleInputChange}
               className={`text-md  placeholder-gray-500 p-2 rounded-md ${
                 isEditing ? "bg-white shadow-lg border" : "bg-inherit"
@@ -190,9 +211,7 @@ const ProfilePersonalInfo = ({ profileData, isEditing }) => {
               className={`text-md  placeholder-gray-500 p-2 rounded-md ${
                 isEditing ? "bg-white shadow-lg border" : "bg-inherit"
               }`}
-              placeholder={
-                newDepartments[0].name || profileData.dept || "Department"
-              }
+              placeholder={(userDept && userDept[0]?.name) || "Department"}
               disabled={!isEditing}
             />
           )}

@@ -48,6 +48,7 @@ const RecentFiles = ({ filteredData, loading }) => {
     profileUrl: "",
     lastUpdate: "",
     mimetype: "",
+    download_url: "",
   });
   // const [loading, setLoading] = useState(true);
   const [sharedFileInfo, setSharedFileInfo] = useState({});
@@ -86,12 +87,12 @@ const RecentFiles = ({ filteredData, loading }) => {
 
   const getSharedFileInfo = async (fileId) => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
       const info = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/sharedFileInfo/${fileId}`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/sharedFileInfo/${fileId}/`,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
@@ -108,7 +109,8 @@ const RecentFiles = ({ filteredData, loading }) => {
     owner,
     profilePic,
     lastUpdate,
-    mimetype
+    mimetype,
+    download_url
   ) => {
     getSharedFileInfo(fileId);
     setSelectedFileInfo({
@@ -119,6 +121,7 @@ const RecentFiles = ({ filteredData, loading }) => {
       ownerProfileUrl: profilePic,
       lastUpdate: lastUpdate,
       mimetype: mimetype,
+      download_url: download_url,
     });
     setIsFileViewOpen(true);
   };
@@ -134,7 +137,8 @@ const RecentFiles = ({ filteredData, loading }) => {
     owner,
     profilePic,
     lastUpdate,
-    mimetype
+    mimetype,
+    download_url
   ) => {
     getSharedFileInfo(fileId);
     setSelectedFileInfo({
@@ -145,7 +149,9 @@ const RecentFiles = ({ filteredData, loading }) => {
       ownerProfileUrl: profilePic,
       lastUpdate: lastUpdate,
       mimetype: mimetype,
+      download_url: download_url,
     });
+
     setIsFileInfoOpen(true);
   };
 
@@ -162,8 +168,6 @@ const RecentFiles = ({ filteredData, loading }) => {
     // Use the fileIcons object to get the appropriate SVG icon
     return fileIcons[mimeType] || PDF; // Default to PDF icon if not found
   };
-
-  console.log("recent", filteredData);
 
   return (
     <div>
@@ -218,7 +222,8 @@ const RecentFiles = ({ filteredData, loading }) => {
                         file.owner,
                         file.profilePic,
                         file.lastUpdate,
-                        file.mimetype
+                        file.mimetype,
+                        file.downloadUrl
                       )
                     }
                   >
@@ -301,7 +306,8 @@ const RecentFiles = ({ filteredData, loading }) => {
                       file.owner,
                       file.profilePic,
                       file.lastUpdate,
-                      file.mimetype
+                      file.mimetype,
+                      file.downloadUrl
                     )
                   }
                 >
@@ -310,7 +316,7 @@ const RecentFiles = ({ filteredData, loading }) => {
                     <img
                       src={getIconByMimeType(file.mimetype)}
                       alt="File Preview"
-                      className="rounded-md"
+                      className="rounded-md my-2"
                     />
                   </span>
                   <span>
@@ -320,10 +326,10 @@ const RecentFiles = ({ filteredData, loading }) => {
                     <span className="flex flex-row justify-between items-center">
                       <span>
                         <h6 className="font-semibold">
-                          <span className="text-xs font-bold text-[#676767]">
+                          {/* <span className="text-xs font-bold text-[#676767]">
                             File size:
-                          </span>{" "}
-                          <span className="font-normal text-[10px] text-[#909090]">
+                          </span>{" "} */}
+                          <span className="text-xs font-bold text-[10px] text-[#676767]">
                             {file.size}
                           </span>
                         </h6>

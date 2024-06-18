@@ -22,7 +22,7 @@ const DashboardFolders = () => {
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/folder`,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );

@@ -266,10 +266,16 @@ const Onboard = () => {
                       {departmentList?.length &&
                         departmentList.map((dept) => (
                           <MenuItem
-                            style={{ backgroundColor: dept?.metadata?.bg }}
+                            // style={{ backgroundColor: dept?.metadata?.bg }}
                             key={dept.id}
                             value={dept.id}
                           >
+                            <span
+                              className="w-4 h-4 rounded-full inline-block mr-2"
+                              style={{
+                                backgroundColor: dept?.metadata?.bg,
+                              }}
+                            ></span>
                             {dept.name}
                           </MenuItem>
                         ))}

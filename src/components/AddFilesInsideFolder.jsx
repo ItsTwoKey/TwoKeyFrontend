@@ -20,23 +20,24 @@ const AddFilesInsideFolder = ({ folderId, listFilesInFolder }) => {
   const [selectedFileName, setSelectedFileName] = useState("");
 
   useEffect(() => {
-    getOwnedFile();
+    getOwnedFiles();
   }, []);
 
-  const getOwnedFile = async () => {
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+  const getOwnedFiles = async () => {
+    let token = secureLocalStorage.getItem("token");
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned`,
 
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
 
       setFiles(response.data);
+      console.log("files", response.data);
     } catch (error) {
       console.log("error occurred while fetching folder.", error);
     }
@@ -63,24 +64,24 @@ const AddFilesInsideFolder = ({ folderId, listFilesInFolder }) => {
   };
 
   const addFile = async () => {
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
-    let body = { file_id: fileId };
+    let token = secureLocalStorage.getItem("token");
+    let body = { file_id: fileId, idToken: token };
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/folder/addFile/${folderId}`,
         body,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
-      toast.success("File added successfully.");
 
       if (response) {
-        closeDialog();
+        toast.success("File added successfully.");
         setFileId("");
         listFilesInFolder(folderId);
+        closeDialog();
       }
     } catch (error) {
       console.log("error occurred while creating folder.", error);
@@ -94,7 +95,7 @@ const AddFilesInsideFolder = ({ folderId, listFilesInFolder }) => {
       <button
         onClick={openDialog}
         title="create folder"
-        className="text-lg rounded-lg px-2 mx-4 text-center bg-purple-600 border border-purple-600 text-white"
+        className="text-2xl rounded-lg px-3 mx-4 text-center text-purple-600 border border-purple-600"
       >
         +
       </button>
@@ -137,15 +138,13 @@ const AddFilesInsideFolder = ({ folderId, listFilesInFolder }) => {
               )}
 
               <div className="my-2">
-                {searchTerm &&
-                  !selectedFileName &&
+                {!selectedFileName &&
                   files
                     .filter((file) =>
                       file.name.toLowerCase().includes(searchTerm.toLowerCase())
                     )
                     .map((file) => (
                       <MenuItem
-                        // style={{ backgroundColor: file.color }}
                         className="menu-item"
                         key={file.id}
                         onClick={() => handleFileClick(file.id, file.name)}

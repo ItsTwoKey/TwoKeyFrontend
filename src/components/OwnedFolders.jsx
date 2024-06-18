@@ -6,6 +6,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import toast, { Toaster } from "react-hot-toast";
 import FolderImg from "../assets/folder.png";
+import { Link } from "react-router-dom";
 
 const OwnedFolders = ({ folders, listFolders }) => {
   const [filesInsideFolder, setFilesInsideFolder] = useState([]);
@@ -28,17 +29,17 @@ const OwnedFolders = ({ folders, listFolders }) => {
   };
 
   const deleteFolder = async (folder_id) => {
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
     try {
       const response = await axios.delete(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/folder/${folder_id}`,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
-      if (response) {
+      if (response.status === 204) {
         handleClose(folder_id);
         toast.success("Folder deleted successfully.");
         listFolders();
@@ -65,16 +66,15 @@ const OwnedFolders = ({ folders, listFolders }) => {
               className="border rounded-2xl cursor-pointer flex-shrink-0 mr-4"
             >
               <div>
-                <a
+                <Link
                   className="flex justify-center items-center py-4 px-8"
-                  href={`filesInsideFolder/${folder.name}/${folder.id}`}
-                  alt="folder img"
+                  to={`/filesInsideFolder/${folder.name}/${folder.id}`}
                 >
-                  <img className="h-24 w-24" src={FolderImg} alt="" />
-                </a>
+                  <img alt="folder img" className="h-24 w-24" src={FolderImg} />
+                </Link>
               </div>
               <span className="flex flex-row justify-between items-center line-clamp-1 ">
-                <p className="px-4 py-2 line-clamp-1 font-semibold text-md">
+                <p className="px-4 pb-2 line-clamp-1 font-semibold text-md">
                   {folder.name}
                 </p>
                 <span>
@@ -109,7 +109,7 @@ const OwnedFolders = ({ folders, listFolders }) => {
                         className="text-red-500"
                         onClick={() => deleteFolder(folder.id)}
                       >
-                        delete
+                        Delete
                       </button>
                     </MenuItem>
                   </Menu>

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
+import toast, { Toaster } from "react-hot-toast";
+import { useAuth } from "../context/authContext";
 
-const ProfileAddressInformation = ({ profileData, isEditing }) => {
+const ProfileAddressInformation = ({ isEditing }) => {
+  const { profileData, setProfileData } = useAuth();
   const [addressFormData, setAddressFormData] = useState({
     country: profileData?.country || "",
     state: profileData?.state || "",
@@ -24,25 +27,34 @@ const ProfileAddressInformation = ({ profileData, isEditing }) => {
   useEffect(() => {
     if (prevIsEditing && !isEditing) {
       const updateProfile = async () => {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
-        if (token) {
-          const res = await axios.put(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
-            {
-              id: token.user.id,
-              country: addressFormData.country,
-              state: addressFormData.state,
-              city: addressFormData.city,
-              postal_code: addressFormData.postal_code,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token.session.access_token}`,
+        try {
+          let token = secureLocalStorage.getItem("token");
+          if (token) {
+            const res = await axios.put(
+              `${process.env.REACT_APP_BACKEND_BASE_URL}/users/update-profile/`,
+              {
+                profileData: {
+                  id: profileData?.id,
+                  country: addressFormData.country,
+                  state: addressFormData.state,
+                  city: addressFormData.city,
+                  postal_code: addressFormData.postal_code,
+                },
+                idToken: token,
               },
-            }
-          );
-
-          secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
+              {
+                headers: {
+                  Authorization: token,
+                },
+              }
+            );
+            setProfileData(res.data);
+            secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
+            toast.success("Address updated successfully");
+          }
+        } catch (error) {
+          toast.error("Error updating address");
+          console.error("Error updating profile:", error);
         }
       };
 
@@ -62,6 +74,7 @@ const ProfileAddressInformation = ({ profileData, isEditing }) => {
 
   return (
     <div className="p-4 my-4 bg-[#F7F8FA] border shadow-lg border-gray-200 w-full rounded-xl">
+      <Toaster position="bottom-left" reverseOrder={false} />
       <div className="grid grid-cols-4 gap-4">
         <span>
           <h5 className="px-2 font-semibold">Country</h5>

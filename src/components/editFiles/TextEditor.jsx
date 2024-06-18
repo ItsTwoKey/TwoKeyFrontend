@@ -8,6 +8,10 @@ import { supabase } from "../../helper/supabaseClient";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { auth, storage } from "../../helper/firebaseClient";
+import { onAuthStateChanged } from "firebase/auth";
+import { useAuth } from "../../context/authContext";
 
 const toolbarOptions = [
   [
@@ -31,24 +35,28 @@ const toolbarOptions = [
 export default function TextEditor({ preUrl, fileName, fileId }) {
   const [quill, setQuill] = useState();
   const [content, setContent] = useState("");
-  const quillRef = useRef(null);
+  const { profileData } = useAuth();
 
   if (preUrl.trim() !== "") {
     fetchAndExtractContent(preUrl);
   }
 
-  const wrapperRef = useCallback((wrapper) => {
-    if (wrapper == null) return;
+  const wrapperRef = useCallback(
+    (wrapper) => {
+      if (wrapper == null) return;
 
-    wrapper.innerHTML = "";
-    const editor = document.createElement("div");
-    wrapper.append(editor);
-    const q = new Quill(editor, {
-      theme: "snow",
-      modules: { toolbar: toolbarOptions },
-    });
-    setQuill(q);
-  }, []);
+      wrapper.innerHTML = "";
+      const editor = document.createElement("div");
+      wrapper.append(editor);
+      const q = new Quill(editor, {
+        theme: "snow",
+        modules: { toolbar: toolbarOptions },
+      });
+      window.quill = q;
+      setQuill(q);
+    },
+    [fileId]
+  );
 
   const saveToDocx = async (q) => {
     try {
@@ -63,44 +71,43 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
       );
 
       // Upload the file to Supabase
-      await saveToSupabase(docAsBlob);
+      await saveToFirebase(docAsBlob);
     } catch (error) {
       console.error("Error generating Word document:", error);
     }
   };
 
-  const saveToSupabase = async (file) => {
+  const saveToFirebase = async (file) => {
     try {
-      const { data, error } = await supabase.storage
-        .from("TwoKey")
-        .update(fileName, file, {
-          cacheControl: "3600",
-          upsert: true,
-        });
+      const fileRef = ref(storage, `files/${profileData.org}/${fileName}`);
+      const snapshot = await uploadBytes(fileRef, file, {
+        cacheControl: "3600",
+      });
 
-      if (error) {
-        throw new Error(error.message);
-      }
+      console.log("File uploaded to Firebase Storage:", snapshot);
+      toast.success("File edited successfully.");
 
-      console.log("File uploaded to Supabase:", data);
-      toast.success("File Edited successfully.");
+      const downloadURL = await getDownloadURL(fileRef);
+      console.log("File available at:", downloadURL);
 
-      if (data) {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
-        const res = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/logEvent/${fileId}?event=edit`,
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const token = await user.getIdToken();
 
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
-        console.log("edit log :", res);
-      }
+          // const res = await axios.get(
+          //   `${process.env.REACT_APP_BACKEND_BASE_URL}/file/logEvent/${fileId}?event=edit`,
+          //   {
+          //     headers: {
+          //       Authorization: token,
+          //     },
+          //   }
+          // );
+          // console.log("edit log:", res);
+        }
+      });
     } catch (error) {
-      console.error("Error uploading Word document to Supabase:", error);
-      // toast.error("Something went wrong.");
+      console.error("Error uploading Word document to Firebase:", error);
+      toast.error("Something went wrong.");
     }
   };
 

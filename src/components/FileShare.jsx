@@ -42,7 +42,7 @@ const FileShare = ({ menuFile }) => {
 
   const shareFile = async () => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       const res = await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/shareFile`,
@@ -56,10 +56,11 @@ const FileShare = ({ menuFile }) => {
             download_enabled: true,
             geo_enabled: securityAllotmentData.location,
           },
+          idToken: token,
         },
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
@@ -68,6 +69,7 @@ const FileShare = ({ menuFile }) => {
 
       // Show snackbar on successful file sharing
       showSnackbar("File shared successfully", "success");
+
 
       setTimeout(() => {
         closeDialog();
@@ -78,7 +80,7 @@ const FileShare = ({ menuFile }) => {
       if (error.response.status === 406) {
         showSnackbar("File already shared", "error");
       } else {
-        showSnackbar("You can only share your owned files", "error");
+        showSnackbar(error.error || "Error sharing file", "error");
       }
     }
   };
@@ -94,8 +96,8 @@ const FileShare = ({ menuFile }) => {
   };
 
   return (
-    <div className="">
-      <button onClick={openDialog} className="">
+    <div className="w-full">
+      <button onClick={openDialog} className="w-full text-left">
         Share
       </button>
 
@@ -114,7 +116,7 @@ const FileShare = ({ menuFile }) => {
             backgroundColor: "#F7F8FA",
           }}
         >
-          <div className="my-2 w-[486px] p-3">
+          <div className="my-2 w-[486px] p-3 overflow-x-hidden">
             <span className="flex flex-row gap-1 items-center">
               <p className="font-semibold">File name:</p>
               <p className="font-semibold text-sm text-gray-600">
@@ -167,7 +169,7 @@ const FileShare = ({ menuFile }) => {
             {snackbarOpen && (
               <Snackbar
                 open={snackbarOpen}
-                autoHideDuration={6000}
+                autoHideDuration={4000}
                 onClose={handleSnackbarClose}
               >
                 <MuiAlert

@@ -44,7 +44,7 @@ const TopBar = () => {
         <p
           className={`${
             darkMode ? "text-gray-300" : "text-gray-800"
-          } capitalize`}
+          } capitalize text-sm font-semibold`}
         >
           {displayedPath}
         </p>

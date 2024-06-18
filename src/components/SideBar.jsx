@@ -189,14 +189,18 @@ function SideBar() {
                     src={
                       profileData ? profileData.profilePictureUrl : ProfilePic
                     }
-                    alt={data ? `${data}'s Profile Picture` : "Profile Picture"}
+                    alt={
+                      profileData
+                        ? `${profileData.username}'s Profile Picture`
+                        : "Profile Picture"
+                    }
                     className={`w-6 h-6 rounded-full ${
                       darkMode
                         ? "filter brightness-100 border border-white"
                         : ""
                     }`}
                   />
-                  <p className="px-2">#{data ? data : "Profile"}</p>
+                  <p className="px-2">#{profileData?.username || "Profile"}</p>
                 </a>
                 <button
                   onClick={handleLogout}
@@ -329,41 +333,23 @@ function SideBar() {
  * @returns {JSX.Element} The SidebarContents component.
  */
 function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
-  const { profileData, setProfileData, setToken } = useAuth();
-  // const [departments, setDepartments] = useState([]);
-  const { departments, setDepartments, listDepartments } = useDepartment();
+  const { profileData } = useAuth();
+  const [userDept, setUserDept] = useState([]);
+  const { departments, listDepartments } = useDepartment();
   const location = useLocation();
-  const navigate = useNavigate();
 
-  // console.log(profileData);
   useEffect(() => {
-    const listDepartments = async () => {
-      try {
-        let token = secureLocalStorage.getItem("token");
-
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-
-        const departmentsData = response.data;
-
-        secureLocalStorage.setItem(
-          "departments",
-          JSON.stringify(departmentsData)
-        );
-        setDepartments(departmentsData);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     listDepartments();
   }, []);
+
+  useEffect(() => {
+    function filterDeptById(depts, targetDeptId) {
+      // Filter the departments based on the target department ID
+      return depts.filter((dept) => dept.id === targetDeptId);
+    }
+    const filteredUserDept = filterDeptById(departments, profileData?.dept);
+    setUserDept(filteredUserDept);
+  }, [departments, profileData?.dept]);
 
   return (
     <>
@@ -408,50 +394,54 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
         </div>
 
         <p
-          className={`text-xs mt-4 py-2 px-6 ${
+          className={`text-xs mt-4 pb-2 px-6 ${
             darkMode ? "text-gray-200" : "text-gray-600"
           }`}
         >
           Department
         </p>
-
-        {departments?.map((department, index) => (
-          <li
-            onClick={() => {
-              setIsMenuOpen(!isMenuOpen);
-            }}
-            key={index}
-            className="min-w-full my-2 "
-          >
-            <style>
-              {`
+        {profileData &&
+          (profileData.role_priv === "employee" ? userDept : departments)?.map(
+            (department, index) => (
+              <li
+                onClick={() => {
+                  setIsMenuOpen(!isMenuOpen);
+                }}
+                key={index}
+                className="min-w-full mb-2"
+              >
+                <style>
+                  {`
               .dept-${index}, .dept-hover-${index}:hover {
                 background-color: ${department.metadata?.bg};
               }
             `}
-            </style>
-            <Link
-              to={`/department/${department.name}`} // Use "to" instead of "href"
-              alt={department.name}
-              className={`flex justify-start items-center min-w-full border border-[#ffffff00] py-2 px-6 rounded-md text-sm  duration-100 ${
-                location.pathname.endsWith(department.name)
-                  ? ` ${
-                      darkMode
-                        ? "hover:bg-gray-700 bg-gray-600"
-                        : `dept-${index}`
-                    }`
-                  : `${
-                      darkMode ? "hover:bg-indigo-700 " : `dept-hover-${index}`
-                    }`
-              }`}
-            >
-              {departmentIcons[department.name]}
-              <p className={`px-2 bg-[rgb(255 255 255 / 0%)] `}>
-                {department.name.replace("_", " ")}
-              </p>
-            </Link>
-          </li>
-        ))}
+                </style>
+                <Link
+                  to={`/department/${department.name}`} // Use "to" instead of "href"
+                  alt={department.name}
+                  className={`flex justify-start items-center min-w-full border border-[#ffffff00] py-2 px-6 rounded-md text-sm  duration-100 ${
+                    location.pathname.endsWith(department.name)
+                      ? ` ${
+                          darkMode
+                            ? "hover:bg-gray-700 bg-gray-600"
+                            : `dept-${index}`
+                        }`
+                      : `${
+                          darkMode
+                            ? "hover:bg-indigo-700 "
+                            : `dept-hover-${index}`
+                        }`
+                  }`}
+                >
+                  {departmentIcons[department.name]}
+                  <p className={`px-2 bg-[rgb(255 255 255 / 0%)] `}>
+                    {department.name.replace("_", " ")}
+                  </p>
+                </Link>
+              </li>
+            )
+          )}
 
         {profileData && profileData.role_priv === "org_admin" ? (
           <div className="px-4">

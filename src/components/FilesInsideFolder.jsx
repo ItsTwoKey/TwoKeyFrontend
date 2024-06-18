@@ -6,6 +6,8 @@ import { useDarkMode } from "../context/darkModeContext";
 import RecentFiles from "./RecentFiles";
 import { useAuth } from "../context/authContext";
 import AddFilesInsideFolder from "./AddFilesInsideFolder";
+import { auth } from "../helper/firebaseClient";
+import { useDepartment } from "../context/departmentContext";
 
 const FilesInsideFolder = () => {
   const { formatFileSize } = useAuth();
@@ -13,23 +15,23 @@ const FilesInsideFolder = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { darkMode } = useDarkMode();
   const { folderName, folderId } = useParams();
+  const { departments } = useDepartment();
 
   useEffect(() => {
     listFilesInFolder(folderId);
-  }, []);
+  }, [auth.currentUser, folderId]);
 
   const listFilesInFolder = async (folder_id) => {
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/folder/listFiles/${folder_id}`,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
-      console.log("files", response.data);
 
       if (response) {
         const mappedFiles = response.data.map((file) => {
@@ -41,17 +43,21 @@ const FilesInsideFolder = () => {
             file.department = "";
           }
 
+          const filteredDepartment = departments.filter(
+            (dept) => dept.id === file.department_ids[0]
+          );
+
           return {
             id: file.id,
             name: file.name.substring(0, 80),
             profilePic: file.profile_pic,
             size: formatFileSize(file.metadata.size),
-            dept: file.department,
-            owner: file.owner_email,
+            dept: file.department_ids,
+            owner: file.owner_id,
             mimetype: file.metadata.mimetype,
             status: "Team",
             security: "Enhanced",
-            bg: file?.file_info[0]?.depts[0]?.metadata?.bg,
+            bg: filteredDepartment[0]?.metadata.bg,
             lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
               "en-IN",
               {
@@ -70,7 +76,6 @@ const FilesInsideFolder = () => {
           return new Date(b.lastUpdate) - new Date(a.lastUpdate);
         });
         setFiles(mappedFiles);
-        // console.log("test", mappedFiles);
       }
     } catch (error) {
       console.log("error occured while fetching files inside folders", error);
@@ -81,9 +86,10 @@ const FilesInsideFolder = () => {
     setSearchQuery(e.target.value);
   };
 
-  const filteredFiles = files.filter((file) =>
-    file.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredFiles = files.filter((file) => {
+    // Perform the filter operation
+    return file.name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   return (
     <div className="p-4">
@@ -96,13 +102,13 @@ const FilesInsideFolder = () => {
       </div>
 
       {/* Search bar */}
-      <div className="flex justify-end items-center">
+      <div className="flex justify-end -mt-2 items-center pb-4">
         <input
           type="text"
           placeholder="Search by file name"
           value={searchQuery}
           onChange={handleSearch}
-          className="border border-gray-300 rounded-md px-3 py-2 mb-4"
+          className="border border-gray-300 rounded-md px-3 py-2"
         />
       </div>
 

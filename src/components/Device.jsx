@@ -3,6 +3,7 @@ import secureLocalStorage from "react-secure-storage";
 import axios from "axios";
 import Desktopicon from "../assets/Desktopicon.svg";
 import MobileIcon from "../assets/MobileIcon.svg";
+import { Avatar, Tooltip } from "@mui/joy";
 
 const Device = () => {
   const [users, setUsers] = useState([]);
@@ -41,21 +42,40 @@ const Device = () => {
                 key={user.id}
                 className="my-4 p-4 rounded-lg bg-[#f1f1ff] flex flex-row justify-between items-center"
               >
-                <p>
-                  {user.name} {user.last_name}
-                </p>
+                <span className="flex flex-row gap-4 items-center">
+                  <Tooltip title={user.email} arrow>
+                    <Avatar
+                      src={user.profilePictureUrl}
+                      alt={`${user.name} ${user.last_name}`}
+                      sx={{
+                        marginRight: 1,
+                        width: "30px",
+                        height: "30px",
+                        borderRadius: "25%",
+                      }}
+                      variant="rounded"
+                    />
+                  </Tooltip>
+                  <p>
+                    {user.name} {user.last_name}
+                  </p>
+                </span>
 
                 <span className="flex flex-row gap-4 items-center">
                   <p className="px-2 py-1 text-sm bg-gray-200 rounded-lg ">
                     {user.metadata ? user.metadata?.devices : "Unknown"}
                   </p>
-
-                  <span className="flex flex-row gap-2 items-center">
-                    <img src={Desktopicon} alt="Desktop" />
-                    <p>Desktop</p>
-                  </span>
-
-                  {/* <img src={MobileIcon} alt="Mobile" /> */}
+                  {user.metadata?.deviceType !== "Desktop" ? (
+                    <span className="flex flex-row gap-2 items-center">
+                      <img src={MobileIcon} alt="Mobile" />
+                      <p>Mobile</p>
+                    </span>
+                  ) : (
+                    <span className="flex flex-row gap-2 items-center">
+                      <img src={Desktopicon} alt="Desktop" />
+                      <p>Desktop</p>
+                    </span>
+                  )}
                 </span>
               </div>
             ))

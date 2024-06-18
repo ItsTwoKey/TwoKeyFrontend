@@ -9,6 +9,7 @@ import SecureShare from "../components/SecureShare";
 import { useDarkMode } from "../context/darkModeContext";
 import { useAuth } from "../context/authContext";
 import fileContext from "../context/fileContext";
+import { useDepartment } from "../context/departmentContext";
 
 const Department = () => {
   const { darkMode } = useDarkMode();
@@ -18,6 +19,7 @@ const Department = () => {
   const [loading, setLoading] = useState(true); // Initialize loading state as true
   const context = useContext(fileContext);
   const { departmentFiles, setDepartmentFiles } = context;
+  const { departments } = useDepartment();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,7 +27,7 @@ const Department = () => {
         let token = secureLocalStorage.getItem("token");
 
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/${deptName}/?p=1`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files`,
           {
             headers: {
               Authorization: token,
@@ -47,17 +49,21 @@ const Department = () => {
             }
             // console.log("department : ", file.department);
 
+            const filteredDepartment = departments.filter(
+              (dept) => dept.id === file.department_ids[0]
+            );
+
             return {
               id: file.id,
               name: file.name.substring(0, 80),
               profilePic: file.profile_pic,
               size: formatFileSize(file.metadata.size),
-              dept: file.department,
-              owner: file.owner_email,
+              dept: file.department_ids,
+              owner: file.owner_id,
               mimetype: file.metadata.mimetype,
               status: "Team",
               security: "Enhanced",
-              color: file.file_info[0]?.depts[0]?.metadata?.bg,
+              color: filteredDepartment[0].metadata?.bg,
               lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
                 "en-IN",
                 {
@@ -76,8 +82,17 @@ const Department = () => {
           mappedFiles.sort((a, b) => {
             return new Date(b.lastUpdate) - new Date(a.lastUpdate);
           });
-          setFilesFromBackend(mappedFiles);
-          setDepartmentFiles(mappedFiles);
+          
+          const getDepartmentId = departments.find(
+            (dept) => dept.name === deptName
+          );
+          
+          const filteredFiles = mappedFiles.filter((file) =>
+            file.dept.find((id) => id === getDepartmentId.id)
+          );
+
+          setFilesFromBackend(filteredFiles);
+          setDepartmentFiles(filteredFiles);
         }
 
         setLoading(false); // Once data is fetched, set loading to false
@@ -92,7 +107,6 @@ const Department = () => {
 
   useEffect(() => {
     setFilesFromBackend(departmentFiles);
-    console.log("dept file: ", departmentFiles);
   }, [departmentFiles]);
 
   if (!secureLocalStorage.getItem("token")) {

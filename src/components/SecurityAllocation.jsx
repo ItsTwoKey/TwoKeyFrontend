@@ -51,13 +51,13 @@ const SecurityAllocation = ({
   }, [selectedUsers]);
 
   const listUsers = async () => {
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
     try {
       const userList = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users`,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
@@ -249,15 +249,16 @@ const SecurityAllocation = ({
             renderValue={(selected) => (
               <div>
                 {selected.map((userId) => {
-                  const { name, last_name, profile_pic } = users.find(
+                  const { name, last_name, profilePictureUrl } = users.find(
                     (user) => user.id === userId
                   );
+
                   return (
                     <Chip
                       key={userId}
                       avatar={
                         <img
-                          src={profile_pic}
+                          src={profilePictureUrl}
                           alt={`${name}'s Profile Pic`}
                           style={{
                             borderRadius: "50%",
@@ -292,13 +293,13 @@ const SecurityAllocation = ({
                     <span className="flex flex-row items-center gap-2">
                       <img
                         src={
-                          user.profile_pic ? user.profile_pic : ProfilePicDummy
+                          user.profilePictureUrl ? user.profilePictureUrl : ProfilePicDummy
                         }
                         alt="Profile pic"
                         className="h-8 w-8 rounded-full"
                       />
                       <span>
-                        <p className="text-sm font-semibold">{user.name}</p>
+                        <p className="text-sm font-semibold">{user.name} {user.last_name}</p>
                         <p className="text-xs font-light text-gray-500">
                           {user.email}
                         </p>
@@ -313,7 +314,7 @@ const SecurityAllocation = ({
           {selectedUsers.map((user, index) => (
             <div
               key={index}
-              className="flex justify-between my-2 bg-[#EDEDFC] p-2"
+              className="flex justify-between my-2 bg-[#EDEDFC] p-2 rounded-md"
             >
               <p className="text-sm font-medium text-indigo-700">
                 {user.name} {user.last_name}
@@ -321,7 +322,7 @@ const SecurityAllocation = ({
 
               <span className="flex flex-row gap-4 items-center">
                 <img
-                  src={user.profile_pic ? user.profile_pic : ProfilePicDummy}
+                  src={user.profilePictureUrl ? user.profilePictureUrl : ProfilePicDummy}
                   alt="Profile pic"
                   className="h-6 w-6 rounded-md"
                 />

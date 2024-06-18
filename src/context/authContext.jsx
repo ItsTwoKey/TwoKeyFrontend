@@ -236,7 +236,7 @@ export const AuthProvider = ({ children }) => {
       size /= 1024;
       unitIndex++;
     }
-    return size.toFixed(2) + " " + units[unitIndex];
+    return size?.toFixed(2) + " " + units[unitIndex];
   }
 
   async function fetchProfileData() {
@@ -251,7 +251,6 @@ export const AuthProvider = ({ children }) => {
 
         // Set the profile data in the state
         setProfileData(res.data.user);
-        secureLocalStorage.removeItem("profileData");
         secureLocalStorage.setItem(
           "profileData",
           JSON.stringify(res.data.user)
@@ -304,14 +303,14 @@ export const AuthProvider = ({ children }) => {
   }
 
   const listLocations = async () => {
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
     try {
       const locations = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/file/listLocation`,
 
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
