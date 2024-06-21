@@ -5,7 +5,12 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import secureLocalStorage from "react-secure-storage";
 import toast, { Toaster } from "react-hot-toast";
+import CircleIcon from "@mui/icons-material/Circle";
 
+const DEPARTMENT_COLOR = {
+  hr: "",
+  sales: "",
+};
 const Lobby = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -27,13 +32,17 @@ const Lobby = () => {
         );
 
         setUsers(response.data);
+        console.log({ users: response.data });
+        console.log({ departments });
         // Filter out users where is_approved is false
-        const filteredUsers = response.data.filter((user) => !user.is_approved);
+        const filteredUsers = response?.data.filter(
+          (user) => !user.is_approved
+        );
         setFilteredUsers(filteredUsers);
-
-        setLoading(false); // Set loading to false after data fetch
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -111,7 +120,8 @@ const Lobby = () => {
     <div className="p-4">
       <Toaster position="bottom-left" reverseOrder={false} />
       {Object.keys(groupedUsers).map((dept) => {
-        const departmentInfo = departments.find((d) => d.name === dept);
+        const departmentInfo = departments.find((d) => d.id === dept);
+        console.log({ departmentInfo });
         const departmentBgColor = departmentInfo
           ? departmentInfo.metadata.bg
           : "#ffffff";
@@ -131,19 +141,38 @@ const Lobby = () => {
               }
             >
               <span className="flex flex-row gap-1 items-center">
-                <p>{dept}</p>
-                <p className="mb-2">.</p>
+                <p>{departmentInfo?.name}</p>
+                <div className="rounded-full w-2 h-2 bg-black mx-2" />
                 <p>{groupedUsers[dept].length}</p>
               </span>
             </h3>
             <DataGrid
+              checkboxSelection
+              disableRowSelectionOnClick
+              className={departmentBgColor}
+              loading={loading}
               rows={groupedUsers[dept]}
-              headerStyle={{ backgroundColor: "blue" }}
+              pageSizeOptions={[10, 25, 50]}
+              headerStyle={{ backgroundColor: "#E2F0FF" }}
               columns={[
                 {
+                  field: "employee_id",
+                  headerName: (
+                    <p className="text-zinc-700 font-bold">Employee Id</p>
+                  ),
+                  width: 120,
+                  renderCell: (params) => (
+                    <div className="flex items-center">
+                      {params.row.employeeId || "#767asv"}
+                    </div>
+                  ),
+                  headerClassName: "custom-header",
+                },
+                {
                   field: "name",
-                  headerName: "Name",
-                  width: 150,
+                  headerName: <p className="text-zinc-700 font-bold">Name</p>,
+
+                  width: 200,
                   renderCell: (params) => (
                     <div className="flex items-center">
                       <Tooltip title={params.row.email} arrow>
@@ -166,31 +195,39 @@ const Lobby = () => {
                 },
                 {
                   field: "email",
-                  headerName: "Email",
-                  width: 250,
-                  headerClassName: "custom-header",
+                  headerAlign: "center",
+                  align: "center",
+                  headerName: <p className="text-zinc-700  font-bold">Email</p>,
+                  width: 240,
+                  headerClassName: "custom-header ",
+                  hideSortIcons: true,
                 },
                 {
                   field: "role_priv",
-                  headerName: "Designation",
+                  headerName: (
+                    <p className="text-zinc-700 font-bold">Designation</p>
+                  ),
                   width: 150,
                   headerClassName: "custom-header",
                 },
                 {
                   field: "action",
-                  headerName: "Action",
+                  headerName: <p className="text-zinc-700 font-bold">Action</p>,
                   width: 200,
+                  headerAlign: "center",
+                  hideSortIcons: true,
+                  align: "center",
                   renderCell: (params) => (
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => acceptUser(params)}
-                        className="py-2 px-4 rounded-lg border shadow-sm"
+                        className="py-2 px-4 rounded-lg border bg-white shadow-sm"
                       >
                         Accept
                       </button>
                       <button
                         onClick={() => handleRemoveUserClick(params)}
-                        className="py-2 px-4 rounded-lg shadow-sm bg-red-700 text-white"
+                        className="py-2 px-4 rounded-lg shadow-sm bg-red-500 font-medium text-white"
                       >
                         Revoke
                       </button>
