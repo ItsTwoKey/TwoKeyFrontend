@@ -121,10 +121,10 @@ const Lobby = () => {
       <Toaster position="bottom-left" reverseOrder={false} />
       {Object.keys(groupedUsers).map((dept) => {
         const departmentInfo = departments.find((d) => d.id === dept);
-        console.log({ departmentInfo });
         const departmentBgColor = departmentInfo
           ? departmentInfo.metadata.bg
-          : "#ffffff";
+          : "#000000";
+        console.log({ departmentInfo, departmentBgColor });
         const departmentBorderColor = departmentInfo
           ? departmentInfo.metadata.border
           : "#B7B6C2";
@@ -148,36 +148,54 @@ const Lobby = () => {
             </h3>
             <DataGrid
               checkboxSelection
+              hideFooterSelectedRowCount
               disableRowSelectionOnClick
-              className={departmentBgColor}
+              disableColumnMenu
+              sx={{
+                "& .MuiDataGrid-columnHeaders": {
+                  backgroundColor: departmentBgColor,
+                },
+                "& .MuiDataGrid-columnHeaderTitle": {
+                  fontWeight: "bold",
+                },
+                "& .MuiDataGrid-columnHeaderCheckbox": {
+                  visibility: "hidden",
+                },
+              }}
+              style={{
+                backgroundColor: departmentBgColor,
+                border: `2px solid ${departmentBorderColor}`,
+              }}
               loading={loading}
               rows={groupedUsers[dept]}
               pageSizeOptions={[10, 25, 50]}
-              headerStyle={{ backgroundColor: "#E2F0FF" }}
               columns={[
+                // todo: Find a proper employee Id to use
                 {
                   field: "employee_id",
                   headerName: (
                     <p className="text-zinc-700 font-bold">Employee Id</p>
                   ),
+                  cellClassName: `border-${departmentBorderColor}`,
                   width: 120,
                   renderCell: (params) => (
-                    <div className="flex items-center">
+                    <div className="flex items-center text-zinc-600">
                       {params.row.employeeId || "#767asv"}
                     </div>
                   ),
-                  headerClassName: "custom-header",
+
+                  headerClassName: `custom-header`,
                 },
                 {
                   field: "name",
                   headerName: <p className="text-zinc-700 font-bold">Name</p>,
 
-                  width: 200,
+                  width: 220,
                   renderCell: (params) => (
                     <div className="flex items-center">
                       <Tooltip title={params.row.email} arrow>
                         <Avatar
-                          src={params.row.profile_pic}
+                          src={params.row.profilePictureUrl}
                           alt={`${params.row.name} ${params.row.last_name}`}
                           sx={{
                             marginRight: 1,
@@ -191,7 +209,7 @@ const Lobby = () => {
                       {`${params.row.name} ${params.row.last_name || ""}`}
                     </div>
                   ),
-                  headerClassName: "custom-header",
+                  headerClassName: `custom-header`,
                 },
                 {
                   field: "email",
@@ -199,7 +217,9 @@ const Lobby = () => {
                   align: "center",
                   headerName: <p className="text-zinc-700  font-bold">Email</p>,
                   width: 240,
-                  headerClassName: "custom-header ",
+                  cellClassName: "text-zinc-600",
+                  headerClassName: `custom-header`,
+
                   hideSortIcons: true,
                 },
                 {
@@ -208,7 +228,15 @@ const Lobby = () => {
                     <p className="text-zinc-700 font-bold">Designation</p>
                   ),
                   width: 150,
-                  headerClassName: "custom-header",
+                  cellClassName: "text-zinc-600",
+                  headerClassName: `custom-header`,
+                  renderCell: (params) => {
+                    const role = `${params.row?.role_priv
+                      .charAt(0)
+                      .toUpperCase()}${params.row?.role_priv.slice(1)}`;
+
+                    return <div>{role}</div>;
+                  },
                 },
                 {
                   field: "action",
@@ -221,7 +249,7 @@ const Lobby = () => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => acceptUser(params)}
-                        className="py-2 px-4 rounded-lg border bg-white shadow-sm"
+                        className={`py-2 px-4 rounded-lg border bg-white shadow-sm border-zinc-400 shadow`}
                       >
                         Accept
                       </button>
@@ -233,7 +261,7 @@ const Lobby = () => {
                       </button>
                     </div>
                   ),
-                  headerClassName: "custom-header",
+                  headerClassName: `custom-header`,
                 },
               ]}
               pageSize={5}
