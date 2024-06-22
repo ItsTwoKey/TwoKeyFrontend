@@ -85,7 +85,10 @@ const Login = () => {
       const userInfo = {
         email: formData.email,
         is_active: true,
-        metadata: { devices: navigator?.userAgentData?.platform || "unknown", deviceType },
+        metadata: {
+          devices: navigator?.userAgentData?.platform || "unknown",
+          deviceType,
+        },
       };
 
       try {
