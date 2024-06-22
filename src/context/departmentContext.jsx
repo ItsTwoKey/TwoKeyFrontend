@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import secureLocalStorage from "react-secure-storage";
 import axios from "axios";
 import { auth } from "../helper/firebaseClient";
+import { api } from "../utils/axios-instance";
 
 const DepartmentContext = createContext();
 export default DepartmentContext;
@@ -17,30 +18,20 @@ export function DepartmentProvider({ children }) {
 
   const listDepartments = async () => {
     setLoading(true);
-    let token = secureLocalStorage.getItem("token");
-    if (token) {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+    try {
+      const response = await api(`/dept/listDepts`);
 
-        const departmentsData = response.data;
-        secureLocalStorage.setItem(
-          "departments",
-          JSON.stringify(departmentsData)
-        );
-        setDepartments(departmentsData);
+      const departmentsData = response.data;
+      secureLocalStorage.setItem(
+        "departments",
+        JSON.stringify(departmentsData)
+      );
+      setDepartments(departmentsData);
 
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-        setLoading(false);
-      }
+      setLoading(false);
+    } catch (error) {
+      setError(error);
+      setLoading(false);
     }
   };
 
