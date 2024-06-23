@@ -140,7 +140,6 @@ const Lobby = () => {
               }}
               loading={loading}
               rows={groupedUsers[dept]}
-              pageSizeOptions={[10, 25, 50]}
               columns={[
                 // todo: Find a proper employee Id to use
                 {
@@ -149,7 +148,8 @@ const Lobby = () => {
                     <p className="text-zinc-700 font-bold">Employee Id</p>
                   ),
                   cellClassName: `border-${departmentBorderColor}`,
-                  width: 120,
+                  flex: 0.5,
+                  minWidth: 0,
                   renderCell: (params) => (
                     <div className="flex items-center text-zinc-600">
                       {params.row.employeeId || "#767asv"}
@@ -161,8 +161,8 @@ const Lobby = () => {
                 {
                   field: "name",
                   headerName: <p className="text-zinc-700 font-bold">Name</p>,
-
-                  width: 220,
+                  flex: 1,
+                  minWidth: 160,
                   renderCell: (params) => (
                     <div className="flex items-center">
                       <Tooltip title={params.row.email} arrow>
@@ -199,7 +199,8 @@ const Lobby = () => {
                   headerName: (
                     <p className="text-zinc-700 font-bold">Designation</p>
                   ),
-                  width: 150,
+                  flex: 1,
+                  minWidth: 100,
                   cellClassName: "text-zinc-600",
                   headerClassName: `custom-header`,
                   renderCell: (params) => {
@@ -213,7 +214,8 @@ const Lobby = () => {
                 {
                   field: "action",
                   headerName: <p className="text-zinc-700 font-bold">Action</p>,
-                  width: 200,
+                  flex: 2,
+                  minWidth: 200,
                   headerAlign: "center",
                   hideSortIcons: true,
                   align: "center",
@@ -221,7 +223,7 @@ const Lobby = () => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => acceptUser(params)}
-                        className={`py-2 px-4 rounded-lg border bg-white shadow-sm border-zinc-400 shadow`}
+                        className={`py-2 px-4 rounded-lg border bg-white shadow-sm border-zinc-400 `}
                       >
                         Accept
                       </button>

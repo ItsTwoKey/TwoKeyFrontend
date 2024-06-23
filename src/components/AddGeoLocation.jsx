@@ -3,10 +3,11 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { api } from "../utils/axios-instance";
+import { auth } from "../helper/firebaseClient";
 
 const AddGeoLocation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,8 +29,6 @@ const AddGeoLocation = () => {
 
   const addLocation = async () => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
-
       const body = {
         type: "Feature",
         geometry: {
@@ -41,15 +40,7 @@ const AddGeoLocation = () => {
         },
       };
       if (selectedLocation) {
-        const addLocation = await axios.post(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/createLocation`,
-          body,
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
+        const addLocation = await api.post("/file/createLocation", body);
         console.log("addLocation:", addLocation.data);
       }
     } catch (error) {

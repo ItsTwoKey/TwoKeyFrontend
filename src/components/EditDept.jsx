@@ -3,12 +3,12 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import secureLocalStorage from "react-secure-storage";
-import axios from "axios";
+
 import { CircularProgress } from "@mui/material";
 import Chrome from "@uiw/react-color-chrome";
 import { GithubPlacement } from "@uiw/react-color-github";
 import { useDepartment } from "../context/departmentContext";
+import { api } from "../utils/axios-instance";
 
 const EditDept = ({ id, name }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,17 +40,7 @@ const EditDept = ({ id, name }) => {
     };
 
     try {
-      let token = secureLocalStorage.getItem("token");
-
-      let renameDept = await axios.patch(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/updateDept/${id}`,
-        body,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      let renameDept = await api.patch(`/dept/updateDept/${id}`, body);
 
       if (renameDept) {
         await listDepartments();

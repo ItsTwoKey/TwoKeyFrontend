@@ -9,7 +9,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import ReadIcon from "../assets/read.svg";
 import secureLocalStorage from "react-secure-storage";
-import axios from "axios";
+import { api } from "../utils/axios-instance";
 
 const FileInfo = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,17 +23,7 @@ const FileInfo = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
 
   const getLogs = async () => {
     try {
-      let token = secureLocalStorage.getItem("token");
-
-      const accessLogs = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/${fileInfo.id}?recs=5`,
-
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const accessLogs = await api.get(`/file/getLogs/${fileInfo.id}?recs=5`);
       console.log(`Access Logs of id ( ${fileInfo.id} ) :`, accessLogs.data);
 
       setLogs(accessLogs.data);

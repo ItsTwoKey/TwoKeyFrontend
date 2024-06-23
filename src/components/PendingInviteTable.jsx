@@ -10,7 +10,7 @@ import Tooltip from "@mui/material/Tooltip";
 import RevokeInvite from "./RevokeInvite";
 import ResendInvite from "./ResendInvite";
 import secureLocalStorage from "react-secure-storage";
-import axios from "axios";
+import { api } from "../utils/axios-instance";
 
 export default function PendingInviteTable() {
   const [pendingInvites, setPendingInvites] = useState([]);
@@ -18,15 +18,7 @@ export default function PendingInviteTable() {
   useEffect(() => {
     const listPendingInvites = async () => {
       try {
-        let token = secureLocalStorage.getItem("token");
-        const invites = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/invites/pending`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const invites = await api.get(`/users/invites/pending`);
 
         console.log(invites.data);
         setPendingInvites(invites.data);

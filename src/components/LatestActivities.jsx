@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Paper from "@mui/material/Paper";
-import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import { useDarkMode } from "../context/darkModeContext";
@@ -9,6 +8,7 @@ import { supabase } from "../helper/supabaseClient";
 import secureLocalStorage from "react-secure-storage";
 
 import Skeleton from "@mui/material/Skeleton";
+import { api } from "../utils/axios-instance";
 
 const LatestActivities = () => {
   const { darkMode } = useDarkMode();
@@ -55,17 +55,11 @@ const LatestActivities = () => {
         setLogs(JSON.parse(cachedLogs));
       }
 
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
-
       const logsEndpoint = isUserProfile
-        ? `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs?global=0&recs=5`
-        : `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/?recs=10`;
+        ? `/file/getLogs?global=0&recs=5`
+        : `/file/getLogs/?recs=10`;
 
-      const accessLogs = await axios.get(logsEndpoint, {
-        headers: {
-          Authorization: `Bearer ${token.session.access_token}`,
-        },
-      });
+      const accessLogs = await api.get(logsEndpoint);
 
       // console.log("Common logs", accessLogs.data);
 

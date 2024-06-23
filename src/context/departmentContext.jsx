@@ -1,6 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import secureLocalStorage from "react-secure-storage";
-import axios from "axios";
 import { auth } from "../helper/firebaseClient";
 import { api } from "../utils/axios-instance";
 

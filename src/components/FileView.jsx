@@ -4,8 +4,9 @@ import FileDetails from "./FileDetails";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import { useAuth } from "../context/authContext";
+import { auth } from "../helper/firebaseClient";
+import { api } from "../utils/axios-instance";
 import axios from "axios";
-import secureLocalStorage from "react-secure-storage";
 
 const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   const { screenshotDetected, screenshotAlert } = useAuth();
@@ -40,7 +41,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   useEffect(() => {
     const getPresignedUrl = async () => {
       try {
-        let token = secureLocalStorage.getItem("token");
+        let token = await auth.currentUser.getIdToken();
 
         const body = {
           latitude: 18.44623721673684,
@@ -48,14 +49,9 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
           idToken: token,
         };
 
-        const presignedUrl = await axios.post(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getPresigned/${fileInfo.id}`,
-          body,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
+        const presignedUrl = await api.post(
+          `/file/getPresigned/${fileInfo.id}`,
+          body
         );
 
         const url = presignedUrl.data.signed_url;
@@ -86,7 +82,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
 
     getPresignedUrl();
     // setPreUrl(fileInfo.download_url);
-    
+
     setLoadingUrl(false);
   }, [fileInfo.id]);
 

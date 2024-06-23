@@ -6,7 +6,6 @@ import LeftArrow from "../assets/leftArrow.svg";
 import Trash from "../assets/trash.svg";
 import DownloadFile from "../assets/downloadFile.svg";
 import { supabase } from "../helper/supabaseClient";
-import axios from "axios";
 import AIChat from "./AIChat";
 import { useNavigate } from "react-router-dom";
 
@@ -20,6 +19,7 @@ import secureLocalStorage from "react-secure-storage";
 import { deleteObject, getStorage, ref } from "firebase/storage";
 import toast, { Toaster } from "react-hot-toast";
 import fileContext from "../context/fileContext";
+import { api } from "../utils/axios-instance";
 
 // Define SVG icons for different file types
 const fileIcons = {
@@ -65,18 +65,8 @@ const FileDetails = ({
 
   const downloadAlert = async (fileId) => {
     try {
-      let token = secureLocalStorage.getItem("token");
-
       if (fileId) {
-        const res = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/logEvent/${fileId}?event=download`,
-
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const res = await api.get(`/file/logEvent/${fileId}?event=download`);
         console.log("download log :", res);
       }
     } catch (error) {
@@ -117,7 +107,6 @@ const FileDetails = ({
 
   const handleDelete = async () => {
     let profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
-    let token = secureLocalStorage.getItem("token");
 
     // Check if the user is the owner of the file
     // console.log(fileName);
@@ -133,14 +122,7 @@ const FileDetails = ({
         await deleteObject(fileRef);
         console.log("Delete success");
 
-        const res = await axios.delete(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/delete-file/${fileInfo.id}/`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const res = await api.delete(`/file/delete-file/${fileInfo.id}/`);
 
         removeFile(fileInfo.id);
         // if (deptName) updateDepartmentFiles(deptName);

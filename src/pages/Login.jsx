@@ -13,6 +13,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import secureLocalStorage from "react-secure-storage";
 import { auth } from "../helper/firebaseClient";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { api } from "../utils/axios-instance";
 
 const Login = () => {
   // const [userMetaData, setUserMetaData] = useState([]);
@@ -156,11 +157,7 @@ const Login = () => {
 
   const listDepartments = async () => {
     try {
-      let token = secureLocalStorage.getItem("token");
-      const departments = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-        { headers: { Authorization: token } }
-      );
+      const departments = await api.get(`/dept/listDepts`);
 
       if (departments.data) {
         console.log("at login", departments.data);

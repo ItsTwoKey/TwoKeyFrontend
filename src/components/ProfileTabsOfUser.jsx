@@ -4,11 +4,10 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import ProfileLogs from "../components/ProfileLogs";
-import axios from "axios";
 // import LatestActivities from "../components/LatestActivities";
 import CustomLogs from "./CustomLogs";
 import { useParams } from "react-router-dom";
-import  secureLocalStorage  from  "react-secure-storage";
+import { api } from "../utils/axios-instance";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -55,34 +54,11 @@ export default function ProfileTabs() {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
-
         const [sharedLogsResponse, receivedLogsResponse, latestLogsResponse] =
           await Promise.all([
-            axios.get(
-              `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getUserInfo/${userId}?type=shared`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token.session.access_token}`,
-                },
-              }
-            ),
-            axios.get(
-              `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getUserInfo/${userId}?type=received`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token.session.access_token}`,
-                },
-              }
-            ),
-            axios.get(
-              `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getUserInfo/${userId}/?logs=1&recs=15`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token.session.access_token}`,
-                },
-              }
-            ),
+            api.get(`/users/getUserInfo/${userId}?type=shared`),
+            api.get(`/users/getUserInfo/${userId}?type=received`),
+            api.get(`/users/getUserInfo/${userId}/?logs=1&recs=15`),
           ]);
 
         setSharedLogs(sharedLogsResponse.data.files);

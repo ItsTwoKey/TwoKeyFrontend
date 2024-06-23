@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import RecentFiles from "../components/RecentFiles";
 import ErrorPage from "../components/ErrorPage";
 import secureLocalStorage from "react-secure-storage";
@@ -10,6 +9,7 @@ import { useDarkMode } from "../context/darkModeContext";
 import { useAuth } from "../context/authContext";
 import fileContext from "../context/fileContext";
 import { useDepartment } from "../context/departmentContext";
+import { api } from "../utils/axios-instance";
 
 const Department = () => {
   const { darkMode } = useDarkMode();
@@ -24,16 +24,7 @@ const Department = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let token = secureLocalStorage.getItem("token");
-
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await api.get(`/file/files`);
 
         if (response) {
           const mappedFiles = response.data.map((file) => {
@@ -82,11 +73,11 @@ const Department = () => {
           mappedFiles.sort((a, b) => {
             return new Date(b.lastUpdate) - new Date(a.lastUpdate);
           });
-          
+
           const getDepartmentId = departments.find(
             (dept) => dept.name === deptName
           );
-          
+
           const filteredFiles = mappedFiles.filter((file) =>
             file.dept.find((id) => id === getDepartmentId.id)
           );

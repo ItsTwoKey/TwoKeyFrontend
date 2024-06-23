@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
 import FileView from "./FileView";
 import { useDarkMode } from "../context/darkModeContext";
 import { Skeleton } from "@mui/material";
@@ -20,6 +19,7 @@ import Txt from "../assets/txt.svg";
 import Video from "../assets/video.svg";
 import secureLocalStorage from "react-secure-storage";
 import fileContext from "../context/fileContext";
+import { api } from "../utils/axios-instance";
 
 // Define SVG icons for different file types
 const fileIcons = {
@@ -87,15 +87,7 @@ const RecentFiles = ({ filteredData, loading }) => {
 
   const getSharedFileInfo = async (fileId) => {
     try {
-      let token = secureLocalStorage.getItem("token");
-      const info = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/sharedFileInfo/${fileId}/`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const info = await api.get(`/file/sharedFileInfo/${fileId}/`);
       setSharedFileInfo(info.data);
     } catch (error) {
       console.log(error);

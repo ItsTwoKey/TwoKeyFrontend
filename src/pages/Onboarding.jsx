@@ -7,11 +7,11 @@ import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import { useDropzone } from "react-dropzone";
-import axios from "axios";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { supabase } from "../helper/supabaseClient";
 import secureLocalStorage from "react-secure-storage";
+import { api } from "../utils/axios-instance";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -70,14 +70,8 @@ const Onboarding = () => {
   useEffect(() => {
     const depData = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
-        const dep = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
+        const dep = await api.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`
         );
         console.log("Departments:", dep.data);
         setDepartmentList(dep.data);
@@ -305,15 +299,7 @@ const Onboarding = () => {
         };
         console.log("onboarding body:", body);
         try {
-          const res = await axios.put(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
-            body,
-            {
-              headers: {
-                Authorization: `Bearer ${data.session.access_token}`,
-              },
-            }
-          );
+          const res = await api.put(`/users/updateProfile`, body);
 
           console.log("onboarding success:", res);
           secureLocalStorage.setItem("profileData", JSON.stringify(res.data));

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -13,6 +12,7 @@ import Radio from "@mui/joy/Radio";
 import Inviteicon from "../assets/InviteMember.svg";
 import toast, { Toaster } from "react-hot-toast";
 import { useDepartment } from "../context/departmentContext";
+import { api } from "../utils/axios-instance";
 
 const InviteMember = (props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,15 +37,7 @@ const InviteMember = (props) => {
   useEffect(() => {
     const getRoles = async () => {
       try {
-        let token = secureLocalStorage.getItem("token");
-        const role = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/role/listRoles`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const role = await api.get(`/role/listRoles`);
         console.log("roles:", role.data);
         setRoles(role.data);
       } catch (error) {
@@ -81,8 +73,6 @@ const InviteMember = (props) => {
 
   const handleInvite = async () => {
     try {
-      let token = secureLocalStorage.getItem("token");
-
       let body = {
         emails: [formData.emailAddress],
         first_name: formData.firstName,
@@ -91,15 +81,7 @@ const InviteMember = (props) => {
         dept_id: formData.department,
       };
 
-      let response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/invite`,
-        body,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      let response = await api.post(`/users/invite`, body);
       // console.log("invite member:", response);
       if (response) {
         toast.success("User invited successfully.");

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
+import { api } from "../utils/axios-instance";
+import { auth } from "../helper/firebaseClient";
 
 const ProfileWorkInformation = ({ profileData }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -22,15 +23,7 @@ const ProfileWorkInformation = ({ profileData }) => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        let token = JSON.parse(secureLocalStorage.getItem("token"));
-        const dep = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
+        const dep = await api.get(`/dept/listDepts`);
         setDepartments(dep.data);
       } catch (error) {
         console.log("Error fetching departments");
@@ -42,21 +35,14 @@ const ProfileWorkInformation = ({ profileData }) => {
 
   const updateProfile = async () => {
     let token = JSON.parse(secureLocalStorage.getItem("token"));
+
     if (token) {
-      const res = await axios.put(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/updateProfile`,
-        {
-          id: token.user.id,
-          role_priv: workFormData.designation,
-          dept: workFormData.department,
-          // manager: workFormData.manager,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
+      const res = await api.put(`/users/updateProfile`, {
+        id: token.user.id,
+        role_priv: workFormData.designation,
+        dept: workFormData.department,
+        // manager: workFormData.manager,
+      });
 
       secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
     }

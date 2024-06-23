@@ -4,7 +4,7 @@ import { supabase } from "../helper/supabaseClient";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
-import axios from "axios";
+
 import secureLocalStorage from "react-secure-storage";
 import RecentFiles from "./RecentFiles";
 import { useAuth } from "../context/authContext";
@@ -20,6 +20,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useDepartment } from "../context/departmentContext";
 import { auth } from "../helper/firebaseClient";
+import { api } from "../utils/axios-instance";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -111,21 +112,20 @@ export default function DashboardTabs() {
     try {
       setLoading(true); // Set loading state to true when fetching data
 
-      let token = secureLocalStorage.getItem("token");
       let url;
 
       switch (value) {
         case 0:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files`;
+          url = `/file/files`;
           break;
         case 1:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared`;
+          url = `/file/files?type=shared`;
           break;
         case 2:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received`;
+          url = `/file/files?type=received`;
           break;
         case 3:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned`;
+          url = `/file/files?type=owned`;
           break;
         default:
           url = "";
@@ -133,11 +133,7 @@ export default function DashboardTabs() {
       }
 
       if (url) {
-        const getFiles = await axios.get(url, {
-          headers: {
-            Authorization: token,
-          },
-        });
+        const getFiles = await api.get(url);
 
         setFiles(getFiles.data);
         setTotalPages(Math.ceil(getFiles.data.length / 25));

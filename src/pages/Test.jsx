@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 import Pagination from "@mui/material/Pagination";
 import PaginationItem from "@mui/material/PaginationItem";
 import Stack from "@mui/material/Stack";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { api } from "../utils/axios-instance";
 
 function FileUploadComponent() {
   const [files, setFiles] = useState([]);
@@ -13,16 +13,8 @@ function FileUploadComponent() {
   const [totalPages, setTotalPages] = useState(0);
 
   const handleFilelisting = async (page) => {
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
     try {
-      const getFiles = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?p=${page}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
+      const getFiles = await api.get(`/file/files?p=${page}`);
 
       console.log("Files:", getFiles.data);
       console.log("Response Headers:", getFiles); // Log response headers

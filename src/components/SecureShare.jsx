@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect, useContext } from "react";
-import axios from "axios";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
@@ -16,6 +15,7 @@ import LinearProgress, {
 import secureLocalStorage from "react-secure-storage";
 import fileContext from "../context/fileContext";
 import { useParams } from "react-router-dom";
+import { api } from "../utils/axios-instance";
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
   borderRadius: 5,
@@ -145,7 +145,6 @@ const SecureShare = ({ value }) => {
 
   const addFileDepartment = async (fileId) => {
     try {
-      let token = secureLocalStorage.getItem("token");
       let profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
       let departmentName = profileData.dept;
 
@@ -158,15 +157,7 @@ const SecureShare = ({ value }) => {
           department_ids: [department.id],
         };
 
-        const addDept = await axios.post(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/addDepartment/${fileId}`,
-          body,
-          {
-            headers: {
-              authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
+        const addDept = await api.post(`/file/addDepartment/${fileId}`, body);
 
         console.log("dept added to file", addDept);
         updateFilesState(value);
@@ -181,28 +172,18 @@ const SecureShare = ({ value }) => {
 
   const shareFiles = async (fileId) => {
     try {
-      let token = secureLocalStorage.getItem("token");
-
       //   console.log("shareFiles Id:", fileId);
-      const res = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/shareFile`,
-        {
-          file: [fileId],
-          shared_with: securityAllotmentData.selectedUsers,
-          expiration_time: securityAllotmentData.timeDifference
-            ? securityAllotmentData.timeDifference
-            : 31536000 * 5,
-          security_check: {
-            download_enabled: true,
-            geo_enabled: securityAllotmentData.location,
-          },
+      const res = await api.post(`/file/shareFile`, {
+        file: [fileId],
+        shared_with: securityAllotmentData.selectedUsers,
+        expiration_time: securityAllotmentData.timeDifference
+          ? securityAllotmentData.timeDifference
+          : 31536000 * 5,
+        security_check: {
+          download_enabled: true,
+          geo_enabled: securityAllotmentData.location,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
+      });
 
       console.log("shareFiles:", res);
     } catch (error) {

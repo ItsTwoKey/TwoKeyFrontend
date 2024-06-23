@@ -3,6 +3,7 @@ import axios from "axios";
 import { supabase } from "../helper/supabaseClient";
 import secureLocalStorage from "react-secure-storage";
 import { auth } from "../helper/firebaseClient";
+import { api } from "../utils/axios-instance";
 
 const AuthContext = createContext();
 
@@ -165,16 +166,7 @@ export const AuthProvider = ({ children }) => {
   // useEffect(() => {
   async function fetchRecentFiles() {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
-
-      const recentFilesFromBackend = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files`,
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
+      const recentFilesFromBackend = await api.get(`/file/files`);
 
       console.log("recentFilesFromBackend", recentFilesFromBackend);
 
@@ -241,7 +233,7 @@ export const AuthProvider = ({ children }) => {
 
   async function fetchProfileData() {
     try {
-      let token = secureLocalStorage.getItem("token");
+      let token = await auth.currentUser.getIdToken();
 
       if (token) {
         const res = await axios.post(
@@ -303,17 +295,8 @@ export const AuthProvider = ({ children }) => {
   }
 
   const listLocations = async () => {
-    let token = secureLocalStorage.getItem("token");
     try {
-      const locations = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/file/listLocation`,
-
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const locations = await api.get(`/file/file/listLocation`);
       // console.log("locations :", locations.data.features);
       setCoordinates(locations.data.features);
     } catch (error) {

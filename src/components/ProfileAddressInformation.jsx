@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 import toast, { Toaster } from "react-hot-toast";
 import { useAuth } from "../context/authContext";
+import { api } from "../utils/axios-instance";
+import { auth } from "../helper/firebaseClient";
 
 const ProfileAddressInformation = ({ isEditing }) => {
   const { profileData, setProfileData } = useAuth();
@@ -28,9 +29,9 @@ const ProfileAddressInformation = ({ isEditing }) => {
     if (prevIsEditing && !isEditing) {
       const updateProfile = async () => {
         try {
-          let token = secureLocalStorage.getItem("token");
+          let token = await auth.currentUser.getIdToken();
           if (token) {
-            const res = await axios.put(
+            const res = await api.put(
               `${process.env.REACT_APP_BACKEND_BASE_URL}/users/update-profile/`,
               {
                 profileData: {
@@ -41,11 +42,6 @@ const ProfileAddressInformation = ({ isEditing }) => {
                   postal_code: addressFormData.postal_code,
                 },
                 idToken: token,
-              },
-              {
-                headers: {
-                  Authorization: token,
-                },
               }
             );
             setProfileData(res.data);

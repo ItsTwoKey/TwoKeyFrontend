@@ -3,7 +3,6 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import axios from "axios";
 import locatemeIcon from "../assets/locateme.svg";
 import DefaultMarkerComponent from "../assets/DefaultMarkerComponent.svg";
 import secureLocalStorage from "react-secure-storage";
@@ -13,6 +12,9 @@ import {
   Autocomplete,
   useJsApiLoader,
 } from "@react-google-maps/api";
+import { api } from "../utils/axios-instance";
+import { auth } from "../helper/firebaseClient";
+import axios from "axios";
 // import { useRef } from "react";
 
 const MapComponent = () => {
@@ -51,7 +53,7 @@ const MapComponent = () => {
   // adding new geolacation into database
   const addLocation = async () => {
     try {
-      let token = secureLocalStorage.getItem("token");
+      let token = await auth.currentUser.getIdToken();
       console.log("proceeding");
       const body = {
         type: "Feature",
@@ -65,15 +67,7 @@ const MapComponent = () => {
         idToken: token,
       };
       if (selectedLocation) {
-        const addLocation = await axios.post(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/createLocation`,
-          body,
-          {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          }
-        );
+        const addLocation = await api.post(`/file/createLocation`, body);
         console.log("addLocation:", addLocation.data);
       }
       console.log("addLocation:", body);

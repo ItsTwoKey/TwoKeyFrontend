@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 import { useDepartment } from "../context/departmentContext";
 import toast, { Toaster } from "react-hot-toast";
 import { useAuth } from "../context/authContext";
+import { api } from "../utils/axios-instance";
+import { auth } from "../helper/firebaseClient";
 
 const ProfilePersonalInfo = ({ isEditing }) => {
   const { departments: newDepartments } = useDepartment();
@@ -35,7 +36,7 @@ const ProfilePersonalInfo = ({ isEditing }) => {
   useEffect(() => {
     if (prevIsEditing && !isEditing) {
       const updateProfile = async () => {
-        let token = secureLocalStorage.getItem("token");
+        let token = await auth.currentUser.getIdToken();
         // TODO: Refactor to update dept with its id and not name
         // Check if the department has changed
         const isDepartmentChanged =
@@ -53,15 +54,10 @@ const ProfilePersonalInfo = ({ isEditing }) => {
         };
 
         try {
-          const res = await axios.put(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/users/update-profile/`,
-            { profileData: updateData, idToken: token },
-            {
-              headers: {
-                Authorization: token,
-              },
-            }
-          );
+          const res = await api.put(`/users/update-profile/`, {
+            profileData: updateData,
+            idToken: token,
+          });
 
           toast.success("Profile updated successfully");
           setProfileData(res.data);
@@ -80,15 +76,7 @@ const ProfilePersonalInfo = ({ isEditing }) => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        let token = secureLocalStorage.getItem("token");
-        const dep = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const dep = await api.get(`/dept/listDepts`);
         setDepartments(dep.data);
       } catch (error) {
         console.log("Error fetching departments");
