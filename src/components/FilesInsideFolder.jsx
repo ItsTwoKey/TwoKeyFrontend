@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
-import axios from "axios";
 import { useDarkMode } from "../context/darkModeContext";
 import RecentFiles from "./RecentFiles";
 import { useAuth } from "../context/authContext";
 import AddFilesInsideFolder from "./AddFilesInsideFolder";
 import { auth } from "../helper/firebaseClient";
 import { useDepartment } from "../context/departmentContext";
+import { api } from "../utils/axios-instance";
 
 const FilesInsideFolder = () => {
   const { formatFileSize } = useAuth();
@@ -22,16 +22,8 @@ const FilesInsideFolder = () => {
   }, [auth.currentUser, folderId]);
 
   const listFilesInFolder = async (folder_id) => {
-    let token = secureLocalStorage.getItem("token");
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/folder/listFiles/${folder_id}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await api.get(`/file/folder/listFiles/${folder_id}`);
 
       if (response) {
         const mappedFiles = response.data.map((file) => {

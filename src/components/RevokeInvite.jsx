@@ -3,23 +3,14 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import secureLocalStorage from "react-secure-storage";
-import axios from "axios";
+import { api } from "../utils/axios-instance";
 
 const RevokeInvite = ({ id }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const revokeInvite = async () => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
-      const response = await axios.delete(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/deleteUser/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
+      const response = await api.delete(`/users/deleteUser/${id}`);
 
       // console.log(response.status);
 

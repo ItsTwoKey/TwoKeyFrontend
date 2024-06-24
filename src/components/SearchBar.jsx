@@ -3,9 +3,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useDarkMode } from "../context/darkModeContext";
 import { supabase } from "../helper/supabaseClient";
 import FileView from "./FileView";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
+import { api } from "../utils/axios-instance";
 
 export default function SearchBar() {
   const { darkMode } = useDarkMode();
@@ -34,15 +34,7 @@ export default function SearchBar() {
 
   const getSharedFileInfo = async (fileId) => {
     try {
-      let token = secureLocalStorage.getItem("token");
-      const info = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/sharedFileInfo/${fileId}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const info = await api.get(`/file/sharedFileInfo/${fileId}`);
       setSharedFileInfo(info.data);
     } catch (error) {
       console.log(error);

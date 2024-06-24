@@ -1,8 +1,8 @@
 import { createContext, useState } from "react";
 import { useAuth } from "./authContext";
-import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 import { useDepartment } from "./departmentContext";
+import { api } from "../utils/axios-instance";
 
 const fileContext = createContext();
 
@@ -24,35 +24,30 @@ export const FileState = (props) => {
 
   const updateFilesState = async (value = 0) => {
     try {
-      let token = secureLocalStorage.getItem("token");
       let url;
 
       // Determine the URL based on the selected tab
       switch (parseInt(value)) {
         case 0:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files`;
+          url = `/file/files`;
           break;
         case 1:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared`;
+          url = `/file/files?type=shared`;
           break;
         case 2:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received`;
+          url = `/file/files?type=received`;
           break;
         case 3:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned`;
+          url = `/file/files?type=owned`;
           break;
 
         default:
-          url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files`;
+          url = `/file/files`;
           break;
       }
 
       if (url) {
-        const getFiles = await axios.get(url, {
-          headers: {
-            Authorization: token,
-          },
-        });
+        const getFiles = await api.get(url);
 
         setFiles(getFiles.data);
 
@@ -124,16 +119,7 @@ export const FileState = (props) => {
 
   const updateDepartmentFiles = async (deptName) => {
     try {
-      let token = secureLocalStorage.getItem("token");
-
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/${deptName}/?recs=25`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await api.get(`/file/files/${deptName}/?recs=25`);
 
       if (response) {
         const mappedFiles = response.data.map((file) => {

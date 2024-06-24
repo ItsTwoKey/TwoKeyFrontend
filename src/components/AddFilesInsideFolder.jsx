@@ -3,14 +3,14 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import secureLocalStorage from "react-secure-storage";
-import axios from "axios";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import { debounce } from "lodash";
 import toast, { Toaster } from "react-hot-toast";
+import { auth } from "../helper/firebaseClient";
+import { api } from "../utils/axios-instance";
 
 const AddFilesInsideFolder = ({ folderId, listFilesInFolder }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,17 +24,8 @@ const AddFilesInsideFolder = ({ folderId, listFilesInFolder }) => {
   }, []);
 
   const getOwnedFiles = async () => {
-    let token = secureLocalStorage.getItem("token");
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=owned`,
-
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await api.get("/file/files?type=owned");
 
       setFiles(response.data);
       console.log("files", response.data);
@@ -64,18 +55,10 @@ const AddFilesInsideFolder = ({ folderId, listFilesInFolder }) => {
   };
 
   const addFile = async () => {
-    let token = secureLocalStorage.getItem("token");
+    const token = await auth.currentUser.getIdToken();
     let body = { file_id: fileId, idToken: token };
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/folder/addFile/${folderId}`,
-        body,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await api.post(`/file/folder/addFile/${folderId}`, body);
 
       if (response) {
         toast.success("File added successfully.");

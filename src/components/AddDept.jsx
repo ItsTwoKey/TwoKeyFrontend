@@ -9,10 +9,11 @@ import { GithubPlacement } from "@uiw/react-color-github";
 import secureLocalStorage from "react-secure-storage";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
+import { auth } from "../helper/firebaseClient";
 
 const AddDept = () => {
   const [isOpen, setIsOpen] = useState(false);
-  
+
   const [deptName, setDeptName] = useState("");
   const [hex, setHex] = useState("#4F46E5");
   const { setDepartments, listDepartments } = useDepartment();
@@ -28,7 +29,7 @@ const AddDept = () => {
 
   const addDepartment = async () => {
     try {
-      let token = secureLocalStorage.getItem("token");
+      const token = await auth.currentUser.getIdToken();
 
       // Replace spaces with underscores in department name
       const formattedDeptName = deptName.replace(/ /g, "_");
@@ -44,8 +45,7 @@ const AddDept = () => {
 
       let addDept = await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/createDepts`,
-        body,
-        
+        body
       );
 
       if (addDept) {

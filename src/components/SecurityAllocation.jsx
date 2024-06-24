@@ -3,9 +3,9 @@ import { useAuth } from "../context/authContext";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
-import axios from "axios";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import secureLocalStorage from "react-secure-storage";
+import { api } from "../utils/axios-instance";
 const SecurityAllocation = ({
   handleSecurityAllocation,
   isOpen,
@@ -51,16 +51,8 @@ const SecurityAllocation = ({
   }, [selectedUsers]);
 
   const listUsers = async () => {
-    let token = secureLocalStorage.getItem("token");
     try {
-      const userList = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const userList = await api.get(`/users/list_users`);
       // console.log("users :", userList.data);
       setUsers(userList.data);
     } catch (error) {
@@ -293,13 +285,17 @@ const SecurityAllocation = ({
                     <span className="flex flex-row items-center gap-2">
                       <img
                         src={
-                          user.profilePictureUrl ? user.profilePictureUrl : ProfilePicDummy
+                          user.profilePictureUrl
+                            ? user.profilePictureUrl
+                            : ProfilePicDummy
                         }
                         alt="Profile pic"
                         className="h-8 w-8 rounded-full"
                       />
                       <span>
-                        <p className="text-sm font-semibold">{user.name} {user.last_name}</p>
+                        <p className="text-sm font-semibold">
+                          {user.name} {user.last_name}
+                        </p>
                         <p className="text-xs font-light text-gray-500">
                           {user.email}
                         </p>
@@ -322,7 +318,11 @@ const SecurityAllocation = ({
 
               <span className="flex flex-row gap-4 items-center">
                 <img
-                  src={user.profilePictureUrl ? user.profilePictureUrl : ProfilePicDummy}
+                  src={
+                    user.profilePictureUrl
+                      ? user.profilePictureUrl
+                      : ProfilePicDummy
+                  }
                   alt="Profile pic"
                   className="h-6 w-6 rounded-md"
                 />

@@ -10,6 +10,8 @@ import Chrome from "@uiw/react-color-chrome";
 import { GithubPlacement } from "@uiw/react-color-github";
 import { CircularProgress } from "@mui/material";
 import toast, { Toaster } from "react-hot-toast";
+import { api } from "../utils/axios-instance";
+import { auth } from "../helper/firebaseClient";
 
 const CreateFolder = ({ listFolders }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +33,7 @@ const CreateFolder = ({ listFolders }) => {
 
   const createFolder = async () => {
     setLoading(true);
-    let token = secureLocalStorage.getItem("token");
+    const token = await auth.currentUser.getIdToken();
     let body = {
       name: folderName,
       metadata: {
@@ -42,15 +44,7 @@ const CreateFolder = ({ listFolders }) => {
     }; // Use folderName from state
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/folder`,
-        body,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await api.post(`/file/folder`, body);
 
       if (response) {
         setFolderName(""); // Clear folderName after folder is created

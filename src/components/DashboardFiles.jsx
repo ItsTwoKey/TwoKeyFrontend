@@ -11,7 +11,6 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Collapse from "@mui/material/Collapse";
 import Tooltip from "@mui/material/Tooltip";
-import axios from "axios";
 import { supabase } from "../helper/supabaseClient";
 import { useLocation } from "react-router-dom";
 import Stepper from "@mui/material/Stepper";
@@ -26,6 +25,8 @@ import { Skeleton } from "@mui/material";
 import FileView from "./FileView";
 import Notes from "../assets/notes.svg";
 import secureLocalStorage from "react-secure-storage";
+import { auth } from "../helper/firebaseClient";
+import { api } from "../utils/axios-instance";
 
 const DashboardFiles = () => {
   const cacheKey = "accountFilesCache";
@@ -50,16 +51,7 @@ const DashboardFiles = () => {
 
   const fetchDashboardFiles = useCallback(async () => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
-
-      const accountFilesFromBackend = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files/?recs=25`,
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
+      const accountFilesFromBackend = await api.get(`/file/files/?recs=25`);
 
       if (accountFilesFromBackend.data) {
         const mappedFiles = accountFilesFromBackend.data.map((file) => {
@@ -154,15 +146,7 @@ const DashboardFiles = () => {
 
   const getSharedFileInfo = async (fileId) => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
-      const info = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/sharedFileInfo/${fileId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
+      const info = await api.get(`/file/sharedFileInfo/${fileId}`);
       setSharedFileInfo(info.data);
     } catch (error) {
       console.log(error);
@@ -292,17 +276,7 @@ function Row(props) {
 
   const getLogs = async (fileId) => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
-
-      const accessLogs = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/${fileId}?recs=5`,
-
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
+      const accessLogs = await api.get(`/file/getLogs/${fileId}?recs=5`);
       console.log(`Access Logs of id ( ${fileId} ) :`, accessLogs.data);
 
       setLogs(accessLogs.data);

@@ -4,7 +4,6 @@ import ProfilePic from "../assets/profilePic.png";
 import { useDarkMode } from "../context/darkModeContext";
 import { useDepartment } from "../context/departmentContext";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
-import axios from "axios";
 import { Link } from "react-router-dom";
 // Mui Icons And Drawers
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
@@ -21,6 +20,7 @@ import { useAuth } from "../context/authContext";
 import secureLocalStorage from "react-secure-storage";
 import CloseIcon from "@mui/icons-material/Close";
 import { auth } from "../helper/firebaseClient";
+import { api } from "../utils/axios-instance";
 
 let hardCodedDepartments = [
   { name: "Account", metadata: { bg: "#FFF6F6", border: "#FEB7B7" } },
@@ -46,17 +46,14 @@ function SideBar() {
 
   async function handleLogout() {
     // change the active status
-    let token = secureLocalStorage.getItem("token");
+    let token = await auth.currentUser.getIdToken();
     let body = {
       idToken: token,
       is_active: false,
     };
 
     try {
-      const res = await axios.put(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/logout/`,
-        body
-      );
+      const res = await api.put(`/auth/logout/`, body);
 
       alert(res.data.message);
 

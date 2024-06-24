@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
@@ -10,6 +9,7 @@ import userContext from "../context/UserContext";
 import secureLocalStorage from "react-secure-storage";
 import toast, { Toaster } from "react-hot-toast";
 import DepartmentContext from "../context/departmentContext";
+import { api } from "../utils/axios-instance";
 
 export default function UserManagementTable() {
   const context = useContext(userContext);
@@ -29,15 +29,7 @@ export default function UserManagementTable() {
   useEffect(() => {
     const listUsers = async () => {
       try {
-        let token = secureLocalStorage.getItem("token");
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await api.get(`/users/list_users`);
 
         setUsers(response.data);
 
@@ -81,17 +73,9 @@ export default function UserManagementTable() {
 
   const handleRemoveUserClick = async (params) => {
     try {
-      let token = secureLocalStorage.getItem("token");
       let id = params.row.id;
       console.log(id);
-      const response = await axios.delete(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/deleteUser/${id}/`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await api.delete(`/users/deleteUser/${id}/`);
 
       // console.log("User deleted successfully ", response);
       toast.success("User deleted successfully.");

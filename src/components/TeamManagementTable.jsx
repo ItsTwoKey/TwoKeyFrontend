@@ -9,9 +9,9 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import axios from "axios";
 import Trash from "../assets/trash.svg";
 import secureLocalStorage from "react-secure-storage";
+import { api } from "../utils/axios-instance";
 import toast from "react-hot-toast";
 
 export default function TeamManagementTable() {
@@ -21,15 +21,7 @@ export default function TeamManagementTable() {
   useEffect(() => {
     const listUsers = async () => {
       try {
-        let token = secureLocalStorage.getItem("token");
-        const users = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const users = await api.get(`/users/list_users`);
         // console.log("users :", users.data);
         setUsers(users.data);
       } catch (error) {
@@ -44,15 +36,7 @@ export default function TeamManagementTable() {
     const getRoles = async () => {
       try {
         console.log("Fetching roles");
-        let token = secureLocalStorage.getItem("token");
-        const role = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/role/listRoles`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const role = await api.get(`/role/listRoles`);
         console.log("roles:", role.data);
         setRoles(role.data);
       } catch (error) {
@@ -125,43 +109,21 @@ export default function TeamManagementTable() {
   };
 
   const elevateUserRole = async (selectedUserId, selectedRole) => {
-    let token = secureLocalStorage.getItem("token");
-    if (token) {
-      try {
-        const res = await axios.patch(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/elevate/${selectedUserId}`,
-          {
-            role_priv: selectedRole,
-          },
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-        console.log("elevate user:", res);
-        toast.success("User role updated successfully");
-      } catch (error) {
-        console.log(error);
-        toast.error("Error updating user role");
-      }
+    try {
+      const res = await api.patch(`/users/elevate/${selectedUserId}`, {
+        role_priv: selectedRole,
+      });
+      console.log("elevate user:", res);
+    } catch (error) {
+      console.log(error);
     }
   };
 
   const deleteUser = async (index) => {
     const deletedUserId = users[index].id;
     console.log(`User deleted: ${deletedUserId}`);
-    let token = secureLocalStorage.getItem("token");
     try {
-      const res = await axios.delete(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/deleteUser/${deletedUserId}`,
-
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const res = await api.delete(`/users/deleteUser/${deletedUserId}`);
       console.log("delete user:", res);
       toast.success("User deleted successfully");
     } catch (error) {

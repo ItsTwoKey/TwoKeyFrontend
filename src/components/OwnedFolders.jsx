@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 import ThreeDots from "../assets/threedots.svg";
 import Menu from "@mui/material/Menu";
@@ -7,6 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import toast, { Toaster } from "react-hot-toast";
 import FolderImg from "../assets/folder.png";
 import { Link } from "react-router-dom";
+import { api } from "../utils/axios-instance";
 
 const OwnedFolders = ({ folders, listFolders }) => {
   const [filesInsideFolder, setFilesInsideFolder] = useState([]);
@@ -29,16 +29,8 @@ const OwnedFolders = ({ folders, listFolders }) => {
   };
 
   const deleteFolder = async (folder_id) => {
-    let token = secureLocalStorage.getItem("token");
     try {
-      const response = await axios.delete(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/folder/${folder_id}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await api.delete(`/file/folder/${folder_id}`);
       if (response.status === 204) {
         handleClose(folder_id);
         toast.success("Folder deleted successfully.");

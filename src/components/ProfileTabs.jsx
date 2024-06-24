@@ -4,12 +4,12 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import ProfileLogs from "../components/ProfileLogs";
-import axios from "axios";
 import LatestActivities from "../components/LatestActivities";
 import CustomLogs from "./CustomLogs";
 import secureLocalStorage from "react-secure-storage";
 import RecentFiles from "./RecentFiles";
 import { useAuth } from "../context/authContext";
+import { api } from "../utils/axios-instance";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -59,13 +59,13 @@ export default function ProfileTabs() {
         // Determine the URL based on the selected tab
         switch (value) {
           case 0:
-            url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=shared`;
+            url = `/file/files?type=shared`;
             break;
           case 1:
-            url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/files?type=received`;
+            url = `/file/files?type=received`;
             break;
           case 3:
-            url = `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/download`;
+            url = `/file/getLogs/download`;
             break;
 
           default:
@@ -75,11 +75,7 @@ export default function ProfileTabs() {
 
         // Check if the URL is empty before making the request
         if (url) {
-          const accessLogs = await axios.get(url, {
-            headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
-            },
-          });
+          const accessLogs = await api.get(url);
 
           // console.log(`Profile Tabs`, accessLogs.data);
 

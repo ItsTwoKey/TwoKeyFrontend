@@ -7,7 +7,6 @@ import Link from "../assets/link.svg";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
-import axios from "axios";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import FileIcon from "../assets/fileIcon.svg";
 import { useDropzone } from "react-dropzone";
@@ -20,6 +19,7 @@ import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import secureLocalStorage from "react-secure-storage";
+import { api } from "../utils/axios-instance";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -49,14 +49,7 @@ const ShareFile = () => {
     let token = secureLocalStorage.getItem("token");
     const listUsers = async () => {
       try {
-        const userList = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const userList = await api.get(`/users/list_users`);
         // console.log("users :", userList.data);
         setUsers(userList.data);
       } catch (error) {
@@ -170,24 +163,14 @@ const ShareFile = () => {
 
   const shareFiles = async (fileId) => {
     try {
-      let token = secureLocalStorage.getItem("token");
-
       const sharedWithIds = selectedUsers.map((user) => user.id);
 
-      const res = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/shareFile`,
-        {
-          file: [fileId],
-          shared_with: sharedWithIds,
-          expiration_time: 315360000,
-          security_check: {},
-        },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const res = await api.post(`/file/shareFile`, {
+        file: [fileId],
+        shared_with: sharedWithIds,
+        expiration_time: 315360000,
+        security_check: {},
+      });
 
       console.log("shareFiles:", res);
     } catch (error) {

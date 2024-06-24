@@ -1,25 +1,17 @@
 import React, { useState, useEffect } from "react";
-import secureLocalStorage from "react-secure-storage";
-import axios from "axios";
+
 import Desktopicon from "../assets/Desktopicon.svg";
 import MobileIcon from "../assets/MobileIcon.svg";
 import { Avatar, Tooltip } from "@mui/joy";
+import { api } from "../utils/axios-instance";
 
 const Device = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const listUsers = async () => {
-      let token = secureLocalStorage.getItem("token");
       try {
-        const userList = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const userList = await api.get(`/users/list_users`);
         console.log("users :", userList.data);
         setUsers(userList.data);
       } catch (error) {

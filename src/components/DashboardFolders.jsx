@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import CreateFolder from "./CreateFolder";
 import OwnedFolders from "./OwnedFolders";
-import secureLocalStorage from "react-secure-storage";
-import axios from "axios";
+
+import { api } from "../utils/axios-instance";
 
 const DashboardFolders = () => {
   const [folders, setFolders] = useState([]);
@@ -15,17 +15,8 @@ const DashboardFolders = () => {
   const listFolders = async () => {
     setLoading(true); // Set loading to true when fetching starts
 
-    let token = secureLocalStorage.getItem("token");
-
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/folder`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await api.get(`/file/folder`);
       console.log("folders", response.data);
       setFolders(response.data);
     } catch (error) {

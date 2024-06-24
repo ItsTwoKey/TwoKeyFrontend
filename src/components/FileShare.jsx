@@ -4,10 +4,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import SecurityAllocation from "./SecurityAllocation";
-import axios from "axios";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import secureLocalStorage from "react-secure-storage";
+import { auth } from "../helper/firebaseClient";
+import { api } from "../utils/axios-instance";
 const FileShare = ({ menuFile }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [checkboxValues, setCheckboxValues] = useState({
@@ -42,34 +43,25 @@ const FileShare = ({ menuFile }) => {
 
   const shareFile = async () => {
     try {
-      let token = secureLocalStorage.getItem("token");
+      const token = await auth.currentUser.getIdToken();
 
-      const res = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/shareFile`,
-        {
-          file: [menuFile.id],
-          shared_with: securityAllotmentData.selectedUsers,
-          expiration_time: securityAllotmentData.timeDifference
-            ? securityAllotmentData.timeDifference
-            : 31536000 * 5,
-          security_check: {
-            download_enabled: true,
-            geo_enabled: securityAllotmentData.location,
-          },
-          idToken: token,
+      const res = await api.post(`/file/shareFile`, {
+        file: [menuFile.id],
+        shared_with: securityAllotmentData.selectedUsers,
+        expiration_time: securityAllotmentData.timeDifference
+          ? securityAllotmentData.timeDifference
+          : 31536000 * 5,
+        security_check: {
+          download_enabled: true,
+          geo_enabled: securityAllotmentData.location,
         },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+        idToken: token,
+      });
 
       console.log("shareFiles:", res);
 
       // Show snackbar on successful file sharing
       showSnackbar("File shared successfully", "success");
-
 
       setTimeout(() => {
         closeDialog();

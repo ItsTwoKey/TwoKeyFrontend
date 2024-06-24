@@ -3,9 +3,10 @@ import { useDepartment } from "../context/departmentContext";
 import AddDept from "./AddDept";
 import ThreeDots from "../assets/threedots.svg";
 import secureLocalStorage from "react-secure-storage";
-import axios from "axios";
+
 import { Menu, MenuItem } from "@mui/material";
 import EditDept from "./EditDept";
+import { api } from "../utils/axios-instance";
 
 // let departments = [
 //   { name: "Account", metadata: { bg: "#FFF6F6", border: "#FEB7B7" } },
@@ -37,14 +38,8 @@ const Department = () => {
 
   const handleRemoveDept = async () => {
     try {
-      let token = secureLocalStorage.getItem("token");
-      const deleteDept = await axios.delete(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/deleteDept/${selectedDept.id}/`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
+      const deleteDept = await api.delete(
+        `/dept/deleteDept/${selectedDept.id}/`
       );
 
       if (deleteDept) {

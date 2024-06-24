@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import AddGeoLocation from "../components/AddGeoLocation";
 import AddSecPreSet from "../components/AddSecPreSet";
-import axios from "axios";
 import MapComponent from "./MapComponent";
 import OfficeLocation from "./securityPage/OfficeLocation";
 import SecurityPresets from "./securityPage/SecurityPresets";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
+import { api } from "../utils/axios-instance";
 
 const Security = () => {
   const [allowedLocations, setAllowedLocations] = useState([]);
@@ -35,17 +35,8 @@ const Security = () => {
 
   useEffect(() => {
     const getLocations = async () => {
-      let token = secureLocalStorage.getItem("token");
-
       try {
-        const locations = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/listLocation`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const locations = await api.get(`/file/listLocation`);
 
         console.log("locations", locations.data.features);
         setAllowedLocations(locations.data.features);

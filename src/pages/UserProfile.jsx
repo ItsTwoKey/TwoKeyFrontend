@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -7,6 +6,7 @@ import ProfileTabsOfUser from "../components/ProfileTabsOfUser";
 import { useParams } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import toast, { Toaster } from "react-hot-toast";
+import { api } from "../utils/axios-instance";
 
 const UserProfile = () => {
   const { userId } = useParams(); // Use useParams to get the user ID from the route parameters
@@ -20,16 +20,8 @@ const UserProfile = () => {
 
   useEffect(() => {
     const getUserProfile = async () => {
-      let token = secureLocalStorage.getItem("token");
       try {
-        const user = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/getUserInfo/${userId}/`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const user = await api.get(`/users/getUserInfo/${userId}/`);
         setUserProfileData(user.data.user_info);
         setSelectedRole(user.data.user_info.role_priv);
         setSelectedDepartment(user.data.user_info.dept);
@@ -41,15 +33,7 @@ const UserProfile = () => {
 
     const fetchDepartments = async () => {
       try {
-        let token = secureLocalStorage.getItem("token");
-        const dep = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/dept/listDepts`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const dep = await api.get(`/dept/listDepts`);
         setDepartments(dep.data);
         let deptobj = {};
         for (const i of dep.data) {
@@ -64,15 +48,7 @@ const UserProfile = () => {
 
     const getRoles = async () => {
       try {
-        let token = secureLocalStorage.getItem("token");
-        const rolesData = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/role/listRoles`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const rolesData = await api.get(`/role/listRoles`);
         setRoles(rolesData.data);
       } catch (error) {
         console.log("Error fetching roles");
@@ -86,50 +62,28 @@ const UserProfile = () => {
   }, [userId]);
 
   const elevateUserRole = async (selectedRole) => {
-    let token = secureLocalStorage.getItem("token");
-    if (token) {
-      try {
-        const res = await axios.patch(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/elevate/${userProfileData.id}`,
-          {
-            role_priv: selectedRole,
-          },
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-        // console.log("elevate user successful");
-        toast.success("Elevate user successful");
-      } catch (error) {
-        console.log(error);
-        toast.error("Something went wrong.");
-      }
+    try {
+      const res = await api.patch(`/users/elevate/${userProfileData.id}`, {
+        role_priv: selectedRole,
+      });
+      // console.log("elevate user successful");
+      toast.success("Elevate user successful");
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong.");
     }
   };
 
   const changeDept = async (selectedDepartment) => {
-    let token = secureLocalStorage.getItem("token");
-    if (token) {
-      try {
-        const res = await axios.patch(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/elevate/${userProfileData.id}`,
-          {
-            dept: selectedDepartment,
-          },
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-        // console.log("User's dept changed");
-        toast.success("User's dept changed");
-      } catch (error) {
-        console.log(error);
-        toast.error("Something went wrong.");
-      }
+    try {
+      const res = await api.patch(`/users/elevate/${userProfileData.id}`, {
+        dept: selectedDepartment,
+      });
+      // console.log("User's dept changed");
+      toast.success("User's dept changed");
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong.");
     }
   };
 

@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../helper/supabaseClient";
 import Paper from "@mui/material/Paper";
 import Skeleton from "@mui/material/Skeleton";
-import axios from "axios";
+
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import secureLocalStorage from "react-secure-storage";
 import { useDarkMode } from "../context/darkModeContext";
+import { api } from "../utils/axios-instance";
 const currentDateTime = () => {
   //  calculate time and date for imput field
   const time =
@@ -67,16 +68,7 @@ const DueDate = () => {
         setLoading(false);
       }
 
-      let token = secureLocalStorage.getItem("token");
-
-      const dueDates = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/dues/`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const dueDates = await api.get(`$/file/getLogs/dues/`);
 
       console.log("Due dates", dueDates.data);
 
@@ -104,7 +96,7 @@ const DueDate = () => {
     setnewExpiry(rescheduleDate(e.target.value));
   };
   const updateDueDate = async (Id) => {
-    let token = secureLocalStorage.getItem("token");
+    let token = JSON.parse(secureLocalStorage.getItem("token"));
     // get time difference in seconds
     setnewExpiry(rescheduleDate(extendedDate));
     let body = {
@@ -119,7 +111,7 @@ const DueDate = () => {
         body,
         {
           headers: {
-            Authorization: token,
+            Authorization: `Bearer ${token.session.access_token}`,
           },
         }
       );

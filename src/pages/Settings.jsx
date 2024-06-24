@@ -31,7 +31,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     let data = JSON.parse(secureLocalStorage.getItem("profileData"));
-    setRole(data.role_priv);
+    setRole(data?.role_priv);
   }, []);
 
   const handleNavItemClick = (navItem) => {

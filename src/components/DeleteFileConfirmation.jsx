@@ -10,7 +10,7 @@ import fileContext from "../context/fileContext";
 import { useParams } from "react-router-dom";
 import { getFirestore } from "firebase/firestore";
 import { deleteObject, getStorage, ref } from "firebase/storage";
-import axios from "axios";
+import { api } from "../utils/axios-instance";
 
 const DeleteFileConfirmation = ({ fileName, owner, id }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,14 +47,7 @@ const DeleteFileConfirmation = ({ fileName, owner, id }) => {
         await deleteObject(fileRef);
         console.log("Delete success");
 
-        const res = await axios.delete(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/delete-file/${id}/`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const res = await api.delete(`/file/delete-file/${id}/`);
 
         setSnackbarSeverity("success");
         setSnackbarMessage("File deleted successfully.");

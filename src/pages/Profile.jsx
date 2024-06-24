@@ -5,11 +5,12 @@ import ProfileAddressInformation from "../components/ProfileAddressInformation";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import ProfileTabs from "../components/ProfileTabs";
 import Pen from "../assets/pen.svg";
-import axios from "axios";
 import ErrorPage from "../components/ErrorPage";
 import secureLocalStorage from "react-secure-storage";
 import toast, { Toaster } from "react-hot-toast";
 import { useAuth } from "../context/authContext";
+import { auth } from "../helper/firebaseClient";
+import { api } from "../utils/axios-instance";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -48,7 +49,7 @@ const Profile = () => {
 
   const handleProfilePicUpdate = async () => {
     try {
-      let token = secureLocalStorage.getItem("token");
+      let token = auth.currentUser.getIdToken();
       const profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
 
       let profilePictureBase64 = null;
@@ -65,14 +66,11 @@ const Profile = () => {
         });
       }
 
-      const res = await axios.put(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/update-profile/`,
-        {
-          idToken: token,
-          profileData,
-          profilePicture: profilePictureBase64,
-        }
-      );
+      const res = await api.put(`/users/update-profile/`, {
+        idToken: token,
+        profileData,
+        profilePicture: profilePictureBase64,
+      });
 
       setProfileData(res.data);
       secureLocalStorage.setItem("profileData", JSON.stringify(res.data));

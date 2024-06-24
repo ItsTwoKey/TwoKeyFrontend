@@ -5,10 +5,10 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { supabase } from "../helper/supabaseClient";
 import { useAuth } from "../context/authContext";
 import PDFPreview from "../assets/pdfPreview.jpg";
-import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import secureLocalStorage from "react-secure-storage";
+import { api } from "../utils/axios-instance";
 
 const FileDrawer = ({
   isDrawerOpen,
@@ -65,20 +65,13 @@ const FileDrawer = ({
 
   const getPresignedUrl = async () => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
-
       const body = {
         latitude: 18.44623721673684,
         longitude: 73.82762833796289,
       };
-      const presignedUrl = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getPresigned/${selectedFileInfo.id}`,
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
+      const presignedUrl = await api.post(
+        `/file/getPresigned/${selectedFileInfo.id}`,
+        body
       );
       // console.log("presignedUrl:", presignedUrl.data.signed_url);
       // secureLocalStorage.setItem("preUrl", presignedUrl.data.signed_url);

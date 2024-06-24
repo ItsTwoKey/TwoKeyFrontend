@@ -8,7 +8,6 @@ import DialogActions from "@mui/material/DialogActions";
 import { useDropzone } from "react-dropzone";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import axios from "axios";
 import * as tus from "tus-js-client";
 import { styled } from "@mui/material/styles";
 import FileIcon from "../assets/fileIcon.svg";
@@ -19,8 +18,9 @@ import secureLocalStorage from "react-secure-storage";
 import fileContext from "../context/fileContext";
 import TextField from "@mui/material/TextField";
 import { useAuth } from "../context/authContext";
-import { storage } from "../helper/firebaseClient";
+import { auth, storage } from "../helper/firebaseClient";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { api } from "../utils/axios-instance";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -143,30 +143,27 @@ const UploadFile = ({ value }) => {
   };
 
   const handleFileIdRetrieval = async (file, desiredFileName, downloadURL) => {
-    const token = secureLocalStorage.getItem("token");
+    const token = await auth.currentUser.getIdToken();
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/file/addDepartment/${desiredFileName}`,
-        {
-          department_ids: [deptId],
-          new: true,
-          name: desiredFileName,
-          downloadURL: downloadURL,
-          idToken: token,
-          metadata: {
-            size: file.size,
-            mimetype: file.type,
-            lastModified: new Date().toLocaleString("en-IN", {
-              day: "numeric",
-              month: "short",
-              year: "numeric",
-              hour: "numeric",
-              minute: "numeric",
-              hour12: true,
-            }),
-          },
-        }
-      );
+      const res = await api.post(`/file/addDepartment/${desiredFileName}`, {
+        department_ids: [deptId],
+        new: true,
+        name: desiredFileName,
+        downloadURL: downloadURL,
+        idToken: token,
+        metadata: {
+          size: file.size,
+          mimetype: file.type,
+          lastModified: new Date().toLocaleString("en-IN", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          }),
+        },
+      });
 
       console.log("File ID retrieval response:", res.data);
       showSnackbar(res.data.detail, "success");

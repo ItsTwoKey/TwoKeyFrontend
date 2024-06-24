@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import secureLocalStorage from "react-secure-storage";
 import toast, { Toaster } from "react-hot-toast";
-import CircleIcon from "@mui/icons-material/Circle";
+import { api } from "../utils/axios-instance";
 
-const DEPARTMENT_COLOR = {
-  hr: "",
-  sales: "",
-};
 const Lobby = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -21,15 +16,8 @@ const Lobby = () => {
   useEffect(() => {
     const listUsers = async () => {
       try {
-        let token = secureLocalStorage.getItem("token");
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/list_users`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        // axios interceptor being used to make calls with token
+        const response = await api.get("/users/list_users");
 
         setUsers(response.data);
         console.log({ users: response.data });
@@ -61,17 +49,9 @@ const Lobby = () => {
 
   const handleRemoveUserClick = async (params) => {
     try {
-      let token = secureLocalStorage.getItem("token");
       let id = params.row.id;
       console.log(id);
-      const response = await axios.delete(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/users/deleteUser/${id}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
-          },
-        }
-      );
+      const response = await api.delete(`/users/deleteUser/${id}/`);
 
       // console.log("User deleted successfully ", response);
       toast.success("User deleted successfully.");
@@ -86,18 +66,10 @@ const Lobby = () => {
     console.log(params.row.id);
     try {
       if (token) {
-        const res = await axios.patch(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/users/elevate/${params.row.id}`,
-          {
-            // id: params.row.id,
-            is_approved: true,
-          },
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const res = await api.patch(`/users/elevate/${params.row.id}`, {
+          // id: params.row.id,
+          is_approved: true,
+        });
         console.log(res);
         toast.success("User added successfully.");
         setAcceptUserClicked(!acceptUserClicked);
@@ -120,7 +92,7 @@ const Lobby = () => {
     <div className="p-4">
       <Toaster position="bottom-left" reverseOrder={false} />
       {Object.keys(groupedUsers).map((dept) => {
-        const departmentInfo = departments.find((d) => d.id === dept);
+        const departmentInfo = departments?.find((d) => d.id === dept);
         const departmentBgColor = departmentInfo
           ? departmentInfo.metadata.bg
           : "#000000";
@@ -142,8 +114,8 @@ const Lobby = () => {
             >
               <span className="flex flex-row gap-1 items-center">
                 <p>{departmentInfo?.name}</p>
-                <div className="rounded-full w-2 h-2 bg-black mx-2" />
-                <p>{groupedUsers[dept].length}</p>
+                <div className="rounded-full w-2 h-2 bg-zinc-500 mx-1" />
+                <p className="text-zinc-700">{groupedUsers[dept].length}</p>
               </span>
             </h3>
             <DataGrid
@@ -168,7 +140,6 @@ const Lobby = () => {
               }}
               loading={loading}
               rows={groupedUsers[dept]}
-              pageSizeOptions={[10, 25, 50]}
               columns={[
                 // todo: Find a proper employee Id to use
                 {
@@ -177,7 +148,8 @@ const Lobby = () => {
                     <p className="text-zinc-700 font-bold">Employee Id</p>
                   ),
                   cellClassName: `border-${departmentBorderColor}`,
-                  width: 120,
+                  flex: 0.5,
+                  minWidth: 0,
                   renderCell: (params) => (
                     <div className="flex items-center text-zinc-600">
                       {params.row.employeeId || "#767asv"}
@@ -189,8 +161,8 @@ const Lobby = () => {
                 {
                   field: "name",
                   headerName: <p className="text-zinc-700 font-bold">Name</p>,
-
-                  width: 220,
+                  flex: 1,
+                  minWidth: 160,
                   renderCell: (params) => (
                     <div className="flex items-center">
                       <Tooltip title={params.row.email} arrow>
@@ -227,7 +199,8 @@ const Lobby = () => {
                   headerName: (
                     <p className="text-zinc-700 font-bold">Designation</p>
                   ),
-                  width: 150,
+                  flex: 1,
+                  minWidth: 100,
                   cellClassName: "text-zinc-600",
                   headerClassName: `custom-header`,
                   renderCell: (params) => {
@@ -241,7 +214,8 @@ const Lobby = () => {
                 {
                   field: "action",
                   headerName: <p className="text-zinc-700 font-bold">Action</p>,
-                  width: 200,
+                  flex: 2,
+                  minWidth: 200,
                   headerAlign: "center",
                   hideSortIcons: true,
                   align: "center",
@@ -249,7 +223,7 @@ const Lobby = () => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => acceptUser(params)}
-                        className={`py-2 px-4 rounded-lg border bg-white shadow-sm border-zinc-400`}
+                        className={`py-2 px-4 rounded-lg border bg-white shadow-sm border-zinc-400 `}
                       >
                         Accept
                       </button>
