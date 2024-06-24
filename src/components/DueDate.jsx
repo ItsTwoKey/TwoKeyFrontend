@@ -73,7 +73,7 @@ const DueDate = () => {
         `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs/dues/`,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );
@@ -104,7 +104,7 @@ const DueDate = () => {
     setnewExpiry(rescheduleDate(e.target.value));
   };
   const updateDueDate = async (Id) => {
-    let token = JSON.parse(secureLocalStorage.getItem("token"));
+    let token = secureLocalStorage.getItem("token");
     // get time difference in seconds
     setnewExpiry(rescheduleDate(extendedDate));
     let body = {
@@ -119,7 +119,7 @@ const DueDate = () => {
         body,
         {
           headers: {
-            Authorization: `Bearer ${token.session.access_token}`,
+            Authorization: token,
           },
         }
       );

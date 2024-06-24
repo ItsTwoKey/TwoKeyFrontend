@@ -14,6 +14,7 @@ const LatestActivities = () => {
   const { darkMode } = useDarkMode();
   const [selectedValue, setSelectedValue] = useState("all");
   const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const isUserProfile = location.pathname.includes("/profile");
 
@@ -55,7 +56,7 @@ const LatestActivities = () => {
         setLogs(JSON.parse(cachedLogs));
       }
 
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       const logsEndpoint = isUserProfile
         ? `${process.env.REACT_APP_BACKEND_BASE_URL}/file/getLogs?global=0&recs=5`
@@ -63,7 +64,7 @@ const LatestActivities = () => {
 
       const accessLogs = await axios.get(logsEndpoint, {
         headers: {
-          Authorization: `Bearer ${token.session.access_token}`,
+          Authorization: token,
         },
       });
 
@@ -74,6 +75,8 @@ const LatestActivities = () => {
       setLogs(accessLogs.data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -146,7 +149,7 @@ const LatestActivities = () => {
         </div>
 
         <div className="h-56 overflow-y-scroll scrollbar-hide">
-          {logs.length ? (
+          {!loading ? (
             logs
               .filter((log) => {
                 if (selectedValue === "all") {

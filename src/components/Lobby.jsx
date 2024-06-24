@@ -249,7 +249,7 @@ const Lobby = () => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => acceptUser(params)}
-                        className={`py-2 px-4 rounded-lg border bg-white shadow-sm border-zinc-400 shadow`}
+                        className={`py-2 px-4 rounded-lg border bg-white shadow-sm border-zinc-400`}
                       >
                         Accept
                       </button>

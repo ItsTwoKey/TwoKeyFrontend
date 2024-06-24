@@ -89,6 +89,7 @@ const InviteMember = (props) => {
         last_name: formData.lastName,
         role_id: formData.role,
         dept_id: formData.department,
+        idToken: token,
       };
 
       let response = await axios.post(

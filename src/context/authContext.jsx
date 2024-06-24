@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }) => {
 
   const screenshotAlert = async (fileId) => {
     try {
-      let token = JSON.parse(secureLocalStorage.getItem("token"));
+      let token = secureLocalStorage.getItem("token");
 
       if (fileId) {
         const res = await axios.get(
@@ -116,7 +116,7 @@ export const AuthProvider = ({ children }) => {
 
           {
             headers: {
-              Authorization: `Bearer ${token.session.access_token}`,
+              Authorization: token,
             },
           }
         );

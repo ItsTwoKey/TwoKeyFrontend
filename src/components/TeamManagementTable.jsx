@@ -12,6 +12,7 @@ import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
 import Trash from "../assets/trash.svg";
 import secureLocalStorage from "react-secure-storage";
+import toast from "react-hot-toast";
 
 export default function TeamManagementTable() {
   const [users, setUsers] = useState([]);
@@ -139,8 +140,10 @@ export default function TeamManagementTable() {
           }
         );
         console.log("elevate user:", res);
+        toast.success("User role updated successfully");
       } catch (error) {
         console.log(error);
+        toast.error("Error updating user role");
       }
     }
   };
@@ -160,8 +163,10 @@ export default function TeamManagementTable() {
         }
       );
       console.log("delete user:", res);
+      toast.success("User deleted successfully");
     } catch (error) {
       console.log(error);
+      toast.error("Error deleting user");
     }
   };
 
@@ -219,7 +224,7 @@ export default function TeamManagementTable() {
                         size="small"
                       >
                         {roles.map((role) => (
-                          <MenuItem key={role.id} value={role.role}>
+                          <MenuItem key={role.role} value={role.role}>
                             {role.role}
                           </MenuItem>
                         ))}

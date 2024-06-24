@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import Loading from "./Loading";
-import  secureLocalStorage  from  "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
+import { auth } from "../helper/firebaseClient";
 
 /**
  * ProtectedRoute is a component that enforces access control for routes.
@@ -17,18 +18,28 @@ export function ProtectedRoute() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const sessionToken = secureLocalStorage.getItem("token");
-    if (sessionToken) {
-      setIsAuthenticated(true);
-    }
-    setIsLoading(false);
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   if (isLoading) {
     return <Loading />;
   }
+
   if (!isAuthenticated) {
-    return <Navigate to={"/"} replace state={{ path: location.pathname }} />;
+    console.log("Redirecting to login page", isAuthenticated, isLoading);
+    return (
+      <Navigate to={"/login"} replace state={{ path: location.pathname }} />
+    );
   }
+
   return <Outlet />;
 }

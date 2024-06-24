@@ -6,6 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import { useAuth } from "../context/authContext";
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
+import Loading from "./Loading";
 
 const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   const { screenshotDetected, screenshotAlert } = useAuth();
@@ -86,9 +87,11 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
 
     getPresignedUrl();
     // setPreUrl(fileInfo.download_url);
-    
-    setLoadingUrl(false);
   }, [fileInfo.id]);
+
+  if (loadingUrl) {
+    return <Loading />;
+  }
 
   return (
     <div className="">

@@ -68,9 +68,9 @@ const FileDetails = ({
       let token = secureLocalStorage.getItem("token");
 
       if (fileId) {
-        const res = await axios.get(
+        const res = await axios.post(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/file/logEvent/${fileId}?event=download`,
-
+          { idToken: token, file: fileId, event: "download" },
           {
             headers: {
               Authorization: token,

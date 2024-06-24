@@ -45,15 +45,17 @@ const REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
 // let fetchedDepartments = JSON.parse(secureLocalStorage.getItem("departments"));
 
 const App = () => {
-  const { refreshAccessToken } = useAuth();
+  // const { refreshAccessToken } = useAuth();
   // const isDarkMode = useDarkMode();
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      refreshAccessToken();
-    }, REFRESH_INTERVAL);
-    return () => clearInterval(intervalId);
-  }, [refreshAccessToken]);
+  // TODO: implement refresh token logic
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     refreshAccessToken();
+  //   }, REFRESH_INTERVAL);
+  //   return () => clearInterval(intervalId);
+  // }, [refreshAccessToken]);
 
   return (
     <Router>
@@ -61,9 +63,17 @@ const App = () => {
         <SideBar />
         <div className="w-full">
           <TopBar />
-
           <Background />
           <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/contact-us" element={<ContactUs />} />
+            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} exact />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/change-password" element={<ChangePassword />} />
+
+            {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/user-management" element={<UserManagement />} />
@@ -78,25 +88,14 @@ const App = () => {
               <Route path="/onboard" element={<Onboard />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/ai/:fileId" element={<AI />} />
-
               <Route path="/test" element={<Test />} />
 
               {/* for editor testing */}
               <Route path="/edit" element={<TextEditor />} />
-              {/* <Route path="/edit" element={<TextEditorV2 />} /> */}
               <Route path="/editcustom" element={<CustomEditor />} />
             </Route>
-            {/* Public Routes should go below */}
-
-            <Route path="/" element={<Home />} />
-            <Route path="/contact-us" element={<ContactUs />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<Login />} exact />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/change-password" element={<ChangePassword />} />
             <Route
-              path="/*"
+              path="*"
               element={
                 <ErrorPage error={"We could not find the requested page."} />
               }

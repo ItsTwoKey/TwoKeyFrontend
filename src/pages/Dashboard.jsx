@@ -6,16 +6,12 @@ import { useAuth } from "../context/authContext";
 import DueDate from "../components/DueDate";
 import DashboardTabs from "../components/DashboardTabs";
 import LatestActivities from "../components/LatestActivities";
-import secureLocalStorage from "react-secure-storage";
-import ErrorPage from "../components/ErrorPage";
 import DashboardFolders from "../components/DashboardFolders";
 
 const Dashboard = () => {
   const { darkMode } = useDarkMode();
   const { isFileViewerOpen, closeFileViewer } = useAuth();
-  if (!secureLocalStorage.getItem("token")) {
-    return <ErrorPage error="You are not authorised" />;
-  }
+
   return (
     <div
       className={`w-full p-4 h-full overflow-clip ${
@@ -27,8 +23,8 @@ const Dashboard = () => {
         <LatestActivities />
       </div>
       <div>
-          <DashboardFolders />
-          <DashboardTabs />
+        <DashboardFolders />
+        <DashboardTabs />
       </div>
       {/* <div className={`${screenshotDetected ? "blur" : ""}`}> */}
       <Dialog open={isFileViewerOpen} onClose={closeFileViewer} maxWidth="lg">
