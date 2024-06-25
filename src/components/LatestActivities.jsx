@@ -9,6 +9,7 @@ import secureLocalStorage from "react-secure-storage";
 
 import Skeleton from "@mui/material/Skeleton";
 import { api } from "../utils/axios-instance";
+import axios from "axios";
 
 const LatestActivities = () => {
   const { darkMode } = useDarkMode();
@@ -17,6 +18,7 @@ const LatestActivities = () => {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   const isUserProfile = location.pathname.includes("/profile");
+  const token = secureLocalStorage.getItem("accessToken");
 
   //   realtime supabase subscribe
   useEffect(() => {

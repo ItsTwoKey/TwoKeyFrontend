@@ -25,6 +25,7 @@ const InviteMember = (props) => {
   });
   const [roles, setRoles] = useState([]);
   const { departments } = useDepartment();
+  const token = secureLocalStorage.getItem("token");
 
   const openDialog = () => {
     setIsOpen(true);
