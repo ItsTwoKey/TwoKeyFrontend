@@ -1,6 +1,5 @@
 import axios from "axios";
-import secureLocalStorage from "react-secure-storage";
-import { auth } from "../helper/firebaseClient";
+import { authStateKnown } from "../helper/firebaseClient";
 
 const apiEndpoint = process.env.REACT_APP_BACKEND_BASE_URL;
 
@@ -15,11 +14,19 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
-  const token = await auth.currentUser.getIdToken();
-  console.log({ token });
-  if (token) {
-    config.headers.Authorization = token;
+  const user = await authStateKnown;
+  if (user) {
+    try {
+      const token = await user.getIdToken();
+      console.log({ token });
+      if (token) {
+        config.headers.Authorization = token;
+      }
+    } catch (error) {
+      console.error("Error fetching token:", { error });
+    }
   }
+
   return config;
 });
 
