@@ -37,7 +37,7 @@ const PasswordChangeForm = () => {
 
   useEffect(() => {
     let data = JSON.parse(secureLocalStorage.getItem("profileData"));
-    setEmail(data.email);
+    setEmail(data?.email);
   }, []);
 
   const handleInputChange = (e) => {

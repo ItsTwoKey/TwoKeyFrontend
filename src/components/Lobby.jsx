@@ -95,7 +95,7 @@ const Lobby = () => {
         const departmentInfo = departments?.find((d) => d.id === dept);
         const departmentBgColor = departmentInfo
           ? departmentInfo.metadata.bg
-          : "#000000";
+          : "rgb(255 162 162)";
         console.log({ departmentInfo, departmentBgColor });
         const departmentBorderColor = departmentInfo
           ? departmentInfo.metadata.border
@@ -119,6 +119,7 @@ const Lobby = () => {
               </span>
             </h3>
             <DataGrid
+              getRowId={(row) => row?.email}
               checkboxSelection
               hideFooterSelectedRowCount
               disableRowSelectionOnClick

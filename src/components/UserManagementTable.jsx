@@ -179,6 +179,7 @@ export default function UserManagementTable() {
       </div>
       <div style={{ height: 400, width: "100%" }}>
         <DataGrid
+          getRowId={(row) => row?.email}
           sx={{ borderLeft: "none", borderRight: "none" }}
           rows={filteredUsers}
           columns={columns}
