@@ -16,7 +16,7 @@ import LinearProgress, {
 } from "@mui/material/LinearProgress";
 import secureLocalStorage from "react-secure-storage";
 import fileContext from "../context/fileContext";
-import TextField from "@mui/material/TextField";
+import toast, { Toaster } from "react-hot-toast";
 import { useAuth } from "../context/authContext";
 import { auth, storage } from "../helper/firebaseClient";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -166,7 +166,8 @@ const UploadFile = ({ value }) => {
       });
 
       console.log("File ID retrieval response:", res.data);
-      showSnackbar(res.data.detail, "success");
+      // showSnackbar(res.data.detail, "success");
+      toast.success("File uploaded successfully");
 
       updateFilesState(value);
       console.log("deptName", deptName, value);
@@ -175,7 +176,8 @@ const UploadFile = ({ value }) => {
       }
     } catch (error) {
       console.log(error);
-      showSnackbar("Error retreiving data", "error");
+      // showSnackbar("Error retreiving data", "error");
+      toast.error("Error uploading file");
     }
   };
 
@@ -242,6 +244,7 @@ const UploadFile = ({ value }) => {
 
   return (
     <div className="">
+      <Toaster reverseOrder={false} position="bottom-left" />
       <button
         onClick={openDialog}
         className="py-1 px-4 rounded-md border bg-blue-700 hover:bg-blue-500 text-white"
@@ -356,8 +359,8 @@ const UploadFile = ({ value }) => {
                 !isFieldsFilled || !droppedFiles.length
                   ? "border-gray-300 text-gray-300 cursor-not-allowed"
                   : uploadProgress > 0
-                  ? "border-gray-500 text-gray-500 hover:bg-gray-200 cursor-progress"
-                  : "border-[#5E5ADB] text-[#5E5ADB] hover:bg-blue-100"
+                    ? "border-gray-500 text-gray-500 hover:bg-gray-200 cursor-progress"
+                    : "border-[#5E5ADB] text-[#5E5ADB] hover:bg-blue-100"
               } text-sm font-semibold`}
               onClick={handleFinalUpload}
               disabled={

@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import secureLocalStorage from "react-secure-storage";
 import { auth } from "../helper/firebaseClient";
 import { api } from "../utils/axios-instance";
+import { onAuthStateChanged } from "firebase/auth";
 
 const DepartmentContext = createContext();
 export default DepartmentContext;
@@ -12,7 +13,15 @@ export function DepartmentProvider({ children }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    listDepartments();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        listDepartments();
+      }
+    });
+
+    return () => {
+      setDepartments([]);
+    };
   }, [auth.currentUser]);
 
   const listDepartments = async () => {

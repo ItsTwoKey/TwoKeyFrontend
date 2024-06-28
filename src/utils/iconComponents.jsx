@@ -71,7 +71,7 @@ export const departmentIcons = {
   Development: <SignalCellularAltRoundedIcon />,
   Manufacturing: <FactoryOutlinedIcon />,
   Sales: <ShoppingBagOutlinedIcon />,
-  "Human_Resource": <HRIcon />,
+  Human_Resource: <HRIcon />,
   Marketing: <Marketing />,
   Engineering: <EngineeringIcon />,
 };
