@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Home from "./pages/Home";
 import Department from "./pages/Department";
 import SignUp from "./pages/SignUp";
@@ -23,12 +23,12 @@ import FilesInsideFolder from "./components/FilesInsideFolder";
 // import secureLocalStorage from "react-secure-storage";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useAuth } from "./context/authContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import ErrorPage from "./components/ErrorPage";
 import TextEditor from "./components/editFiles/TextEditor";
 import TextEditorV2 from "./components/editFiles/TextEditorV2";
 import CustomEditor from "./components/customEditor/CustomEditorV1";
+import WaitingLobby from "./components/WaitingLobby";
 // import { useDarkMode } from "./context/darkModeContext";
 
 // let hardCodedDepartments = [
@@ -43,7 +43,6 @@ import CustomEditor from "./components/customEditor/CustomEditorV1";
 const REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
 
 // let fetchedDepartments = JSON.parse(secureLocalStorage.getItem("departments"));
-
 const App = () => {
   // const { refreshAccessToken } = useAuth();
   // const isDarkMode = useDarkMode();
@@ -72,6 +71,7 @@ const App = () => {
             <Route path="/login" element={<Login />} exact />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/change-password" element={<ChangePassword />} />
+            <Route path="/waiting-lobby" element={<WaitingLobby />} />
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>

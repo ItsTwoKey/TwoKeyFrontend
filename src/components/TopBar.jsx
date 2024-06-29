@@ -19,6 +19,8 @@ const TopBar = () => {
     location.pathname === "/signup" ||
     location.pathname === "/change-password" ||
     location.pathname === "/onboarding" ||
+    location.pathname === "/waiting-lobby" ||
+    location.pathname === "/contact-us" ||
     location.pathname.startsWith("/ai");
 
   if (hideTopBar || !secureLocalStorage.getItem("token")) {

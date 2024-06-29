@@ -75,7 +75,9 @@ function SideBar() {
     location.pathname === "/onboard" ||
     location.pathname === "/signup" ||
     location.pathname === "/change-password" ||
-    location.pathname === "/onboarding";
+    location.pathname === "/onboarding" ||
+    location.pathname === "/waiting-lobby" ||
+    location.pathname === "/contact-us";
 
   if (hideSideBar) {
     return null;
