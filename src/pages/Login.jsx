@@ -108,7 +108,7 @@ const Login = () => {
         await listDepartments();
 
         console.log("userMetaData", userMetaData);
-
+        console.log({ userMetaData });
         if (
           userMetaData.username &&
           userMetaData.name &&

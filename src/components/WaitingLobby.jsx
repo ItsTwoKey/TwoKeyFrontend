@@ -1,7 +1,14 @@
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import secureLocalStorage from "react-secure-storage";
+import { auth, authStateKnown } from "../helper/firebaseClient";
+import { api } from "../utils/axios-instance";
+import { useNavigate } from "react-router-dom";
+import { Dropdown, Menu, MenuButton, MenuItem } from "@mui/joy";
+import toast from "react-hot-toast";
 
 export default function WaitingLobby() {
+  const navigate = useNavigate();
+
   const data = secureLocalStorage.getItem("profileData");
   const user = useMemo(() => {
     try {
@@ -11,6 +18,42 @@ export default function WaitingLobby() {
       return null;
     }
   }, [data]);
+
+  const handleLogout = useCallback(async () => {
+    // change the active status
+    const user = await authStateKnown;
+    if (!user) {
+      toast("User not found");
+      return;
+    }
+    const token = await user.getIdToken();
+    let body = {
+      idToken: token,
+      is_active: false,
+    };
+
+    try {
+      const res = await api.put(`/auth/logout/`, body);
+      secureLocalStorage.removeItem("profileData");
+      secureLocalStorage.removeItem("token");
+      auth.signOut().then(() => {
+        console.log("Logged out");
+        navigate("/");
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.message || "Something went wrong");
+    }
+  });
+  useEffect(() => {
+    if (!user || !user?.is_authenticated) {
+      navigate("/login");
+    }
+    if (user?.is_approved) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
+  console.log({ user });
   return (
     <div className=" min-h-screen relative">
       <div>
@@ -34,13 +77,29 @@ export default function WaitingLobby() {
             </span>
           </div>
         </a>
-        <div className="flex items-center justify-start gap-2">
-          <img
-            src={user?.profilePictureUrl}
-            alt="ProfilePic"
-            className="rounded-full w-6 h-6 "
-          />
-          <span className="text-sm  font-semibold">{user?.name}</span>
+        <div className="flex justify-end items-center gap-8">
+          <Dropdown>
+            <MenuButton style={{ border: "none" }}>
+              <div className="flex items-center justify-start gap-2">
+                <img
+                  src={user?.profilePictureUrl}
+                  alt="ProfilePic"
+                  className="rounded-full w-6 h-6 "
+                />
+                <span className="text-sm  font-semibold">{user?.name}</span>
+              </div>
+            </MenuButton>
+            <Menu>
+              <MenuItem>
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 rounded-md px-4 py-1 w-full text-white hover:bg-red-400 duration-200 shadow-sm"
+                >
+                  Logout
+                </button>
+              </MenuItem>
+            </Menu>
+          </Dropdown>
         </div>
       </div>
       <div className="flex flex-col items-center justify-center flex-1 w-full max-w-4xl px-4 py-8 text-center mx-auto pt-24 ">

@@ -25,7 +25,7 @@ const db = getFirestore(app);
 const storage = getStorage(app, "gs://twokey-a14ec.appspot.com");
 
 // Initialize a promise that resolves when the auth state is known
-let authStateKnown = new Promise((resolve) => {
+const authStateKnown = new Promise((resolve) => {
   onAuthStateChanged(auth, (user) => {
     resolve(user);
   });

@@ -21,6 +21,7 @@ import secureLocalStorage from "react-secure-storage";
 import CloseIcon from "@mui/icons-material/Close";
 import { auth } from "../helper/firebaseClient";
 import { api } from "../utils/axios-instance";
+import toast from "react-hot-toast";
 
 let hardCodedDepartments = [
   { name: "Account", metadata: { bg: "#FFF6F6", border: "#FEB7B7" } },
@@ -54,12 +55,12 @@ function SideBar() {
 
     try {
       const res = await api.put(`/auth/logout/`, body);
-
-      alert(res.data.message);
-
+      secureLocalStorage.removeItem("profileData");
+      secureLocalStorage.removeItem("token");
       auth.signOut();
     } catch (error) {
       console.log(error);
+      toast.error(error?.message || "Something went wrong");
     }
     navigate("/");
     setProfileData(null);

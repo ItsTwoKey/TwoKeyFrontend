@@ -14,10 +14,10 @@ import { auth } from "../helper/firebaseClient";
  */
 export function ProtectedRoute() {
   const location = useLocation();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const data = secureLocalStorage.getItem("profileData");
-  const user = useMemo(() => {
+  const userDetails = useMemo(() => {
     try {
       return JSON.parse(data);
     } catch (err) {
@@ -27,12 +27,13 @@ export function ProtectedRoute() {
   }, [data]);
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
+      console.log({ user });
       if (user) {
         setIsAuthenticated(true);
       } else {
         setIsAuthenticated(false);
       }
-      // setIsLoading(false);
+      setIsLoading(false);
     });
 
     return () => unsubscribe();
@@ -42,11 +43,16 @@ export function ProtectedRoute() {
     return <Loading />;
   }
 
-  if (user && user?.is_authenticated && !user?.is_approved) {
+  if (
+    userDetails &&
+    userDetails?.is_authenticated &&
+    !userDetails?.is_approved
+  ) {
     console.log("User not approved, redirecting to waiting lobby");
     return <Navigate to="/waiting-lobby" />;
   }
 
+  console.log({ isAuthenticated });
   if (!isAuthenticated) {
     console.log("Redirecting to login page", isAuthenticated, isLoading);
     return (
