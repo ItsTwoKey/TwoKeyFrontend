@@ -349,7 +349,7 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
     }
     const filteredUserDept = filterDeptById(departments, profileData?.dept);
     setUserDept(filteredUserDept);
-  }, [departments, profileData?.dept]);
+  }, [departments, profileData?.dept, auth.currentUser]);
 
   return (
     <>

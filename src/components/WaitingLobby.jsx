@@ -5,11 +5,13 @@ import { api } from "../utils/axios-instance";
 import { useNavigate } from "react-router-dom";
 import { Dropdown, Menu, MenuButton, MenuItem } from "@mui/joy";
 import toast from "react-hot-toast";
+import { useAuth } from "../context/authContext";
 
 export default function WaitingLobby() {
   const navigate = useNavigate();
+  const { profileData } = useAuth();
 
-  const data = secureLocalStorage.getItem("profileData");
+  const data = profileData;
   const user = useMemo(() => {
     try {
       return JSON.parse(data);
