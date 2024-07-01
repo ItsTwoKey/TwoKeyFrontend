@@ -1,6 +1,5 @@
 import axios from "axios";
-import { auth } from "../helper/firebaseClient";
-// import { authStateKnown } from "../helper/firebaseClient";
+import { auth, authStateKnown } from "../helper/firebaseClient";
 
 const apiEndpoint = process.env.REACT_APP_BACKEND_BASE_URL;
 
@@ -15,7 +14,6 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
-  // const user = await authStateKnown;
   const user = auth.currentUser;
   if (user) {
     try {
