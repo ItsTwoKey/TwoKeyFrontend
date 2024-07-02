@@ -11,35 +11,22 @@ const RoleCount = () => {
   const [roles, setRoles] = useState([]);
   const [roleCount, setRoleCount] = useState({});
   const context = useContext(userContext);
-  const { activeType, applyFilter } = context;
+  const { activeType, applyFilter, users } = context;
 
   useEffect(() => {
-    const getRoles = async () => {
-      try {
-        let { data: user_info, error } = await supabase
-          .from("user_info")
-          .select("role_priv");
-
-        console.log("roles:", user_info);
-        setRoles(user_info);
-
-        const countedRoles = countRoles(user_info);
-        setRoleCount(countedRoles);
-      } catch (error) {
-        console.log("Error fetching departments");
-      }
+    const countRoles = (rolesData) => {
+      const roleCountData = {};
+      rolesData.forEach((user) => {
+        roleCountData[user.role_priv] =
+          (roleCountData[user.role_priv] || 0) + 1;
+      });
+      return roleCountData;
     };
 
-    getRoles();
-  }, []);
+    const countedRoles = countRoles(users);
 
-  const countRoles = (rolesData) => {
-    const roleCountData = {};
-    rolesData.forEach((role) => {
-      roleCountData[role.role_priv] = (roleCountData[role.role_priv] || 0) + 1;
-    });
-    return roleCountData;
-  };
+    setRoleCount(countedRoles);
+  }, [users]);
 
   return (
     <div className="h-[315px] bg-white p-4 rounded-md shadow-lg my-4">

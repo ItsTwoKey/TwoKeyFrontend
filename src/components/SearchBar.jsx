@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { useDarkMode } from "../context/darkModeContext";
 import { supabase } from "../helper/supabaseClient";
@@ -6,6 +6,7 @@ import FileView from "./FileView";
 import { useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { api } from "../utils/axios-instance";
+import userContext from "../context/UserContext";
 
 export default function SearchBar() {
   const { darkMode } = useDarkMode();
@@ -14,6 +15,7 @@ export default function SearchBar() {
   const [searchResults, setSearchResults] = useState([]);
   const [filteredFiles, setFilteredFiles] = useState([]);
   const [isFileViewOpen, setIsFileViewOpen] = useState(false);
+  const [users, setUsers] = useState([]);
   const [selectedFileInfo, setSelectedFileInfo] = useState({
     name: "",
     size: "",
@@ -79,6 +81,7 @@ export default function SearchBar() {
         file.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredFiles(filteredFiles);
+      // console.log(filteredFiles);
     }
   }, [searchTerm]);
 
@@ -102,27 +105,30 @@ export default function SearchBar() {
   // }, [searchTerm]);
 
   useEffect(() => {
-    // Only fetch user data if search term is not empty
+    const listUsers = async () => {
+      try {
+        const response = await api.get(`/users/list_users`);
+
+        setUsers(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    listUsers();
+  }, []);
+
+  useEffect(() => {
     if (searchTerm.trim() !== "") {
       const fetchUserData = async () => {
-        // Fetch data from Supabase with text search
-        const { data, error } = await supabase
-          .from("user_info")
-          .select("name,last_name,id")
-          .ilike("name", `%${searchTerm}%`);
-
-        // console.log(data);
-
-        if (error) {
-          console.error(error);
-        } else {
-          setSearchResults(data);
-        }
+        const filtered = users.filter((user) =>
+          user.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setSearchResults(filtered);
       };
 
       fetchUserData();
     } else {
-      // If search term is empty, reset search results
       setSearchResults([]);
     }
   }, [searchTerm]);
@@ -185,7 +191,7 @@ export default function SearchBar() {
                 {filteredFiles.map((file, index) => {
                   // finde the bg-color and border-color of the file
                   try {
-                    file.bgColor = dept[file.dept].bg;
+                    file.bgColor = file.color;
                     file.borderColor = dept[file.dept].border;
                   } catch (error) {
                     file.bgColor = "";
@@ -206,7 +212,7 @@ export default function SearchBar() {
                       }
                       className={`p-4 border-b-[1px] hover:bg-gray-50 cursor-pointer border-gray-100`}
                       style={{
-                        backgroundColor: file.bgColor,
+                        backgroundColor: file.color,
                         borderColor: file.borderColor,
                       }}
                       onMouseEnter={(e) => {
