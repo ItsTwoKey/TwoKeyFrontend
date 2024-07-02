@@ -98,7 +98,7 @@ export default function DashboardTabs() {
       setLoading(false);
     }
     dummy();
-  }, [value, currentPage, auth.currentUser]);
+  }, [value, currentPage, auth.currentUser, departments]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value); // Update currentPage when pagination changes

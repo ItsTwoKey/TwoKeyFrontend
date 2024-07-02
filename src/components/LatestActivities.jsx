@@ -9,16 +9,13 @@ import secureLocalStorage from "react-secure-storage";
 
 import Skeleton from "@mui/material/Skeleton";
 import { api } from "../utils/axios-instance";
-import axios from "axios";
 
 const LatestActivities = () => {
   const { darkMode } = useDarkMode();
   const [selectedValue, setSelectedValue] = useState("all");
   const [logs, setLogs] = useState([]);
-  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const isUserProfile = location.pathname.includes("/profile");
-  const token = secureLocalStorage.getItem("accessToken");
 
   //   realtime supabase subscribe
   useEffect(() => {
@@ -62,11 +59,7 @@ const LatestActivities = () => {
         ? `/file/getLogs?global=0&recs=5`
         : `/file/getLogs/?recs=10`;
 
-      const accessLogs = await axios.get(logsEndpoint, {
-        headers: {
-          Authorization: `Bearer ${token.session.access_token}`,
-        },
-      });
+      const accessLogs = await api.get(logsEndpoint);
 
       // console.log("Common logs", accessLogs.data);
 
@@ -75,8 +68,6 @@ const LatestActivities = () => {
       setLogs(accessLogs.data);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -149,7 +140,7 @@ const LatestActivities = () => {
         </div>
 
         <div className="h-56 overflow-y-scroll scrollbar-hide">
-          {!loading ? (
+          {logs.length ? (
             logs
               .filter((log) => {
                 if (selectedValue === "all") {
@@ -174,10 +165,10 @@ const LatestActivities = () => {
                         {log.event === "screenshot"
                           ? "took Screenshot of"
                           : log.event === "download"
-                          ? "downloaded"
-                          : log.event === "edit"
-                          ? "edited"
-                          : "accessed"}{" "}
+                            ? "downloaded"
+                            : log.event === "edit"
+                              ? "edited"
+                              : "accessed"}{" "}
                         <span className="font-semibold">
                           {log.file_name.split("_TS=")[0]}
                         </span>{" "}

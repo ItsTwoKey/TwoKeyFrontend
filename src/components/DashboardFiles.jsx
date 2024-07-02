@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import Box from "@mui/material/Box";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
@@ -27,6 +27,7 @@ import Notes from "../assets/notes.svg";
 import secureLocalStorage from "react-secure-storage";
 import { auth } from "../helper/firebaseClient";
 import { api } from "../utils/axios-instance";
+import DepartmentContext from "../context/departmentContext";
 
 const DashboardFiles = () => {
   const cacheKey = "accountFilesCache";
@@ -38,6 +39,7 @@ const DashboardFiles = () => {
   const [sortColumn, setSortColumn] = useState("lastUpdate");
   const location = useLocation();
   const [isFileViewOpen, setIsFileViewOpen] = useState(false);
+  const { departments } = useContext(DepartmentContext);
   const [selectedFileInfo, setSelectedFileInfo] = useState({
     name: "",
     size: "",
@@ -66,6 +68,10 @@ const DashboardFiles = () => {
             file.department = "";
           }
           // console.log("department : ", file.department);
+          const filteredDepartment = departments.filter(
+            (dept) => dept.id === file.department_ids[0]
+          );
+
           return {
             id: file.id,
             name: file.name.substring(0, 80),
@@ -76,6 +82,7 @@ const DashboardFiles = () => {
             mimetype: file.metadata.mimetype,
             status: "Team",
             security: "Enhanced",
+            color: filteredDepartment[0].metadata?.bg,
             lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
               "en-IN",
               {
@@ -94,6 +101,7 @@ const DashboardFiles = () => {
         secureLocalStorage.setItem(cacheKey, JSON.stringify(mappedFiles));
 
         // Update the state with the new data
+        console.log(mappedFiles);
 
         setFilteredData(mappedFiles);
       }
@@ -103,24 +111,6 @@ const DashboardFiles = () => {
       console.error("Error fetching files:", error);
     }
   }, [formatFileSize]);
-
-  useEffect(() => {
-    const channel = supabase
-      .channel("custom_all_channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "file_info" },
-        () => {
-          console.log("rendered due to subscribe");
-          fetchDashboardFiles();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [fetchDashboardFiles]); // Include fetchDashboardFiles in the dependency array
 
   useEffect(() => {
     // Check if account files data is available in localStorage

@@ -81,7 +81,6 @@ export default function SearchBar() {
         file.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredFiles(filteredFiles);
-      // console.log(filteredFiles);
     }
   }, [searchTerm]);
 
@@ -210,19 +209,19 @@ export default function SearchBar() {
                           file.lastUpdate
                         )
                       }
-                      className={`p-4 border-b-[1px] hover:bg-gray-50 cursor-pointer border-gray-100`}
+                      className={`p-4 border-b-[1px] hover:opacity-70 cursor-pointer border-gray-100`}
                       style={{
                         backgroundColor: file.color,
                         borderColor: file.borderColor,
                       }}
-                      onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = "rgb(249 250 251)";
-                        e.target.style.borderColor = "rgb(243 244 246 )";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = file.bgColor;
-                        e.target.style.borderColor = file.borderColor;
-                      }}
+                      // onMouseEnter={(e) => {
+                      //   e.target.style.opacity = "rgb(249 250 251)";
+                      //   e.target.style.borderColor = "rgb(243 244 246 )";
+                      // }}
+                      // onMouseLeave={(e) => {
+                      //   e.target.style.backgroundColor = file.bgColor;
+                      //   e.target.style.borderColor = file.borderColor;
+                      // }}
                     >
                       {file.name.split("_TS=")[0]}
                     </li>
