@@ -26,7 +26,7 @@ const FileInfo = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
       const accessLogs = await api.get(`/file/getLogs/${fileInfo.id}?recs=5`);
       console.log(`Access Logs of id ( ${fileInfo.id} ) :`, accessLogs.data);
 
-      setLogs(accessLogs.data);
+      setLogs(accessLogs.data); 
       setLoading(false); // Set loading to false after logs are fetched
     } catch (error) {
       console.log(error);
