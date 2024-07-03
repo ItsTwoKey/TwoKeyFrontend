@@ -1,39 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
 import InviteOptions from "../components/teamManagement/InviteOptions";
 
 import TeamManagementTable from "./TeamManagementTable";
 import PendingInviteTable from "./PendingInviteTable";
-import { supabase } from "../helper/supabaseClient";
+import toast from "react-hot-toast";
+import { api } from "../utils/axios-instance";
 
 const TeamManagement = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const downloadData = async () => {
+    setLoading(true);
     try {
-      let { data: user_info, error } = await supabase
-        .from("user_info")
-        .select("*");
-
-      if (error) {
-        throw error;
+      const res = await api.get("/users/list_users");
+      if (res.status !== 200) {
+        throw new Error(res.data || "Something went wrong");
       }
+      const listUsers = res.data?.map((user) => {
+        let { metadata, dept, profilePictureUrl, id, org, ...rest } = user;
+        return rest;
+      });
+      const allKeys = [...new Set(listUsers.flatMap(Object.keys))];
 
-      // Convert the data to CSV format
-      const csvContent =
-        "data:text/csv;charset=utf-8," +
-        Object.keys(user_info[0]).join(",") +
-        "\n" +
-        user_info.map((row) => Object.values(row).join(",")).join("\n");
+      const csvRows = [];
+      csvRows.push(allKeys.join(",").toUpperCase());
+      console.log({ listUsers, allKeys, csvRows });
+      listUsers.forEach((row) => {
+        const values = allKeys.map((key) => {
+          const escapeValue = (
+            row[key] !== undefined ? "" + row[key] : ""
+          ).replace(/"/g, '\\"');
+          return `"${escapeValue}"`;
+        });
+        csvRows.push(values.join(","));
+      });
+      const csvContent = csvRows.join("\n");
 
-      // Create a CSV file and trigger download
-      const encodedUri = encodeURI(csvContent);
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
       link.setAttribute("download", "user_info.csv");
       document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     } catch (error) {
+      setError(error?.message || "Something went wrong. Please try again!");
+
       console.error("Error fetching data:", error.message);
+    } finally {
+      setLoading(false);
     }
   };
+  if (error) {
+    toast.error(error);
+    setError("");
+  }
 
   return (
     <div className="py-4 px-8 rounded-md h-screen overflow-y-scroll scrollbar-hide">
@@ -42,8 +64,8 @@ const TeamManagement = () => {
 
       <div className="my-4 rounded-lg p-4 bg-[#F1F1FF] w-full shadow-lg">
         <p className="font-semibold mb-1">Members</p>
-        <div className="flex flex-row justify-between items-center">
-          <p className="w-1/2 text-sm">
+        <div className="lg:flex flex-row justify-start items-center space-y-4 lg:space-y-0">
+          <p className="w-full  lg:w-1/2  text-sm">
             Invite a team member on Epitaxial IT to work faster and collaborate
             easily together. Manage their permissions to better structure
             projects.
@@ -53,7 +75,7 @@ const TeamManagement = () => {
               onClick={downloadData}
               className="bg-white border-2 rounded-lg py-1 px-2"
             >
-              Download CSV
+              {loading ? "Processing..." : "Download CSV"}
             </button>
 
             <InviteOptions />
