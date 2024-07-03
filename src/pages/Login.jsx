@@ -174,9 +174,10 @@ const Login = () => {
 
   useEffect(() => {
     if (secureLocalStorage.getItem("token")) {
+      console.log("token");
       navigate("/dashboard");
     }
-  }, [navigate]);
+  }, []);
 
   return (
     <div className="flex flex-col md:flex-row font-raleway">

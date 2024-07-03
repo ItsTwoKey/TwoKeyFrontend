@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import MuiAccordion from "@mui/material/Accordion";
@@ -13,6 +13,8 @@ import Select from "@mui/material/Select";
 import secureLocalStorage from "react-secure-storage";
 import { auth } from "../helper/firebaseClient";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useAuth } from "../context/authContext";
+import Loading from "../components/Loading";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -65,7 +67,8 @@ const Onboard = () => {
   const [isFormComplete, setIsFormComplete] = useState(false);
   const [loading, setLoading] = useState(false);
   let token = secureLocalStorage.getItem("token");
-  let profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
+  const profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
+
   let departmentList = JSON.parse(secureLocalStorage.getItem("departments"));
   const navigate = useNavigate();
 
@@ -184,6 +187,9 @@ const Onboard = () => {
     }
   };
 
+  if (!profileData || !profileData?.is_authenticated) {
+    return <Navigate to={"/login"} />;
+  }
   return (
     <div className="min-h-screen flex flex-col justify-between items-center">
       <div className="text-center p-16">
