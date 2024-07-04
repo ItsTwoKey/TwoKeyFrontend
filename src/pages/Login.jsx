@@ -16,7 +16,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { api } from "../utils/axios-instance";
 
 const Login = () => {
-  // const [userMetaData, setUserMetaData] = useState([]);
+  const [userMetaData, setUserMetaData] = useState([]);
   let navigate = useNavigate();
   const { fetchProfileData } = useAuth();
   const isSmallScreen = useMediaQuery("(max-width:600px)");
@@ -95,7 +95,12 @@ const Login = () => {
       try {
         const res = await axios.put(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/login/`,
-          userInfo
+          userInfo,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
 
         const userMetaData = res.data.user;
@@ -108,7 +113,7 @@ const Login = () => {
         await listDepartments();
 
         console.log("userMetaData", userMetaData);
-        console.log({ userMetaData });
+        setUserMetaData(userMetaData);
         if (
           userMetaData.username &&
           userMetaData.name &&
@@ -174,8 +179,17 @@ const Login = () => {
 
   useEffect(() => {
     if (secureLocalStorage.getItem("token")) {
-      console.log("token");
-      navigate("/dashboard");
+      if (
+        userMetaData.username &&
+        userMetaData.name &&
+        userMetaData.last_name &&
+        userMetaData.dept &&
+        userMetaData.profilePictureUrl
+      ) {
+        navigate("/dashboard");
+      } else {
+        navigate("/onboard");
+      }
     }
   }, []);
 

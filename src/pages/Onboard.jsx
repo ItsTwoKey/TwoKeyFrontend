@@ -15,6 +15,7 @@ import { auth } from "../helper/firebaseClient";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useAuth } from "../context/authContext";
 import Loading from "../components/Loading";
+import { useDepartment } from "../context/departmentContext";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -68,8 +69,7 @@ const Onboard = () => {
   const [loading, setLoading] = useState(false);
   let token = secureLocalStorage.getItem("token");
   const profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
-
-  let departmentList = JSON.parse(secureLocalStorage.getItem("departments"));
+  const { departments } = useDepartment();
   const navigate = useNavigate();
 
   const handleChange = (panel) => (event, newExpanded) => {
@@ -168,6 +168,11 @@ const Onboard = () => {
             idToken,
             profileData: newProfileData,
             profilePicture: profilePictureBase64,
+          },
+          {
+            headers: {
+              Authorization: token,
+            },
           }
         );
 
@@ -175,7 +180,7 @@ const Onboard = () => {
         secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
         if (res) {
           setLoading(false);
-          navigate("/dashboard");
+          navigate("/waiting-lobby");
         }
       } catch (error) {
         setLoading(false);
@@ -252,25 +257,20 @@ const Onboard = () => {
                     <label className="block text-gray-600 text-sm font-medium p-1">
                       Department
                     </label>
-
-                    <Select
-                      className="w-full bg-gray-100"
-                      labelId="demo-select-small-label"
-                      id="demo-select-small"
-                      value={formData.department}
-                      label="Departments"
-                      name="Departments"
-                      onChange={(e) =>
-                        handleInputChange("department", e.target.value)
-                      }
-                      size="small"
-                    >
-                      {/* <MenuItem value="None">
-                        <em>None</em>
-                      </MenuItem> */}
-
-                      {departmentList?.length &&
-                        departmentList.map((dept) => (
+                    {departments?.length && (
+                      <Select
+                        className="w-full bg-gray-100"
+                        labelId="demo-select-small-label"
+                        id="demo-select-small"
+                        value={formData.department}
+                        label="Departments"
+                        name="Departments"
+                        onChange={(e) =>
+                          handleInputChange("department", e.target.value)
+                        }
+                        size="small"
+                      >
+                        {departments.map((dept) => (
                           <MenuItem
                             // style={{ backgroundColor: dept?.metadata?.bg }}
                             key={dept.id}
@@ -285,7 +285,8 @@ const Onboard = () => {
                             {dept.name}
                           </MenuItem>
                         ))}
-                    </Select>
+                      </Select>
+                    )}
                   </div>
                   <div className="mb-4">
                     <label className="block text-gray-600 text-sm font-medium p-1">
