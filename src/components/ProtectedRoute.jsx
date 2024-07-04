@@ -3,6 +3,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import Loading from "./Loading";
 import secureLocalStorage from "react-secure-storage";
 import { auth } from "../helper/firebaseClient";
+import { useAuth } from "../context/authContext";
 
 /**
  * ProtectedRoute is a component that enforces access control for routes.
@@ -14,17 +15,12 @@ import { auth } from "../helper/firebaseClient";
  */
 export function ProtectedRoute() {
   const location = useLocation();
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const data = secureLocalStorage.getItem("profileData");
-  const userDetails = useMemo(() => {
-    try {
-      return JSON.parse(data);
-    } catch (err) {
-      console.error("Could not parse profile data", { err });
-      return null;
-    }
-  }, [data]);
+  // const [isApproved, setIsApproved] = useState(false);
+  // const [hasOnBoarded, setHasOnBoarded] = useState(false);
+  const { profileData, profileIsPending, setProfileIsPending } = useAuth();
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       console.log({ user });
@@ -33,31 +29,59 @@ export function ProtectedRoute() {
       } else {
         setIsAuthenticated(false);
       }
-      setIsLoading(false);
+      setProfileIsPending(false);
     });
 
     return () => unsubscribe();
-  }, []);
-
-  if (isLoading) {
+  }, [setProfileIsPending]);
+  console.log({
+    profileData,
+    profileIsPending,
+    // hasOnBoarded,
+    // isApproved,
+    // isAuthenticated,
+  });
+  if (profileIsPending) {
     return <Loading />;
   }
-
-  if (
-    userDetails &&
-    userDetails?.is_authenticated &&
-    !userDetails?.is_approved
-  ) {
-    console.log("User not approved, redirecting to waiting lobby");
-    return <Navigate to="/waiting-lobby" />;
-  }
-
-  console.log({ isAuthenticated });
-  if (!isAuthenticated) {
-    console.log("Redirecting to login page", isAuthenticated, isLoading);
+  if (!profileData?.is_authenticated) {
+    console.log("Redirecting to login page");
     return (
       <Navigate to={"/login"} replace state={{ path: location.pathname }} />
     );
   }
+
+  if (!profileData?.username && location.pathname !== "/onboard") {
+    console.log("on");
+    return (
+      <Navigate to={"/onboard"} replace state={{ path: location.pathname }} />
+    );
+  }
+
+  if (profileData?.username && location.pathname === "/onboard") {
+    return (
+      <Navigate
+        to={"/waiting-lobby"}
+        replace
+        state={{ path: location.pathname }}
+      />
+    );
+  }
+
+  if (
+    !profileData?.is_approved &&
+    location.pathname !== "/onboard" &&
+    location.pathname !== "/waiting-lobby"
+  ) {
+    console.log("User not approved, redirecting to waiting lobby");
+    return (
+      <Navigate
+        to="/waiting-lobby"
+        replace
+        state={{ path: location.pathname }}
+      />
+    );
+  }
+
   return <Outlet />;
 }

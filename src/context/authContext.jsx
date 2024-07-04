@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [screenshotDetected, setScreenshotDetected] = useState(false);
   const [users, setUsers] = useState([]);
   const [profileData, setProfileData] = useState(null);
+  const [profileIsPending, setProfileIsPending] = useState(true);
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [coordinates, setCoordinates] = useState([]);
@@ -232,8 +233,9 @@ export const AuthProvider = ({ children }) => {
   }
 
   async function fetchProfileData() {
+    setProfileIsPending(true);
     try {
-      let token = await auth.currentUser.getIdToken();
+      const token = await auth.currentUser.getIdToken();
 
       if (token) {
         const res = await axios.post(
@@ -250,6 +252,8 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.log("error occurred while fetching profile data", error);
+    } finally {
+      setProfileIsPending(false);
     }
   }
 
@@ -343,6 +347,8 @@ export const AuthProvider = ({ children }) => {
     users,
     profileData,
     setProfileData,
+    profileIsPending,
+    setProfileIsPending,
     fetchProfileData,
     listLocations,
     coordinates,
