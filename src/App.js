@@ -71,7 +71,6 @@ const App = () => {
             <Route path="/login" element={<Login />} exact />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/change-password" element={<ChangePassword />} />
-            <Route path="/waiting-lobby" element={<WaitingLobby />} />
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
@@ -86,6 +85,8 @@ const App = () => {
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/onboard" element={<Onboard />} />
+              <Route path="/waiting-lobby" element={<WaitingLobby />} />
+
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/ai/:fileId" element={<AI />} />
               <Route path="/test" element={<Test />} />
