@@ -14,11 +14,12 @@ import secureLocalStorage from "react-secure-storage";
 import { auth } from "../helper/firebaseClient";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { api } from "../utils/axios-instance";
+import Loading from "../components/Loading";
 
 const Login = () => {
   const [userMetaData, setUserMetaData] = useState([]);
   let navigate = useNavigate();
-  const { fetchProfileData } = useAuth();
+  const { fetchProfileData, isProfilePending, profileData } = useAuth();
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   const [formData, setFormData] = useState({
@@ -178,20 +179,27 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (secureLocalStorage.getItem("token")) {
+    if (
+      secureLocalStorage.getItem("token") &&
+      profileData 
+    ) {
       if (
-        userMetaData.username &&
-        userMetaData.name &&
-        userMetaData.last_name &&
-        userMetaData.dept &&
-        userMetaData.profilePictureUrl
+        profileData.username &&
+        profileData.name &&
+        profileData.last_name &&
+        profileData.dept &&
+        profileData.profilePictureUrl
       ) {
         navigate("/dashboard");
       } else {
         navigate("/onboard");
       }
     }
-  }, []);
+  }, [auth.currentUser, profileData]);
+
+  if (isProfilePending) {
+    return <Loading />;
+  }
 
   return (
     <div className="flex flex-col md:flex-row font-raleway">

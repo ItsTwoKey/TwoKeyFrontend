@@ -15,7 +15,7 @@ import { useAuth } from "../context/authContext";
  */
 export function ProtectedRoute() {
   const location = useLocation();
-  // const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   // const [isApproved, setIsApproved] = useState(false);
   // const [hasOnBoarded, setHasOnBoarded] = useState(false);
@@ -26,14 +26,17 @@ export function ProtectedRoute() {
       console.log({ user });
       if (user) {
         setIsAuthenticated(true);
+        setIsLoading(false);
       } else {
         setIsAuthenticated(false);
+        setIsLoading(false);
       }
       setProfileIsPending(false);
     });
 
     return () => unsubscribe();
-  }, [setProfileIsPending]);
+  }, []);
+
   console.log({
     profileData,
     profileIsPending,
@@ -41,6 +44,7 @@ export function ProtectedRoute() {
     // isApproved,
     // isAuthenticated,
   });
+
   if (profileIsPending) {
     return <Loading />;
   }

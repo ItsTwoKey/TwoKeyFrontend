@@ -68,7 +68,7 @@ const Onboard = () => {
   const [isFormComplete, setIsFormComplete] = useState(false);
   const [loading, setLoading] = useState(false);
   let token = secureLocalStorage.getItem("token");
-  const profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
+  const { profileData, setProfileData } = useAuth();
   const { departments } = useDepartment();
   const navigate = useNavigate();
 
@@ -179,6 +179,7 @@ const Onboard = () => {
         console.log("onboarding success:", res);
         secureLocalStorage.setItem("profileData", JSON.stringify(res.data));
         if (res) {
+          setProfileData(res.data);
           setLoading(false);
           navigate("/waiting-lobby");
         }
