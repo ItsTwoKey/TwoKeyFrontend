@@ -1,0 +1,77 @@
+import React from "react";
+import Github from "../assets/github.svg";
+import Discord from "../assets/discord.svg";
+import Twitter from "../assets/twitter.svg";
+import Linkedin from "../assets/linkedin.svg";
+import Youtube from "../assets/youtube.svg";
+
+const LandingFooter = () => {
+  const scrollTo = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  };
+
+  return (
+    <div className="h-full bg-[#DEE5E5] px-8 md:px-20 py-16 border-t border-[#F7F7F821] text-center md:text-left font-plusJakartaSans">
+      <div className="md:flex md:justify-between md:items-start ">
+        {/* <div className="w-full md:w-1/2">
+          <h4 className="text-white text-lg font-[400] font-allertaStencil">
+            TWOKEY
+          </h4>
+          <p className="text-sm text-[#5E5ADB] w-full md:w-4/5 my-8 text-justify md:text-left">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
+            dictum aliquet accumsan porta lectus ridiculus in mattis. Netus
+            sodales in volutpat ullamcorper amet adipiscing fermentum.
+          </p>
+          <span className="flex flex-row gap-3 w-full justify-center md:justify-start items-center mb-8 md:mb-0">
+            <img src={Github} alt="" className="cursor-pointer" />
+            <img src={Discord} alt="" className="cursor-pointer" />
+            <img src={Twitter} alt="" className="cursor-pointer" />
+            <img src={Linkedin} alt="" className="cursor-pointer" />
+            <img src={Youtube} alt="" className="cursor-pointer" />
+          </span>
+        </div> */}
+        <div className="flex flex-col flex-end mt-auto">
+          <p>© 2024 Copyright two key PVT LTD's. </p>
+          <p>Pune, Maharashtra, India</p>
+        </div>
+        <div className="flex justify-between items-start w-full md:w-1/2 text-sm">
+          <span>
+            <h5 className="text-black mb-8 font-bold">Product</h5>
+            <span className="flex flex-col leading-8 cursor-pointer">
+              <a className="text-black" href="/">
+                Pricing
+              </a>
+            </span>
+          </span>
+          <span>
+            <h5 className="text-black mb-8 font-bold">Resources</h5>
+            <span className="flex flex-col leading-8">
+              <a className="text-black" href="/contact-us">
+                Templates
+              </a>
+              <a className="text-black">Docs</a>
+            </span>
+          </span>
+          <span className="">
+            <h5 className="text-black mb-8 font-bold">Company</h5>
+            <span className="flex flex-col leading-8 cursor-pointer">
+              <a className="text-black" href="/">
+                About
+              </a>
+              <a className="text-black" href="/">
+                Contact and Support
+              </a>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LandingFooter;

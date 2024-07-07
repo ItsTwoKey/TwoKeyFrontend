@@ -29,6 +29,7 @@ import TextEditor from "./components/editFiles/TextEditor";
 import TextEditorV2 from "./components/editFiles/TextEditorV2";
 import CustomEditor from "./components/customEditor/CustomEditorV1";
 import WaitingLobby from "./components/WaitingLobby";
+import Landing from "./pages/Landing";
 // import { useDarkMode } from "./context/darkModeContext";
 
 // let hardCodedDepartments = [
@@ -64,7 +65,8 @@ const App = () => {
           <TopBar />
           <Background />
           <Routes>
-            <Route path="/" element={<Home />} />
+            {/* <Route path="/" element={<Home />} /> */}
+            <Route path="/" element={<Landing />} />
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/signup" element={<SignUp />} />
