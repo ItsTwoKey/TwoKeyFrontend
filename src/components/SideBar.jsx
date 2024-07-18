@@ -434,7 +434,11 @@ function SideBarContents({ darkMode, isMenuOpen, setIsMenuOpen }) {
                         }`
                   }`}
                 >
-                  {departmentIcons[department.name]}
+                  {departmentIcons[department.name] || (
+                    <span className="text-2xl grayscale-[100%] brightness-90 -ml-1">
+                      {department.emoji || "🏢"}
+                    </span>
+                  )}
                   <p className={`px-2 bg-[rgb(255 255 255 / 0%)] `}>
                     {department.name.replace("_", " ")}
                   </p>

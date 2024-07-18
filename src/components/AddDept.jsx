@@ -10,6 +10,8 @@ import secureLocalStorage from "react-secure-storage";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 import { auth } from "../helper/firebaseClient";
+import data from "@emoji-mart/data/sets/15/native.json";
+import Picker from "@emoji-mart/react";
 
 const AddDept = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +20,7 @@ const AddDept = () => {
   const [hex, setHex] = useState("#4F46E5");
   const { setDepartments, listDepartments } = useDepartment();
   const [loading, setLoading] = useState(false);
+  const [emoji, setEmoji] = useState(null); // State to hold selected emoji
 
   const openDialog = () => {
     setIsOpen(true);
@@ -25,6 +28,10 @@ const AddDept = () => {
 
   const closeDialog = () => {
     setIsOpen(false);
+  };
+
+  const handleEmojiSelect = (emoji) => {
+    setEmoji(emoji.native); // Update state with selected emoji
   };
 
   const addDepartment = async () => {
@@ -41,6 +48,7 @@ const AddDept = () => {
           border: "#B7B6C2",
         },
         idToken: token,
+        emoji: emoji,
       };
 
       let addDept = await axios.post(
@@ -82,7 +90,7 @@ const AddDept = () => {
             backgroundColor: "#F7F8FA",
           }}
         >
-          <div className="my-2 w-[486px] py-2">
+          <div className="my-2 w-full py-2">
             <span className="w-[462px]">
               <p className="text-gray-700">Department Name</p>
               <input
@@ -93,17 +101,32 @@ const AddDept = () => {
               />
             </span>
 
-            <span>
-              <p className="text-gray-700 my-2">Department Color</p>
-              <Chrome
-                color={hex}
-                style={{ width: "100%", margin: "auto" }}
-                placement={GithubPlacement.Right}
-                onChange={(color) => {
-                  setHex(color.hexa);
-                }}
-              />
-            </span>
+            <div className="w-full flex gap-6">
+              <span>
+                <p className="text-gray-700 my-2">
+                  Department Icon {emoji && `: ${emoji}`}
+                </p>
+                <Picker
+                  data={data}
+                  set="native"
+                  onEmojiSelect={handleEmojiSelect}
+                  theme="light"
+                  perLine={7}
+                />
+              </span>
+
+              <span>
+                <p className="text-gray-700 my-2">Department Color</p>
+                <Chrome
+                  color={hex}
+                  style={{ width: "100%", margin: "auto" }}
+                  placement={GithubPlacement.Right}
+                  onChange={(color) => {
+                    setHex(color.hexa);
+                  }}
+                />
+              </span>
+            </div>
           </div>
         </DialogContent>
         <DialogActions sx={{ padding: "10px" }}>

@@ -49,7 +49,8 @@ const Profile = () => {
 
   const handleProfilePicUpdate = async () => {
     try {
-      let token = auth.currentUser.getIdToken();
+      let token = await auth.currentUser.getIdToken();
+
       const profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
 
       let profilePictureBase64 = null;

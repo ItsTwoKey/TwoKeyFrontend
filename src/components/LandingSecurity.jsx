@@ -67,9 +67,7 @@ const LandingSecurity = () => {
         the tighter the security dance.
       </p>
       <div className="h-full w-4/5 bg-[#1A2020] rounded-xl mt-10 px-4 py-2">
-        <div className="bg-white rounded-xl" style={{ height: "60vh" }}>
-          hi
-        </div>
+        <div className="bg-white rounded-xl" style={{ height: "60vh" }}></div>
         <div className="flex justify-between mt-5">
           {options.map((option, index) => (
             <h1
@@ -90,7 +88,7 @@ const LandingSecurity = () => {
         {options.map((option) => (
           <div
             key={option.title}
-            className="bg-[#A1A1A1] bg-opacity-20 flex flex-col w-full mx-auto justify-between"
+            className="bg-[#A1A1A1] bg-opacity-20 flex flex-col w-full mx-auto justify-between pb-8"
           >
             <div
               className="h-2/3 flex-grow rounded-t-lg"
@@ -102,7 +100,7 @@ const LandingSecurity = () => {
                 className="object-cover w-full h-full"
               />
             </div>
-            <div className="flex text-white h-[15vh] md:h-36 lg:h-24 items-center justify-between">
+            <div className="flex text-white h-[15vh] md:h-36 lg:h-24 items-center justify-between mt-2">
               <div className="flex flex-col w-3/4 px-5 justify-center">
                 <h1 className="text-xl md:text-2xl font-bold">
                   {option.title}
