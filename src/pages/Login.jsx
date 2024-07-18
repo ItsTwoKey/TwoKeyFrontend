@@ -14,11 +14,12 @@ import secureLocalStorage from "react-secure-storage";
 import { auth } from "../helper/firebaseClient";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { api } from "../utils/axios-instance";
+import Loading from "../components/Loading";
 
 const Login = () => {
-  // const [userMetaData, setUserMetaData] = useState([]);
+  const [userMetaData, setUserMetaData] = useState([]);
   let navigate = useNavigate();
-  const { fetchProfileData } = useAuth();
+  const { fetchProfileData, isProfilePending, profileData } = useAuth();
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   const [formData, setFormData] = useState({
@@ -95,7 +96,12 @@ const Login = () => {
       try {
         const res = await axios.put(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/login/`,
-          userInfo
+          userInfo,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
         );
 
         const userMetaData = res.data.user;
@@ -108,7 +114,7 @@ const Login = () => {
         await listDepartments();
 
         console.log("userMetaData", userMetaData);
-        console.log({ userMetaData });
+        setUserMetaData(userMetaData);
         if (
           userMetaData.username &&
           userMetaData.name &&
@@ -173,10 +179,27 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (secureLocalStorage.getItem("token")) {
-      navigate("/dashboard");
+    if (
+      secureLocalStorage.getItem("token") &&
+      profileData 
+    ) {
+      if (
+        profileData.username &&
+        profileData.name &&
+        profileData.last_name &&
+        profileData.dept &&
+        profileData.profilePictureUrl
+      ) {
+        navigate("/dashboard");
+      } else {
+        navigate("/onboard");
+      }
     }
-  }, [navigate]);
+  }, [auth.currentUser, profileData]);
+
+  if (isProfilePending) {
+    return <Loading />;
+  }
 
   return (
     <div className="flex flex-col md:flex-row font-raleway">

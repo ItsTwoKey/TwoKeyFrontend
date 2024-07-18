@@ -70,7 +70,7 @@ const DueDate = () => {
         setLoading(false);
       }
 
-      const dueDates = await api.get(`$/file/getLogs/dues/`);
+      const dueDates = await api.get(`/file/getLogs/dues/`);
 
       console.log("Due dates", dueDates.data);
 

@@ -29,7 +29,7 @@ const RoleCount = () => {
   }, [users]);
 
   return (
-    <div className="h-[315px] bg-white p-4 rounded-md shadow-lg my-4">
+    <div className="min-h-[315px] bg-white p-4 rounded-md shadow-lg my-4">
       <h3 className="font-semibold text-lg">Administrator roles available</h3>
       <p className="leading-5 text-sm text-gray-600 font-normal w-4/5">
         A role provides access to predefined menus and features so that
@@ -37,7 +37,7 @@ const RoleCount = () => {
         heads, Employees) an administrator can have access to what he/she needs.
       </p>
 
-      <div className="h-[175px] mt-6 grid grid-cols-4 gap-4">
+      <div className="min-h-[175px] mt-6 md:grid grid-cols-4 gap-4">
         {roles ? (
           Object.entries(roleCount).map(([role, count], index) => (
             <span

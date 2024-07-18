@@ -6,20 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { Dropdown, Menu, MenuButton, MenuItem } from "@mui/joy";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/authContext";
+import Loading from "./Loading";
 
 export default function WaitingLobby() {
   const navigate = useNavigate();
-  const { profileData } = useAuth();
-
-  const data = profileData;
-  const user = useMemo(() => {
-    try {
-      return JSON.parse(data);
-    } catch (err) {
-      console.error("Could not parse profile data", { err });
-      return null;
-    }
-  }, [data]);
+  const { profileData, profileIsPending } = useAuth();
 
   const handleLogout = useCallback(async () => {
     // change the active status
@@ -46,16 +37,23 @@ export default function WaitingLobby() {
       console.log(error);
       toast.error(error?.message || "Something went wrong");
     }
-  });
+  }, [navigate]);
   useEffect(() => {
-    if (!user || !user?.is_authenticated) {
+    if (profileData) {
+      if (!profileData?.is_authenticated) {
+        navigate("/login");
+      }
+      if (profileData?.is_approved) {
+        navigate("/dashboard");
+      }
+    } else if (!profileData && !profileIsPending) {
       navigate("/login");
     }
-    if (user?.is_approved) {
-      navigate("/dashboard");
-    }
-  }, [user, navigate]);
-  console.log({ user });
+  }, [profileData, navigate, profileIsPending]);
+  console.log({ profileData });
+  if (profileIsPending) {
+    return <Loading />;
+  }
   return (
     <div className=" min-h-screen relative">
       <div>
@@ -84,11 +82,13 @@ export default function WaitingLobby() {
             <MenuButton style={{ border: "none" }}>
               <div className="flex items-center justify-start gap-2">
                 <img
-                  src={user?.profilePictureUrl}
+                  src={profileData?.profilePictureUrl}
                   alt="ProfilePic"
                   className="rounded-full w-6 h-6 "
                 />
-                <span className="text-sm  font-semibold">{user?.name}</span>
+                <span className="text-sm  font-semibold">
+                  {profileData?.username}
+                </span>
               </div>
             </MenuButton>
             <Menu>

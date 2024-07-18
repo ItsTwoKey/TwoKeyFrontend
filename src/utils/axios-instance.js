@@ -18,7 +18,7 @@ api.interceptors.request.use(async (config) => {
   if (user) {
     try {
       const token = await user.getIdToken();
-      // console.log({ token });
+      console.log({ token });
       if (token) {
         config.headers.Authorization = token;
       }
