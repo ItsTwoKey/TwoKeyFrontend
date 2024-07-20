@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TextEditor from "./editFiles/TextEditor";
 import CustomFileViewer from "./CustomFileViewer";
+import SpreadsheetComponent from "./SpreadSheetViewer";
 
 const FileViewer = ({ preUrl, mimetype, signedUrl, fileName, fileId }) => {
   const containerStyles = {
@@ -37,9 +38,17 @@ const FileViewer = ({ preUrl, mimetype, signedUrl, fileName, fileId }) => {
     case "application/vnd.ms-powerpoint":
     case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
     case "text/csv":
-    case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
       viewerComponent = (
         <CustomFileViewer preUrl={signedUrl} mimetype={mimetype} />
+      );
+      break;
+    case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+      viewerComponent = (
+        <SpreadsheetComponent
+          preUrl={signedUrl}
+          mimetype={mimetype}
+          fileName={fileName}
+        />
       );
       break;
     default:
