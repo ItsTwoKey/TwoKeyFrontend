@@ -1,12 +1,30 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import "@inovua/reactdatagrid-community/index.css";
 import "@inovua/reactdatagrid-community/theme/default-light.css";
 import ReactDataGrid from "@inovua/reactdatagrid-community";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 import * as XLSX from "xlsx-js-style";
+import { useAuth } from "../context/authContext";
+import { storage } from "../helper/firebaseClient";
+import { Button } from "@mui/joy";
 
 const SpreadsheetComponent = ({ preUrl, mimetype, fileName }) => {
   const [data, setData] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const idleTimeoutRef = useRef(null);
+  const { profileData, profileIsPending } = useAuth();
+  const deptId = useMemo(() => profileData?.dept ?? null, [profileData?.dept]);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  console.log({ deptId });
 
   const padHeaderRows = (sheetData) => {
     let headerRows = [];
@@ -88,11 +106,117 @@ const SpreadsheetComponent = ({ preUrl, mimetype, fileName }) => {
     const updatedData = [...data];
     updatedData[rowIndex][columnIndex] = value;
     setData(updatedData);
+    setIsEditing(true);
+    setHasUnsavedChanges(true);
+    resetIdleTimeout();
   };
+
+  const handleUserActivity = (e) => {
+    console.log("user is editing");
+    if (e.key === "Enter") {
+      saveFile();
+    }
+
+    setIsEditing(true);
+    resetIdleTimeout();
+  };
+
+  const resetIdleTimeout = () => {
+    if (idleTimeoutRef.current) {
+      clearTimeout(idleTimeoutRef.current);
+    }
+    idleTimeoutRef.current = setTimeout(() => {
+      setIsEditing(false);
+      console.log("not editinh", hasUnsavedChanges);
+      if (hasUnsavedChanges) {
+        saveFile();
+      }
+    }, 1000);
+  };
+
+  const saveFile = () => {
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    const fileBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const file = new Blob([fileBuffer], { type: mimetype });
+    console.log("Uploading ...");
+    uploadFile(file)
+      .then(() => {
+        console.log("File saved successfully.");
+        setHasUnsavedChanges(false);
+      })
+      .catch((error) => {
+        console.error("File save error:", error);
+      });
+  };
+
+  const uploadFile = async (file) => {
+    return new Promise((resolve, reject) => {
+      const fileRef = ref(storage, `files/${profileData.org}/${fileName}`);
+      const metadata = {
+        customMetadata: {
+          department_id: deptId,
+          org_id: profileData.org,
+        },
+      };
+      const uploadTask = uploadBytesResumable(fileRef, file, metadata);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+        },
+        (error) => {
+          console.error("File upload error:", error);
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+          });
+        }
+      );
+    });
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleUserActivity);
+    window.addEventListener("mousedown", handleUserActivity);
+    window.addEventListener("mousemove", handleUserActivity);
+
+    return () => {
+      window.removeEventListener("keydown", handleUserActivity);
+      window.removeEventListener("mousedown", handleUserActivity);
+      window.removeEventListener("mousemove", handleUserActivity);
+      if (idleTimeoutRef.current) {
+        clearTimeout(idleTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  if (profileIsPending) {
+    return (
+      <div className="w-full h-screen flex justify-center items-center">
+        <p>Please wait...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen overflow-y-scroll px-2">
-      <div className="text-center py-2 bg-zinc-200 font-bold">{fileName}</div>
+      <div className="text-center py-2 bg-zinc-200 font-bold">
+        <p>{fileName}</p>
+        <div className="w-fit ml-auto px-2">
+          <Button onClick={saveFile}>Save</Button>
+        </div>
+      </div>
+
       {data.length > 0 && (
         <ReactDataGrid
           dataSource={data}
@@ -106,6 +230,7 @@ const SpreadsheetComponent = ({ preUrl, mimetype, fileName }) => {
           columnMinWidth={120}
           columnDefaultWidth={200}
           onEditComplete={handleEditComplete}
+          onEditValueChange={() => setHasUnsavedChanges(true)}
         />
       )}
     </div>
