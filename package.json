@@ -2,11 +2,11 @@
   "name": "twokey",
   "version": "0.1.0",
   "private": true,
-  
   "dependencies": {
     "@cyntler/react-doc-viewer": "^1.14.0",
-    "@mui/icons-material": "^5.14.14",
+    "@mui/icons-material": "^5.16.4",
     "@mui/joy": "^5.0.0-beta.15",
+    "@mui/material": "^5.16.4",
     "@mui/x-data-grid": "^6.16.3",
     "@mui/x-data-grid-premium": "^6.19.2",
     "@react-google-maps/api": "^2.19.2",
@@ -43,6 +43,7 @@
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-hot-toast": "^2.4.1",
+    "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.17.0",
     "react-scripts": "5.0.1",
     "react-secure-storage": "^1.3.2",
