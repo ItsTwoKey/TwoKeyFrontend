@@ -82,6 +82,7 @@ const PasswordChangeForm = () => {
         passwordChangeData.oldPassword
       );
       await reauthenticateWithCredential(user, credential);
+      await updatePassword(user, passwordChangeData.newPassword);
 
       if (passwordChangeData.newPassword === passwordChangeData.oldPassword) {
         setSamePasswordWarning(true);
@@ -141,7 +142,7 @@ const PasswordChangeForm = () => {
       <h2 className="text-xl font-semibold p-2">Account Settings</h2>
       <hr className="border border-white border-b-[#D8DEE4]" />
 
-      <div className="flex flex-col gap-3 px-2 py-4">
+      <div className="flex flex-col gap-3 px-2 pt-4">
         <h5 className="font-semibold">Email address</h5>
         <p className="text-sm text-gray-600">
           Your email address is{" "}
@@ -205,7 +206,9 @@ const PasswordChangeForm = () => {
       <button
         onClick={handleChangePassword}
         className={`flex mx-2 px-4 py-1.5 text-center text-sm border shadow-lg rounded-md text-white ${
-          (areFieldsFilled && !loading) ? "bg-[#5E5ADB]" : "bg-[#5e5adb98] cursor-not-allowed"
+          areFieldsFilled && !loading
+            ? "bg-[#5E5ADB]"
+            : "bg-[#5e5adb98] cursor-not-allowed"
         }`}
         disabled={!areFieldsFilled || loading}
       >

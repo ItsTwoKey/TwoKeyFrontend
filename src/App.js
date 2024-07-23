@@ -30,6 +30,7 @@ import TextEditorV2 from "./components/editFiles/TextEditorV2";
 import CustomEditor from "./components/customEditor/CustomEditorV1";
 import WaitingLobby from "./components/WaitingLobby";
 import Landing from "./pages/Landing";
+import AuthHandler from "./pages/AuthHandler";
 // import { useDarkMode } from "./context/darkModeContext";
 
 // let hardCodedDepartments = [
@@ -73,6 +74,7 @@ const App = () => {
             <Route path="/login" element={<Login />} exact />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/change-password" element={<ChangePassword />} />
+            <Route path="/_/auth_handler" element={<AuthHandler />} />
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
