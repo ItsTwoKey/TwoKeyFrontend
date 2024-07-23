@@ -9,20 +9,21 @@ import { getStorage } from "firebase/storage";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDv4AacvgblE8Z0n2W8zZ9neZaUWp9iT-8",
-  authDomain: "twokey-a14ec.firebaseapp.com",
-  projectId: "twokey-a14ec",
-  storageBucket: "twokey-a14ec.appspot.com",
-  messagingSenderId: "432922979523",
-  appId: "1:432922979523:web:2519c6b5905fc4249e0676",
-  measurementId: "G-9E8DPLH2BC",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app, "gs://twokey-a14ec.appspot.com");
+const bucket = process.env.REACT_APP_FIREBASE_STORAGE_BUCKET;
+const storage = getStorage(app, bucket);
 
 // Initialize a promise that resolves when the auth state is known
 const authStateKnown = new Promise((resolve) => {
