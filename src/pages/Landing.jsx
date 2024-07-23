@@ -183,7 +183,7 @@ const Landing = () => {
             <img
               src={eg}
               alt="example dashboard"
-              className="absolute bottom-0 right-0 object-cover rounded-tl-lg"
+              className="absolute bottom-0 right-0 object-cover object-left-top rounded-tl-lg"
               style={{ width: "90%", height: "90%" }}
             />
           </div>

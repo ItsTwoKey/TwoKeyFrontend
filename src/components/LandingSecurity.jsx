@@ -1,31 +1,56 @@
 import React, { useState } from "react";
 import pl from "../assets/Landing/pl.png";
-import arrow from "../assets/Landing/arrow.png";
+import LandingSecurityFeatures from "./LandingSecurityFeatures";
+
+//Widgets
+import w1 from "../assets/Landing/Features/w1.png";
+import w2 from "../assets/Landing/Features/w2.png";
+import w3 from "../assets/Landing/Features/w3.png";
+import w4 from "../assets/Landing/Features/w4.png";
+
+//Chat
+import c1 from "../assets/Landing/Features/c1.png";
+import c2 from "../assets/Landing/Features/c2.png";
+import c3 from "../assets/Landing/Features/c3.png";
+
+//Security
+import s1 from "../assets/Landing/Features/s1.png";
+import s2 from "../assets/Landing/Features/s2.png";
+import s3 from "../assets/Landing/Features/s3.png";
+import s4 from "../assets/Landing/Features/s4.png";
+
+//OCR
+import o1 from "../assets/Landing/Features/o1.png";
+import o2 from "../assets/Landing/Features/o2.png";
 
 const options = [
   {
     title: "Widgets",
     description: "Encryption ensures secure transmission of content",
-    image: pl,
+    thumbnail: w3,
+    images: [w1, w2, w3, w4],
     bColor: "#1B7FFF",
   },
   {
     title: "Chat Feature",
     description: "Advanced encryption ensures stronger security",
-    image: pl,
+    thumbnail: c2,
+    images: [c1, c2, c3],
     bColor: "#7E4EE9",
   },
   {
     title: "Security Features",
     description:
       "Unique Identifiers invisibly mark files for tracking purposes",
-    image: pl,
+    thumbnail: pl,
+    images: [s1, s2, s3, s4],
     bColor: "#141097",
   },
   {
     title: "Colour coding and OCR",
     description: "Encryption ensures secure transmission of content",
-    image: pl,
+    thumbnail: pl,
+    images: [o1, o2],
     bColor: "#5E5ADB",
   },
 ];
@@ -86,30 +111,7 @@ const LandingSecurity = () => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-10 w-4/5">
         {options.map((option) => (
-          <div
-            key={option.title}
-            className="bg-[#A1A1A1] bg-opacity-20 flex flex-col w-full mx-auto justify-between pb-8"
-          >
-            <div
-              className="h-2/3 flex-grow rounded-t-lg"
-              style={{ border: `8px solid ${option.bColor}` }}
-            >
-              <img
-                src={option.image}
-                alt="img"
-                className="object-cover w-full h-full"
-              />
-            </div>
-            <div className="flex text-white h-[15vh] md:h-36 lg:h-24 items-center justify-between mt-2">
-              <div className="flex flex-col w-3/4 px-5 justify-center">
-                <h1 className="text-xl md:text-2xl font-bold">
-                  {option.title}
-                </h1>
-                <p className="text-sm md:text-base">{option.description}</p>
-              </div>
-              <img src={arrow} alt="arrow" className="h-10 mr-10" />
-            </div>
-          </div>
+          <LandingSecurityFeatures option={option} />
         ))}
       </div>
     </div>
