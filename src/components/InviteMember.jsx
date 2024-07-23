@@ -11,6 +11,7 @@ import RadioGroup from "@mui/joy/RadioGroup";
 import Radio from "@mui/joy/Radio";
 import Inviteicon from "../assets/InviteMember.svg";
 import toast, { Toaster } from "react-hot-toast";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useDepartment } from "../context/departmentContext";
 import { api } from "../utils/axios-instance";
 
@@ -25,6 +26,7 @@ const InviteMember = (props) => {
   });
   const [roles, setRoles] = useState([]);
   const { departments } = useDepartment();
+  const [loading, setLoading] = useState(false);
   const token = secureLocalStorage.getItem("token");
 
   const openDialog = () => {
@@ -73,6 +75,7 @@ const InviteMember = (props) => {
   };
 
   const handleInvite = async () => {
+    setLoading(true);
     try {
       let body = {
         emails: [formData.emailAddress],
@@ -92,6 +95,8 @@ const InviteMember = (props) => {
     } catch (error) {
       console.log("error occurew while inviting user", error);
       toast.error("Something went wrong.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -217,10 +222,17 @@ const InviteMember = (props) => {
             Cancel
           </button>
           <button
-            className="px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] hover:bg-indigo-400 text-white"
+            className="flex items-center px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] hover:bg-indigo-400 text-white disabled:bg-gray-300 disabled:cursor-not-allowed"
             onClick={handleInvite}
+            disabled={loading}
           >
             Invite
+            {loading && (
+              <CircularProgress
+                style={{ color: "gray", marginLeft: 6 }}
+                size={20}
+              />
+            )}
           </button>
         </DialogActions>
       </Dialog>

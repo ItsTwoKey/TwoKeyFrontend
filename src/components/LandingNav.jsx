@@ -17,7 +17,7 @@ const LandingNav = () => {
   return (
     <nav
       id="nav"
-      className="bg-[transparent] h-24 flex justify-between items-center px-4 md:px-12 font-tahoma"
+      className="bg-[transparent] h-[72px] flex justify-between items-center px-4 md:px-12 font-tahoma"
     >
       <div className="flex items-center">
         <img
@@ -84,7 +84,7 @@ const LandingNav = () => {
       <span className="flex gap-4">
         <Link
           to="/login"
-          className="bg-[#12191B] hover:bg-violet-200 border rounded-md border-[#12191B] py-2.5 px-6 text-sm font-semibold text-white"
+          className="bg-[#12191B] hover:border-violet-500 border rounded-md border-[#12191B] py-2.5 px-6 text-sm font-semibold text-white"
         >
           Sign In
         </Link>

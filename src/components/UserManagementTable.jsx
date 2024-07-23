@@ -25,6 +25,7 @@ export default function UserManagementTable() {
   } = context;
   const navigate = useNavigate();
   const { departments } = useContext(DepartmentContext);
+  const [refetch, setRefetch] = useState(true);
 
   useEffect(() => {
     const listUsers = async () => {
@@ -45,8 +46,12 @@ export default function UserManagementTable() {
       }
     };
 
-    listUsers();
-  }, []);
+    if (refetch) {
+      listUsers().then(() => {
+        setRefetch(false);
+      });
+    }
+  }, [refetch]);
 
   const replaceDeptIdWithName = (users, departments) => {
     // Create a map from department IDs to department names
@@ -79,6 +84,7 @@ export default function UserManagementTable() {
 
       // console.log("User deleted successfully ", response);
       toast.success("User deleted successfully.");
+      setRefetch(true);
     } catch (error) {
       console.log("error occured  while deleting user ", error);
       toast.error("Something went wrong.");

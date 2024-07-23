@@ -14,6 +14,7 @@ import bottomBg from "../assets/Landing/bottomBg.png";
 import eg from "../assets/Landing/eg.png";
 import HomeFooter from "../components/HomeFooter";
 import LandingFooter from "../components/LandingFooter";
+import { Link } from "react-router-dom";
 
 const features = [
   {
@@ -58,18 +59,20 @@ const Landing = () => {
               cutting-edge technology ensures your media stays protected, so you
               can focus on what matters most - your work.
             </p>
-            <button
-              className="flex mt-10 px-7 py-2 text-white relative mx-auto md:mx-0 rounded-lg font-bold"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, #1F0027, #7E408D, #1F0027)",
-              }}
-            >
-              Sign Up
-              <span className="ml-2" aria-hidden="true">
-                →
-              </span>
-            </button>
+            <Link to="/signup">
+              <button
+                className="flex mt-10 px-7 py-2 text-white relative mx-auto md:mx-0 rounded-lg font-bold border-t-[#6b6377] border-b-[#5713AE] border-y-2"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(to right, #1F0027, #7E408D, #1F0027)",
+                }}
+              >
+                Sign Up
+                <span className="ml-2" aria-hidden="true">
+                  →
+                </span>
+              </button>
+            </Link>
           </div>
           <div className="md:w-1/2 mt-10 md:mt-0">
             <img src={pages} alt="TwoKey" className="md:max-w-[45vw] mx-auto" />
@@ -138,7 +141,7 @@ const Landing = () => {
         style={{ backgroundImage: `url(${buttonBg})` }}
       >
         <div className="inline-block rounded-xl bg-white">
-          <button className="bg-white py-3 px-6 m-2 border-solid border-grey border-2 rounded-xl">
+          <button className="font-bold bg-white py-3 px-6 m-2 border-solid border-grey border-2 rounded-xl">
             Read about more features
           </button>
         </div>
@@ -161,18 +164,20 @@ const Landing = () => {
               Redefining Media Sharing with Unparalleled{" "}
               <span className="text-blue-300">Security and Control</span>
             </h1>
-            <button
-              className="flex mt-10 px-3 md:px-7 py-2 text-white relative w-[30vw] md:w-[15vw] lg:w-[10vw] rounded-lg font-bold mx-auto md:mx-0"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, #1F0027, #7E408D, #1F0027)",
-              }}
-            >
-              Sign Up
-              <span className="ml-2" aria-hidden="true">
-                →
-              </span>
-            </button>
+            <Link to="/signup">
+              <button
+                className="flex w-fit mt-10 px-3 md:px-6 py-2 text-white relative border-t-[#6b6377] border-b-purple-500 border-y-2 rounded-lg font-bold mx-auto md:mx-0"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(to right, #1F0027, #7E408D, #1F0027)",
+                }}
+              >
+                Sign Up
+                <span className="ml-2" aria-hidden="true">
+                  →
+                </span>
+              </button>
+            </Link>
           </div>
           <div className="p-8 text-center h-full bg-gradient-to-r from-[#BCDDE6] via-[#C8D7DD] via-[#D3D0D5] via-[#DDC9CC] via-[#E6C2C3] to-[#EFBBBB] relative rounded-b-lg md:rounded-r-lg md:rounded-b-none w-full md:w-3/5">
             <img

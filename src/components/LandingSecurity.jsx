@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 import pl from "../assets/Landing/pl.png";
-import arrow from "../assets/Landing/arrow.png";
-import knot from "../assets/Landing/knot.png";
-import eg from "../assets/Landing/eg.png";
 import LandingSecurityFeatures from "./LandingSecurityFeatures";
 
 //Widgets
@@ -95,9 +92,7 @@ const LandingSecurity = () => {
         the tighter the security dance.
       </p>
       <div className="h-full w-4/5 bg-[#1A2020] rounded-xl mt-10 px-4 py-2">
-        <div className="bg-white rounded-xl" style={{ height: "60vh" }}>
-          hi
-        </div>
+        <div className="bg-white rounded-xl" style={{ height: "60vh" }}></div>
         <div className="flex justify-between mt-5">
           {options.map((option, index) => (
             <h1
