@@ -47,7 +47,7 @@ const options = [
     bColor: "#141097",
   },
   {
-    title: "Colour coding and OCR",
+    title: "Colour Coding & OCR",
     description: "Encryption ensures secure transmission of content",
     thumbnail: pl,
     images: [o1, o2],
@@ -111,7 +111,9 @@ const LandingSecurity = () => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-10 w-4/5">
         {options.map((option) => (
-          <LandingSecurityFeatures option={option} />
+          <LandingSecurityFeatures
+            option={option}
+          />
         ))}
       </div>
     </div>

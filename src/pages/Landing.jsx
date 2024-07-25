@@ -12,32 +12,42 @@ import buttonBg from "../assets/Landing/buttonBg.png";
 import endBg from "../assets/Landing/endBg.png";
 import bottomBg from "../assets/Landing/bottomBg.png";
 import eg from "../assets/Landing/eg.png";
-import HomeFooter from "../components/HomeFooter";
 import LandingFooter from "../components/LandingFooter";
 import { Link } from "react-router-dom";
 
 const features = [
   {
-    title: "Two-Person",
+    title: "Widgets",
     subTitle: "Permission",
     mt: 0,
+    bColor: "#1B7FFF",
   },
   {
-    title: "Access Time",
+    title: "Chat Feature",
     subTitle: "Windows",
     mt: 64,
+    bColor: "#7E4EE9",
   },
   {
-    title: "Location-based",
+    title: "Security Features",
     subTitle: "access notification",
     mt: 96,
+    bColor: "#141097",
   },
   {
-    title: "Customization",
+    title: "Colour Coding & OCR",
     subTitle: "security",
     mt: 20,
+    bColor: "#5E5ADB",
   },
 ];
+
+const scrollToSection = (id) => {
+  const element = document.getElementById(id);
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth" });
+  }
+};
 
 const Landing = () => {
   return (
@@ -60,13 +70,7 @@ const Landing = () => {
               can focus on what matters most - your work.
             </p>
             <Link to="/signup">
-              <button
-                className="flex mt-10 px-7 py-2 text-white relative mx-auto md:mx-0 rounded-lg font-bold border-t-[#6b6377] border-b-[#5713AE] border-y-2"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(to right, #1F0027, #7E408D, #1F0027)",
-                }}
-              >
+              <button className="flex mt-10 px-7 py-2 text-white relative mx-auto md:mx-0 rounded-lg font-bold bg-[#7E408D]">
                 Sign Up
                 <span className="ml-2" aria-hidden="true">
                   →
@@ -85,24 +89,14 @@ const Landing = () => {
           <div className="flex flex-col items-center">
             <h1
               style={{
-                backgroundImage:
-                  "linear-gradient(to right, grey, #D3D3D3, #FFFFFF)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent",
+                color: "aliceblue",
               }}
               className="text-3xl md:text-5xl font-bold pt-24"
             >
               Where innovation
             </h1>
             <h1
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, grey, #D3D3D3, #FFFFFF)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent",
-              }}
+              style={{ color: "aliceblue" }}
               className="text-3xl md:text-5xl font-bold pt-2 mx-2"
             >
               meets security
@@ -124,6 +118,8 @@ const Landing = () => {
                   title={feature.title}
                   subTitle={feature.subTitle}
                   key={feature.title}
+                  bColor={feature.bColor}
+                  scrollToSection={scrollToSection}
                 />
               ))}
             </div>
@@ -165,13 +161,7 @@ const Landing = () => {
               <span className="text-blue-300">Security and Control</span>
             </h1>
             <Link to="/signup">
-              <button
-                className="flex w-fit mt-10 px-3 md:px-6 py-2 text-white relative border-t-[#6b6377] border-b-purple-500 border-y-2 rounded-lg font-bold mx-auto md:mx-0"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(to right, #1F0027, #7E408D, #1F0027)",
-                }}
-              >
+              <button className="flex w-fit mt-10 px-3 md:px-6 py-2 text-white relative rounded-lg font-bold mx-auto md:mx-0 bg-[#7E408D]">
                 Sign Up
                 <span className="ml-2" aria-hidden="true">
                   →
