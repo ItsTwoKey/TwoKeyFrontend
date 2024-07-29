@@ -81,7 +81,9 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
       }
     };
 
-    getPresignedUrl();
+    getPresignedUrl().then(() => {
+      console.log("File fetched");
+    });
     // setPreUrl(fileInfo.download_url);
 
     setLoadingUrl(false);
