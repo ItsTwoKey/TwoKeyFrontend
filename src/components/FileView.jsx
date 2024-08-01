@@ -70,20 +70,9 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
 
   const getPresignedUrl = useCallback(async () => {
     try {
+      setLoadingUrl(true);
+
       let token = await auth.currentUser.getIdToken();
-
-      const body = {
-        latitude: 18.44623721673684,
-        longitude: 73.82762833796289,
-        idToken: token,
-      };
-
-      const presignedUrl = await api.post(
-        `/file/getPresigned/${fileInfo.id}`,
-        body
-      );
-      const url = presignedUrl.data.signed_url;
-      setSignedUrl(url);
 
       // Open the cache storage
       const cache = await caches.open(CACHE_NAME);
@@ -98,6 +87,17 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
         setPreUrl(URL.createObjectURL(cachedBlob));
       } else {
         console.log("No cached response found for URL:", fileIdentfier);
+        const body = {
+          latitude: 18.44623721673684,
+          longitude: 73.82762833796289,
+          idToken: token,
+        };
+        const presignedUrl = await api.post(
+          `/file/getPresigned/${fileInfo.id}`,
+          body
+        );
+        const url = presignedUrl.data.signed_url;
+        setSignedUrl(url);
 
         // Fetch data from the URL
         const response = await axios.get(url, {
@@ -126,7 +126,6 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
       }
     } catch (error) {
       console.log("Error while getPresignedUrl", error);
-      setLoadingUrl(false);
     } finally {
       setLoadingUrl(false);
     }
@@ -135,8 +134,6 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
     getPresignedUrl().then(() => {
       console.log("File fetched");
     });
-
-    setLoadingUrl(false);
   }, [fileInfo.id, getPresignedUrl]);
 
   if (loadingUrl) {
