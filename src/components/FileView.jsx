@@ -36,10 +36,6 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   }, []);
 
   useEffect(() => {
-    openDialog();
-  }, []);
-
-  useEffect(() => {
     const getPresignedUrl = async () => {
       try {
         let token = await auth.currentUser.getIdToken();
@@ -56,6 +52,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
         );
 
         const url = presignedUrl.data.signed_url;
+        console.log("URL:", url);
 
         setSignedUrl(url);
 
@@ -71,7 +68,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
 
         // Convert blob to data URL
         const dataUrl = URL.createObjectURL(blob);
-        // console.log("blob", dataUrl);
+        console.log("blob", dataUrl);
 
         setPreUrl(dataUrl);
         setLoadingUrl(false);

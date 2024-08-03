@@ -11,6 +11,9 @@ import FileShare from "./FileShare";
 import threeDots from "../assets/threedots.svg";
 import DeleteFileConfirmation from "./DeleteFileConfirmation";
 
+import LockIcon from "@mui/icons-material/Lock";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import DoneIcon from "@mui/icons-material/Done";
 import PDF from "../assets/pdf.svg";
 import Doc from "../assets/doc.svg";
 import Image from "../assets/image.svg";
@@ -19,6 +22,7 @@ import Txt from "../assets/txt.svg";
 import Video from "../assets/video.svg";
 import secureLocalStorage from "react-secure-storage";
 import fileContext from "../context/fileContext";
+import AuthContext from "../context/authContext";
 import { api } from "../utils/axios-instance";
 
 // Define SVG icons for different file types
@@ -37,7 +41,15 @@ const fileIcons = {
   // Add more as needed
 };
 
-const RecentFiles = ({ filteredData, loading }) => {
+const RecentFiles = ({
+  filteredData,
+  loading,
+  select,
+  setSelect,
+  showMultiFileOptions,
+  setShowMultiFileOptions,
+  removeFile,
+}) => {
   const location = useLocation();
   const { darkMode } = useDarkMode();
   const [selectedFileInfo, setSelectedFileInfo] = useState({
@@ -58,10 +70,13 @@ const RecentFiles = ({ filteredData, loading }) => {
   const context = useContext(fileContext);
   const { anchorEl, setAnchorEl } = context;
   const [menuFile, setMenuFile] = useState({});
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const open = Boolean(anchorEl);
 
   const recentBgColor = ["#FFF6F6", "#FFF6FF", "#F6FFF6", "#F6F7FF", "#FFFFF6"];
+
+  const authCon = useContext(AuthContext);
 
   // useEffect(() => {
   //   const channel = supabase
@@ -161,6 +176,46 @@ const RecentFiles = ({ filteredData, loading }) => {
     return fileIcons[mimeType] || PDF; // Default to PDF icon if not found
   };
 
+  const handleMultiFileSelect = (file) => {
+    console.log(file);
+    if (selectedFiles.includes(file)) {
+      const newSelectedFiles = selectedFiles.filter(
+        (selectedFile) => selectedFile.id !== file.id
+      );
+      setSelectedFiles(newSelectedFiles);
+    } else {
+      setSelectedFiles([...selectedFiles, file]);
+    }
+  };
+
+  const handleLockChange = async (file) => {
+    const id = file.id;
+    const res = await api.patch(`/file/change-lock-status/${id}/`, {
+      is_locked: !file?.is_locked,
+    });
+
+    console.log(res);
+  };
+
+  useEffect(() => {
+    if (!select) {
+      setSelectedFiles([]);
+    }
+  }, [select]);
+
+  useEffect(() => {
+    if (selectedFiles.length > 0 && !showMultiFileOptions) {
+      setShowMultiFileOptions(true);
+    }
+
+    if (showMultiFileOptions && selectedFiles.length === 0) {
+      setShowMultiFileOptions(false);
+      setSelect(false);
+    }
+
+    context.setSelectedFiles(selectedFiles);
+  }, [selectedFiles]);
+
   return (
     <div>
       <div
@@ -199,24 +254,39 @@ const RecentFiles = ({ filteredData, loading }) => {
           : filteredData.map((file, index) => (
               <div
                 key={index}
-                className={`border border-gray-200 p-3 rounded-[16px] cursor-pointer`}
+                className={`border border-gray-200 p-3 rounded-[16px] cursor-pointer relative`}
                 style={{
                   backgroundColor: file.color || `#f9f9f9`,
                 }}
               >
+                <div
+                  className="w-full h-full absolute left-0 top-0 items-center justify-center rounded-[16px]"
+                  onClick={() => handleMultiFileSelect(file)}
+                  style={{
+                    backgroundColor: "rgba(255, 255, 255, 0.5)",
+                    display:
+                      selectedFiles.includes(file) && select ? "flex" : "none",
+                  }}
+                >
+                  <div className="py-3 px-3 rounded-full bg-green-400">
+                    <DoneIcon />
+                  </div>
+                </div>
                 <span className="flex justify-between items-center">
                   <button
                     onClick={() =>
-                      openFileInfoDrawer(
-                        file.name,
-                        file.size,
-                        file.id,
-                        file.owner,
-                        file.profilePic,
-                        file.lastUpdate,
-                        file.mimetype,
-                        file.downloadUrl
-                      )
+                      select
+                        ? handleMultiFileSelect(file)
+                        : openFileInfoDrawer(
+                            file.name,
+                            file.size,
+                            file.id,
+                            file.owner,
+                            file.profilePic,
+                            file.lastUpdate,
+                            file.mimetype,
+                            file.downloadUrl
+                          )
                     }
                   >
                     <b className="text-gray-500 font-serif text-xs border-2 border-gray-500 rounded-full px-[5px] mx-1">
@@ -224,7 +294,10 @@ const RecentFiles = ({ filteredData, loading }) => {
                     </b>
                   </button>
 
-                  <span>
+                  <span className="flex">
+                    <div onClick={() => handleLockChange(file)}>
+                      {file?.isLocked ? <LockIcon /> : <LockOpenIcon />}
+                    </div>
                     <button
                       className=""
                       onClick={(event) => {
@@ -283,6 +356,7 @@ const RecentFiles = ({ filteredData, loading }) => {
                           fileName={menuFile.name}
                           owner={menuFile.owner}
                           id={menuFile.id}
+                          remove={removeFile}
                         />
                       </MenuItem>
                     </Menu>
@@ -291,16 +365,18 @@ const RecentFiles = ({ filteredData, loading }) => {
 
                 <div
                   onClick={() =>
-                    openDrawer(
-                      file.name,
-                      file.size,
-                      file.id,
-                      file.owner,
-                      file.profilePic,
-                      file.lastUpdate,
-                      file.mimetype,
-                      file.downloadUrl
-                    )
+                    select
+                      ? handleMultiFileSelect(file)
+                      : openDrawer(
+                          file.name,
+                          file.size,
+                          file.id,
+                          file.owner,
+                          file.profilePic,
+                          file.lastUpdate,
+                          file.mimetype,
+                          file.downloadUrl
+                        )
                   }
                 >
                   <span className="flex justify-center items-center">

@@ -9,6 +9,8 @@ const fileContext = createContext();
 export const FileState = (props) => {
   const [files, setFiles] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [folders, setFolders] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [departmentFiles, setDepartmentFiles] = useState([]);
   const { departments } = useDepartment();
@@ -79,6 +81,9 @@ export const FileState = (props) => {
             security: "Enhanced",
             color: filteredDepartment[0]?.metadata.bg,
             downloadUrl: file.download_url,
+            isLocked: file?.is_locked,
+            hasPassword: file?.has_password,
+            password: file?.password,
             lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
               "en-IN",
               {
@@ -147,6 +152,9 @@ export const FileState = (props) => {
             status: "Team",
             security: "Enhanced",
             color: file.file_info[0]?.depts[0]?.metadata?.bg,
+            isLocked: file?.is_locked,
+            hasPassword: file?.has_password,
+            password: file?.password,
             lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
               "en-IN",
               {
@@ -186,6 +194,10 @@ export const FileState = (props) => {
         updateDepartmentFiles,
         departmentFiles,
         setDepartmentFiles,
+        selectedFiles,
+        setSelectedFiles,
+        folders,
+        setFolders,
       }}
     >
       {props.children}

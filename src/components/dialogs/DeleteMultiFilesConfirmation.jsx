@@ -1,83 +1,81 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useContext } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
+import Danger from "../../assets/danger.svg";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import { supabase } from "../helper/supabaseClient";
-import Danger from "../assets/danger.svg";
+import fileContext from "../../context/fileContext";
 import secureLocalStorage from "react-secure-storage";
-import fileContext from "../context/fileContext";
-import { useParams } from "react-router-dom";
-import { getFirestore } from "firebase/firestore";
 import { deleteObject, getStorage, ref } from "firebase/storage";
-import { api } from "../utils/axios-instance";
+import { api } from "../../utils/axios-instance";
+import { useParams } from "react-router-dom";
 
-const DeleteFileConfirmation = ({ fileName, owner, id, remove }) => {
-  const [isOpen, setIsOpen] = useState(false);
+function DeleteMultiFilesConfirmation({
+  isOpen,
+  closeDialog,
+  closeDeleteDialog,
+  removeMultiSelect,
+  removeFiles,
+}) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" or "error"
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const { deptName } = useParams();
+
   const context = useContext(fileContext);
-  const { removeFile, setAnchorEl, updateDepartmentFiles } = context;
+  const { updateDepartmentFiles } = context;
+  const { deptName } = useParams();
 
-  console.log(fileName, owner, id);
-
-  const openDialog = () => {
-    setIsOpen(true);
-  };
-
-  const closeDialog = () => {
-    setIsOpen(false);
-    setAnchorEl(null);
-  };
-
-  const handleDelete = async () => {
+  const handleDelete = async (file) => {
     let profileData = JSON.parse(secureLocalStorage.getItem("profileData"));
     let token = secureLocalStorage.getItem("token");
 
-    // Check if the user is the owner of the file
-    // console.log(fileName);
-
-    if (profileData.id === owner) {
+    if (profileData.id === file.owner) {
       try {
         const storage = getStorage();
-        const fileRef = ref(storage, `files/${profileData.org}/${fileName}`);
+        const fileRef = ref(storage, `files/${profileData.org}/${file.name}`);
 
         await deleteObject(fileRef);
-        console.log("Delete success");
-
-        const res = await api.delete(`/file/delete-file/${id}/`);
-
-        setSnackbarSeverity("success");
-        setSnackbarMessage("File deleted successfully.");
-        setSnackbarOpen(true);
-
-        removeFile(id);
-        if (remove) {
-          console.log("YES")
-          remove(id);
-        }
+        await api.delete(`/file/delete-file/${file.id}/`);
 
         if (deptName) updateDepartmentFiles(deptName);
-
-        setTimeout(() => {
-          closeDialog();
-        }, 3000);
       } catch (error) {
-        console.error("Error occurred while deleting the file:", error.message);
-        setSnackbarSeverity("error");
-        setSnackbarMessage("Error deleting the file.");
-        setSnackbarOpen(true);
+        throw new Error(
+          "Error occurred while deleting the file: " + error.message
+        );
       }
     } else {
-      // Display Snackbar message if the user is not the owner of the file
-      setSnackbarSeverity("error");
-      setSnackbarMessage("You are not the owner of the file.");
+      throw new Error("You are not the owner of the file.");
+    }
+  };
+
+  const deleteFiles = async () => {
+    try {
+      const deletePromises = context.selectedFiles.map((file) =>
+        handleDelete(file)
+      );
+      await Promise.all(deletePromises);
+
+      setSnackbarSeverity("success");
+      setSnackbarMessage("Files deleted successfully.");
       setSnackbarOpen(true);
+
+      const newFiles = context.filteredData.filter(
+        (file) => !context.selectedFiles.includes(file)
+      );
+      context.setFilteredData(newFiles);
+
+      if (removeFiles) removeFiles();
+
       setTimeout(() => {
         closeDialog();
-      }, 3000);
+        closeDeleteDialog();
+        removeMultiSelect();
+      }, 500);
+    } catch (error) {
+      console.error(error);
+      setSnackbarSeverity("error");
+      setSnackbarMessage(error.message || "Error deleting files.");
+      setSnackbarOpen(true);
     }
   };
 
@@ -86,16 +84,10 @@ const DeleteFileConfirmation = ({ fileName, owner, id, remove }) => {
       return;
     }
     setSnackbarOpen(false);
-
-    // Close the dialog after 3 seconds
   };
 
   return (
     <div className="">
-      <button onClick={openDialog} className="text-[#D1293D]">
-        Delete File
-      </button>
-
       <Dialog
         open={isOpen}
         onClose={closeDialog}
@@ -105,7 +97,6 @@ const DeleteFileConfirmation = ({ fileName, owner, id, remove }) => {
           },
         }}
       >
-        {/* <DialogTitle>Confirm Delete</DialogTitle> */}
         <DialogContent
           style={{
             backgroundColor: "#FEF2F2",
@@ -117,26 +108,30 @@ const DeleteFileConfirmation = ({ fileName, owner, id, remove }) => {
               Are you sure?
             </h2>
             <div className="text-center">
-              <p>
-                This action will delete the{" "}
-                <strong className="hover:underline">
-                  {fileName.split("_TS=")[0]}
-                </strong>{" "}
-                file.
-              </p>
+              <p>This action will delete the following files</p>
+              <ul className="my-8">
+                {context.selectedFiles.map((file) => (
+                  <li key={file.id} className="font-bold">
+                    {file.name}
+                  </li>
+                ))}
+              </ul>
               <p>You won't be able to revert this action!</p>
             </div>
 
             <div className="flex flex-row justify-center items-center gap-2">
               <button
                 className="px-4 py-1 rounded-lg shadow-sm bg-red-500 text-white"
-                onClick={handleDelete}
+                onClick={deleteFiles}
               >
                 Confirm
               </button>
               <button
                 className="px-4 py-1 mx-2 rounded-lg shadow-sm border border-gray-300"
-                onClick={closeDialog}
+                onClick={() => {
+                  closeDeleteDialog();
+                  removeMultiSelect();
+                }}
                 color="primary"
               >
                 Cancel
@@ -162,6 +157,6 @@ const DeleteFileConfirmation = ({ fileName, owner, id, remove }) => {
       </Dialog>
     </div>
   );
-};
+}
 
-export default DeleteFileConfirmation;
+export default DeleteMultiFilesConfirmation;
