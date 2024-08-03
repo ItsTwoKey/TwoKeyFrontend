@@ -119,12 +119,19 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
   }
 
   function stringAvatar(name) {
-    if (name) {
+    if (name && name.split(" ").length >= 2) {
       return {
         sx: {
           bgcolor: stringToColor(name),
         },
         children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+      };
+    } else {
+      return {
+        sx: {
+          bgcolor: "#ccc", // Default color or handle as necessary
+        },
+        children: "NA", // Default initials or handle as necessary
       };
     }
   }
