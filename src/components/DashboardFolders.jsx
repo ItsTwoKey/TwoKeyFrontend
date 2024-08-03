@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import CreateFolder from "./CreateFolder";
 import OwnedFolders from "./OwnedFolders";
+import fileContext from "../context/fileContext";
 
 import { api } from "../utils/axios-instance";
 
 const DashboardFolders = () => {
-  const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(true); // Add loading state
+  const context = useContext(fileContext);
 
   useEffect(() => {
     listFolders();
@@ -17,8 +18,7 @@ const DashboardFolders = () => {
 
     try {
       const response = await api.get(`/file/folder`);
-      console.log("folders", response.data);
-      setFolders(response.data);
+      context.setFolders(response.data);
     } catch (error) {
       console.log("error occurred while fetching folders", error);
     }
@@ -37,10 +37,10 @@ const DashboardFolders = () => {
           <p className="text-center">Loading folders...</p>
         ) : (
           <>
-            {folders.length === 0 ? (
+            {context.folders.length === 0 ? (
               <p className="text-center">No folders found.</p>
             ) : (
-              <OwnedFolders folders={folders} listFolders={listFolders} />
+              <OwnedFolders folders={context.folders} listFolders={listFolders} />
             )}
           </>
         )}

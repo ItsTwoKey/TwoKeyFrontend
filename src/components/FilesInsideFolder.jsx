@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { useDarkMode } from "../context/darkModeContext";
@@ -8,6 +8,8 @@ import AddFilesInsideFolder from "./AddFilesInsideFolder";
 import { auth } from "../helper/firebaseClient";
 import { useDepartment } from "../context/departmentContext";
 import { api } from "../utils/axios-instance";
+import MultipleFileMenu from "./MultipleFileMenu";
+import fileContext from "../context/fileContext";
 
 const FilesInsideFolder = () => {
   const { formatFileSize } = useAuth();
@@ -16,6 +18,10 @@ const FilesInsideFolder = () => {
   const { darkMode } = useDarkMode();
   const { folderName, folderId } = useParams();
   const { departments } = useDepartment();
+
+  const [select, setSelect] = useState(false);
+  const [showMultiFileOptions, setShowMultiFileOptions] = useState(false);
+  const context = useContext(fileContext);
 
   useEffect(() => {
     listFilesInFolder(folderId);
@@ -67,6 +73,7 @@ const FilesInsideFolder = () => {
         mappedFiles.sort((a, b) => {
           return new Date(b.lastUpdate) - new Date(a.lastUpdate);
         });
+        console.log("MAPPED FILES", mappedFiles);
         setFiles(mappedFiles);
       }
     } catch (error) {
@@ -83,14 +90,52 @@ const FilesInsideFolder = () => {
     return file.name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
+  const removeFile = (fileToRemove) => {
+    const removedFiles = files.filter((file) => file.id !== fileToRemove);
+    setFiles(removedFiles);
+  };
+
+  const removeFiles = () => {
+    const idsToRemove = context.selectedFiles.map((file) => file.id);
+
+    const updatedFiles = files.filter((file) => !idsToRemove.includes(file.id));
+
+    setFiles(updatedFiles);
+  };
+
+  const addFiles = (files) => {
+    setFiles((prevData) => [...files, ...prevData]);
+  };
+
   return (
     <div className="p-4">
       <div className="flex flex-row justify-between items-center my-2">
         <h2 className="text-2xl font-semibold my-2">{folderName} :</h2>
-        <AddFilesInsideFolder
-          folderId={folderId}
-          listFilesInFolder={listFilesInFolder}
-        />
+        <div className="flex">
+          {showMultiFileOptions && (
+            <MultipleFileMenu
+              removeMultiSelect={() => setSelect(false)}
+              removeFiles={removeFiles}
+              addFiles={addFiles}
+              location="folder"
+              id={folderId}
+            />
+          )}
+          <button
+            className="py-1 px-4 rounded-md border"
+            onClick={() => setSelect(!select)}
+            style={{
+              backgroundColor: select ? "grey" : "#1c4ed8",
+              color: "white",
+            }}
+          >
+            Select Files
+          </button>
+          <AddFilesInsideFolder
+            folderId={folderId}
+            listFilesInFolder={listFilesInFolder}
+          />
+        </div>
       </div>
 
       {/* Search bar */}
@@ -103,9 +148,14 @@ const FilesInsideFolder = () => {
           className="border border-gray-300 rounded-md px-3 py-2"
         />
       </div>
-
       <div>
-        <RecentFiles filteredData={filteredFiles} />
+        <RecentFiles
+          filteredData={filteredFiles}
+          removeFile={removeFile}
+          select={select}
+          showMultiFileOptions={showMultiFileOptions}
+          setShowMultiFileOptions={setShowMultiFileOptions}
+        />
       </div>
     </div>
   );
