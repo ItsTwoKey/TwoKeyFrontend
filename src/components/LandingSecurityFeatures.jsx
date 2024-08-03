@@ -20,6 +20,7 @@ const LandingSecurityFeatures = ({ option }) => {
       className="bg-[#A1A1A1] bg-opacity-20 flex flex-col w-full mx-auto justify-between"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      id={option.title}
     >
       <div
         className="h-2/3 flex-grow rounded-t-lg"

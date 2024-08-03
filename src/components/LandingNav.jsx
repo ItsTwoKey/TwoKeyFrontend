@@ -37,40 +37,23 @@ const LandingNav = () => {
       {isOnContactUs ? (
         <span className="flex gap-8 py-2">
           <Link to="/" className="hidden md:block hover:underline text-white">
-            About Us
+            Pricing
           </Link>
-
           <Link to="/" className="hidden md:block hover:underline text-white">
             Product
           </Link>
-
           <Link to="/" className="hidden md:block hover:underline text-white">
-            Pricing
+            About Us
           </Link>
         </span>
       ) : (
         <span className="flex gap-8 py-2 text-white">
-          <button
-            onClick={() => scrollToSection("about")}
-            className="hidden md:block hover:underline"
-          >
-            ABOUT
-          </button>
-
-          <button
-            onClick={() => scrollToSection("product")}
-            className="hidden md:block hover:underline"
-          >
-            PRODUCT
-          </button>
-
           <button
             onClick={() => scrollToSection("pricing")}
             className="hidden md:block hover:underline"
           >
             PRICING
           </button>
-
           <Link
             onClick={() => scrollToSection("pricing")}
             className="hidden md:block hover:underline"
@@ -78,6 +61,18 @@ const LandingNav = () => {
           >
             CONTACT
           </Link>
+          <button
+            onClick={() => scrollToSection("product")}
+            className="hidden md:block hover:underline"
+          >
+            PRODUCT
+          </button>
+          <button
+            onClick={() => scrollToSection("about")}
+            className="hidden md:block hover:underline"
+          >
+            ABOUT
+          </button>
         </span>
       )}
 
