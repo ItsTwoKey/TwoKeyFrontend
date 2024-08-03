@@ -21,6 +21,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useDepartment } from "../context/departmentContext";
 import { auth } from "../helper/firebaseClient";
 import { api } from "../utils/axios-instance";
+import MultipleFileMenu from "./MultipleFileMenu";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -71,6 +72,9 @@ export default function DashboardTabs() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const { departments } = useDepartment();
+
+  const [select, setSelect] = useState(false);
+  const [showMultiFileOptions, setShowMultiFileOptions] = useState(false);
 
   //   realtime supabase subscribe
   // useEffect(() => {
@@ -214,8 +218,25 @@ export default function DashboardTabs() {
       >
         <p className="text-2xl font-semibold ">Files</p>
         <span className="flex gap-2">
+          {showMultiFileOptions && (
+            <MultipleFileMenu
+              removeMultiSelect={() => setSelect(false)}
+              location="dashboard"
+            />
+          )}
           <SecureShare value={value} />
           <UploadFile value={value} />
+          <button
+            className="py-1 px-4 rounded-md border"
+            onClick={() => setSelect(!select)}
+            style={{
+              backgroundColor: select ? "grey" : "#1c4ed8",
+              color: "white",
+            }}
+          >
+            Select Files
+          </button>
+
           {/* <ShareFile /> */}
         </span>
       </div>
@@ -266,16 +287,43 @@ export default function DashboardTabs() {
           </Tabs>
         </Box>
         <CustomTabPanel value={value} index={0}>
-          <RecentFiles filteredData={filteredData} loading={loading} />
+          <RecentFiles
+            filteredData={filteredData}
+            loading={loading}
+            select={select}
+            setSelect={setSelect}
+            showMultiFileOptions={showMultiFileOptions}
+            setShowMultiFileOptions={setShowMultiFileOptions}
+          />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          <RecentFiles filteredData={filteredData} loading={loading} />
+          <RecentFiles
+            filteredData={filteredData}
+            loading={loading}
+            select={select}
+            setSelect={setSelect}
+            showMultiFileOptions={showMultiFileOptions}
+            setShowMultiFileOptions={setShowMultiFileOptions}
+          />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
-          <RecentFiles filteredData={filteredData} loading={loading} />
+          <RecentFiles
+            filteredData={filteredData}
+            loading={loading}
+            select={select}
+            showMultiFileOptions={showMultiFileOptions}
+            setShowMultiFileOptions={setShowMultiFileOptions}
+          />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
-          <RecentFiles filteredData={filteredData} loading={loading} />
+          <RecentFiles
+            filteredData={filteredData}
+            loading={loading}
+            select={select}
+            setSelect={setSelect}
+            showMultiFileOptions={showMultiFileOptions}
+            setShowMultiFileOptions={setShowMultiFileOptions}
+          />
         </CustomTabPanel>
       </Box>
 

@@ -21,6 +21,7 @@ import { useAuth } from "../context/authContext";
 import { auth, storage } from "../helper/firebaseClient";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { api } from "../utils/axios-instance";
+import { v4 as uuidv4 } from "uuid";
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -103,6 +104,7 @@ const UploadFile = ({ value }) => {
           org_id: profileData.org,
         },
       };
+
       const uploadTask = uploadBytesResumable(fileRef, file, metadata);
 
       uploadTask.on(
@@ -144,8 +146,9 @@ const UploadFile = ({ value }) => {
 
   const handleFileIdRetrieval = async (file, desiredFileName, downloadURL) => {
     const token = await auth.currentUser.getIdToken();
+    const newFileId = uuidv4();
     try {
-      const res = await api.post(`/file/addDepartment/${desiredFileName}`, {
+      const res = await api.post(`/file/addDepartment/${newFileId}`, {
         department_ids: [deptId],
         new: true,
         name: desiredFileName,

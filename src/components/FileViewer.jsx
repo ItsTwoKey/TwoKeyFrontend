@@ -21,7 +21,6 @@ const FileViewer = ({ preUrl, mimetype, signedUrl, fileName, fileId }) => {
     top: "0",
     right: "0",
     width: "25%",
-    height: "10%",
     backgroundColor: "inherit",
     zIndex: 1,
   };
@@ -54,16 +53,22 @@ const FileViewer = ({ preUrl, mimetype, signedUrl, fileName, fileId }) => {
     default:
       viewerComponent = (
         <div style={{ ...containerStyles, ...iframeStyles }}>
-          <iframe title="Document Viewer" src={preUrl} style={iframeStyles} />
+          <iframe title="Document" src={preUrl} style={iframeStyles} />
           <div style={overlayStyles}></div>
         </div>
       );
   }
 
   return (
-    <div style={containerStyles} className=" overflow-y-scroll scrollbar-hide">
-      {viewerComponent}
-    </div>
+    console.log(preUrl, mimetype, signedUrl, fileName, fileId),
+    (
+      <div
+        style={containerStyles}
+        className=" overflow-y-scroll scrollbar-hide"
+      >
+        {viewerComponent}
+      </div>
+    )
   );
 };
 

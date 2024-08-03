@@ -10,6 +10,7 @@ import { useAuth } from "../context/authContext";
 import fileContext from "../context/fileContext";
 import { useDepartment } from "../context/departmentContext";
 import { api } from "../utils/axios-instance";
+import MultipleFileMenu from "../components/MultipleFileMenu";
 
 const Department = () => {
   const { darkMode } = useDarkMode();
@@ -20,6 +21,8 @@ const Department = () => {
   const context = useContext(fileContext);
   const { departmentFiles, setDepartmentFiles } = context;
   const { departments } = useDepartment();
+  const [select, setSelect] = useState(false);
+  const [showMultiFileOptions, setShowMultiFileOptions] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,6 +107,16 @@ const Department = () => {
     return <ErrorPage error="You are not authorised" />;
   }
 
+  const removeFiles = () => {
+    const idsToRemove = context.selectedFiles.map((file) => file.id);
+
+    const updatedFiles = filesFromBackend.filter(
+      (file) => !idsToRemove.includes(file.id)
+    );
+
+    setFilesFromBackend(updatedFiles);
+  };
+
   return (
     <div>
       <div
@@ -119,8 +132,25 @@ const Department = () => {
           {deptName} Files
         </p>
         <span className="flex gap-2">
+          {showMultiFileOptions && (
+            <MultipleFileMenu
+              removeMultiSelect={() => setSelect(false)}
+              location="department"
+              removeFiles={removeFiles}
+            />
+          )}
           <SecureShare value={0} />
           <UploadFile value={0} />
+          <button
+            className="py-1 px-4 rounded-md border"
+            onClick={() => setSelect(!select)}
+            style={{
+              backgroundColor: select ? "grey" : "#1c4ed8",
+              color: "white",
+            }}
+          >
+            Select Files
+          </button>
           {/* <ShareFile /> */}
         </span>
       </div>
@@ -129,7 +159,14 @@ const Department = () => {
         {loading ? (
           <p>Loading...</p> // Display loading indicator while fetching data
         ) : (
-          <RecentFiles filteredData={filesFromBackend} loading={loading} />
+          <RecentFiles
+            filteredData={filesFromBackend}
+            loading={loading}
+            select={select}
+            setSelect={setSelect}
+            showMultiFileOptions={showMultiFileOptions}
+            setShowMultiFileOptions={setShowMultiFileOptions}
+          />
           // <RecentFiles filteredData={departmentFiles} loading={loading} />
         )}
       </div>
