@@ -33,7 +33,6 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
 
   useEffect(() => {
     function start() {
-      setLoading(true);
       gapi.client
         .init({
           apiKey: API_KEY,
@@ -42,6 +41,7 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
           scope: SCOPES,
         })
         .then(() => {
+          setLoading(true);
           const authInstance = gapi.auth2.getAuthInstance();
           setIsSignedIn(authInstance.isSignedIn.get());
           authInstance.isSignedIn.listen(setIsSignedIn);
@@ -52,11 +52,11 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
           if (token && refreshToken) {
             fetchEmails(token);
           }
+          setLoading(false);
         });
     }
 
     gapi.load("client:auth2", start);
-    setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
