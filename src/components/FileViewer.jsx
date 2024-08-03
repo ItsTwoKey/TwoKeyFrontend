@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import TextEditor from "./editFiles/TextEditor";
 import CustomFileViewer from "./CustomFileViewer";
 import SpreadsheetComponent from "./SpreadSheetViewer";

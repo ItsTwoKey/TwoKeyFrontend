@@ -7,6 +7,7 @@ import DueDate from "../components/DueDate";
 import DashboardTabs from "../components/DashboardTabs";
 import LatestActivities from "../components/LatestActivities";
 import DashboardFolders from "../components/DashboardFolders";
+import LatestEmails from "../components/LatestEmails";
 
 const Dashboard = () => {
   const { darkMode } = useDarkMode();
@@ -20,7 +21,10 @@ const Dashboard = () => {
     >
       <div className="flex flex-col md:flex-row gap-4">
         <DueDate />
-        <LatestActivities />
+        <div className="w-full flex flex-col gap-4">
+          <LatestActivities />
+          <LatestEmails />
+        </div>
       </div>
       <div>
         <DashboardFolders />

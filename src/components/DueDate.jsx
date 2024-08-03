@@ -192,8 +192,8 @@ const DueDate = () => {
   };
 
   return (
-    <div className="w-full md:w-3/5">
-      <Paper className="h-72 ">
+    <div className="w-full md:w-4/5">
+      <Paper className="h-[25rem]">
         <div
           className={`flex justify-between items-center p-5 ${
             darkMode ? "bg-gray-600 text-gray-200 " : " "

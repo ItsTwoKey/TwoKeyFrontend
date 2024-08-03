@@ -1,13 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import JSZip from "jszip";
-import { saveAs } from "file-saver";
 import * as quillToWord from "quill-to-word";
-import { supabase } from "../../helper/supabaseClient";
 import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
-import secureLocalStorage from "react-secure-storage";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { auth, storage } from "../../helper/firebaseClient";
 import { onAuthStateChanged } from "firebase/auth";
@@ -70,7 +66,7 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
         quillToWordConfig
       );
 
-      // Upload the file to Supabase
+      // Upload the file to firebase storage
       await saveToFirebase(docAsBlob);
     } catch (error) {
       console.error("Error generating Word document:", error);
@@ -85,7 +81,7 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
       });
 
       console.log("File uploaded to Firebase Storage:", snapshot);
-      toast.success("File edited successfully.");
+      toast.success("File saved successfully.");
 
       const downloadURL = await getDownloadURL(fileRef);
       console.log("File available at:", downloadURL);
@@ -115,15 +111,40 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
     try {
       const zip = await JSZip.loadAsync(docxFile);
       const documentXml = await zip.file("word/document.xml").async("string");
-      const content = parseDocumentXml(documentXml); // parse the docx to xml
-      console.log(content);
-      quill.setContents(content);
+      const mediaFiles = zip.folder("word/media");
+
+      const imageArray = [];
+
+      // Collect all file read promises
+      const filePromises = [];
+
+      mediaFiles.forEach((relativePath, file) => {
+        const promise = file.async("base64").then((base64Data) => {
+          const fileName = relativePath.split("/").pop();
+
+          // Add image to the array based on the index
+          imageArray.push({
+            url: `data:image/png;base64,${base64Data}`,
+            name: fileName,
+          });
+        });
+        filePromises.push(promise);
+      });
+
+      // Wait for all file read promises to resolve
+      await Promise.all(filePromises);
+
+      const content = parseDocumentXml(documentXml, imageArray);
+      if (quill) {
+        console.log(content);
+        quill.setContents(content);
+      }
     } catch (error) {
       console.error("Error converting .docx to Quill format:", error);
     }
   }
 
-  function parseDocumentXml(xml) {
+  function parseDocumentXml(xml, imageArray) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xml, "text/xml");
 
@@ -135,7 +156,7 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
       const paragraphNode = paragraphNodes[i];
 
       // Extract text content and apply any formatting
-      const ops = extractParagraphContent(paragraphNode);
+      const ops = extractParagraphContent(paragraphNode, imageArray);
 
       // Add the operations to the quillOps array
       quillOps = quillOps.concat(ops);
@@ -144,31 +165,71 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
     return { ops: quillOps };
   }
 
-  function extractParagraphContent(paragraphNode) {
+  let noOfImages = 0;
+
+  function extractParagraphContent(paragraphNode, imageArray) {
+    console.log(paragraphNode, imageArray);
     let ops = [];
-
-    // Iterate through the child nodes of the paragraph
-    const childNodes = paragraphNode.childNodes;
-    for (let i = 0; i < childNodes.length; i++) {
-      const childNode = childNodes[i];
-
-      // Check if the node contains text
-      if (childNode.nodeName === "w:r") {
-        const textOps = extractTextOps(childNode);
+    function traverseNode(node) {
+      // console.log(node.nodeName);
+      // Check for image nodes directly or in nested elements
+      if (node.nodeName === "w:p") {
+        const textOps = extractTextOps(node);
         ops = ops.concat(textOps);
-        console.log(textOps);
+      } else if (node.nodeName === "w:drawing" || node.nodeName === "w:pict") {
+        const imageOps = extractImageOps(node, imageArray);
+        ops = ops.concat(imageOps);
       }
-      // Check if the node contains formatting
-      if (childNode.nodeName === "w:pPr") {
-        const formatOps = extractFormatOps(childNode);
-        ops = ops.concat({ insert: "\n", attributes: formatOps });
-        console.log(formatOps);
+
+      // Traverse child nodes recursively
+      for (let i = 0; i < node.childNodes.length; i++) {
+        traverseNode(node.childNodes[i]);
       }
     }
 
-    // Add newline character after each paragraph
-    ops.push({ insert: "\n" });
+    // Start traversing from the paragraph node
+    traverseNode(paragraphNode);
 
+    return ops;
+  }
+
+  function extractImageOps(drawingNode, imageArray) {
+    let ops = [];
+    // const blipNode = drawingNode.querySelector("a\\:blip");
+    // console.log(blipNode);
+
+    // if (blipNode) {
+    //   const rId = blipNode.getAttribute("r:embed");
+    //   const rIdNumber = parseInt(rId.replace("rId", ""));
+    //   console.log(rIdNumber, "rIdNumber");
+
+    //   // Check if the rIdNumber matches with the index of imageArray
+    //   if (!isNaN(rIdNumber) && imageArray[rIdNumber - 1]) {
+    //     ops.push({
+    //       insert: {
+    //         image: imageArray[rIdNumber - 1].url,
+    //       },
+    //     });
+    //   }
+    // }
+
+    // Check for image nodes directly or in nested elements
+    const blipNode = drawingNode.getElementsByTagName("a:blip")[0];
+    if (blipNode) {
+      const embedAttr = blipNode.getAttribute("r:embed");
+      if (embedAttr) {
+        const rIdNumber = parseInt(embedAttr.replace("rId", ""));
+        console.log(rIdNumber, "rIdNumber");
+        if (!isNaN(rIdNumber) && imageArray[noOfImages]) {
+          ops.push({
+            insert: {
+              image: imageArray[noOfImages].url,
+            },
+          });
+          noOfImages++;
+        }
+      }
+    }
     return ops;
   }
 
@@ -183,12 +244,22 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
       // Extract formatting
       const formatOps = extractFormatOps(runNode);
 
+      const headingLevel = extractHeadingLevel(runNode);
+
       // Add text operations with formatting
       let textOp = { insert: textContent };
       if (Object.keys(formatOps).length > 0) {
         textOp = { ...textOp, attributes: formatOps };
       }
       ops.push(textOp);
+
+      if (headingLevel) {
+        ops.push({ attributes: { header: headingLevel }, insert: "\n" });
+      }
+      if (textContent !== "") {
+        // Add a newline character after each paragraph
+        // ops.push({ insert: "\n" });
+      }
     }
 
     return ops;
@@ -238,6 +309,7 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
 
     // Check for heading level
     const headingLevel = extractHeadingLevel(runNode);
+
     if (headingLevel) {
       formatOps.header = headingLevel;
     }
@@ -263,6 +335,7 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
       if (fontSizeValue) {
         // Convert font size value from half points to points (Quill uses points for font size)
         const fontSizeInPoints = parseInt(fontSizeValue) / 2;
+        console.log(fontSizeInPoints, "fontSizeInPoints");
         return fontSizeInPoints;
       }
     }
@@ -397,7 +470,7 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
             Save
           </button>
         </div>
-        <div>{content}</div>
+        {/* <div>{content}</div> */}
         <div className="container" ref={wrapperRef}></div>
       </div>
     </>

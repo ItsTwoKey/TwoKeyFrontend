@@ -6,10 +6,13 @@ import Chip from "@mui/material/Chip";
 import ProfilePicDummy from "../assets/profilePicDummy.jpg";
 import secureLocalStorage from "react-secure-storage";
 import { api } from "../utils/axios-instance";
+import { InputLabel, TextField } from "@mui/material";
 const SecurityAllocation = ({
   handleSecurityAllocation,
   isOpen,
   checkboxValues,
+  reciverEmail,
+  setRecieverEmail,
 }) => {
   const { listLocations } = useAuth();
   const [formData, setFormData] = useState({});
@@ -332,6 +335,53 @@ const SecurityAllocation = ({
               </span>
             </div>
           ))}
+        </div>
+
+        {/* Share through email */}
+        <div className="my-2">
+          <div className="w-full">
+            <InputLabel className="text-gray-800 font-semibold my-1" id="email">
+              Share via Email
+            </InputLabel>
+            <span id="email" className="flex flex-row gap-2">
+              <TextField
+                id="outlined-basic-email"
+                variant="outlined"
+                className="w-full"
+                placeholder="Enter reciever's Email here"
+                name="email"
+                onChange={(e) => setRecieverEmail(e.target.value)}
+                value={reciverEmail}
+                size="small"
+              />
+            </span>
+          </div>
+
+          {/* {selectedUsers.map((user, index) => (
+            <div
+              key={index}
+              className="flex justify-between my-2 bg-[#EDEDFC] p-2 rounded-md"
+            >
+              <p className="text-sm font-medium text-indigo-700">
+                {user.name} {user.last_name}
+              </p>
+
+              <span className="flex flex-row gap-4 items-center">
+                <img
+                  src={
+                    user.profilePictureUrl
+                      ? user.profilePictureUrl
+                      : ProfilePicDummy
+                  }
+                  alt="Profile pic"
+                  className="h-6 w-6 rounded-md"
+                />
+                <p className="text-xs font-medium text-green-900 bg-green-100 p-1 rounded-md">
+                  Can Edit
+                </p>
+              </span>
+            </div>
+          ))} */}
         </div>
       </div>
     </div>
