@@ -60,7 +60,7 @@ const Department = () => {
     <div className="py-4 px-8">
       <div className="flex justify-between ">
         <h3 className="text-xl font-semibold">Departments</h3>
-        <AddDept />
+        <AddDept source="settings"/>
       </div>
       <hr className="border border-white border-b-[#D8DEE4] my-3" />
       <div className="grid grid-cols-3 gap-4">

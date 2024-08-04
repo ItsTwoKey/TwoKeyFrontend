@@ -153,7 +153,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
           }}
         >
           <div className={`flex `}>
-            <div className={`w-4/5 ${screenshotDetected ? "blur" : ""}`}>
+            <div className={`w-4/5 ${screenshotDetected ? "blur" : ""} h-screen`}>
               {loadingUrl && (
                 <div className="text-center pt-20">Fetching URL...</div>
               )}
