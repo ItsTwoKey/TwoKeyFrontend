@@ -13,7 +13,7 @@ import { auth } from "../helper/firebaseClient";
 import data from "@emoji-mart/data/sets/15/native.json";
 import Picker from "@emoji-mart/react";
 
-const AddDept = () => {
+const AddDept = ({ source }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const [deptName, setDeptName] = useState("");
@@ -66,87 +66,100 @@ const AddDept = () => {
     }
   };
 
-  return (
-    <div className="">
-      <button
-        onClick={openDialog}
-        className="bg-[#5E5ADB] text-white text-sm rounded-lg py-2 px-3"
-      >
-        Add New Department
-      </button>
 
-      <Dialog
-        open={isOpen}
-        onClose={closeDialog}
-        PaperProps={{
-          style: {
-            borderRadius: "5px",
-          },
-        }}
-      >
-        <DialogTitle>New Department</DialogTitle>
-        <DialogContent
-          style={{
-            backgroundColor: "#F7F8FA",
+  return (
+    (
+      <div className="">
+        {source === "settings" ? (
+          <button
+            onClick={openDialog}
+            className="bg-[#5E5ADB] text-white text-sm rounded-lg py-2 px-3"
+          >
+            Add New Department
+          </button>
+        ) : (
+          <button
+            onClick={openDialog}
+            title="create folder"
+            className="text-2xl rounded-lg px-3 mx-4 text-center text-purple-600 border border-purple-600"
+          >
+            +
+          </button>
+        )}
+
+        <Dialog
+          open={isOpen}
+          onClose={closeDialog}
+          PaperProps={{
+            style: {
+              borderRadius: "5px",
+            },
           }}
         >
-          <div className="my-2 w-full py-2">
-            <span className="w-[462px]">
-              <p className="text-gray-700">Department Name</p>
-              <input
-                className="w-full border border-gray-300 rounded-md my-2 px-2 py-1"
-                type="text"
-                value={deptName}
-                onChange={(e) => setDeptName(e.target.value)}
-              />
-            </span>
-
-            <div className="w-full flex gap-6">
-              <span>
-                <p className="text-gray-700 my-2">
-                  Department Icon {emoji && `: ${emoji}`}
-                </p>
-                <Picker
-                  data={data}
-                  set="native"
-                  onEmojiSelect={handleEmojiSelect}
-                  theme="light"
-                  perLine={7}
+          <DialogTitle>New Department</DialogTitle>
+          <DialogContent
+            style={{
+              backgroundColor: "#F7F8FA",
+            }}
+          >
+            <div className="my-2 w-full py-2">
+              <span className="w-[462px]">
+                <p className="text-gray-700">Department Name</p>
+                <input
+                  className="w-full border border-gray-300 rounded-md my-2 px-2 py-1"
+                  type="text"
+                  value={deptName}
+                  onChange={(e) => setDeptName(e.target.value)}
                 />
               </span>
 
-              <span>
-                <p className="text-gray-700 my-2">Department Color</p>
-                <Chrome
-                  color={hex}
-                  style={{ width: "100%", margin: "auto" }}
-                  placement={GithubPlacement.Right}
-                  onChange={(color) => {
-                    setHex(color.hexa);
-                  }}
-                />
-              </span>
+              <div className="w-full flex gap-6">
+                <span>
+                  <p className="text-gray-700 my-2">
+                    Department Icon {emoji && `: ${emoji}`}
+                  </p>
+                  <Picker
+                    data={data}
+                    set="native"
+                    onEmojiSelect={handleEmojiSelect}
+                    theme="light"
+                    perLine={7}
+                  />
+                </span>
+
+                <span>
+                  <p className="text-gray-700 my-2">Department Color</p>
+                  <Chrome
+                    color={hex}
+                    style={{ width: "100%", margin: "auto" }}
+                    placement={GithubPlacement.Right}
+                    onChange={(color) => {
+                      setHex(color.hexa);
+                    }}
+                  />
+                </span>
+              </div>
             </div>
-          </div>
-        </DialogContent>
-        <DialogActions sx={{ padding: "10px" }}>
-          <button
-            className="px-2 py-1 mx-2 rounded-lg shadow-sm border border-gray-300"
-            onClick={closeDialog}
-            color="primary"
-          >
-            Cancel
-          </button>
-          <button
-            className="flex gap-2 items-center px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white"
-            onClick={addDepartment}
-          >
-            Add new department
-            {loading && <CircularProgress size={20} color="inherit" />}
-          </button>
-        </DialogActions>
-      </Dialog>
-    </div>
+          </DialogContent>
+          <DialogActions sx={{ padding: "10px" }}>
+            <button
+              className="px-2 py-1 mx-2 rounded-lg shadow-sm border border-gray-300"
+              onClick={closeDialog}
+              color="primary"
+            >
+              Cancel
+            </button>
+            <button
+              className="flex gap-2 items-center px-2 py-1 rounded-lg shadow-sm bg-[#5E5ADB] text-white"
+              onClick={addDepartment}
+            >
+              Add new department
+              {loading && <CircularProgress size={20} color="inherit" />}
+            </button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    )
   );
 };
 

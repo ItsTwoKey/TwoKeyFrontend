@@ -311,6 +311,7 @@ export default function DashboardTabs() {
             filteredData={filteredData}
             loading={loading}
             select={select}
+            setSelect={setSelect}
             showMultiFileOptions={showMultiFileOptions}
             setShowMultiFileOptions={setShowMultiFileOptions}
           />

@@ -5,10 +5,14 @@ import SpreadsheetComponent from "./SpreadSheetViewer";
 
 const FileViewer = ({ preUrl, mimetype, signedUrl, fileName, fileId }) => {
   const containerStyles = {
-    width: "100%",
-    height: "100%",
-    overflow: "hidden",
-    position: "relative",
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden',
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+
   };
 
   const iframeStyles = {
@@ -52,8 +56,21 @@ const FileViewer = ({ preUrl, mimetype, signedUrl, fileName, fileId }) => {
       break;
     default:
       viewerComponent = (
-        <div style={{ ...containerStyles, ...iframeStyles }}>
-          <iframe title="Document" src={preUrl} style={iframeStyles} />
+        <div style={containerStyles}>
+          {mimetype.split("/")[0] === "image" ? (
+            <img
+              src={preUrl}
+              alt="Document"
+              style={{
+                maxWidth: "50%",
+                maxHeight: "100%",
+                objectFit: "contain",
+                display: "block",
+              }}
+            />
+          ) : (
+            <iframe title="Document" src={preUrl} style={iframeStyles} />
+          )}
           <div style={overlayStyles}></div>
         </div>
       );

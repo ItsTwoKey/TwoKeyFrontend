@@ -141,6 +141,7 @@ const FileDetails = ({
   };
 
   return (
+    console.log(fileInfo),
     <div className="bg-[#525659] h-screen text-white p-6 flex flex-col justify-between">
       {/* <button onClick={handleBackButtonClick}>Back</button> */}
       <Toaster position="bottom-left" reverseOrder={false} />
