@@ -55,7 +55,7 @@ const FilesInsideFolder = () => {
             mimetype: file.metadata.mimetype,
             status: "Team",
             security: "Enhanced",
-            bg: filteredDepartment[0]?.metadata.bg,
+            color: filteredDepartment[0]?.metadata.bg,
             lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
               "en-IN",
               {
@@ -107,6 +107,14 @@ const FilesInsideFolder = () => {
     setFiles((prevData) => [...files, ...prevData]);
   };
 
+  const updateFiles = (file, val) => {
+    setFiles((prevData) =>
+      prevData.map((data) =>
+        data.id === file.id ? { ...data, isLocked: val } : data
+      )
+    );
+  };
+
   return (
     <div className="p-4">
       <div className="flex flex-row justify-between items-center my-2">
@@ -119,6 +127,7 @@ const FilesInsideFolder = () => {
               addFiles={addFiles}
               location="folder"
               id={folderId}
+              listFilesInFolder={listFilesInFolder}
             />
           )}
           <button
@@ -156,6 +165,7 @@ const FilesInsideFolder = () => {
           setSelect={setSelect}
           showMultiFileOptions={showMultiFileOptions}
           setShowMultiFileOptions={setShowMultiFileOptions}
+          updateFiles={updateFiles}
         />
       </div>
     </div>

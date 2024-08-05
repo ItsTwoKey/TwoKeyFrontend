@@ -17,6 +17,9 @@ function MoveFiles({
   removeMultiSelect,
   removeFiles,
   location,
+  deptName,
+  listFilesInFolder,
+  folderId,
 }) {
   const context = useContext(fileContext);
   const { profileData } = useAuth();
@@ -88,15 +91,19 @@ function MoveFiles({
     }
   };
 
-  const handleMoveDepts = (isMove) => {
+  const handleMoveDepts = async (isMove) => {
     for (const file of context.selectedFiles) {
-      addFileToDepartment(file, isMove);
+      await addFileToDepartment(file, isMove);
     }
 
     toast.success("Files moved successfully!");
 
-    if (newDept) {
-      updateDepartmentFiles(newDept);
+    if (deptName) {
+      updateDepartmentFiles(deptName);
+    }
+
+    if (location === "folder") {
+      listFilesInFolder(folderId);
     }
 
     setOpenMoveDeptOptions(false);
@@ -105,6 +112,7 @@ function MoveFiles({
   };
 
   useEffect(() => {
+    console.log(context.selectedFiles);
     listFolders();
     listDepartments();
   }, []);

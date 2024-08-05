@@ -22,8 +22,9 @@ import Txt from "../assets/txt.svg";
 import Video from "../assets/video.svg";
 import secureLocalStorage from "react-secure-storage";
 import fileContext from "../context/fileContext";
-import AuthContext from "../context/authContext";
 import { api } from "../utils/axios-instance";
+import { useAuth } from "../context/authContext";
+import toast from "react-hot-toast";
 
 // Define SVG icons for different file types
 const fileIcons = {
@@ -49,6 +50,9 @@ const RecentFiles = ({
   showMultiFileOptions,
   setShowMultiFileOptions,
   removeFile,
+  value,
+  updateFiles,
+  deptName,
 }) => {
   const location = useLocation();
   const { darkMode } = useDarkMode();
@@ -68,15 +72,15 @@ const RecentFiles = ({
   const [isFileInfoOpen, setIsFileInfoOpen] = useState(false);
   // const [anchorEl, setAnchorEl] = useState(null);
   const context = useContext(fileContext);
-  const { anchorEl, setAnchorEl } = context;
+  const { anchorEl, setAnchorEl, updateFilesState, updateDepartmentFiles } =
+    context;
   const [menuFile, setMenuFile] = useState({});
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const { profileData } = useAuth();
 
   const open = Boolean(anchorEl);
 
   const recentBgColor = ["#FFF6F6", "#FFF6FF", "#F6FFF6", "#F6F7FF", "#FFFFF6"];
-
-  const authCon = useContext(AuthContext);
 
   // useEffect(() => {
   //   const channel = supabase
@@ -117,7 +121,8 @@ const RecentFiles = ({
     profilePic,
     lastUpdate,
     mimetype,
-    download_url
+    download_url,
+    isLocked
   ) => {
     getSharedFileInfo(fileId);
     setSelectedFileInfo({
@@ -130,7 +135,12 @@ const RecentFiles = ({
       mimetype: mimetype,
       download_url: download_url,
     });
-    setIsFileViewOpen(true);
+
+    if (isLocked) {
+      toast.error("File has been locked by organization admin!");
+    } else {
+      setIsFileViewOpen(true);
+    }
   };
 
   const closeDrawer = () => {
@@ -178,23 +188,44 @@ const RecentFiles = ({
 
   const handleMultiFileSelect = (file) => {
     console.log(file);
-    if (selectedFiles.includes(file)) {
-      const newSelectedFiles = selectedFiles.filter(
-        (selectedFile) => selectedFile.id !== file.id
-      );
-      setSelectedFiles(newSelectedFiles);
+
+    if (!file.isLocked) {
+      if (selectedFiles.includes(file)) {
+        const newSelectedFiles = selectedFiles.filter(
+          (selectedFile) => selectedFile.id !== file.id
+        );
+        setSelectedFiles(newSelectedFiles);
+      } else {
+        setSelectedFiles([...selectedFiles, file]);
+      }
     } else {
-      setSelectedFiles([...selectedFiles, file]);
+      toast.error("You cannot perform actions on locked files!");
     }
   };
 
   const handleLockChange = async (file) => {
-    const id = file.id;
-    const res = await api.patch(`/file/change-lock-status/${id}/`, {
-      is_locked: !file?.is_locked,
-    });
+    if (profileData.role_priv !== "employee") {
+      const id = file.id;
+      const res = await api.patch(`/file/change-lock-status/${id}/`, {
+        is_locked: !file?.isLocked,
+      });
+    }
 
-    console.log(res);
+    const curr_location = location?.pathname.split("/")[1];
+
+    switch (curr_location) {
+      case "dashboard":
+        updateFilesState(value);
+        break;
+      case "filesInsideFolder":
+        updateFiles(file, !file?.isLocked);
+        break;
+      case "department":
+        updateDepartmentFiles(deptName);
+        break;
+      default:
+        console.log("UNEXPECTED INPUT");
+    }
   };
 
   useEffect(() => {
@@ -295,7 +326,7 @@ const RecentFiles = ({
                   </button>
 
                   <span className="flex">
-                    <div onClick={() => handleLockChange(file)}>
+                    <div onClick={() => handleLockChange(file, index)}>
                       {file?.isLocked ? <LockIcon /> : <LockOpenIcon />}
                     </div>
                     <button
@@ -375,7 +406,8 @@ const RecentFiles = ({
                           file.profilePic,
                           file.lastUpdate,
                           file.mimetype,
-                          file.downloadUrl
+                          file.downloadUrl,
+                          file.isLocked
                         )
                   }
                 >
