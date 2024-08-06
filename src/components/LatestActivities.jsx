@@ -112,15 +112,15 @@ const LatestActivities = () => {
   }
 
   return (
-    <div className={`${isUserProfile ? "w-full" : "w-full md:w-2/5"}`}>
-      <Paper elevation={isUserProfile ? 0 : 1} className="h-72 ">
+    <div className={`${isUserProfile ? "w-full" : "w-full"}`}>
+      <Paper elevation={isUserProfile ? 0 : 1} className="h-48 overflow-y-hidden">
         <div
           className={`flex justify-between items-center p-4 ${
             darkMode ? "bg-gray-600 text-gray-200 " : " "
           }`}
         >
           <span className="flex flex-row items-center gap-1">
-            <p className="text-sm font-semibold">Latest Activities</p>
+            <p className="text-sm font-semibold text-gray-500">Latest Activities</p>
             <select
               className={`text-sm text-gray-400 bg-inherit appearance-none mx-5 px-2 py-1 border border-gray-300 rounded-md shadow-sm  focus:outline-none  ${
                 darkMode
@@ -139,7 +139,7 @@ const LatestActivities = () => {
           </span>
         </div>
 
-        <div className="h-56 overflow-y-scroll scrollbar-hide">
+        <div className="h-56 pb-8 overflow-y-scroll scrollbar-hide">
           {logs.length ? (
             logs
               .filter((log) => {

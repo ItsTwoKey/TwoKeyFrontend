@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,9 +6,10 @@ import DialogActions from "@mui/material/DialogActions";
 import SecurityAllocation from "./SecurityAllocation";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import secureLocalStorage from "react-secure-storage";
 import { auth } from "../helper/firebaseClient";
 import { api } from "../utils/axios-instance";
+import CircularProgress from "@mui/material/CircularProgress";
+
 const FileShare = ({ menuFile }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [checkboxValues, setCheckboxValues] = useState({
@@ -17,9 +18,11 @@ const FileShare = ({ menuFile }) => {
     accessControl: false,
   });
   const [securityAllotmentData, setSecurityAllotmentData] = useState("");
+  const [recieverEmail, setRecieverEmail] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [loading, setLoading] = useState(false);
 
   const openDialog = () => {
     setIsOpen(true);
@@ -43,29 +46,48 @@ const FileShare = ({ menuFile }) => {
 
   const shareFile = async () => {
     try {
+      setLoading(true);
       const token = await auth.currentUser.getIdToken();
 
-      const res = await api.post(`/file/shareFile`, {
-        file: [menuFile.id],
-        shared_with: securityAllotmentData.selectedUsers,
-        expiration_time: securityAllotmentData.timeDifference
-          ? securityAllotmentData.timeDifference
-          : 31536000 * 5,
-        security_check: {
-          download_enabled: true,
-          geo_enabled: securityAllotmentData.location,
-        },
-        idToken: token,
-      });
+      if (recieverEmail.trim() !== "") {
+        console.log("recieverEmail", recieverEmail);
+        const res = await api.post(`/file/shareAFileThroughEmail`, {
+          fileId: menuFile.id,
+          to: recieverEmail,
+          idToken: token,
+        });
 
-      console.log("shareFiles:", res);
+        console.log("shareFiles:", res);
 
-      // Show snackbar on successful file sharing
-      showSnackbar("File shared successfully", "success");
+        showSnackbar("File shared successfully", "success");
 
-      setTimeout(() => {
-        closeDialog();
-      }, 2000);
+        setTimeout(() => {
+          closeDialog();
+        }, 2000);
+      }
+      if (securityAllotmentData.selectedUsers.length > 0) {
+        const res = await api.post(`/file/shareFile`, {
+          file: [menuFile.id],
+          shared_with: securityAllotmentData.selectedUsers,
+          expiration_time: securityAllotmentData.timeDifference
+            ? securityAllotmentData.timeDifference
+            : 31536000 * 5,
+          security_check: {
+            download_enabled: true,
+            geo_enabled: securityAllotmentData.location,
+          },
+          idToken: token,
+        });
+
+        console.log("shareFiles:", res);
+
+        // Show snackbar on successful file sharing
+        showSnackbar("File shared successfully", "success");
+
+        setTimeout(() => {
+          closeDialog();
+        }, 2000);
+      }
     } catch (error) {
       console.log("error occurred while setting the permissions", error);
       // Show snackbar on error
@@ -74,6 +96,8 @@ const FileShare = ({ menuFile }) => {
       } else {
         showSnackbar(error.error || "Error sharing file", "error");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -156,6 +180,8 @@ const FileShare = ({ menuFile }) => {
               handleSecurityAllocation={handleSecurityAllocation}
               isOpen={isOpen}
               checkboxValues={checkboxValues}
+              recieverEmail={recieverEmail}
+              setRecieverEmail={setRecieverEmail}
             />
 
             {snackbarOpen && (
@@ -184,10 +210,12 @@ const FileShare = ({ menuFile }) => {
             Close
           </button>
           <button
-            className={`px-4 py-1 rounded-lg shadow-sm text-white bg-[#5E5ADB] hover:bg-blue-500`}
+            className={`flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed px-4 py-1 rounded-lg shadow-sm text-white bg-[#5E5ADB] hover:bg-[#6e6bd0da]`}
             onClick={shareFile}
+            disabled={loading}
           >
             Share
+            {loading && <CircularProgress size={20} color="inherit" />}
           </button>
         </DialogActions>
       </Dialog>

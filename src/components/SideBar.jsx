@@ -22,6 +22,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { auth } from "../helper/firebaseClient";
 import { api } from "../utils/axios-instance";
 import toast from "react-hot-toast";
+import { gapi } from "gapi-script";
 
 let hardCodedDepartments = [
   { name: "Account", metadata: { bg: "#FFF6F6", border: "#FEB7B7" } },
@@ -57,7 +58,12 @@ function SideBar() {
       const res = await api.put(`/auth/logout/`, body);
       secureLocalStorage.removeItem("profileData");
       secureLocalStorage.removeItem("token");
-      auth.signOut();
+      
+      const authInstance = gapi.auth2.getAuthInstance();
+      await authInstance.signOut();
+      localStorage.removeItem("google_token");
+      localStorage.removeItem("google_refresh_token");
+      await auth.signOut();
     } catch (error) {
       console.log(error);
       toast.error(error?.message || "Something went wrong");

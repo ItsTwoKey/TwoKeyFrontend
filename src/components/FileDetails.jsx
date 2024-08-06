@@ -20,6 +20,7 @@ import { deleteObject, getStorage, ref } from "firebase/storage";
 import toast, { Toaster } from "react-hot-toast";
 import fileContext from "../context/fileContext";
 import { api } from "../utils/axios-instance";
+import { auth } from "../helper/firebaseClient";
 
 // Define SVG icons for different file types
 const fileIcons = {
@@ -64,9 +65,13 @@ const FileDetails = ({
   };
 
   const downloadAlert = async (fileId) => {
+    const token = auth.currentUser && (await auth.currentUser.getIdToken());
     try {
       if (fileId) {
-        const res = await api.get(`/file/logEvent/${fileId}?event=download`);
+        const res = await api.post(`/file/logEvent/${fileId}?event=download`,{
+          event: "download",
+          idToken: token
+        });
         console.log("download log :", res);
       }
     } catch (error) {
