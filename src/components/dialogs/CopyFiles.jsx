@@ -20,18 +20,15 @@ function CopyFiles({
   openMove,
   addFiles,
   folderId,
+  deptName,
 }) {
   const { profileData, formatFileSize } = useAuth();
   const { departments } = useDepartment();
   const context = useContext(fileContext);
   const [loading, setLoading] = useState(false);
-  const [copiedFiles, setCopiedFiles] = useState([]);
-  const [filesCopied, setFilesCopied] = useState(false);
 
-  const addFilesToFolder = useCallback(async () => {
+  const addFilesToFolder = async (copiedFiles) => {
     const token = await auth.currentUser.getIdToken();
-    console.log("Adding files to folder with token:", token);
-    console.log("COPIED FILES ARE : ", copiedFiles);
 
     const addPromises = copiedFiles.map(async (file) => {
       let body = { file_id: file.id, idToken: token };
@@ -41,9 +38,6 @@ function CopyFiles({
           body
         );
         console.log("File added response:", response);
-        if (response) {
-          toast.success("File added successfully.");
-        }
       } catch (error) {
         console.log("Error occurred while adding file:", error);
         toast.error("Error adding the file.");
@@ -51,7 +45,7 @@ function CopyFiles({
     });
 
     await Promise.all(addPromises);
-  });
+  };
 
   const uploadFile = async (file, metadata) => {
     const fileRef = ref(storage, `files/${profileData.org}/${file.name}`);
@@ -92,7 +86,8 @@ function CopyFiles({
   };
 
   const createCopyOfFile = async (file) => {
-    const deptId = file.dept[0];
+    console.log(file);
+    const deptId = file.dept;
     const newFileId = uuidv4();
     let newFile = null;
 
@@ -130,7 +125,7 @@ function CopyFiles({
 
       const token = await auth.currentUser.getIdToken();
       const res = await api.post(`/file/addDepartment/${newFileId}`, {
-        department_ids: [deptId],
+        department_ids: deptId,
         new: true,
         name: copiedFile.name,
         downloadURL: copiedFileDownloadURL,
@@ -195,18 +190,12 @@ function CopyFiles({
       const copyPromises = context.selectedFiles.map(createCopyOfFile);
       const newFiles = await Promise.all(copyPromises);
 
-      console.log("FILES AFTER COPY: ", newFiles);
-
       if (location === "dashboard") {
         context.setFilteredData((prevData) => [...newFiles, ...prevData]);
         removeMultiSelect();
-      } else if (location === "folder") {
-        console.log("Setting copied files and filesCopied state");
-        setCopiedFiles([...newFiles]);
-        setFilesCopied(true);
       }
-
       toast.success("Files copied successfully");
+      return newFiles;
     } catch (error) {
       console.error("Error during file copy process:", error);
       toast.error("Error copying files");
@@ -215,20 +204,27 @@ function CopyFiles({
     }
   };
 
-  const handleCopyHere = async () => {
+  const handleCopyHere = async (here) => {
     setLoading(true);
     try {
-      await handleCopyFiles(location);
+      const copiedFiles = await handleCopyFiles(location);
 
-      if (location === "folder") {
-        console.log("FILES COPIED STATE: ", filesCopied);
-        // if (filesCopied) {
-          console.log("Adding files to folder");
-          await addFilesToFolder();
-          addFiles(copiedFiles);
-        // } else {
-        //   console.log("FILES COPIED CONDITION NOT MET");
-        // }
+      if (location === "folder" && here) {
+        await addFilesToFolder(copiedFiles);
+        addFiles(copiedFiles);
+        removeMultiSelect();
+        context.setSelectedFiles([]);
+      } else if (location === "folder" && !here) {
+        context.setSelectedFiles(copiedFiles);
+        closeDialog();
+        openMove();
+      } else if (location === "department" && here) {
+        context.updateDepartmentFiles(deptName);
+        removeMultiSelect();
+      } else {
+        context.setSelectedFiles(copiedFiles);
+        closeDialog();
+        openMove();
       }
     } catch (error) {
       console.error("Error handling copy here:", error);
@@ -236,8 +232,6 @@ function CopyFiles({
     } finally {
       setLoading(false);
       closeDialog();
-      removeMultiSelect();
-      context.setSelectedFiles([]);
     }
   };
 
@@ -246,17 +240,6 @@ function CopyFiles({
       handleCopyFiles(location);
     }
   }, [isOpen, location]);
-
-  useEffect(() => {
-    console.log("FILES COPIED STATE CHANGED: ", filesCopied);
-    console.log("COPIED FILES STATE: ", copiedFiles);
-    
-    if (filesCopied && location === "folder") {
-      console.log("Triggering addFilesToFolder due to state change");
-      addFilesToFolder();
-      addFiles(copiedFiles);
-    }
-  }, [filesCopied, copiedFiles, location, addFiles, addFilesToFolder]);
 
   return (
     <div>
@@ -280,16 +263,19 @@ function CopyFiles({
           }}
         >
           <div className="my-2 p-3 flex flex-col justify-center items-center gap-6">
-            {location === "folder" ? (
+            {location !== "dashboard" && !loading ? (
               <div className="flex flex-col">
                 <button
                   className="py-1 px-4 rounded-md border bg-[#1c4ed8] text-white my-4"
-                  onClick={handleCopyHere}
+                  onClick={() => handleCopyHere(true)}
                 >
                   Copy Here
                 </button>
-                <button className="py-1 px-4 rounded-md border bg-[#1c4ed8] text-white">
-                  Copy to different folder
+                <button
+                  className="py-1 px-4 rounded-md border bg-[#1c4ed8] text-white"
+                  onClick={() => handleCopyHere(false)}
+                >
+                  Copy to Different Directory
                 </button>
               </div>
             ) : (

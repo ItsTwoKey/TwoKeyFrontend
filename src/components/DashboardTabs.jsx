@@ -294,6 +294,7 @@ export default function DashboardTabs() {
             setSelect={setSelect}
             showMultiFileOptions={showMultiFileOptions}
             setShowMultiFileOptions={setShowMultiFileOptions}
+            value={value}
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
@@ -304,6 +305,7 @@ export default function DashboardTabs() {
             setSelect={setSelect}
             showMultiFileOptions={showMultiFileOptions}
             setShowMultiFileOptions={setShowMultiFileOptions}
+            value={value}
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
@@ -314,6 +316,7 @@ export default function DashboardTabs() {
             setSelect={setSelect}
             showMultiFileOptions={showMultiFileOptions}
             setShowMultiFileOptions={setShowMultiFileOptions}
+            value={value}
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
@@ -324,6 +327,7 @@ export default function DashboardTabs() {
             setSelect={setSelect}
             showMultiFileOptions={showMultiFileOptions}
             setShowMultiFileOptions={setShowMultiFileOptions}
+            value={value}
           />
         </CustomTabPanel>
       </Box>

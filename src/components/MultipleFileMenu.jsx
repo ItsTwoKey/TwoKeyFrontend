@@ -76,6 +76,8 @@ export default function MultipleFileMenu({
   location,
   addFiles,
   id,
+  deptName,
+  listFilesInFolder
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openMoveDialog, setOpenMoveDialog] = useState(false);
@@ -205,6 +207,9 @@ export default function MultipleFileMenu({
           removeMultiSelect={removeMultiSelect}
           removeFiles={removeFiles}
           location={location}
+          deptName={deptName}
+          listFilesInFolder={listFilesInFolder}
+          folderId={id}
         />
       )}
 
@@ -219,6 +224,7 @@ export default function MultipleFileMenu({
           openMove={() => setOpenMoveDialog(true)}
           addFiles={addFiles}
           folderId={id}
+          deptName={deptName}
         />
       )}
 

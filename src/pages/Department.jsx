@@ -58,6 +58,9 @@ const Department = () => {
               status: "Team",
               security: "Enhanced",
               color: filteredDepartment[0]?.metadata?.bg,
+              isLocked: file?.is_locked,
+              hasPassword: file?.has_password,
+              password: file?.password,
               lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
                 "en-IN",
                 {
@@ -85,6 +88,7 @@ const Department = () => {
             file.dept.find((id) => id === getDepartmentId.id)
           );
 
+          console.log(filteredFiles);
           setFilesFromBackend(filteredFiles);
           setDepartmentFiles(filteredFiles);
         }
@@ -117,6 +121,14 @@ const Department = () => {
     setFilesFromBackend(updatedFiles);
   };
 
+  const updateFiles = (file, val) => {
+    setFilesFromBackend((prevData) =>
+      prevData.map((data) =>
+        data.id === file.id ? { ...data, isLocked: val } : data
+      )
+    );
+  };
+
   return (
     <div>
       <div
@@ -137,6 +149,7 @@ const Department = () => {
               removeMultiSelect={() => setSelect(false)}
               location="department"
               removeFiles={removeFiles}
+              deptName={deptName}
             />
           )}
           <SecureShare value={0} />
@@ -166,6 +179,7 @@ const Department = () => {
             setSelect={setSelect}
             showMultiFileOptions={showMultiFileOptions}
             setShowMultiFileOptions={setShowMultiFileOptions}
+            deptName={deptName}
           />
           // <RecentFiles filteredData={departmentFiles} loading={loading} />
         )}
