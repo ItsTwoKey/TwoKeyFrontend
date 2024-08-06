@@ -51,13 +51,13 @@ const Department = () => {
               id: file.id,
               name: file.name.substring(0, 80),
               profilePic: file.profile_pic,
-              size: formatFileSize(file.metadata.size),
+              size: formatFileSize(file?.metadata?.size),
               dept: file.department_ids,
               owner: file.owner_id,
               mimetype: file.metadata.mimetype,
               status: "Team",
               security: "Enhanced",
-              color: filteredDepartment[0].metadata?.bg,
+              color: filteredDepartment[0]?.metadata?.bg,
               lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
                 "en-IN",
                 {

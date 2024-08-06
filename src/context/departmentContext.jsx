@@ -34,6 +34,8 @@ export function DepartmentProvider({ children }) {
         "departments",
         JSON.stringify(departmentsData)
       );
+
+      console.log("DEPARTMENT DATA : ", departmentsData);
       setDepartments(departmentsData);
 
       setLoading(false);

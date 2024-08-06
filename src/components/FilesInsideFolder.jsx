@@ -153,6 +153,7 @@ const FilesInsideFolder = () => {
           filteredData={filteredFiles}
           removeFile={removeFile}
           select={select}
+          setSelect={setSelect}
           showMultiFileOptions={showMultiFileOptions}
           setShowMultiFileOptions={setShowMultiFileOptions}
         />
