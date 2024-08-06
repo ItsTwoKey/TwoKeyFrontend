@@ -199,7 +199,7 @@ const DueDate = () => {
             darkMode ? "bg-gray-600 text-gray-200 " : " "
           }`}
         >
-          <p className="text-sm font-medium ">Due Date</p>
+          <p className="text-sm font-bold text-gray-500">Due Date</p>
         </div>
         <div className="px-4 h-56 overflow-y-scroll scrollbar-hide">
           {!loading ? (

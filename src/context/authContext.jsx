@@ -110,16 +110,14 @@ export const AuthProvider = ({ children }) => {
 
   const screenshotAlert = async (fileId) => {
     try {
-      let token = secureLocalStorage.getItem("token");
+      let token = auth.currentUser && (await auth.currentUser.getIdToken());
 
       if (fileId) {
-        const res = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/file/logEvent/${fileId}?event=screenshot`,
-
+        const res = await api.post(
+          `/file/logEvent/${fileId}?event=screenshot`,
           {
-            headers: {
-              Authorization: token,
-            },
+            event: "download",
+            idToken: token,
           }
         );
         console.log("screenshot log :", res);

@@ -29,6 +29,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
 
   useEffect(() => {
     if (screenshotDetected) {
+      console.log("Screenshot detected");
       screenshotAlert(fileInfo.id);
     }
   }, [screenshotDetected, fileInfo.id, screenshotAlert]);

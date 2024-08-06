@@ -7,6 +7,7 @@ import {
 } from "date-fns";
 import { gapi } from "gapi-script";
 import { api } from "../utils/axios-instance";
+import { auth } from "../helper/firebaseClient";
 
 import {
   Avatar,
@@ -19,10 +20,12 @@ import {
 import GoogleIcon from "@mui/icons-material/Google";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
+import ComposeEmail from "./ComposeEmail";
 
 const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
-const SCOPES = "https://www.googleapis.com/auth/gmail.readonly";
+const SCOPES =
+  "https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.send";
 const DISCOVERY_DOCS = [
   "https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest",
 ];
@@ -33,6 +36,7 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
 
   useEffect(() => {
     function start() {
+      setLoading(true);
       gapi.client
         .init({
           apiKey: API_KEY,
@@ -41,15 +45,14 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
           scope: SCOPES,
         })
         .then(() => {
-          setLoading(true);
           const authInstance = gapi.auth2.getAuthInstance();
           setIsSignedIn(authInstance.isSignedIn.get());
           authInstance.isSignedIn.listen(setIsSignedIn);
 
           // Check if credentials are stored in local storage
           const token = localStorage.getItem("google_token");
-          const refreshToken = localStorage.getItem("google_refresh_token");
-          if (token && refreshToken) {
+          // const refreshToken = localStorage.getItem("google_refresh_token");
+          if (token) {
             fetchEmails(token);
           }
           setLoading(false);
@@ -64,9 +67,9 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
     const authInstance = gapi.auth2.getAuthInstance();
     if (!isSignedIn) {
       const user = await authInstance.signIn({ prompt: "consent" });
+      const refreshToken = user.getAuthResponse(true).refresh_token;
       const authResponse = user.getAuthResponse(true);
       const token = authResponse.access_token;
-      const refreshToken = authResponse.refresh_token;
 
       // Store the tokens in local storage
       localStorage.setItem("google_token", token);
@@ -75,6 +78,7 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
       fetchEmails(token);
     } else {
       const authResponse = authInstance.currentUser.get().getAuthResponse(true);
+
       const token = authResponse.access_token;
 
       // Fetch emails with current token
@@ -84,13 +88,22 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
 
   const fetchEmails = async (token) => {
     setLoading(true);
-    const response = await api.post("/users/google_login/", { token });
+    const idToken = await auth.currentUser.getIdToken();
+    const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
+    const response = await api.post("/users/google_login/", {
+      idToken,
+      token,
+      clientId,
+      clientSecret, // You need to store this securely
+    });
     const data = response.data;
     onEmailsFetched(data.emails);
     setLoading(false);
   };
 
   const handleLogout = async () => {
+    setLoading(false);
     const authInstance = gapi.auth2.getAuthInstance();
     await authInstance.signOut();
     localStorage.removeItem("google_token");
@@ -129,7 +142,7 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
     } else {
       return {
         sx: {
-          bgcolor: "#ccc", // Default color or handle as necessary
+          bgcolor: "#B3A9EB", // Default color or handle as necessary
         },
         children: "NA", // Default initials or handle as necessary
       };
@@ -168,16 +181,21 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
         <div className="flex justify-between items-center">
           <h2 className="text-sm font-semibold text-gray-500">Email Box</h2>
           <div className="flex items-center space-x-2">
+            <ComposeEmail isSignedIn={isSignedIn} />
             <IconButton onClick={handleSignIn}>
               {isSignedIn ? (
                 <ChangeCircleIcon className="cursor-pointer text-gray-500" />
               ) : (
-                <GoogleIcon className="cursor-pointer text-blue-400" />
+                <Tooltip title="Connect your Google account" arrow>
+                  <GoogleIcon className="cursor-pointer text-blue-400" />
+                </Tooltip>
               )}
             </IconButton>
-            <IconButton onClick={handleLogout}>
-              <LogoutIcon className="cursor-pointer text-red-400" />
-            </IconButton>
+            {isSignedIn && (
+              <IconButton onClick={handleLogout}>
+                <LogoutIcon className="cursor-pointer text-red-400" />
+              </IconButton>
+            )}
           </div>
         </div>
         <div className="h-56 overflow-y-scroll scrollbar-hide">
@@ -203,7 +221,7 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
 
           {emails.map((email, index) => (
             <Stack direction={"row"} key={index} spacing={2} className="my-6">
-              <Tooltip title={email.from_email} arrow>
+              <Tooltip title={email.from} arrow>
                 <Avatar
                   {...stringAvatar(extractName(email.from))}
                   variant="rounded"

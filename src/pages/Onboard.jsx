@@ -56,7 +56,7 @@ const Onboard = () => {
   const [expanded, setExpanded] = useState("panel1");
   const [formData, setFormData] = useState({
     username: "",
-    department: "test",
+    department: "",
     firstName: "",
     lastName: "",
     profileUrl: "",
@@ -234,7 +234,11 @@ const Onboard = () => {
                         {...getRootProps()}
                         className="mt-2 h-28 w-32 hover:text-blue-400 flex items-center justify-center border-2 border-dashed hover:border-blue-400 border-gray-400 p-4 rounded-md text-center cursor-pointer"
                       >
-                        <input {...getInputProps()} />
+                        {/* accept only images */}
+                        <input
+                          {...getInputProps()}
+                          accept="image/*"
+                        />
                         <p>Drop files to upload</p>
                       </div>
                     )}
