@@ -7,147 +7,86 @@ import React, {
 } from "react";
 import "@inovua/reactdatagrid-community/index.css";
 import "@inovua/reactdatagrid-community/theme/default-light.css";
-import ReactDataGrid from "@inovua/reactdatagrid-community";
+import {
+  SpreadsheetComponent,
+  SheetsDirective,
+  SheetDirective,
+  RangesDirective,
+  RangeDirective,
+  ColumnsDirective,
+  ColumnDirective,
+} from "@syncfusion/ej2-react-spreadsheet";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import PDF from "../assets/pdf.svg";
 
-import * as XLSX from "xlsx-js-style";
 import { useAuth } from "../context/authContext";
-import { storage } from "../helper/firebaseClient";
+import { auth, storage } from "../helper/firebaseClient";
 import { Button } from "@mui/joy";
 
-const SpreadsheetComponent = ({ preUrl, mimetype, fileName }) => {
-  const [data, setData] = useState([]);
-  const [isEditing, setIsEditing] = useState(false);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const idleTimeoutRef = useRef(null);
+const CACHE_NAME = "blob-cache";
+
+const Spread = ({ preUrl, mimetype, fileName, fileId }) => {
+  if (!preUrl) alert("Please provide a valid URL");
+  const spreadsheetRef = useRef(null);
   const { profileData, profileIsPending } = useAuth();
   const deptId = useMemo(() => profileData?.dept ?? null, [profileData?.dept]);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [_, setUploadProgress] = useState(0);
 
-  console.log({ deptId });
-
-  const padHeaderRows = (sheetData) => {
-    let headerRows = [];
-    let dataRows = [];
-    let maxColumns = 0;
-
-    for (let row of sheetData) {
-      if (row.length > maxColumns) {
-        maxColumns = row.length;
-      }
-    }
-
-    for (let row of sheetData) {
-      if (
-        row.every((cell) => typeof cell === "string") &&
-        row.length < maxColumns
-      ) {
-        const paddedRow = [
-          ...row,
-          ...new Array(maxColumns - row.length).fill(""),
-        ];
-        headerRows.push(paddedRow);
-      } else {
-        dataRows.push(row);
-      }
-    }
-
-    return [dataRows, headerRows];
+  const beforeSave = (args) => {
+    args.needBlobData = true; // To trigger the saveComplete event.
+    args.isFullPost = false; // Get the spreadsheet data as blob data in the saveComplete event.
   };
 
-  const fetchFileData = useCallback(async () => {
+  const saveComplete = (args) => {
+    console.log({ args });
+    let reader = new FileReader();
+    reader.readAsArrayBuffer(args.blobData);
+    reader.onloadend = function () {
+      const arrayBuffer = reader.result;
+      const fileBuffer = new Uint8Array(arrayBuffer);
+      saveFile(fileBuffer);
+    };
+  };
+
+  const fetchFileData = useCallback(() => {
     try {
-      const response = await fetch(preUrl);
-      const arrayBuffer = await response.arrayBuffer();
-      const binaryString = new Uint8Array(arrayBuffer).reduce(
-        (data, byte) => data + String.fromCharCode(byte),
-        ""
-      );
+      let spreadSheet = spreadsheetRef.current;
 
-      const workbook = XLSX.read(binaryString, {
-        type: "binary",
-        cellStyles: true,
-        cellHTML: true,
-        cellFormula: true,
-        cellText: true,
-      });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-      const [rows, headings] = padHeaderRows(jsonData);
-
-      setData([...headings, ...rows]);
+      fetch(preUrl)
+        .then((response) => response.blob())
+        .then((fileBlob) => {
+          let file = new File([fileBlob], "Sample.xlsx");
+          console.log("Opening file", file);
+          spreadSheet.open({ file: file });
+        });
     } catch (error) {
       console.error("Error fetching or processing the file:", error);
     }
   }, [preUrl]);
 
   useEffect(() => {
-    if (
-      preUrl &&
-      mimetype ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    ) {
-      fetchFileData();
-    }
+    fetchFileData();
   }, [preUrl, mimetype, fetchFileData]);
 
-  const columns = data[0]
-    ? Object.keys(data[0]).map((key) => ({
-        name: key,
-        header: key,
-        editable: true,
-      }))
-    : [];
-
-  const handleEditComplete = (editInfo) => {
-    const { rowIndex, columnIndex, value } = editInfo;
-
-    const updatedData = [...data];
-    updatedData[rowIndex][columnIndex] = value;
-    setData(updatedData);
-    setIsEditing(true);
-    setHasUnsavedChanges(true);
-    resetIdleTimeout();
-  };
-
-  const handleUserActivity = (e) => {
-    console.log("user is editing");
-    if (e.key === "Enter") {
-      saveFile();
-    }
-
-    setIsEditing(true);
-    resetIdleTimeout();
-  };
-
-  const resetIdleTimeout = () => {
-    if (idleTimeoutRef.current) {
-      clearTimeout(idleTimeoutRef.current);
-    }
-    idleTimeoutRef.current = setTimeout(() => {
-      setIsEditing(false);
-      console.log("not editinh", hasUnsavedChanges);
-      if (hasUnsavedChanges) {
-        saveFile();
-      }
-    }, 1000);
-  };
-
-  const saveFile = () => {
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.aoa_to_sheet(data);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    const fileBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
+  const saveFile = (fileBuffer) => {
     const file = new Blob([fileBuffer], { type: mimetype });
     console.log("Uploading ...");
     uploadFile(file)
-      .then(() => {
-        console.log("File saved successfully.");
-        setHasUnsavedChanges(false);
+      .then(async () => {
+        console.log("File saved successfully.", { file });
+        const token = await auth.currentUser.getIdToken();
+        const fileIdentfier = `${fileId}-${token}`;
+
+        // update cache
+        const cache = await caches.open(CACHE_NAME);
+        const responseToCache = new Response(file, {
+          headers: {
+            "Content-Type": mimetype,
+            "sw-cache-date": new Date().toISOString(),
+          },
+        });
+        await cache.put(fileIdentfier, responseToCache);
+        console.log("Cache updated for file:", fileIdentfier);
       })
       .catch((error) => {
         console.error("File save error:", error);
@@ -185,21 +124,6 @@ const SpreadsheetComponent = ({ preUrl, mimetype, fileName }) => {
     });
   };
 
-  useEffect(() => {
-    window.addEventListener("keydown", handleUserActivity);
-    window.addEventListener("mousedown", handleUserActivity);
-    window.addEventListener("mousemove", handleUserActivity);
-
-    return () => {
-      window.removeEventListener("keydown", handleUserActivity);
-      window.removeEventListener("mousedown", handleUserActivity);
-      window.removeEventListener("mousemove", handleUserActivity);
-      if (idleTimeoutRef.current) {
-        clearTimeout(idleTimeoutRef.current);
-      }
-    };
-  }, []);
-
   if (profileIsPending) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
@@ -209,32 +133,64 @@ const SpreadsheetComponent = ({ preUrl, mimetype, fileName }) => {
   }
 
   return (
-    <div className="h-screen overflow-y-scroll px-2">
-      <div className="text-center py-2 bg-zinc-200 font-bold">
-        <p>{fileName}</p>
-        <div className="w-fit ml-auto px-2">
-          <Button onClick={saveFile}>Save</Button>
+    <div className="h-screen min-w-full overflow-y-scroll px-2">
+      <div className="flex items-center justify-between bg-zinc-200 py-2 px-4 font-bold shadow-md">
+        <div className="flex items-center">
+          <img src={PDF} alt="Excel Logo" className="h-6 w-6 mr-2" />
+          <p>{fileName}</p>
+        </div>
+        <div className="flex items-center">
+          <Button
+            className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition"
+            onClick={() => {
+              const spreadSheet = spreadsheetRef.current;
+              spreadSheet.save({
+                url: "https://services.syncfusion.com/react/production/api/spreadsheet/save",
+              });
+            }}
+          >
+            Save
+          </Button>
         </div>
       </div>
 
-      {data.length > 0 && (
-        <ReactDataGrid
-          dataSource={data}
-          columns={columns}
-          editable={true}
-          style={{
-            minHeight: 1000,
-            border: "solid 1px #ccc",
-            borderRadius: 4,
-          }}
-          columnMinWidth={120}
-          columnDefaultWidth={200}
-          onEditComplete={handleEditComplete}
-          onEditValueChange={() => setHasUnsavedChanges(true)}
-        />
-      )}
+      <SpreadsheetComponent
+        openUrl="https://services.syncfusion.com/react/production/api/spreadsheet/open"
+        ref={spreadsheetRef}
+        beforeSave={beforeSave}
+        saveComplete={saveComplete}
+        actionComplete={async (cell) => {
+          console.log("action complete", cell);
+          const spreadSheet = spreadsheetRef.current;
+          if (cell.action === "cellSave") {
+            spreadSheet.save({
+              url: "https://services.syncfusion.com/react/production/api/spreadsheet/save",
+            });
+          }
+        }}
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        <SheetsDirective>
+          <SheetDirective name="Car Sales Report">
+            <RangesDirective>
+              <RangeDirective></RangeDirective>
+            </RangesDirective>
+            <ColumnsDirective>
+              <ColumnDirective width={180}></ColumnDirective>
+              <ColumnDirective width={130}></ColumnDirective>
+              <ColumnDirective width={130}></ColumnDirective>
+              <ColumnDirective width={180}></ColumnDirective>
+              <ColumnDirective width={130}></ColumnDirective>
+              <ColumnDirective width={120}></ColumnDirective>
+            </ColumnsDirective>
+          </SheetDirective>
+        </SheetsDirective>
+      </SpreadsheetComponent>
     </div>
   );
 };
 
-export default SpreadsheetComponent;
+export default Spread;

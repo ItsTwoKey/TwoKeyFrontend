@@ -5,14 +5,13 @@ import SpreadsheetComponent from "./SpreadSheetViewer";
 
 const FileViewer = ({ preUrl, mimetype, signedUrl, fileName, fileId }) => {
   const containerStyles = {
-    width: '100%',
-    height: '100%',
-    overflow: 'hidden',
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-
+    width: "100%",
+    height: "100%",
+    overflow: "hidden",
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   };
 
   const iframeStyles = {
@@ -48,9 +47,10 @@ const FileViewer = ({ preUrl, mimetype, signedUrl, fileName, fileId }) => {
     case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
       viewerComponent = (
         <SpreadsheetComponent
-          preUrl={signedUrl}
+          preUrl={preUrl}
           mimetype={mimetype}
           fileName={fileName}
+          fileId={fileId}
         />
       );
       break;
