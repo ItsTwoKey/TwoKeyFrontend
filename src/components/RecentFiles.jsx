@@ -341,19 +341,19 @@ const RecentFiles = ({
                     </b>
                   </button>
 
-                  <span className="flex">
+                  <span style={{ fontSize: 20 }} className="flex">
                     <div onClick={() => handleLockChange(file)}>
                       {file?.isLocked ? (
-                        <LockIcon  />
+                        <LockIcon fontSize="inherit" />
                       ) : (
-                        <LockOpenIcon  />
+                        <LockOpenIcon fontSize="inherit" />
                       )}
                     </div>
                     <div onClick={() => handlePinChange(file)} className="ml-1">
                       {file?.isPinned ? (
-                        <PushPinIcon  />
+                        <PushPinIcon fontSize="inherit" />
                       ) : (
-                        <PushPinOutlinedIcon  />
+                        <PushPinOutlinedIcon fontSize="inherit" />
                       )}
                     </div>
                     <button

@@ -183,31 +183,31 @@ const FileDetails = ({
                     </>
                   ) : (
                     <>
-                      <div className="flex items-center gap-2 text-gray-500 font-semibold">
-                        <CloudDoneIcon fontSize="inherit" />
-                        <p className="text-xs">Saved</p>
-                      </div>
+                      <Tooltip title={fileInfo.size} arrow>
+                        <div className="flex items-center gap-2 text-gray-500 font-semibold hover:bg-gray-200 cursor-pointer px-2 py-1 rounded-md">
+                          <CloudDoneIcon fontSize="inherit" />
+                          <p className="text-xs">Saved</p>
+                        </div>
+                      </Tooltip>
                     </>
                   )}
                 </p>
               </div>
-              <div className="flex gap-2 w-[500px]">
+              <div className="flex gap-2 w-[500px] -ml-1">
                 <p
                   onClick={handleBackButtonClick}
-                  className="hover:bg-slate-200 cursor-pointer px-1 rounded-sm text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis"
+                  className="hover:bg-gray-200 cursor-pointer px-2 rounded-md text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis"
                 >
                   Home
                 </p>
                 <p
                   onClick={handleDownload}
-                  className="hover:bg-slate-200 cursor-pointer px-1 rounded-sm text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis"
+                  className="hover:bg-gray-200 cursor-pointer px-2 rounded-md text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis"
                 >
                   Download
                 </p>
-                <p className="text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis">
-                  {fileInfo.name.split(".").pop().split("_TS=")[0]}
-                </p>
-                <p className="text-sm text-gray-600">{fileInfo.size}</p>
+
+                {/* <p className="text-sm text-gray-600">{fileInfo.size}</p> */}
               </div>
             </div>
           </div>
