@@ -343,13 +343,17 @@ const RecentFiles = ({
 
                   <span className="flex">
                     <div onClick={() => handleLockChange(file)}>
-                      {file?.isLocked ? <LockIcon /> : <LockOpenIcon />}
+                      {file?.isLocked ? (
+                        <LockIcon  />
+                      ) : (
+                        <LockOpenIcon  />
+                      )}
                     </div>
                     <div onClick={() => handlePinChange(file)} className="ml-1">
                       {file?.isPinned ? (
-                        <PushPinIcon />
+                        <PushPinIcon  />
                       ) : (
-                        <PushPinOutlinedIcon />
+                        <PushPinOutlinedIcon  />
                       )}
                     </div>
                     <button
@@ -439,7 +443,7 @@ const RecentFiles = ({
                     <img
                       src={getIconByMimeType(file.mimetype)}
                       alt="File Preview"
-                      className="rounded-md my-2"
+                      className="rounded-md my-4"
                     />
                   </span>
                   <span>

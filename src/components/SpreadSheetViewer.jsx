@@ -25,7 +25,7 @@ import { Button } from "@mui/joy";
 
 const CACHE_NAME = "blob-cache";
 
-const Spread = ({ preUrl, mimetype, fileName, fileId }) => {
+const Spread = ({ preUrl, mimetype, fileName, fileId, setSaving }) => {
   if (!preUrl) alert("Please provide a valid URL");
   const spreadsheetRef = useRef(null);
   const { profileData, profileIsPending } = useAuth();
@@ -87,6 +87,7 @@ const Spread = ({ preUrl, mimetype, fileName, fileId }) => {
         });
         await cache.put(fileIdentfier, responseToCache);
         console.log("Cache updated for file:", fileIdentfier);
+        setSaving(false);
       })
       .catch((error) => {
         console.error("File save error:", error);
@@ -95,6 +96,7 @@ const Spread = ({ preUrl, mimetype, fileName, fileId }) => {
 
   const uploadFile = async (file) => {
     return new Promise((resolve, reject) => {
+      setSaving(true);
       const fileRef = ref(storage, `files/${profileData.org}/${file.id}`);
       const metadata = {
         customMetadata: {
@@ -132,64 +134,47 @@ const Spread = ({ preUrl, mimetype, fileName, fileId }) => {
     );
   }
 
-  return (
-    <div className="h-screen min-w-full overflow-y-scroll px-2">
-      <div className="flex items-center justify-between bg-zinc-200 py-2 px-4 font-bold shadow-md">
-        <div className="flex items-center">
-          <img src={PDF} alt="Excel Logo" className="h-6 w-6 mr-2" />
-          <p>{fileName}</p>
-        </div>
-        <div className="flex items-center">
-          <Button
-            className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition"
-            onClick={() => {
-              const spreadSheet = spreadsheetRef.current;
-              spreadSheet.save({
-                url: "https://services.syncfusion.com/react/production/api/spreadsheet/save",
-              });
-            }}
-          >
-            Save
-          </Button>
-        </div>
-      </div>
+  const Editorhieght = window.innerHeight - 64;
 
-      <SpreadsheetComponent
-        openUrl="https://services.syncfusion.com/react/production/api/spreadsheet/open"
-        ref={spreadsheetRef}
-        beforeSave={beforeSave}
-        saveComplete={saveComplete}
-        actionComplete={async (cell) => {
-          console.log("action complete", cell);
-          const spreadSheet = spreadsheetRef.current;
-          if (cell.action === "cellSave") {
-            spreadSheet.save({
-              url: "https://services.syncfusion.com/react/production/api/spreadsheet/save",
-            });
-          }
-        }}
-        style={{
-          width: "100%",
-          height: "100%",
-        }}
-      >
-        <SheetsDirective>
-          <SheetDirective name="Car Sales Report">
-            <RangesDirective>
-              <RangeDirective></RangeDirective>
-            </RangesDirective>
-            <ColumnsDirective>
-              <ColumnDirective width={180}></ColumnDirective>
-              <ColumnDirective width={130}></ColumnDirective>
-              <ColumnDirective width={130}></ColumnDirective>
-              <ColumnDirective width={180}></ColumnDirective>
-              <ColumnDirective width={130}></ColumnDirective>
-              <ColumnDirective width={120}></ColumnDirective>
-            </ColumnsDirective>
-          </SheetDirective>
-        </SheetsDirective>
-      </SpreadsheetComponent>
-    </div>
+  return (
+    <SpreadsheetComponent
+      openUrl="https://services.syncfusion.com/react/production/api/spreadsheet/open"
+      ref={spreadsheetRef}
+      beforeSave={beforeSave}
+      saveComplete={saveComplete}
+      actionComplete={async (cell) => {
+        console.log("action complete", cell);
+        const spreadSheet = spreadsheetRef.current;
+        if (cell.action === "cellSave") {
+          spreadSheet.save({
+            url: "https://services.syncfusion.com/react/production/api/spreadsheet/save",
+          });
+        }
+      }}
+      // style={{
+      //   width: "100%",
+      //   height: { Editorhieght },
+      // }}
+      height={Editorhieght}
+      allowSave={true}
+      saveUrl="https://services.syncfusion.com/react/production/api/spreadsheet/save"
+    >
+      <SheetsDirective>
+        <SheetDirective name="Car Sales Report">
+          <RangesDirective>
+            <RangeDirective></RangeDirective>
+          </RangesDirective>
+          <ColumnsDirective>
+            <ColumnDirective width={180}></ColumnDirective>
+            <ColumnDirective width={130}></ColumnDirective>
+            <ColumnDirective width={130}></ColumnDirective>
+            <ColumnDirective width={180}></ColumnDirective>
+            <ColumnDirective width={130}></ColumnDirective>
+            <ColumnDirective width={120}></ColumnDirective>
+          </ColumnsDirective>
+        </SheetDirective>
+      </SheetsDirective>
+    </SpreadsheetComponent>
   );
 };
 

@@ -47,12 +47,15 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
           const authInstance = gapi.auth2.getAuthInstance();
           setIsSignedIn(authInstance.isSignedIn.get());
           authInstance.isSignedIn.listen(setIsSignedIn);
+          const freshToken = authInstance.currentUser
+            .get()
+            .getAuthResponse(true).access_token;
 
           // Check if credentials are stored in local storage
           const token = localStorage.getItem("google_token");
           // const refreshToken = localStorage.getItem("google_refresh_token");
-          if (token) {
-            fetchEmails(token);
+          if (freshToken || token) {
+            fetchEmails(freshToken || token);
           }
         });
     }

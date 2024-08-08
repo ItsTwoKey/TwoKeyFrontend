@@ -18,11 +18,12 @@ import toast, { Toaster } from "react-hot-toast";
 import fileContext from "../context/fileContext";
 import { api } from "../utils/axios-instance";
 import { auth } from "../helper/firebaseClient";
-import { Icon, IconButton } from "@mui/material";
+import { IconButton } from "@mui/material";
 import HistoryIcon from "@mui/icons-material/History";
 import DownloadForOfflineIcon from "@mui/icons-material/DownloadForOffline";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-
+import CloudDoneIcon from "@mui/icons-material/CloudDone";
+import CachedIcon from "@mui/icons-material/Cached";
 // Define SVG icons for different file types
 const fileIcons = {
   "image/png": Image,
@@ -45,6 +46,7 @@ const FileDetails = ({
   closeDrawer,
   preUrl,
   signedUrl,
+  saving,
 }) => {
   const navigate = useNavigate();
   const context = useContext(fileContext);
@@ -120,10 +122,7 @@ const FileDetails = ({
     if (profileData.id === fileInfo.owner) {
       try {
         const storage = getStorage();
-        const fileRef = ref(
-          storage,
-          `files/${profileData.org}/${fileInfo.id}`
-        );
+        const fileRef = ref(storage, `files/${profileData.org}/${fileInfo.id}`);
 
         await deleteObject(fileRef);
         console.log("Delete success");
@@ -170,15 +169,40 @@ const FileDetails = ({
             </span>
 
             <div className="mx-2">
-              <p className="text-md text-black font-semibold whitespace-nowrap overflow-hidden text-ellipsis ml-1 ">
-                {fileInfo.name.split("_TS=")[0]}
-              </p>
+              <div className="flex gap-6 items-center">
+                <p className="ml-1 text-md text-black font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
+                  {fileInfo.name.split("_TS=")[0]}
+                </p>
+                <p className="text-sm text-gray-400 whitespace-nowrap overflow-hidden text-ellipsis">
+                  {saving ? (
+                    <>
+                      <div className="flex items-center gap-2 text-gray-500 font-semibold">
+                        <CachedIcon fontSize="inherit" />
+                        Saving..
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2 text-gray-500 font-semibold">
+                        <CloudDoneIcon fontSize="inherit" />
+                        <p className="text-xs">Saved</p>
+                      </div>
+                    </>
+                  )}
+                </p>
+              </div>
               <div className="flex gap-2 w-[500px]">
                 <p
                   onClick={handleBackButtonClick}
                   className="hover:bg-slate-200 cursor-pointer px-1 rounded-sm text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis"
                 >
                   Home
+                </p>
+                <p
+                  onClick={handleDownload}
+                  className="hover:bg-slate-200 cursor-pointer px-1 rounded-sm text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis"
+                >
+                  Download
                 </p>
                 <p className="text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis">
                   {fileInfo.name.split(".").pop().split("_TS=")[0]}

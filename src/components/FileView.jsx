@@ -17,6 +17,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   const [preUrl, setPreUrl] = useState("");
   const [signedUrl, setSignedUrl] = useState("");
   const [loadingUrl, setLoadingUrl] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const openDialog = () => {
     setIsOpen(true);
@@ -98,7 +99,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
           `/file/getPresigned/${fileInfo.id}`,
           body
         );
-        console.log('URL', presignedUrl);
+        console.log("URL", presignedUrl);
         const url = presignedUrl.data.signed_url;
         setSignedUrl(url);
 
@@ -164,6 +165,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
                 closeDrawer={closeDrawer}
                 preUrl={preUrl}
                 signedUrl={signedUrl}
+                saving={saving}
               />
             </div>
             <div className={`w-full ${screenshotDetected ? "blur" : ""}`}>
@@ -177,6 +179,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
                   signedUrl={signedUrl}
                   fileName={fileInfo.name}
                   fileId={fileInfo.id}
+                  setSaving={setSaving}
                 />
               ) : (
                 <div className="text-center pt-20">

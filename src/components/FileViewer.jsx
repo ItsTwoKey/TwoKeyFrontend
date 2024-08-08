@@ -3,7 +3,15 @@ import TextEditor from "./editFiles/TextEditor";
 import CustomFileViewer from "./CustomFileViewer";
 import SpreadsheetComponent from "./SpreadSheetViewer";
 
-const FileViewer = ({ preUrl, mimetype, signedUrl, fileName, fileId }) => {
+const FileViewer = ({
+  preUrl,
+  mimetype,
+  signedUrl,
+  fileName,
+  fileId,
+
+  setSaving,
+}) => {
   const containerStyles = {
     width: "100%",
     height: "100%",
@@ -34,7 +42,13 @@ const FileViewer = ({ preUrl, mimetype, signedUrl, fileName, fileId }) => {
     case "application/msword":
     case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
       viewerComponent = (
-        <TextEditor preUrl={preUrl} fileName={fileName} fileId={fileId} />
+        <TextEditor
+          setSaving={setSaving}
+          preUrl={preUrl}
+          fileName={fileName}
+          fileId={fileId}
+          mimetype={mimetype}
+        />
       );
       break;
     case "application/vnd.ms-powerpoint":
@@ -51,6 +65,7 @@ const FileViewer = ({ preUrl, mimetype, signedUrl, fileName, fileId }) => {
           mimetype={mimetype}
           fileName={fileName}
           fileId={fileId}
+          setSaving={setSaving}
         />
       );
       break;
