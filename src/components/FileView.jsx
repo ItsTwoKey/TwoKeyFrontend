@@ -153,8 +153,17 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
             padding: 0,
           }}
         >
-          <div className={`flex `}>
-            <div className={`w-4/5 ${screenshotDetected ? "blur" : ""} h-screen`}>
+          <div className={`flex flex-col`}>
+            <div className="w-full">
+              <FileDetails
+                fileInfo={fileInfo}
+                sharedFileInfo={sharedFileInfo}
+                closeDrawer={closeDrawer}
+                preUrl={preUrl}
+                signedUrl={signedUrl}
+              />
+            </div>
+            <div className={`w-full ${screenshotDetected ? "blur" : ""}`}>
               {loadingUrl && (
                 <div className="text-center pt-20">Fetching URL...</div>
               )}
@@ -171,15 +180,6 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
                   You do not have access to the file.
                 </div>
               )}
-            </div>
-            <div className="w-1/5">
-              <FileDetails
-                fileInfo={fileInfo}
-                sharedFileInfo={sharedFileInfo}
-                closeDrawer={closeDrawer}
-                preUrl={preUrl}
-                signedUrl={signedUrl}
-              />
             </div>
           </div>
         </DialogContent>

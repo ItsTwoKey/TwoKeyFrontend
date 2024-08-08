@@ -32,11 +32,10 @@ const DISCOVERY_DOCS = [
 
 const DisplayEmails = ({ emails, onEmailsFetched }) => {
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     function start() {
-      setLoading(true);
       gapi.client
         .init({
           apiKey: API_KEY,
@@ -55,7 +54,6 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
           if (token) {
             fetchEmails(token);
           }
-          setLoading(false);
         });
     }
 
@@ -88,6 +86,7 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
 
   const fetchEmails = async (token) => {
     setLoading(true);
+    onEmailsFetched([]);
     const idToken = await auth.currentUser.getIdToken();
     const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
     const clientSecret = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
@@ -198,7 +197,7 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
             )}
           </div>
         </div>
-        <div className="h-56 overflow-y-scroll scrollbar-hide">
+        <div className="h-56 overflow-y-scroll scrollbar-hide pb-20">
           {Array.from({ length: loading ? 5 : 0 }).map((_, index) => (
             <div
               key={index}
@@ -220,8 +219,13 @@ const DisplayEmails = ({ emails, onEmailsFetched }) => {
           ))}
 
           {emails.map((email, index) => (
-            <Stack direction={"row"} key={index} spacing={2} className="my-6">
-              <Tooltip title={email.from} arrow>
+            <Stack
+              direction={"row"}
+              key={email.id}
+              spacing={2}
+              className="my-6"
+            >
+              <Tooltip title={email.from_email} arrow>
                 <Avatar
                   {...stringAvatar(extractName(email.from))}
                   variant="rounded"

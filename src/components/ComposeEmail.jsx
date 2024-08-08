@@ -9,6 +9,7 @@ import {
   TextField,
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
+import toast, { Toaster } from "react-hot-toast";
 
 import React, { useState } from "react";
 import { api } from "../utils/axios-instance";
@@ -43,10 +44,10 @@ const ComposeEmail = ({ isSignedIn }) => {
     });
 
     if (response.data.status === "success") {
-      console.log("Email sent successfully!");
+      toast.success("Email sent successfully.");
       setLoading(false);
     } else {
-      console.log("Failed to send email.");
+      toast.error("Failed to send email.");
       setLoading(false);
     }
 
@@ -61,12 +62,13 @@ const ComposeEmail = ({ isSignedIn }) => {
     setIsOpen(false);
   };
 
-  if(!isSignedIn) {
+  if (!isSignedIn) {
     return null;
   }
 
   return (
     <div>
+      <Toaster position="bottom-left" reverseOrder={false} />
       <IconButton onClick={openDialog}>
         <EmailIcon className="cursor-pointer text-indigo-400 disabled:cursor-not-allowed" />
       </IconButton>

@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { useDarkMode } from "../context/darkModeContext";
-import { supabase } from "../helper/supabaseClient";
 import FileView from "./FileView";
 import { useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import { api } from "../utils/axios-instance";
-import userContext from "../context/UserContext";
 
 export default function SearchBar() {
   const { darkMode } = useDarkMode();
@@ -123,6 +121,7 @@ export default function SearchBar() {
         const filtered = users.filter((user) =>
           user.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
+        console.log(filtered);
         setSearchResults(filtered);
       };
 
@@ -130,7 +129,7 @@ export default function SearchBar() {
     } else {
       setSearchResults([]);
     }
-  }, [searchTerm]);
+  }, [searchTerm, users]);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);

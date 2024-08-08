@@ -133,9 +133,9 @@ const AIChat = ({ signedUrl }) => {
     <div className="">
       <button
         onClick={openDialog}
-        className="h-12 w-12 shadow-lg border border-gray-500 bg-[#3C4042] rounded-full"
+        className="h-8 w-8 shadow-lg border border-gray-500 bg-[#3C4042] rounded-full"
       >
-        <img src={AI} alt="AI" className="mx-auto" />
+        <img src={AI} alt="AI" className="mx-auto object-contain h-4" />
       </button>
 
       <Dialog
