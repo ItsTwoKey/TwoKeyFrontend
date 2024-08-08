@@ -75,7 +75,7 @@ export default function TextEditor({ preUrl, fileName, fileId }) {
 
   const saveToFirebase = async (file) => {
     try {
-      const fileRef = ref(storage, `files/${profileData.org}/${fileName}`);
+      const fileRef = ref(storage, `files/${profileData.org}/${file.id}`);
       const snapshot = await uploadBytes(fileRef, file, {
         cacheControl: "3600",
       });

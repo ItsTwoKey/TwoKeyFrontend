@@ -20,6 +20,9 @@ import Image from "../assets/image.svg";
 import Ppt from "../assets/ppt.svg";
 import Txt from "../assets/txt.svg";
 import Video from "../assets/video.svg";
+import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
+import PushPinIcon from "@mui/icons-material/PushPin";
+
 import secureLocalStorage from "react-secure-storage";
 import fileContext from "../context/fileContext";
 import { api } from "../utils/axios-instance";
@@ -211,6 +214,19 @@ const RecentFiles = ({
       });
     }
 
+    updateUI("isLocked", file, !file?.isLocked);
+  };
+
+  const handlePinChange = async (file) => {
+    const id = file.id;
+    const res = await api.patch(`/file/change-pin-status/${id}/`, {
+      is_pinned: !file.isPinned,
+    });
+
+    updateUI("isPinned", file, !file?.isPinned);
+  };
+
+  const updateUI = (changedAttr, file, newVal) => {
     const curr_location = location?.pathname.split("/")[1];
 
     switch (curr_location) {
@@ -218,7 +234,7 @@ const RecentFiles = ({
         updateFilesState(value);
         break;
       case "filesInsideFolder":
-        updateFiles(file, !file?.isLocked);
+        updateFiles(file, changedAttr, newVal);
         break;
       case "department":
         updateDepartmentFiles(deptName);
@@ -326,8 +342,15 @@ const RecentFiles = ({
                   </button>
 
                   <span className="flex">
-                    <div onClick={() => handleLockChange(file, index)}>
+                    <div onClick={() => handleLockChange(file)}>
                       {file?.isLocked ? <LockIcon /> : <LockOpenIcon />}
+                    </div>
+                    <div onClick={() => handlePinChange(file)} className="ml-1">
+                      {file?.isPinned ? (
+                        <PushPinIcon />
+                      ) : (
+                        <PushPinOutlinedIcon />
+                      )}
                     </div>
                     <button
                       className=""

@@ -42,7 +42,9 @@ export const FileState = (props) => {
         case 3:
           url = `/file/files?type=owned`;
           break;
-
+        case 4:
+          url = `/file/files?type=pinned`;
+          break;
         default:
           url = `/file/files`;
           break;
@@ -84,6 +86,7 @@ export const FileState = (props) => {
             isLocked: file?.is_locked,
             hasPassword: file?.has_password,
             password: file?.password,
+            isPinned: file?.is_pinned,
             lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
               "en-IN",
               {
@@ -159,6 +162,7 @@ export const FileState = (props) => {
             isLocked: file?.is_locked,
             hasPassword: file?.has_password,
             password: file?.password,
+            isPinned: file?.is_pinned,
             lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
               "en-IN",
               {
@@ -189,7 +193,7 @@ export const FileState = (props) => {
         const filteredFiles = mappedFiles.filter((file) =>
           file.dept.find((id) => id === getDepartmentId.id)
         );
-        
+
         console.log(filteredFiles);
         setDepartmentFiles(filteredFiles);
       }
