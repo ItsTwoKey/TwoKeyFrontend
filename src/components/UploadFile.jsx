@@ -97,7 +97,8 @@ const UploadFile = ({ value }) => {
 
   const uploadFile = async (file, index) => {
     return new Promise((resolve, reject) => {
-      const fileRef = ref(storage, `files/${profileData.org}/${file.name}`);
+      const fileRef = ref(storage, `files/${profileData.org}/${file.id}`);
+      console.log("REF: ", fileRef);
       const metadata = {
         customMetadata: {
           department_id: deptId,

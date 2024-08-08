@@ -156,7 +156,7 @@ const SpreadsheetComponent = ({ preUrl, mimetype, fileName }) => {
 
   const uploadFile = async (file) => {
     return new Promise((resolve, reject) => {
-      const fileRef = ref(storage, `files/${profileData.org}/${fileName}`);
+      const fileRef = ref(storage, `files/${profileData.org}/${file.id}`);
       const metadata = {
         customMetadata: {
           department_id: deptId,

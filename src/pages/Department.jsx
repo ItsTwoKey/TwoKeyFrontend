@@ -61,6 +61,7 @@ const Department = () => {
               isLocked: file?.is_locked,
               hasPassword: file?.has_password,
               password: file?.password,
+              isPinned: file?.is_pinned,
               lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
                 "en-IN",
                 {

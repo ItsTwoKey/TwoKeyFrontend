@@ -131,6 +131,9 @@ export default function DashboardTabs() {
         case 3:
           url = `/file/files?type=owned`;
           break;
+        case 4:
+          url = `/file/files?type=pinned`;
+          break;
         default:
           url = "";
           break;
@@ -284,6 +287,15 @@ export default function DashboardTabs() {
                 color: darkMode ? "white" : "black",
               }}
             />
+            <Tab
+              label="Pinned"
+              {...a11yProps(4)}
+              sx={{
+                textTransform: "capitalize",
+                fontSize: "small",
+                color: darkMode ? "white" : "black",
+              }}
+            />
           </Tabs>
         </Box>
         <CustomTabPanel value={value} index={0}>
@@ -320,6 +332,17 @@ export default function DashboardTabs() {
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
+          <RecentFiles
+            filteredData={filteredData}
+            loading={loading}
+            select={select}
+            setSelect={setSelect}
+            showMultiFileOptions={showMultiFileOptions}
+            setShowMultiFileOptions={setShowMultiFileOptions}
+            value={value}
+          />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={4}>
           <RecentFiles
             filteredData={filteredData}
             loading={loading}

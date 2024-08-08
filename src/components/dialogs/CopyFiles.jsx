@@ -48,7 +48,7 @@ function CopyFiles({
   };
 
   const uploadFile = async (file, metadata) => {
-    const fileRef = ref(storage, `files/${profileData.org}/${file.name}`);
+    const fileRef = ref(storage, `files/${profileData.org}/${file.id}`);
     const uploadTask = uploadBytesResumable(fileRef, file, metadata);
 
     return new Promise((resolve, reject) => {
@@ -70,23 +70,22 @@ function CopyFiles({
     });
   };
 
-  const getUniqueFileName = async (fileName) => {
-    let uniqueName = fileName;
-    let counter = 1;
+  // const getUniqueFileName = async (fileName) => {
+  //   let uniqueName = fileName;
+  //   let counter = 1;
 
-    while (true) {
-      const fileRef = ref(storage, `files/${profileData.org}/${uniqueName}`);
-      try {
-        await getDownloadURL(fileRef);
-        uniqueName = fileName.replace(/(\.[\w\d_-]+)$/i, ` (${counter++})$1`);
-      } catch (error) {
-        return uniqueName;
-      }
-    }
-  };
+  //   while (true) {
+  //     const fileRef = ref(storage, `files/${profileData.org}/${uniqueName}`);
+  //     try {
+  //       await getDownloadURL(fileRef);
+  //       uniqueName = fileName.replace(/(\.[\w\d_-]+)$/i, ` (${counter++})$1`);
+  //     } catch (error) {
+  //       return uniqueName;
+  //     }
+  //   }
+  // };
 
   const createCopyOfFile = async (file) => {
-    console.log(file);
     const deptId = file.dept;
     const newFileId = uuidv4();
     let newFile = null;
@@ -94,7 +93,7 @@ function CopyFiles({
     try {
       const originalFileRef = ref(
         storage,
-        `files/${profileData.org}/${file.name}`
+        `files/${profileData.org}/${file.id}`
       );
       const downloadURL = await getDownloadURL(originalFileRef);
       const response = await axios.get(downloadURL, {
@@ -104,9 +103,9 @@ function CopyFiles({
       const originalFileBlob = new Blob([response.data], {
         type: file.mimetype,
       });
-      const uniqueFileName = await getUniqueFileName(`Copy of ${file.name}`);
+      // const uniqueFileName = await getUniqueFileName(`Copy of ${file.name}`);
 
-      const copiedFile = new File([originalFileBlob], uniqueFileName, {
+      const copiedFile = new File([originalFileBlob], `Copy of ${file.name}`, {
         type: file.mimetype,
         lastModified: Date.now(),
       });
@@ -164,6 +163,7 @@ function CopyFiles({
         isLocked: returnedFile?.is_locked,
         hasPassword: returnedFile?.has_password,
         password: returnedFile?.password,
+        isPinned: returnedFile?.is_pinned,
         lastUpdate: new Date(returnedFile.metadata.lastModified).toLocaleString(
           "en-IN",
           {

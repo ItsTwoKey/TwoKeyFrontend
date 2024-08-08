@@ -56,6 +56,10 @@ const FilesInsideFolder = () => {
             status: "Team",
             security: "Enhanced",
             color: filteredDepartment[0]?.metadata.bg,
+            isLocked: file?.is_locked,
+            hasPassword: file?.has_password,
+            password: file?.password,
+            isPinned: file?.is_pinned,
             lastUpdate: new Date(file.metadata.lastModified).toLocaleString(
               "en-IN",
               {
@@ -107,10 +111,10 @@ const FilesInsideFolder = () => {
     setFiles((prevData) => [...files, ...prevData]);
   };
 
-  const updateFiles = (file, val) => {
+  const updateFiles = (file, changedAttr, val) => {
     setFiles((prevData) =>
       prevData.map((data) =>
-        data.id === file.id ? { ...data, isLocked: val } : data
+        data.id === file.id ? { ...data, [changedAttr]: val } : data
       )
     );
   };
