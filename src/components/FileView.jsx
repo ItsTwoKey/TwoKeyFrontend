@@ -93,10 +93,12 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
           longitude: 73.82762833796289,
           idToken: token,
         };
+
         const presignedUrl = await api.post(
           `/file/getPresigned/${fileInfo.id}`,
           body
         );
+        console.log('URL', presignedUrl);
         const url = presignedUrl.data.signed_url;
         setSignedUrl(url);
 
@@ -154,7 +156,9 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
           }}
         >
           <div className={`flex `}>
-            <div className={`w-4/5 ${screenshotDetected ? "blur" : ""} h-screen`}>
+            <div
+              className={`w-4/5 ${screenshotDetected ? "blur" : ""} h-screen`}
+            >
               {loadingUrl && (
                 <div className="text-center pt-20">Fetching URL...</div>
               )}

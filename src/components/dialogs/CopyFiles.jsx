@@ -47,8 +47,8 @@ function CopyFiles({
     await Promise.all(addPromises);
   };
 
-  const uploadFile = async (file, metadata) => {
-    const fileRef = ref(storage, `files/${profileData.org}/${file.id}`);
+  const uploadFile = async (file, metadata, id) => {
+    const fileRef = ref(storage, `files/${profileData.org}/${id}`);
     const uploadTask = uploadBytesResumable(fileRef, file, metadata);
 
     return new Promise((resolve, reject) => {
@@ -119,7 +119,8 @@ function CopyFiles({
 
       const copiedFileDownloadURL = await uploadFile(
         copiedFile,
-        copiedFileMetadata
+        copiedFileMetadata,
+        newFileId
       );
 
       const token = await auth.currentUser.getIdToken();
