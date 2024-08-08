@@ -11,7 +11,7 @@ import Loading from "./Loading";
 
 const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
   const CACHE_NAME = "blob-cache";
-  const MAX_CACHE_AGE = 24 * 60 * 60 * 1000; // Cache duration in milliseconds (1 day)
+  const MAX_CACHE_AGE = 7 * 24 * 60 * 60 * 1000; // Cache duration in milliseconds (1 week)
   const { screenshotDetected, screenshotAlert } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [preUrl, setPreUrl] = useState("");
@@ -123,6 +123,7 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
 
         // Convert blob to data URL
         const dataUrl = URL.createObjectURL(blob);
+        console.log("cache miss", dataUrl);
         setPreUrl(dataUrl);
       }
     } catch (error) {
