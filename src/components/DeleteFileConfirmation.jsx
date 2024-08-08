@@ -42,7 +42,7 @@ const DeleteFileConfirmation = ({ fileName, owner, id, remove }) => {
     if (profileData.id === owner) {
       try {
         const storage = getStorage();
-        const fileRef = ref(storage, `files/${profileData.org}/${fileName}`);
+        const fileRef = ref(storage, `files/${profileData.org}/${id}`);
 
         await deleteObject(fileRef);
         console.log("Delete success");

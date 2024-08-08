@@ -15,6 +15,8 @@ import { auth } from "../helper/firebaseClient";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { api } from "../utils/axios-instance";
 import Loading from "../components/Loading";
+import bg from "../assets/loginBg.jpeg";
+import logo from "../assets/logo.png";
 
 const Login = () => {
   const [userMetaData, setUserMetaData] = useState([]);
@@ -141,19 +143,19 @@ const Login = () => {
   const handleFirebaseError = (error) => {
     let errorMessage = "An error occurred. Please try again.";
 
-    if (error.code == "auth/invalid-email") {
+    if (error.code === "auth/invalid-email") {
       errorMessage = "Invalid email format.";
     }
-    if (error.code == "auth/user-disabled") {
+    if (error.code === "auth/user-disabled") {
       errorMessage = "This account has been disabled.";
     }
-    if (error.code == "auth/user-not-found") {
+    if (error.code === "auth/user-not-found") {
       errorMessage = "No user found with this email.";
     }
-    if (error.code == "auth/invalid-credential") {
+    if (error.code === "auth/invalid-credential") {
       errorMessage = "Invalid Credentials";
     }
-    if (error.code == "auth/too-many-requests") {
+    if (error.code === "auth/too-many-requests") {
       errorMessage =
         "Access to this account has been temporarily disabled due to many failed login attempts. Please try again later.";
     }
@@ -179,10 +181,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (
-      secureLocalStorage.getItem("token") &&
-      profileData 
-    ) {
+    if (secureLocalStorage.getItem("token") && profileData) {
       if (
         profileData.username &&
         profileData.name &&
@@ -203,7 +202,7 @@ const Login = () => {
 
   return (
     <div className="flex flex-col md:flex-row font-raleway">
-      {!isSmallScreen && (
+      {/* {!isSmallScreen && (
         <div className="w-full md:w-1/2 ">
           <img
             className="h-screen w-full object-cover"
@@ -211,18 +210,32 @@ const Login = () => {
             alt="twokeyLandingImage"
           />
         </div>
-      )}
+      )} */}
 
-      <div className="bg-white flex flex-col justify-center items-center w-full md:w-1/2 p-4">
-        <h1 className="text-5xl text-center mt-4 font-semibold ">
-          Welcome to Twokey
-        </h1>
-
-        <form onSubmit={handleSubmit} className="text-center w-full md:w-11/12">
-          <span className="my-4 flex flex-col justify-center ">
+      <div
+        className="bg-white flex flex-col justify-center items-center w-full h-screen p-4"
+        style={{
+          backgroundImage: `url(${bg})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat", // Do not repeat the image
+        }}
+      >
+        <form
+          onSubmit={handleSubmit}
+          className="w-full md:w-1/3 bg-white p-8 rounded-xl"
+        >
+          <img
+            src={logo}
+            alt="logo"
+            className="h-4"
+            style={{ transform: "translateX(-3px)" }}
+          />
+          <h1 className="self-start mt-5">Welcome Back 👋</h1>
+          <p className="text-xs">Enter your credentials to access your account</p>
+          <span className="my-4 flex flex-col justify-center">
             <div className="w-full">
-              <InputLabel className="text-md text-left mb-2 mt-4" id="email">
-                Email
+              <InputLabel className="text-xs text-left mb-2 mt-4" id="email">
+                Email address
               </InputLabel>
               <span id="email" className="flex flex-row gap-2">
                 <TextField
@@ -276,7 +289,7 @@ const Login = () => {
             <a
               href="/forgot-password"
               alt="forgot password"
-              className="text-blue-900 text-sm "
+              className="text-blue-900 text-sm"
             >
               Forgot password?
             </a>
@@ -287,13 +300,15 @@ const Login = () => {
               style={{ color: "#000", height: 25, width: 25 }}
             />
           ) : (
-            <button
-              type="submit"
-              // className="bg-blue-600 text-white py-1 px-10 text-center mt-16 rounded-sm hover:bg-blue-500"
-              className="bg-[#C8C6FF] hover:bg-violet-200 border rounded-md border-[#131149] py-2.5 px-8 text-sm font-semibold"
-            >
-              Sign In
-            </button>
+            <div className="text-center">
+              <button
+                type="submit"
+                // className="bg-blue-600 text-white py-1 px-10 text-center mt-16 rounded-sm hover:bg-blue-500"
+                className="bg-black hover:bg-violet-200 border rounded-md py-2.5 px-8 text-sm font-semibold w-full mt-4 text-white"
+              >
+                Sign In
+              </button>
+            </div>
           )}
 
           {error && <p className="text-red-500 text-center mt-2">{error}</p>}
@@ -301,9 +316,9 @@ const Login = () => {
             <p className="text-indigo-500 text-center mt-2">{message}</p>
           )}
 
-          <p className="text-gray-500 mt-4 text-center">
+          <p className="text-gray-500 mt-4 text-sm">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-indigo-600 font-semibold">
+            <Link to="/signup" className="text-[#8E48E7] font-semibold">
               Sign Up
             </Link>
           </p>

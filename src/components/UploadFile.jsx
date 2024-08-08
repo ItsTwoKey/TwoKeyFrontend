@@ -95,9 +95,9 @@ const UploadFile = ({ value }) => {
     },
   });
 
-  const uploadFile = async (file, index) => {
+  const uploadFile = async (file, id) => {
     return new Promise((resolve, reject) => {
-      const fileRef = ref(storage, `files/${profileData.org}/${file.name}`);
+      const fileRef = ref(storage, `files/${profileData.org}/${id}`);
       const metadata = {
         customMetadata: {
           department_id: deptId,
@@ -130,9 +130,10 @@ const UploadFile = ({ value }) => {
   const handleFinalUpload = async () => {
     try {
       for (const file of droppedFiles) {
-        const downloadURL = await uploadFile(file);
+        const newFileId = uuidv4();
+        const downloadURL = await uploadFile(file, newFileId);
         console.log("uploaded file:", downloadURL);
-        await handleFileIdRetrieval(file, file.name, downloadURL);
+        await handleFileIdRetrieval(file, file.name, downloadURL, newFileId);
       }
       showSnackbar("Upload successful", "success");
     } catch (error) {
@@ -144,9 +145,8 @@ const UploadFile = ({ value }) => {
     }
   };
 
-  const handleFileIdRetrieval = async (file, desiredFileName, downloadURL) => {
+  const handleFileIdRetrieval = async (file, desiredFileName, downloadURL, newFileId) => {
     const token = await auth.currentUser.getIdToken();
-    const newFileId = uuidv4();
     try {
       const res = await api.post(`/file/addDepartment/${newFileId}`, {
         department_ids: [deptId],

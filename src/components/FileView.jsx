@@ -93,10 +93,12 @@ const FileView = ({ fileInfo, closeDrawer, sharedFileInfo }) => {
           longitude: 73.82762833796289,
           idToken: token,
         };
+
         const presignedUrl = await api.post(
           `/file/getPresigned/${fileInfo.id}`,
           body
         );
+        console.log('URL', presignedUrl);
         const url = presignedUrl.data.signed_url;
         setSignedUrl(url);
 

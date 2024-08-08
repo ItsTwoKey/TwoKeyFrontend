@@ -122,7 +122,7 @@ const FileDetails = ({
         const storage = getStorage();
         const fileRef = ref(
           storage,
-          `files/${profileData.org}/${fileInfo.name}`
+          `files/${profileData.org}/${fileInfo.id}`
         );
 
         await deleteObject(fileRef);

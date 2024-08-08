@@ -32,7 +32,7 @@ function DeleteMultiFilesConfirmation({
     if (profileData.id === file.owner) {
       try {
         const storage = getStorage();
-        const fileRef = ref(storage, `files/${profileData.org}/${file.name}`);
+        const fileRef = ref(storage, `files/${profileData.org}/${file.id}`);
 
         await deleteObject(fileRef);
         await api.delete(`/file/delete-file/${file.id}/`);

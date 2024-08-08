@@ -126,7 +126,7 @@ export default function MultipleFileMenu({
           try {
             const fileRef = ref(
               storage,
-              `files/${profileData.org}/${file.name}`
+              `files/${profileData.org}/${file.id}`
             );
             const downloadURL = await getDownloadURL(fileRef);
             const response = await axios.get(downloadURL, {
